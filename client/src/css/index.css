@@ -1,5 +1,13 @@
 @import url('./admin/dashboard.css');
 @import url('./admin/admin.css');
+@import url('./admin/blogs.css');
+@import url('./admin/bookings.css');
+@import url('./admin/employees.css');
+@import url('./admin/inventory.css');
+@import url('./admin/messages.css');
+@import url('./admin/packages.css');
+@import url('./admin/payments.css');
+@import url('./admin/users.css');
 
 
 
