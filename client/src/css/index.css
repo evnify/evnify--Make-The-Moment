@@ -6,4 +6,5 @@
 
 @import url('./users/login.css');
 @import url('./users/signup.css');
-@import url('./users/profile.css');
+@import url('./users/userprofile.css');
+@import url('./users/usersettings.css');
