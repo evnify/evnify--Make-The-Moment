@@ -1,2 +1,9 @@
 @import url('./admin/dashboard.css');
 @import url('./admin/admin.css');
+
+
+
+
+@import url('./users/login.css');
+@import url('./users/signup.css');
+@import url('./users/profile.css');
