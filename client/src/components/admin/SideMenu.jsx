@@ -77,7 +77,7 @@ function SideMenu() {
         }
     };
     return (
-        <div className="SideMenu">
+        <div className="Admin_SideMenu">
             <ConfigProvider
                 theme={{
                     components: {

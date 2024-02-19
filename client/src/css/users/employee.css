@@ -1,13 +1,11 @@
-/* Side Bar */
-
-.Admin_DashboardContainer{
+.Emp_DashboardContainer{
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
 }
 
-.Admin_SideMenuAndPageContent{
+.Emp_SideMenuAndPageContent{
     display: flex;
     flex: 1;
     justify-content: flex-start;
@@ -15,7 +13,7 @@
     background-color: #efefef;
 
 }
-.Admin_SideMenu{
+.Emp_SideMenu{
     background-color: white;
     height: calc(100vh - 30px);
     width: fit-content;
@@ -24,23 +22,8 @@
     border-radius: 11px;
 }
 
-.Admin_PageContent{
+.Emp_PageContent{
     flex: 1;
     height: 100%;
     overflow-y: auto;
 }
-
-/* Nav Bar */
-
-.Admin__NavBar{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 51px;
-    background-color: #fff;
-    border-radius: 11px;
-    margin: 15px;
-}
-
-
-
