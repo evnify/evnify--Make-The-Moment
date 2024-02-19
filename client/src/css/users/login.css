@@ -1,0 +1,31 @@
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-container .login-form {
+    width: 100%;
+  }
+  
+  .login-container .login-form-forgot {
+    float: right;
+  }
+  
+  .login-container .login-form-button {
+    width: 100%;
+  }
+  
+.social-login-button {
+    width: 50%;
+    padding: auto;
+}
+
+.bold {
+    font-weight: bold;
+}
