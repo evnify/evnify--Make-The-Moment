@@ -1,5 +1,5 @@
-import {SideMenu} from './admin'
+import {SideMenu, NavBar} from './admin'
 import AdminRoutes from './AdminRoutes'
-import {NavBar} from './admin'
+import { ChatBox, EmpRoutes, EmpSideMenu } from './users'
 
-export {SideMenu, AdminRoutes, NavBar}
+export {SideMenu, AdminRoutes, NavBar, ChatBox, EmpRoutes, EmpSideMenu}
