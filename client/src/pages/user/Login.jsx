@@ -73,7 +73,7 @@ const App = () => {
                         Log in
                     </Button>
                     <div className="mt-3 ml-2 text-center">
-                        Don't have an account <a href="#signup">Sign up!</a>
+                        Don't have an Account <a href="#signup">Sign up!</a>
                     </div>
                 </Form.Item>
             </Form>
@@ -85,10 +85,12 @@ const App = () => {
 
             <Button className="mt-3 mb-3 social-login-button">
                 <Icon icon="devicon:google" />
+            
             </Button>
             <Button className="social-login-button">
                 <Icon icon="logos:facebook" />
             </Button>
+        
         </div>
     );
 };
