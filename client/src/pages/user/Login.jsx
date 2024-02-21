@@ -1,15 +1,25 @@
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, ConfigProvider} from "antd";
 import { Icon } from "@iconify/react";
 
-const App = () => {
+const Login = () => {
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
     };
 
     return (
         <div className="login-container">
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Button: {
+                            colorPrimary:"#1890ff"
+                        
+                        },
+                    },
+                }}
+            ></ConfigProvider>
             <h4 className="bold mt-4">Hi, Welcome back!</h4>
             <p>Enter your credentials to continue</p>
             <Form className="mt-4 w-100 login-form"
@@ -93,6 +103,8 @@ const App = () => {
         
         </div>
     );
+
+    
 };
 
-export default App;
+export default Login;
