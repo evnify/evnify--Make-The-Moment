@@ -1,6 +1,6 @@
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, ConfigProvider} from "antd";
+import { Button, Checkbox, Form, Input, ConfigProvider, Row, Col } from "antd";
 import { Icon } from "@iconify/react";
 
 const Login = () => {
@@ -14,17 +14,16 @@ const Login = () => {
                 theme={{
                     components: {
                         Button: {
-                            colorPrimary:"#1890ff"
-                        
+                            colorPrimary: "#1890ff",
                         },
                     },
                 }}
             ></ConfigProvider>
             <h4 className="bold mt-4">Hi, Welcome back!</h4>
             <p>Enter your credentials to continue</p>
-            <Form className="mt-4 w-100 login-form"
+            <Form
+                className="mt-4 w-100 login-form"
                 name="normal_login"
-                
                 initialValues={{
                     remember: true,
                 }}
@@ -88,23 +87,26 @@ const Login = () => {
                 </Form.Item>
             </Form>
             <div className="or-divider">
-                
                 <div className="text-center mt">or login with</div>
-               
             </div>
 
-            <Button className="mt-3 mb-3 social-login-button">
-                <Icon icon="devicon:google" />
-            
-            </Button>
-            <Button className="social-login-button">
-                <Icon icon="logos:facebook" />
-            </Button>
-        
+            <Row gutter={{ xs: 8, sm: 16 }} justify="center">
+                <Col
+                    className="gutter-row"
+                    xs={{ span: 24 }}
+                    md={{ span: 12 }}
+                    lg={{ span: 24 }}
+                >
+                    <Button className="mt-3 w-50 button mr-3" >
+                        <Icon icon="devicon:google" />
+                    </Button>
+                    <Button className="w-50 button mr-3">
+                        <Icon icon="logos:facebook" />
+                    </Button>
+                </Col>
+            </Row>
         </div>
     );
-
-    
 };
 
 export default Login;

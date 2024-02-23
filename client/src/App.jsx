@@ -9,9 +9,11 @@ import {
     Packages,
     Booking,
     Blog,
-    EmpDashboard
+    EmpDashboard,
+    ForgetPassword
 } from "./pages";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Reset, Verify } from "./pages/user";
 
 function App() {
     return (
@@ -28,6 +30,9 @@ function App() {
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/admin/*" element={<AdminDashboard />} />
                     <Route path="/employee/*" element={<EmpDashboard />} />
+                    <Route path="/forgetpassword" element={<ForgetPassword/>} />
+                    <Route path ="/reset" element={<Reset/>} />
+                    <Route path="/verify" element={<Verify/>} />
                 </Routes>
             </BrowserRouter>
         </div>
