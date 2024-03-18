@@ -43,6 +43,7 @@ const Login = () => {
                             <LockOutlined className="site-form-item-icon" />
                         }
                         placeholder=" new Password"
+                        size="large"
                     />
                 </Form.Item>
 
@@ -60,6 +61,7 @@ const Login = () => {
                             <LockOutlined className="site-form-item-icon" />
                         }
                         placeholder="comfirm Password"
+                        size="large"
                     />
                 </Form.Item>
 
@@ -68,6 +70,7 @@ const Login = () => {
                         type="primary"
                         htmlType="submit"
                         className="login-form-button"
+                        size="large"
                     >
                         Set Password
                     </Button>

@@ -1,0 +1,9 @@
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-left: 150px;
+    gap: 6.414px;
+    flex-shrink: 0;
+}
