@@ -20,21 +20,17 @@ const items = [
         getItem("Insights", "/admin/userinsights"),
         getItem("Users", "/admin/users"),
     ]),
-    getItem("Packages", "sub2", <Icon icon="ph:package-duotone" />, [
-        getItem("Insights", "/admin/packageinsights"),
-        getItem("Package List", "/admin/packagelist"),
-        getItem("Add New", "/admin/addpackages")
-    ]),
-    getItem("Bookings", "/admin/bookings", <Icon icon="mdi:cart-outline" />),
+    getItem("Packages", "/admin/packages", <Icon icon="ph:package-duotone" />),
 
     getItem("Inventory", "sub3", <Icon icon="ic:outline-inventory" />, [
         getItem("Insights", "/admin/inventoryinsights"),
-        getItem("Inventory List", "/admin/inventorylist"),
-        getItem("New Inventory", "/admin/newinventory")
+        getItem("Inventory List", "/admin/inventorylist")
     ]),
+    
+    getItem("Bookings", "/admin/bookings", <Icon icon="mdi:cart-outline" />),
+
     getItem("Employees", "sub4", <Icon icon="healthicons:city-worker" />, [
         getItem("Employee List", "/admin/employeelist"),
-        getItem("Add Employee", "/admin/addemployee"),
         getItem("Leave Requests", "/admin/leaverequests"),
         getItem("Assign To Events", "/admin/assigntoevents")
     ]),
@@ -44,8 +40,7 @@ const items = [
     ]),
     getItem("Payments", "sub6", <Icon icon="mdi:auto-pay" />, [
         getItem("Insights", "/admin/paymentinsights"),
-        getItem("Payroll", "/admin/payroll"),
-        getItem("Assign Salary", "/admin/assignsalary")
+        getItem("Payroll", "/admin/payroll")
     ]),
     getItem("Messages", "sub7", <Icon icon="ri:message-2-line" />, [
         getItem("Insights", "/admin/messageinsights"),

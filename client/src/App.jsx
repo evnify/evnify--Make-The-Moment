@@ -2,6 +2,7 @@ import "./App.css";
 import {
     HomePage,
     AdminDashboard,
+    Article,
     UserProfile,
     Login,
     SignUp,
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/packages" element={<Packages />} />
                     <Route path="/booking" element={<Booking />} />
                     <Route path="/blog" element={<Blog />} />
+                    <Route path="/article" element={<Article />} />
                     <Route path="/admin/*" element={<AdminDashboard />} />
                     <Route path="/employee/*" element={<EmpDashboard />} />
                     <Route path="/forgetpassword" element={<ForgetPassword/>} />
