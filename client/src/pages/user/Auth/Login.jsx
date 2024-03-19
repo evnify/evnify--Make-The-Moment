@@ -4,6 +4,7 @@ import { Button, Checkbox, Form, Input, ConfigProvider, Row, Col } from "antd";
 import { Divider, Grid, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import FirebaseSocial from "./FirebaseSocial";
+import Navbar from "../../../components/users/navBar";
 
 const Login = () => {
     const theme = useTheme();
@@ -13,7 +14,10 @@ const Login = () => {
     };
 
     return (
+        
+        
         <div className="login-container">
+
             <ConfigProvider
                 theme={{
                     components: {
@@ -43,13 +47,10 @@ const Login = () => {
                     ]}
                 >
                     <Input
-                        prefix={
-                            <UserOutlined className="site-form-item-icon" />
-                        }
+                        prefix={<UserOutlined className="site-form-item-icon" />}
                         placeholder="Username"
-                        style={{ borderRadius: "5px" }} 
-                        size="large"
-                    />
+                        style={{ borderRadius: "5px" }}
+                        size="large" />
                 </Form.Item>
 
                 <Form.Item
@@ -62,13 +63,10 @@ const Login = () => {
                     ]}
                 >
                     <Input.Password
-                        prefix={
-                            <LockOutlined className="site-form-item-icon" />
-                        }
+                        prefix={<LockOutlined className="site-form-item-icon" />}
                         placeholder="Password"
-                        style={{ borderRadius: "5px" }} 
-                        size="large"
-                    />
+                        style={{ borderRadius: "5px" }}
+                        size="large" />
                 </Form.Item>
 
                 <Form.Item>
@@ -86,7 +84,7 @@ const Login = () => {
                         type="primary"
                         htmlType="submit"
                         className="login-form-button"
-                        style={{ borderRadius: "5px" }} 
+                        style={{ borderRadius: "5px" }}
                         size="large"
                     >
                         Log in
@@ -96,7 +94,7 @@ const Login = () => {
                     </div>
                 </Form.Item>
             </Form>
-            <div className="or-divider " style={{ borderRadius: "5px" }} >
+            <div className="or-divider " style={{ borderRadius: "5px" }}>
                 <Grid item xs={12}>
                     <Divider>
                         <Typography variant="caption">Sign up with</Typography>
@@ -108,6 +106,7 @@ const Login = () => {
                 <FirebaseSocial />
             </Grid>
         </div>
+   
     );
 };
 

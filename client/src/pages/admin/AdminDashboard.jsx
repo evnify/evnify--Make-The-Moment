@@ -1,5 +1,5 @@
 import React from "react";
-import { SideMenu, AdminRoutes, NavBar } from '../../components'
+import { SideMenu, AdminRoutes ,NavBar } from '../../components'
 
 function AdminDashboard() {
     return <div className="Admin_DashboardContainer">

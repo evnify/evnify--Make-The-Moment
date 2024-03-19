@@ -32,3 +32,8 @@
     font-weight: bold;
 }
 
+.login-form-button{
+    width: 100%;
+    background: #533c56;
+    color: aliceblue;
+}

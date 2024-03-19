@@ -31,3 +31,16 @@
 .bold {
     font-weight: bold;
 }
+
+.signup-form-button{
+    width: 100%;
+    background: #533c56;
+    color: aliceblue;
+}
+
+.signup-form-button:hover{
+    background: #533c56;
+    color: aliceblue;
+}
+
+

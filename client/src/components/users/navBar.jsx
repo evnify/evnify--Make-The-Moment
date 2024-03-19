@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-
 import { Button, Grid, Menu, Space, theme } from "antd";
-
 import { MenuOutlined } from "@ant-design/icons";
-
 import Logo from "../../assets/logo/logo.png";
+
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
 
-export default function App() {
+function NavBarUser() {
     const { token } = useToken();
     const screens = useBreakpoint();
 
@@ -48,6 +46,7 @@ export default function App() {
             img: "../../assets/userNavToggleicon.png",
             key: "Projects",
         },
+        
     ];
 
     const [current, setCurrent] = useState("projects");
@@ -75,7 +74,7 @@ export default function App() {
         logo: {
             display: "block",
             height: token.sizeLG * 2, // Adjusting logo size
-            width: 'auto', // Ensuring aspect ratio remains correct
+            width: "auto", // Ensuring aspect ratio remains correct
             position: screens.md ? "static" : "absolute",
             top: "50%",
             transform: screens.md ? " " : "translate(-50%, -50%)",
@@ -119,11 +118,19 @@ export default function App() {
                         }
                     />
                 </div>
-                <Space >
-                    {screens.md ? <Button type="text">Log in</Button> : ""}
-                    <Button type="primary">Sign up</Button>
+                <Space>
+                    {screens.md ? (
+                        <Button className="btn_signin" style={{ fontSize: "1.0rem" }}>
+                            Log in
+                        </Button>
+                    ) : null}
+                    <Button className = "btn_signup"style={{ fontSize: "1.0rem" }}>
+                        Sign up
+                    </Button>
                 </Space>
             </div>
         </nav>
     );
 }
+
+export default NavBarUser;

@@ -15,14 +15,14 @@ import {
 } from "./pages";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
-import Navbar from "./components/users/navBar";
+
 
 
 function App() {
     return (
         <div className="App">
             <BrowserRouter basename="/">
-            <Navbar />
+            
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/userprofile" element={<UserProfile />} />
