@@ -1,5 +1,7 @@
 import {SideMenu, NavBar} from './admin'
 import AdminRoutes from './AdminRoutes'
-import { ChatBox, EmpRoutes, EmpSideMenu } from './users'
+import EmpRoutes from './EmpRoutes'
+import ChatBox  from './ChatBox'
+import {EmpSideMenu} from "./employee";
 
 export {SideMenu, AdminRoutes, NavBar, ChatBox, EmpRoutes, EmpSideMenu}
