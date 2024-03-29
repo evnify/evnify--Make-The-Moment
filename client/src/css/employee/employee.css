@@ -27,7 +27,7 @@
 .Emp_PageContent {
     flex: 1;
     height: 100%;
-    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .emp_dashboard_logo {
@@ -85,5 +85,5 @@
     display: flex;
     gap: 75px;
     margin-top: 30px;
-
+    
 }
