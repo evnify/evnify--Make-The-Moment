@@ -6,6 +6,7 @@ import {
     logo_white_with_tag,
     logo_white_without_tag,
 } from "./Logo";
+
 import error_404 from "./404.svg";
 import error_500 from "./500.svg";
 import access_error from "./no_access.svg";
