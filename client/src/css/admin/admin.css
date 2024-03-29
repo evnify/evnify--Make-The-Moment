@@ -34,12 +34,14 @@
 
 .Admin__NavBar{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 25px;
     align-items: center;
     height: 51px;
     background-color: #fff;
     border-radius: 11px;
     margin: 15px;
+    padding: 0 15px;
 }
 
 
