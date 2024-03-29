@@ -1,38 +1,52 @@
 /* Side Bar */
 
-.Admin_DashboardContainer{
-    display: flex;
-    flex-direction: column;
+.Admin_DashboardContainer {
     width: 100vw;
     height: 100vh;
+    
+    overflow-x: hidden;
 }
 
-.Admin_SideMenuAndPageContent{
+.Admin_SideMenuAndPageContent {
     display: flex;
     flex: 1;
     justify-content: flex-start;
     align-items: flex-start;
     background-color: #efefef;
-
 }
-.Admin_SideMenu{
+.Admin_SideMenu {
     background-color: white;
     height: calc(100vh - 30px);
     width: fit-content;
     margin: 15px 0 15px 15px;
-    padding: 100px 0 0 0;
+    padding: 0 0 0 0;
     border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.admin_sidebar_logo{
+    width: 136px;
+    padding: 34px 0 20px 0;
 }
 
-.Admin_PageContent{
+.Admin_PageContent {
     flex: 1;
     height: 100%;
+    overflow-x: hidden;
     overflow-y: auto;
+    margin-left: 270px;
+    width: calc(100% - 271px);
+}
+
+.admin_sidebar_container {
+    position: fixed;
 }
 
 /* Nav Bar */
 
-.Admin__NavBar{
+.Admin__NavBar {
     display: flex;
     justify-content: flex-end;
     gap: 25px;
@@ -43,6 +57,3 @@
     margin: 15px;
     padding: 0 15px;
 }
-
-
-
