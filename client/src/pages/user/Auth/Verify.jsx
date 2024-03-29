@@ -1,6 +1,7 @@
 import React from "react";
 import { LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, ConfigProvider } from "antd";
+import Navbar from "../../../components/users/navBar";
 
 const Login = () => {
     const onFinish = (values) => {
@@ -8,7 +9,8 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
+        <><Navbar />
+        <div className="verify-container">
             <ConfigProvider
                 theme={{
                     components: {
@@ -38,12 +40,11 @@ const Login = () => {
                     ]}
                 >
                     <Input.Password
-                        
-                        placeholder="Enter Code here"
-                    />
+
+                        placeholder="Enter Code here" />
 
                     <div className="mt-3  text-center">
-                    Didn’t receive a code? <a href="#signup">Resend</a>
+                        Didn’t receive a code? <a href="#signup">Resend</a>
                     </div>
                 </Form.Item>
 
@@ -51,13 +52,13 @@ const Login = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        className="login-form-button"
+                        className="verify-form-button"
                     >
                         Verify
                     </Button>
                 </Form.Item>
             </Form>
-        </div>
+        </div></>
     );
 };
 
