@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Grid, Menu, Space, theme } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import Logo from "../../assets/logo/logo.png";
+import Logo from "../../assets/Logo/logo.png";
 import { Link } from "react-router-dom"; 
 
 
