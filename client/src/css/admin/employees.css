@@ -1,0 +1,80 @@
+/* Employee List */
+
+.admin_employee_list_cards {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin_emp_details_card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 204px;
+    height: 136px;
+    padding: 16px 12px 12px 30px;
+    margin-bottom: 12px;
+    border-radius: 11px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+.card1 {
+    background-color: #e8f0fb;
+}
+
+.card2 {
+    background-color: #e4ffe1;
+}
+
+.admin_emp_details_card h1 {
+    font-family: "";
+    font-size: 20px;
+    font-family: "Product Sans";
+    font-weight: 500;
+}
+
+.admin_emp_details_card h2 {
+    font-family: "Product Sans";
+    font-size: 38px;
+    font-weight: 500;
+}
+
+.admin_employee_list_hero_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 15px;
+}
+
+.admin_emp_pending_leave_container {
+    width: 545px;
+    height: 284px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border-radius: 11px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+.admin_emp_upcoming_event_container {
+    width: 450px;
+    height: 284px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border-radius: 11px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+
+.admin_emp_list_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    background: #ffffff;
+    width: calc(100% - 30px);
+    height: 100px;
+    height: 649px;
+    margin: 0 0 15px 15px;
+    border-radius: 11px;
+}

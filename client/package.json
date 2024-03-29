@@ -4,10 +4,6 @@
   "private": true,
   "dependencies": {
     "@ant-design/charts": "^2.0.3",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.15.14",
-    "@mui/x-data-grid": "^6.19.8",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -57,9 +53,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@iconify/react": "^4.1.1"
   },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
-  }
+  "proxy": "http://localhost:5000"
   
+
 }
