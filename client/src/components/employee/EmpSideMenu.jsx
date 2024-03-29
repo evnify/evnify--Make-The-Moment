@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { logo_dark_with_tag } from "../../assets";
+import axios from "axios";
 
 import {
     Menu,
@@ -53,6 +54,12 @@ function EmpSideMenu() {
     const [selectedKeys, setSelectedKeys] = useState("/employee");
     const [leaveModelOpen, setLeaveModelOpen] = useState(false);
 
+    // Leave Request model use states
+    const [leaveType, setLeaveType] = useState("sick leave");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [reason, setReason] = useState("");
+
     useEffect(() => {
         const pathName = location.pathname;
         setSelectedKeys(pathName);
@@ -68,11 +75,26 @@ function EmpSideMenu() {
     };
 
     const onChangeFromDate = (date, dateString) => {
-        console.log(date, dateString);
+        setStartDate(dateString);
     };
 
     const onChangeToDate = (date, dateString) => {
-        console.log(date, dateString);
+        setEndDate(dateString);
+    };
+
+    const submitLeaveRequest = async () => {
+        try {
+            const leave = {
+                empID: "emp001",
+                leaveType,
+                startDate,
+                endDate,
+                reason,
+            };
+            await axios.post("/api/leaves/newLeave", leave);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -88,7 +110,7 @@ function EmpSideMenu() {
                         Button: {
                             colorPrimary: "#4f46e5",
                             colorPrimaryHover: "#3d36b2",
-                        }
+                        },
                     },
                 }}
             >
@@ -126,7 +148,7 @@ function EmpSideMenu() {
                                     width: 320,
                                     height: 40,
                                 }}
-                                onChange={(value) => console.log(value)}
+                                onChange={(value) => setLeaveType(value)}
                                 options={[
                                     {
                                         value: "sick leave",
@@ -181,6 +203,7 @@ function EmpSideMenu() {
                                 }}
                                 rows={6}
                                 placeholder="Enter Reason for leave"
+                                onChange={(e) => setReason(e.target.value)}
                             />
                         </div>
                     </div>
@@ -198,7 +221,7 @@ function EmpSideMenu() {
                         <Button
                             key="submit"
                             type="primary"
-                            onClick={() => setLeaveModelOpen(false)}
+                            onClick={submitLeaveRequest}
                             style={{
                                 width: "120px",
                                 height: "40px",
