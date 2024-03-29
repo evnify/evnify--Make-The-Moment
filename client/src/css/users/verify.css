@@ -1,6 +1,6 @@
-.login-container {
+.verify-container{
     max-width: 450px;
-    height: 530px;
+    height: 350px;
     margin: auto;
     margin-top: 100px;
     margin-bottom: 100px;
@@ -11,15 +11,15 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
-  .login-container .login-form {
+  .verify-container .login-form {
     width: 100%;
   }
   
-  .login-container .login-form-forgot {
+  .verify-container .login-form-forgot {
     float: right;
   }
   
-  .login-container .login-form-button {
+  .verify-container .login-form-button {
     width: 100%;
   }
   
@@ -32,7 +32,7 @@
     font-weight: bold;
 }
 
-.login-form-button{
+.verify-form-button{
     width: 100%;
     background: #533c56;
     color: aliceblue;

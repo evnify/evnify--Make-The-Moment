@@ -9,16 +9,22 @@
 @import url("./admin/payments.css");
 @import url("./admin/users.css");
 
-@import url("./users/home.css");
-@import url("./users/login.css");
-@import url("./users/signup.css");
-@import url("./users/userprofile.css");
-@import url("./users/usersettings.css");
-@import url("./users/contactus.css");
-@import url("./users/packages.css");
-@import url("./users/blog.css");
-@import url("./users/booking.css");
-@import url("./users/article.css");
+
+
+
+@import url('./users/home.css');
+@import url('./users/login.css');
+@import url('./users/signup.css');
+@import url('./users/userprofile.css');
+@import url('./users/usersettings.css');
+@import url('./users/contactus.css');
+@import url('./users/packages.css');
+@import url('./users/blog.css');
+@import url('./users/booking.css');
+@import url('./users/article.css');
+@import url('./users/navbar.css');
+@import url('./users/verify.css');
+@import url('./users/forgetpw.css');
 
 @import url("./employee/employeeDashboard.css");
 @import url("./employee/employee.css");
@@ -30,3 +36,4 @@
     justify-content: center;
     align-items: center;
 }
+
