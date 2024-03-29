@@ -1,8 +1,9 @@
 import React from "react";
 
 function AddBlog() {
-    return <div>
-        <h1>Add Blog</h1>
+    return <div className="admin_add_blog_section_one">
+        
+        
     </div>;
 }
 
