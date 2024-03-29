@@ -1,0 +1,35 @@
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-left: 150px;
+    gap: 6.414px;
+    flex-shrink: 0;
+}
+
+
+.btn_signup {
+    display:flex;
+    height: 35px;
+    width: 110px;
+    padding: 6px var(--Spacing-space-6, 32px);
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 5px;
+    background: #533c56;
+    color: aliceblue;
+}
+
+.btn_signin{
+    display:flex;
+    height: 35px;
+    width: 110px;
+    padding: 6px var(--Spacing-space-6, 32px);
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 5px;
+
+}

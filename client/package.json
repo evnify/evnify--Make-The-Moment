@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@ant-design/charts": "^2.0.3",
+    "@ant-design/icons": "^5.3.5",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.14",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -54,6 +58,4 @@
     "@iconify/react": "^4.1.1"
   },
   "proxy": "http://localhost:5000"
-  
-
 }

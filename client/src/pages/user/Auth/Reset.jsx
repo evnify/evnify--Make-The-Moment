@@ -1,6 +1,7 @@
 import React from "react";
 import { LockOutlined } from "@ant-design/icons";
 import { Button,  Form, Input, ConfigProvider } from "antd";
+import Navbar from "../../../components/users/navBar";
 
 
 const Login = () => {
@@ -9,6 +10,10 @@ const Login = () => {
     };
 
     return (
+    <>
+            <Navbar />
+        
+    );
         <div className="login-container">
             <ConfigProvider
                 theme={{
@@ -43,6 +48,7 @@ const Login = () => {
                             <LockOutlined className="site-form-item-icon" />
                         }
                         placeholder=" new Password"
+                        size="large"
                     />
                 </Form.Item>
 
@@ -60,6 +66,7 @@ const Login = () => {
                             <LockOutlined className="site-form-item-icon" />
                         }
                         placeholder="comfirm Password"
+                        size="large"
                     />
                 </Form.Item>
 
@@ -68,6 +75,7 @@ const Login = () => {
                         type="primary"
                         htmlType="submit"
                         className="login-form-button"
+                        size="large"
                     >
                         Set Password
                     </Button>
@@ -78,7 +86,10 @@ const Login = () => {
 
             
         </div>
+        
+    </>
     );
+
 };
 
 export default Login;

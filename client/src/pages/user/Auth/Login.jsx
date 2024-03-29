@@ -1,15 +1,24 @@
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, ConfigProvider, Row, Col } from "antd";
-import { Icon } from "@iconify/react";
+import { Divider, Grid, Typography, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import FirebaseSocial from "./FirebaseSocial";
+import Navbar from "../../../components/users/navBar";
 
 const Login = () => {
+    const theme = useTheme();
+    const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
     };
 
     return (
+        <><Navbar />
+        
         <div className="login-container">
+
+
             <ConfigProvider
                 theme={{
                     components: {
@@ -39,11 +48,10 @@ const Login = () => {
                     ]}
                 >
                     <Input
-                        prefix={
-                            <UserOutlined className="site-form-item-icon" />
-                        }
+                        prefix={<UserOutlined className="site-form-item-icon" />}
                         placeholder="Username"
-                    />
+                        style={{ borderRadius: "5px" }}
+                        size="large" />
                 </Form.Item>
 
                 <Form.Item
@@ -56,11 +64,10 @@ const Login = () => {
                     ]}
                 >
                     <Input.Password
-                        prefix={
-                            <LockOutlined className="site-form-item-icon" />
-                        }
+                        prefix={<LockOutlined className="site-form-item-icon" />}
                         placeholder="Password"
-                    />
+                        style={{ borderRadius: "5px" }}
+                        size="large" />
                 </Form.Item>
 
                 <Form.Item>
@@ -78,6 +85,8 @@ const Login = () => {
                         type="primary"
                         htmlType="submit"
                         className="login-form-button"
+                        style={{ borderRadius: "5px" }}
+                        size="middle"
                     >
                         Log in
                     </Button>
@@ -86,26 +95,19 @@ const Login = () => {
                     </div>
                 </Form.Item>
             </Form>
-            <div className="or-divider">
-                <div className="text-center mt">or login with</div>
+            <div className="or-divider " style={{ borderRadius: "5px" }}>
+                <Grid item xs={12}>
+                    <Divider>
+                        <Typography variant="caption">Sign up with</Typography>
+                    </Divider>
+                </Grid>
             </div>
 
-            <Row gutter={{ xs: 8, sm: 16 }} justify="center">
-                <Col
-                    className="gutter-row"
-                    xs={{ span: 24 }}
-                    md={{ span: 12 }}
-                    lg={{ span: 24 }}
-                >
-                    <Button className="mt-3 w-50 button mr-3" >
-                        <Icon icon="devicon:google" />
-                    </Button>
-                    <Button className="w-50 button mr-3">
-                        <Icon icon="logos:facebook" />
-                    </Button>
-                </Col>
-            </Row>
-        </div>
+            <Grid item xs={12} className="mt-3 ml-2 text-center">
+                <FirebaseSocial />
+            </Grid>
+        </div></>
+   
     );
 };
 
