@@ -1,6 +1,7 @@
 import React from "react";
 import { LockOutlined } from "@ant-design/icons";
 import { Button,  Form, Input, ConfigProvider } from "antd";
+import Navbar from "../../../components/users/navBar";
 
 
 const Login = () => {
@@ -9,6 +10,10 @@ const Login = () => {
     };
 
     return (
+    <>
+            <Navbar />
+        
+    );
         <div className="login-container">
             <ConfigProvider
                 theme={{
@@ -81,7 +86,10 @@ const Login = () => {
 
             
         </div>
+        
+    </>
     );
+
 };
 
 export default Login;

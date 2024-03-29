@@ -11,7 +11,7 @@
 
 .btn_signup {
     display:flex;
-    height: 40px;
+    height: 35px;
     width: 110px;
     padding: 6px var(--Spacing-space-6, 32px);
     justify-content: center;
@@ -24,7 +24,7 @@
 
 .btn_signin{
     display:flex;
-    height: 40px;
+    height: 35px;
     width: 110px;
     padding: 6px var(--Spacing-space-6, 32px);
     justify-content: center;

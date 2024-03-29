@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Grid, Menu, Space, theme } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import Logo from "../../assets/logo/logo.png";
+import { Link } from "react-router-dom"; 
 
 
 const { useToken } = theme;
@@ -32,6 +33,22 @@ function NavBarUser() {
                     label: "Birthdays",
                     key: "birthdays:2",
                 },
+                {
+                    label: "Get Together",
+                    key: "gettogether:3",
+                },
+                {
+                    label: "Farewall Party",
+                    key: "farewall:4",
+                },
+                {
+                    label: "Bright to be",
+                    key: "brighttobe:5",
+                },
+                {
+                    label: "Aniversary",
+                    key: "aniversary:6",
+                },
             ],
         },
         {
@@ -42,11 +59,6 @@ function NavBarUser() {
             label: "Contac Us",
             key: "contact us",
         },
-        {
-            img: "../../assets/userNavToggleicon.png",
-            key: "Projects",
-        },
-        
     ];
 
     const [current, setCurrent] = useState("projects");
@@ -60,11 +72,8 @@ function NavBarUser() {
             alignItems: "center",
             display: "flex",
             justifyContent: "space-between",
-            margin: "0 auto",
+            margin: "auto",
             maxWidth: token.screenXL,
-            padding: screens.md
-                ? `0px ${token.paddingLG}px`
-                : `0px ${token.padding}px`,
         },
         header: {
             backgroundColor: token.colorBgContainer,
@@ -73,9 +82,9 @@ function NavBarUser() {
         },
         logo: {
             display: "block",
-            height: token.sizeLG * 2, // Adjusting logo size
-            width: "auto", // Ensuring aspect ratio remains correct
-            position: screens.md ? "static" : "absolute",
+            height: screens.md ? token.sizeLG * 2 : token.sizeLG,
+            width: "auto",
+            position: screens.xl ? "static" : "absolute",
             top: "50%",
             transform: screens.md ? " " : "translate(-50%, -50%)",
         },
@@ -83,9 +92,9 @@ function NavBarUser() {
             backgroundColor: "transparent",
             borderBottom: "none",
             lineHeight: screens.sm ? "4rem" : "3.5rem",
-            marginLeft: screens.md ? "0px" : `-${token.size}px`,
-            width: screens.md ? "inherit" : token.sizeXXL,
-            fontSize: "1.1rem",
+            marginLeft: screens.xl ? "0px" : `-${token.size}px`,
+            width: screens.xl ? "inherit" : token.sizeXXL,
+            fontSize: screens.md ? "1.05rem" : "1rem",
         },
         menuContainer: {
             alignItems: "center",
@@ -120,13 +129,23 @@ function NavBarUser() {
                 </div>
                 <Space>
                     {screens.md ? (
-                        <Button className="btn_signin" style={{ fontSize: "1.0rem" }}>
-                            Log in
-                        </Button>
+                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                            <Button
+                                className="btn_signin"
+                                style={{ fontSize: "1.0rem" }}
+                            >
+                                Log in
+                            </Button>
+                        </Link>
                     ) : null}
-                    <Button className = "btn_signup"style={{ fontSize: "1.0rem" }}>
-                        Sign up
-                    </Button>
+                    <Link to="/signup" style={{ textDecoration: 'none' }}>
+                        <Button
+                            className="btn_signup"
+                            style={{ fontSize: "1.0rem" }}
+                        >
+                            Sign up
+                        </Button>
+                    </Link>
                 </Space>
             </div>
         </nav>

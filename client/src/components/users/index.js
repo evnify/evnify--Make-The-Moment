@@ -1,14 +1,16 @@
-import ChatBox from './ChatBox';
-import EmpRoutes from './EmpRoutes';
-import { EmpSideMenu } from './employee';
+import UserSideMenu  from './UserSideMenu';
 import Navbar from './navBar';
-
-
+import Booking from './Booking';
+import Profile from './UserProfile';
+import UserSettings from './UserSettings';
+import ContactUS from './ContactUS';
 
 export {
-    ChatBox,
-    EmpRoutes,
-    EmpSideMenu,    
+    UserSideMenu,   
+    Booking,
+    Profile,
     Navbar,
-    
+    UserSettings,
+    ContactUS
+
 }

@@ -14,9 +14,10 @@ const Login = () => {
     };
 
     return (
-        
+        <><Navbar />
         
         <div className="login-container">
+
 
             <ConfigProvider
                 theme={{
@@ -85,7 +86,7 @@ const Login = () => {
                         htmlType="submit"
                         className="login-form-button"
                         style={{ borderRadius: "5px" }}
-                        size="large"
+                        size="middle"
                     >
                         Log in
                     </Button>
@@ -105,7 +106,7 @@ const Login = () => {
             <Grid item xs={12} className="mt-3 ml-2 text-center">
                 <FirebaseSocial />
             </Grid>
-        </div>
+        </div></>
    
     );
 };

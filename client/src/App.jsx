@@ -22,10 +22,9 @@ function App() {
     return (
         <div className="App">
             <BrowserRouter basename="/">
-            
                 <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/userprofile" element={<UserProfile />} />
+                    <Route path="/userprofile/*" element={<UserProfile />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/contactus" element={<ContactUs />} />
