@@ -111,6 +111,7 @@ function EmpSideMenu() {
                             colorPrimary: "#4f46e5",
                             colorPrimaryHover: "#3d36b2",
                         },
+                        
                     },
                 }}
             >
