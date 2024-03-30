@@ -12,7 +12,7 @@ function UserProfile() {
                     />
                 </div>
 
-              <div className="profile-info">
+                <div className="profile-info">
                     <h2>John Doe</h2>
                     <p>
                         <strong>Email:</strong>
@@ -23,7 +23,7 @@ function UserProfile() {
                         </span>
                     </p>
                 </div>
-              <button className="btn btn-primary edit">Edit Profile</button>
+                <button className="btn btn-primary edit">Edit Profile</button>
             </div>
 
             <div className="profile-details"></div>

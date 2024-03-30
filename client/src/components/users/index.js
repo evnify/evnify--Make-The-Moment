@@ -4,6 +4,7 @@ import Booking from './Booking';
 import Profile from './UserProfile';
 import UserSettings from './UserSettings';
 import ContactUS from './ContactUS';
+import UserBasicInfo from './UserBasicInfo';
 
 export {
     UserSideMenu,   
@@ -11,6 +12,7 @@ export {
     Profile,
     Navbar,
     UserSettings,
-    ContactUS
+    ContactUS,
+    UserBasicInfo
 
 }

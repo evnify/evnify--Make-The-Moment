@@ -16,7 +16,7 @@ function getItem(label, key, icon, children, type) {
 const items = [
     getItem("Profile", "/userprofile", <Icon icon="iconamoon:profile" />),
     getItem("Booking", "/userprofile/booking", <Icon icon="prime:book" />),
-    getItem("Settings", "/userprofile/setting", <Icon icon="uil:setting" />),
+    getItem("Settings", "/userprofile/UserSettings", <Icon icon="uil:setting" />),
     getItem(
         "Contact Us",
         "/userprofile/contactus",

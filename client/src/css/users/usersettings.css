@@ -1,0 +1,89 @@
+.genral-setting {
+    width: 879px;
+    height: 1064px;
+    flex-shrink: 0;
+    margin-top: 20px;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #ffffff);
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.change-password {
+    width: 879px;
+    height: 512px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #fff);
+    margin-top: 20px;
+
+    /* shadow-sm */
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.setting-header {
+    margin: 30px;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+.avtar {
+    margin: 30px;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    display: flex;
+    align-items: center;
+    margin-left: 50px;
+
+
+}
+
+.avtar-btn {
+    margin-top: 10px;
+    gap: 10px;
+    
+}
+.avtar-img{
+    margin-left: 200px;
+}
+
+.btn-change {
+    display: inline-flex;
+    padding: 6px 12px;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--Gray-300, #dfe3e8);
+    background: var(--Core-white, #fff);
+    margin: 0 20px 20px 0;
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.btn-change:hover {
+    background: var(--Gray-100, #f4f6f9);
+}   
+
+.btn-remove{
+    display: inline-flex;
+    padding: 6px 12px;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--Gray-300, #dfe3e8);
+    background: var(--Core-white, #fff);
+    margin: 0 20px 20px 0;
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.btn-remove:hover {
+    background: var(--Gray-100, #f4f6f9);
+}
+
+.upload-box{
+    width: 600px;
+    margin-left: 45px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}

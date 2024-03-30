@@ -7,7 +7,7 @@ function UserRoutes() {
         <Routes>
             <Route path="/" element={<Profile />} />
             <Route path="/booking" element={<Booking />} />
-            <Route path="/settings" element={<UserSettings />} />
+            <Route path="/UserSettings" element={<UserSettings />} />
             <Route path="/contactus" element={<ContactUS />} />   
         </Routes>
     </div>;
