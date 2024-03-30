@@ -5,19 +5,22 @@ const blogSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    blogTitleDescription : {
+        type: String,
+        required: true,
+    },
     category : {
         type: String,
         required: true,
     },
     eventDate : {
-        type: Object,
+        type: String,
         required: true,
     },
     description : {
         type: String,
         required: true,
     },
-
     tags : [],
     images : [],
 
