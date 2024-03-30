@@ -14,7 +14,8 @@ import corosal01 from "./corosal01.svg";
 import corosal02 from "./corosal02.svg";
 import corosal03 from "./corosal03.svg";
 import corosal04 from "./corosal04.svg";
-import contactUSimg01 from "./contactUs-img-01.svg"
+import contactUSimg01 from "./contactus-img-1.svg"
+import contactUSimg02 from "./contactus-img-02.svg"
 
 export {
     Logo_black_with_tag,
@@ -30,5 +31,6 @@ export {
     corosal02,
     corosal03,
     corosal04,
-    contactUSimg01
+    contactUSimg01,
+    contactUSimg02
 };

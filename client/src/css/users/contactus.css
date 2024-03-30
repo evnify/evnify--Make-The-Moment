@@ -85,7 +85,7 @@
   display: flex;
   flex-direction: column;
   margin: auto;
-  height: 530px;
+  height: 730px;
   width: 1216px;
  background-color: #ffffff;
   background-size: cover; 
@@ -120,8 +120,81 @@
 .contact-us-about-us-section-whychooseus{
   font-size: 15px;
   padding: 40px;
-  margin: 40px;
+  margin: 20px 0 0 40px;
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+.contact-us-about-us-section-whychooseus-point{
+  display: flex;
+  flex-direction: row;
+  margin: 20px;
+  text-align: justify;
+}
+
+.contact-us-about-us-section-howwestandout{
+  border-radius: 50%;
+  padding-left: 40px;
+  margin-left: 40px;
+  margin-right: 40px;
+  text-align: left;
+}
+
+.contact-us-contact-us-section-form{
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  height: 730px;
+  width: 1216px;
+ background-color: #ffffff;
+  background-size: cover; 
+  background-position: center; 
+  text-align: center;
+}
+
+.contact-us-contact-us-section-form img{
+  display: block;
+  float: left;
+  margin-top: 100px;
+  height: 600px;
+}
+
+.contact-us-contact-us-section-form-form{
+  float: right;
+  margin: 100px;
+}
+
+.contact-us-contact-us-section-form-center-dev{
+  width: 500px;
+  margin-top: 200px;
+}
+
+.contact-us-contact-us-section-form-right-dev{
+  width: 300px;
+  margin-top: 200px;
+  margin-left: 40px;
+}
+
+.contact-us-contact-us-section-form-right-dev b{
+  float: left;
+}
+.contact-us-contact-us-section-form-right-dev input {
+  background-color: #f0f2f5;
+  height: 40px;
+  margin: 0 0 40px 0;
+}
+.Btn-btn-contact-us{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.Btn-btn-contact-us:hover {
+  background-color: #1890ff; /* Change the hover background color to blue */
+  border-color: #1890ff; /* Change the hover border color to blue */
+  color: #fff; /* Change the hover text color to white */
 }
