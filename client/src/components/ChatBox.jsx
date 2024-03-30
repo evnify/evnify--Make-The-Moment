@@ -1,30 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import { Icon } from '@iconify/react';
 import axios from 'axios';
+import moment from 'moment';
 
-const ChatBox = () => {
+function ChatBox() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [data, setData] = useState([]);
-    const [content, setMessage] = useState('');
+    const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState([]);
 
-
-    const submitMessage = async () => {
+    const fetchMessages = async () => {
         try {
-            const message = {
-                customerID: "c001",
-                category: "general",
-                message: content
-            };
-    
-            // Adjust the endpoint URL based on your backend configuration
-            await axios.post("/api/message/newMessage", message);
-    
-            // Close the modal after submitting the message
-            setIsModalOpen(false);
+            const response = await axios.get('/api/messages/allMessages');
+            setMessages(response.data);
+            console.log(response.data);
         } catch (error) {
             console.log(error);
-            // Handle error if the message submission fails
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+    }, []);
+
+
+
+    const sendMessage = async (e) => {
+        try {
+            const messages = {
+                customerID: "123",
+                message,
+                sendDate: moment().format("YYYY-MM-DD"),
+                sendTime: moment().format("HH:mm:ss"),
+                category: "newe new",
+                status: "unread",
+
+            };
+            console.log(messages);
+            await axios.post('/api/messages/newMessage', messages);
+            fetchMessages();
+        } catch (error) {
+            console.log(error)
         }
     };
     
@@ -53,12 +70,9 @@ const ChatBox = () => {
 
     const modalFooter = (
         <div>
-            {/* <input type="text" placeholder="Type a message" onSubmit={submitMessage} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
-            <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25' }} /> */}
-             <form onSubmit={submitMessage}>
-            <input type="text" onChange={(e) => setMessage(e.target.value)}/>
-            <input type='submit'/>
-        </form>
+            <input type="text" placeholder="Type a message" onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
+            <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25' }} onClick={sendMessage}/>
+            
         </div>
     );
 
@@ -90,23 +104,15 @@ const ChatBox = () => {
                     right: '50px',
                     top: '190px',
                     overflow: 'auto',
-                    border: '1px solid #e8e8e8', // Add border style
-                    borderRadius: '8px', // Optional: Add border radius for rounded corners
-                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Optional: Add shadow
+                    border: '1px solid #e8e8e8', 
+                    borderRadius: '8px', 
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', 
                 }}
             >
                 <div className="message-box-chatbox  " style={{ scrollbarWidth: "thin" }}>
-                    <div className="sent-message-chatbox ">Hello, how are you?</div>
-                    <div className="sent-message-chatbox ">Hello, how are you?</div>
-                    {
-                        data.map((item) => {
-                            return (
-                                <div>
-                                    <h1>{item.message}</h1>
-                                </div>
-                            )
-                        })
-                    }
+                    {messages.map((msg, index) => (
+                        <div key={index} className="sent-message-chatbox">{msg.message}</div>
+                    ))}
                 </div>
                 <div style={{ borderTop: '1px solid #e8e8e8', padding: '8px 0' }}>
                     {modalFooter}

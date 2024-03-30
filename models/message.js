@@ -11,7 +11,11 @@ const messageSchema = new mongoose.Schema({
         required: true,
     },
     sendDate : {
-        type: Date,
+        type: String,
+        required: true,
+    },
+    sendTime : {
+        type: String,
         required: true,
     },
     category : {
