@@ -1,29 +1,92 @@
-.Emp_DashboardContainer{
+.Emp_DashboardContainer {
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
 }
 
-.Emp_SideMenuAndPageContent{
+.Emp_SideMenuAndPageContent {
     display: flex;
     flex: 1;
     justify-content: flex-start;
     align-items: flex-start;
     background-color: #efefef;
-
-}
-.User_SideMenu{
-    background-color: white;
-    height: calc(100vh - 30px);
-    width: fit-content;
-    margin: 15px 0 15px 15px;
-    padding: 100px 0 0 0;
-    border-radius: 11px;
 }
 
-.Emp_PageContent{
+.Emp_PageContent {
     flex: 1;
     height: 100%;
     overflow-y: auto;
+}
+
+.bg-image {
+    display: flex;
+    width: 963px;
+    height: 224px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #fff);
+
+    /* smooth-shadow-level-2 */
+    box-shadow: 0px 2px 4px 0px rgba(13, 23, 33, 0.08),
+        0px 1px 2px 0px rgba(21, 30, 40, 0.08);
+    margin: auto;
+    margin-top: 18px;
+    border-radius: 8px 8px 0px 0px;
+    background: #f2f2f2;
+}
+
+.rounded-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #c4c4c4;
+    margin-top: 100px;
+    margin-left: 20px;
+}
+.profile-card {
+    width: 963px;
+    height: 152px;
+    flex-shrink: 0;
+    background: #c4c4c4;
+    border-radius: 8px 8px 0px 0px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
+
+.bg-image {
+    display: flex;
+    flex: space-between;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 160px; /* Adjust margin as needed */
+    margin-top: -20px;
+    font-size: 10px;
+}
+
+.edit {
+    margin-left: auto; /* Push the button to the right */
+    margin-top: -90px;
+    margin-right: 20px;
+}
+
+.profile-details {
+    width: 966px;
+    height: 549px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #fff);
+    margin-top: 20px;
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+    margin-bottom: 20px;
 }
