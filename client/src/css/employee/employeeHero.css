@@ -1,0 +1,140 @@
+.employee_dashboard_hero {
+    width: 100%;
+    margin: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.emp_hero_container_main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 840px;
+    height: 215px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    border: 2px solid #fff;
+    background: #fff;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+.emp_hero_dp {
+    margin-left: 25px;
+}
+
+.emp_hero_name_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    margin-right: 25px;
+    padding-right: 180px;
+}
+
+.emp_hero_name_container h1 {
+    color: #79838b;
+    font-family: "Product Sans";
+    font-size: 41px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.emp_hero_name_container h2 {
+    color: #404040;
+    font-family: "Product Sans";
+    font-size: 41px;
+    font-style: normal;
+    font-weight: 400;
+    margin-top: -10px;
+}
+
+.emp_hero_name_container h4 {
+    color: rgba(0, 0, 0, 0.59);
+    font-family: "Product Sans";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    margin-top: -10px;
+}
+
+.emp_hero_edit_btn {
+    border-radius: 6.082px;
+    background: #000;
+    color: #fff;
+    display: inline-flex;
+    padding: 5.529px 11.058px;
+    justify-content: center;
+    align-items: center;
+    gap: 3.87px;
+
+    font-family: "Product Sans";
+    font-size: 11.143px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: lowercase;
+}
+
+.emp_hero_edit_btn_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+
+    padding: 10px;
+}
+
+.emp_hero_notification_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: right;
+    background: #fff;
+    width: 380px;
+    height: 55px;
+
+    flex-shrink: 0;
+    margin-left: 15px;
+    border-radius: 11px;
+    border: 2px solid #fff;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    padding: 10px;
+    gap: 20px;
+}
+
+.emp_hero_date_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.emp_hero_realtime_insights_container {
+    border-radius: 11px;
+    background: #fff;
+    width: 380px;
+    height: 146px;
+    flex-shrink: 0;
+
+    margin: 15px 0 0 15px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    gap: 40px;
+}
+
+.emp_hero_date_container h1 {
+    color: #534f4f;
+    font-family: "product sans";
+    font-size: 34px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    width: 190px;
+}
+
+.emp_hero_date_container h2 {
+    color: #534f4f;
+    font-family: "product sans";
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-top: -10px;
+}

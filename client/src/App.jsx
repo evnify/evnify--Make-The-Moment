@@ -11,10 +11,12 @@ import {
     Booking,
     Blog,
     EmpDashboard,
-    ForgetPassword
+    ForgetPassword,
 } from "./pages";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
+
+
 
 function App() {
     return (
@@ -22,7 +24,7 @@ function App() {
             <BrowserRouter basename="/">
                 <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/userprofile" element={<UserProfile />} />
+                    <Route path="/userprofile/*" element={<UserProfile />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/contactus" element={<ContactUs />} />
