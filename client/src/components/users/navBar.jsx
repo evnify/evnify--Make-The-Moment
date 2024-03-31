@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Grid, Menu, Space, theme } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import Logo from "../../assets/Logo/logo.png";
+import {logo_dark_without_tag} from "../../assets"
 import { Link } from "react-router-dom"; 
 
 
@@ -108,7 +108,7 @@ function NavBarUser() {
         <nav style={styles.header}>
             <div style={styles.container}>
                 <div style={styles.menuContainer}>
-                    <img src={Logo} alt="logo" style={styles.logo} />
+                    <img src={logo_dark_without_tag} alt="logo" style={styles.logo} />
                     <Menu
                         style={{
                             ...styles.menu,
