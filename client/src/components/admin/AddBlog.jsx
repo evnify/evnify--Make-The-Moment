@@ -44,7 +44,7 @@ function AddBlog() {
     var id = 0;
 
     const saveBlog = async () => {
-        const blog = {
+        const blogData = {
             blogTitle,
             blogTitleDescription,
             category,
@@ -53,12 +53,13 @@ function AddBlog() {
             description,
             images,
         };
-        console.log(blog);
+        console.log(blogData);
             if (!blogTitle || !blogTitleDescription || !category || !eventDate || !tags || !description) {
                 return message.error("Please fill all the fields");
             }
         try{
-            await axios.post("/api/blogs/addBlogs", blog);
+            await axios.post("/api/blogs/addBlogs", blogData);
+            message.success("Blog added successfully");
         }catch(error){
             console.log(error);
         }

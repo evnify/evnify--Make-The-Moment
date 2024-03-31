@@ -25,3 +25,6 @@ const blogSchema = new mongoose.Schema({
     images : [],
 
 }, { timestamps: true });
+
+const blogModel = mongoose.model("blog", blogSchema);
+module.exports = blogModel;

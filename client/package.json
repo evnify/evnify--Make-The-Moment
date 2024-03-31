@@ -57,5 +57,5 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@iconify/react": "^4.1.1"
   },
-  "proxy": "http://localhost:5050"
+  "proxy": "http://localhost:5000"
 }
