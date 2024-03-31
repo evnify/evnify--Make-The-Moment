@@ -14,7 +14,6 @@ function ChatBox() {
         try {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         }

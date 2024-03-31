@@ -16,6 +16,9 @@ import corosal03 from "./corosal03.svg";
 import corosal04 from "./corosal04.svg";
 import contactUSimg01 from "./contactus-img-1.svg"
 import contactUSimg02 from "./contactus-img-02.svg"
+import missionIcon from "./our-mission-contactus.svg";
+import chooseUsIcon from "./whychooseus--contactus.svg";
+import westandoutIcon from "./westandout-contactus.svg";
 
 export {
     Logo_black_with_tag,
@@ -32,5 +35,8 @@ export {
     corosal03,
     corosal04,
     contactUSimg01,
-    contactUSimg02
+    contactUSimg02,
+    missionIcon,
+    chooseUsIcon,
+    westandoutIcon
 };
