@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import EmployeeListTable from "./EmployeeListTable";
+import EmployeeListTable from "./UserListTable";
 import {
     ConfigProvider,
     Modal,
@@ -21,43 +21,26 @@ let index = 0;
 
 const { Search, TextArea } = Input;
 
-function EmployeeList() {
+function UserList() {
     const [selectedType, setSelectedType] = useState("all");
-    const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
+    const [addUserModelOpen, setaddUserModelOpen] = useState(false);
 
     // Type Selector
-    const [items, setItems] = useState([
-        "Photographer",
-        "Event Manager",
-        "Manager",
-        "Designer",
-    ]);
+    const [items, setItems] = useState(["Admin", "Hr-Manager", "Customer"]);
     const [name, setName] = useState("");
-    const inputRef = useRef(null);
-    const onNameChange = (event) => {
-        setName(event.target.value);
-    };
-    const addItem = (e) => {
-        e.preventDefault();
-        setItems([...items, name || `New item ${index++}`]);
-        setName("");
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
-    };
 
     // Add employee model use states
     const [address, setAddress] = useState("");
     const [dob, setDob] = useState("");
-    const [type, setType] = useState("sick leave");
+    const [type, setType] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [username, setUsername] = useState("");
-    const [profileImage, setProfileImage] = useState("");
+    const [profilePic, setprofilePic] = useState("");
 
-    const saveEmployee = async () => {
+    const saveUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (
@@ -75,17 +58,17 @@ function EmployeeList() {
             return message.error("Please enter a valid email address");
         }
 
-        if (!profileImage || profileImage.trim() === "") {
+        if (!profilePic || profilePic.trim() === "") {
             // Set default profile image
-            setProfileImage(
+            setprofilePic(
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
             );
-            console.log(profileImage);
+            console.log(profilePic);
         } else {
-            console.log("Profile image already set:", profileImage);
+            console.log("Profile image already set:", profilePic);
         }
 
-        const empData = {
+        const userData = {
             address,
             dob,
             type,
@@ -94,11 +77,11 @@ function EmployeeList() {
             email,
             phoneNumber,
             username,
-            profileImage,
+            profilePic,
         };
 
         try {
-            await axios.post("/api/employees/addEmployee", empData);
+            await axios.post("/api/employees/addEmployee", userData);
         } catch (error) {
             console.log(error);
         }
@@ -191,8 +174,8 @@ function EmployeeList() {
                             url: response.data.data.url,
                         },
                     ]);
-                    setProfileImage(response.data.data.url);
-                    console.log(profileImage);
+                    setprofilePic(response.data.data.url);
+                    console.log(profilePic);
                     setLoading(false);
                 } else {
                     onError();
@@ -214,7 +197,6 @@ function EmployeeList() {
                     },
                 }}
             >
-               
                 <div className="admin_emp_list_container">
                     <div className="admin_emp_list_top_menu">
                         <div
@@ -224,7 +206,7 @@ function EmployeeList() {
                                 alignItems: "center",
                             }}
                         >
-                            <h5>All Employees</h5>
+                            <h5>All Users</h5>
                             <Search
                                 placeholder="Search "
                                 size="large"
@@ -258,7 +240,7 @@ function EmployeeList() {
                             </Radio.Group>
                             <button
                                 className="admin_emp_list_top_menu_button"
-                                onClick={() => setAddEmployeeModelOpen(true)}
+                                onClick={() => setaddUserModelOpen(true)}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -279,9 +261,9 @@ function EmployeeList() {
 
                     <Modal
                         centered
-                        open={addEmployeeModelOpen}
-                        onOk={() => setAddEmployeeModelOpen(false)}
-                        onCancel={() => setAddEmployeeModelOpen(false)}
+                        open={addUserModelOpen}
+                        onOk={() => setaddUserModelOpen(false)}
+                        onCancel={() => setaddUserModelOpen(false)}
                         footer={null}
                         width={550}
                     >
@@ -329,7 +311,7 @@ function EmployeeList() {
                                             marginBottom: "3px",
                                         }}
                                     >
-                                        Leave Type
+                                        User Type
                                     </span>
                                     <Select
                                         style={{
@@ -353,24 +335,7 @@ function EmployeeList() {
                                                     style={{
                                                         padding: "0 8px 4px",
                                                     }}
-                                                >
-                                                    <Input
-                                                        placeholder="Please enter item"
-                                                        ref={inputRef}
-                                                        value={name}
-                                                        onChange={onNameChange}
-                                                        onKeyDown={(e) =>
-                                                            e.stopPropagation()
-                                                        }
-                                                    />
-                                                    <Button
-                                                        type="text"
-                                                        icon={<PlusOutlined />}
-                                                        onClick={addItem}
-                                                    >
-                                                        Add item
-                                                    </Button>
-                                                </Space>
+                                                ></Space>
                                             </>
                                         )}
                                         options={items.map((item) => ({
@@ -537,7 +502,7 @@ function EmployeeList() {
                         </div>
                         <div className="add_emp_popup_footer_container center">
                             <Button
-                                onClick={() => setAddEmployeeModelOpen(false)}
+                                onClick={() => setaddUserModelOpen(false)}
                                 style={{
                                     width: "120px",
                                     height: "40px",
@@ -548,13 +513,13 @@ function EmployeeList() {
                             </Button>
                             <button
                                 className="add_emp_popup_footer_button"
-                                onClick={saveEmployee}
+                                onClick={saveUser}
                                 style={{
                                     width: "120px",
                                     height: "40px",
                                 }}
                             >
-                                Add Employee
+                                Add User
                             </button>
                         </div>
                     </Modal>
@@ -568,4 +533,4 @@ function EmployeeList() {
     );
 }
 
-export default EmployeeList;
+export default UserList;
