@@ -211,7 +211,6 @@ function EmployeeList() {
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
-            <Button type="primary">Primary Button</Button>
             <ConfigProvider
                 theme={{
                     components: {
@@ -555,7 +554,6 @@ function EmployeeList() {
                     <div style={{ width : "100%"}}>
                     <EmployeeListTable/>
                     </div>
-
                 </div>
             </ConfigProvider>
         </div>
