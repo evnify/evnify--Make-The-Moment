@@ -17,6 +17,7 @@ import MessageInsights from "./MessageInsights";
 import AllMessages from "./AllMessages";
 import UserEmails from "./UserEmails";
 import NavBar from "./NavBar";
+import UserTab from "./UserTab";
 
 export {
     SideMenu,
@@ -37,5 +38,6 @@ export {
     MessageInsights,
     AllMessages,
     UserEmails,
-    NavBar
+    NavBar,
+    UserTab
 };

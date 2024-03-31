@@ -1,9 +1,12 @@
 import React from "react";
+import UserTab from "./UserTab";
 
 function UsersInsights() {
-    return <div>
-        <h1>User Insights</h1>
-    </div>;
+    return (
+        <div className="UsersInsights">
+            <UserTab />
+        </div>
+    );
 }
 
 export default UsersInsights;
