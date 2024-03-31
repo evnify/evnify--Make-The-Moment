@@ -1,0 +1,15 @@
+.payroll_002
+{color: var(--Gray-900, #0F172A);
+    font-family: Inter;
+    font-size: 14.174px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;}
+
+.container {
+    text-align: right;
+  }
+  
+  .align-right-button {
+    margin-left: 1px; 
+  }
