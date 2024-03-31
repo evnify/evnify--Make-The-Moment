@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import EmployeeListTable from "./others/EmployeeListTable";
 import {
     LoadingOutlined,
     PlusOutlined,
@@ -210,9 +211,13 @@ function EmployeeList() {
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
+            <Button type="primary">Primary Button</Button>
             <ConfigProvider
                 theme={{
-                    components: {},
+                    components: {
+                        Modal: {
+                        }
+                    },
                 }}
             >
                 <div className="admin_employee_list_hero_container">
@@ -546,6 +551,11 @@ function EmployeeList() {
                             </button>
                         </div>
                     </Modal>
+                    
+                    <div style={{ width : "100%"}}>
+                    <EmployeeListTable/>
+                    </div>
+
                 </div>
             </ConfigProvider>
         </div>
