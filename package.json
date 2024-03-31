@@ -5,12 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cd client && npm install",
-    "build2": "cd client && npm install react-scripts",
-    "install-client": "cd client && npm run build",
-    "heroku-postbuild": "npm run build2 && npm run install-client && npm run build",
-    "start": "node server.js",
-    "client": "cd client && npm start"
+    "dev": "concurrently \"cd client && npm start\" \"nodemon server.js\"",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
