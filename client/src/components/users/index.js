@@ -5,6 +5,7 @@ import Profile from './UserProfile';
 import UserSettings from './UserSettings';
 import ContactUS from './ContactUS';
 import UserBasicInfo from './UserBasicInfo';
+import ChangePw from './ChangePw';
 
 export {
     UserSideMenu,   
@@ -13,6 +14,8 @@ export {
     Navbar,
     UserSettings,
     ContactUS,
-    UserBasicInfo
+    UserBasicInfo,
+    ChangePw
+
 
 }

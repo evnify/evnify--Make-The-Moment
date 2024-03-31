@@ -96,7 +96,6 @@ const Signup = () => {
                             ]}
                         >
                             <Input
-                                prefix={<UserAddOutlined className="site-form-item-icon" />}
                                 placeholder="Last Name"
                                 size="large"
                                 style={{ borderRadius: "5px" }} />

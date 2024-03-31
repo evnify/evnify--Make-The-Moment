@@ -3,10 +3,11 @@ import axios from "axios";
 import { InboxOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, message, Upload } from "antd";
 import UserBasicInfo from "./UserBasicInfo";
+import  ChangePw  from "./ChangePw";
 
 const { Dragger } = Upload;
 
-export default function UserSettings() {
+function UserSettings() {
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -108,7 +109,47 @@ export default function UserSettings() {
                 </div>
             </div>
 
-            <div className="change-password"></div>
+            <div className="change-password">
+                <div className="setting-header">
+                    <h4>Change Password</h4>
+                    <p>
+                        Update your password. We recommend you use a strong
+                        password that you aren't using elsewhere.
+                    </p>
+                </div>
+                <div className="change-password-form">
+                
+                <ChangePw/>
+                </div>  
+
+                <div className="pw-requirement">
+                    <h4>Password requirements</h4>
+                    <ul>
+                        <li>Minimum 8 characters long - the more, the better</li>
+                        <li>At least one lowercase character</li>
+                        <li>At least one uppercase character</li>
+                        <li>At least one number</li>
+                    </ul>
+                </div>
+                
+                <div className="save-btn">
+                    <button>Save changes</button>
+                </div>
+                <div className="setting-header">
+                <h4>Deactivate Account</h4>
+                
+               
+                <p>
+                    If you deactivate your account, you will lose access to your
+                    profile and all your data will be permanently deleted.  
+                </p>
+                </div>
+                <button className="deactivate-acc">Deactivate Account</button>
+
+
+            </div>
         </div>
     );
 }
+
+export default UserSettings;

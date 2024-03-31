@@ -10,7 +10,7 @@
 
 .change-password {
     width: 879px;
-    height: 512px;
+    height: 712px;
     flex-shrink: 0;
     border-radius: 8px;
     background: var(--Theme-Colors-White, #fff);
@@ -86,4 +86,79 @@
     display: flex;
     flex-direction: row;
     gap: 20px;
+}
+
+.change-password-form{
+    margin: 30px;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+.pw-requirement{
+    margin-bottom: 20px;
+    margin-left: 260px;
+}
+.pw-requirement h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.pw-requirement ul {
+    padding-left: 20px;
+}
+.save-btn {
+    margin-top: 30px;
+    margin-left: 260px;
+}
+.save-btn button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.save-btn button:hover {
+    background-color: #0056b3;
+}
+.deactivate-section {
+    margin-top: 30px;
+}
+.deactivate-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.deactivate-section p {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+.deactivate-section button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.deactivate-section button:hover {
+    background-color: #c82333;
+}
+
+
+.deactivate-acc{
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #c70000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 260px;
+}
+
+.deactivate-acc:hover {
+    background-color: #c82333;
 }
