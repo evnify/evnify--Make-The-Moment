@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Space, Table, Tag } from "antd";
+import { Space, Table, Tag,Button, Radio,Input  } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
-import { Button, Radio } from "antd";
 import { Icon } from "@iconify/react";
 const { Column } = Table;
+const { Search } = Input;
 
 const data = [
   {
@@ -53,6 +53,14 @@ function Payroll() {
   return (
     <div>
       <h1 className="payroll_002"> Recent Salaries </h1>
+      <Search
+                                placeholder="Search "                              
+                                style={{
+                                    width: 300,
+                                    padding: "0px 0px 0px 30px",
+                                  
+                                }}
+                            />
       <div className="container_002">
         <Radio.Group
           className="right-align"
@@ -82,6 +90,7 @@ function Payroll() {
           &nbsp; Create{" "}
         </button>
       </div>
+         {/* payrool_table */}
       <div className="admin_payroll_table_002">
         <Table dataSource={data}>
           <Column title="Name" dataIndex="Name" key="Name" />
