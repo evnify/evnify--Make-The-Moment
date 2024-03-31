@@ -1,13 +1,15 @@
-@import url('./admin/dashboard.css');
-@import url('./admin/admin.css');
-@import url('./admin/blogs.css');
-@import url('./admin/bookings.css');
-@import url('./admin/employees.css');
-@import url('./admin/inventory.css');
-@import url('./admin/messages.css');
-@import url('./admin/packages.css');
-@import url('./admin/payments.css');
-@import url('./admin/users.css');
+@import url("./admin/dashboard.css");
+@import url("./admin/admin.css");
+@import url("./admin/blogs.css");
+@import url("./admin/bookings.css");
+@import url("./admin/employees.css");
+@import url("./admin/inventory.css");
+@import url("./admin/messages.css");
+@import url("./admin/packages.css");
+@import url("./admin/payments.css");
+@import url("./admin/users.css");
+
+
 
 
 @import url('./users/home.css');
@@ -20,4 +22,18 @@
 @import url('./users/blog.css');
 @import url('./users/booking.css');
 @import url('./users/article.css');
-@import url('./users/employee.css');
+@import url('./users/navbar.css');
+@import url('./users/verify.css');
+@import url('./users/forgetpw.css');
+
+@import url("./employee/employeeDashboard.css");
+@import url("./employee/employee.css");
+@import url("./employee/employeeHero.css");
+
+/* Special functionalities */
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

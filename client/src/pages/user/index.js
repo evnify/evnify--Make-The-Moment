@@ -4,7 +4,6 @@ import SignUp from "./Auth/Signup";
 import ForgetPassword from "./Auth/ForgetPassword";
 import Reset from "./Auth/Reset";
 import Verify from "./Auth/Verify";
-import UserSettings from "./UserSettings";
 import ContactUs from "./ContactUs";
 import Packages from "./Packages";
 import Booking from "./Booking";
@@ -21,7 +20,6 @@ export {
     ForgetPassword,
     Reset,
     Verify,
-    UserSettings,
     ContactUs,
     Packages,
     Booking,

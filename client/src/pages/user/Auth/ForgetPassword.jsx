@@ -1,6 +1,8 @@
 import React from "react";
 import { Button, Form, Input, ConfigProvider } from "antd";
-import { Icon } from "@iconify/react";
+import { Divider, Grid, Typography } from "@mui/material";
+import FirebaseSocial from "./FirebaseSocial";
+import Navbar from "../../../components/users/navBar";
 
 const Login = () => {
     const onFinish = (values) => {
@@ -8,7 +10,9 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
+        <><Navbar />
+        
+        <div className="forget-container">
             <ConfigProvider
                 theme={{
                     components: {
@@ -61,18 +65,19 @@ const Login = () => {
                 </Form.Item>
             </Form>
             <div className="or-divider">
-                <div className="text-center mt">or login with</div>
+                <Grid item xs={12}>
+                    <Divider>
+                        <Typography variant="caption">Sign up with</Typography>
+                    </Divider>
+                </Grid>
             </div>
 
-            <Button className="mt-3 mb-3 social-login-button">
-                <Icon icon="devicon:google" />
-            </Button>
-            <Button className="social-login-button">
-                <Icon icon="logos:facebook" />
-            </Button>
+            <Grid item xs={12} className="mt-3 ml-2 text-center">
+                <FirebaseSocial />
+            </Grid>
 
 
-        </div>
+        </div></>
     );
 };
 

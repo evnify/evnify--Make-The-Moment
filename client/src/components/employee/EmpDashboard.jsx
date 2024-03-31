@@ -1,9 +1,11 @@
 import React from "react";
 
 function EmpDashboard() {
-    return <div>
-        <h1>Employee Dashboard</h1>
-    </div>;
+    return (
+        <div>
+            
+        </div>
+    );
 }
 
 export default EmpDashboard;

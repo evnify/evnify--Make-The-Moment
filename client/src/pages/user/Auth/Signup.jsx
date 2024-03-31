@@ -1,17 +1,12 @@
 import React from "react";
-import {
-    Form,
-    Input,
-    Checkbox,
-    Button,
-    Row,
-    Col,
-    Space,
-} from "antd";
+import { Form, Input, Checkbox, Button, Row, Col, Space } from "antd";
 import { UserAddOutlined, LockOutlined } from "@ant-design/icons";
-import { Icon } from "@iconify/react";
+import { Divider, Grid, Typography } from "@mui/material";
+import FirebaseSocial from "./FirebaseSocial";
+import Navbar from "../../../components/users/navBar";
 
 const Signup = () => {
+
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
     };
@@ -34,11 +29,14 @@ const Signup = () => {
     };
 
     return (
-        <div className="login-container col-md-12 ">
+        <><Navbar />
+        <div className="signup-container col-md-12 ">
             <h4 className="bold mt-4">Sign up!</h4>
             <p>Enter your credentials to continue</p>
 
-            <Form  mt-4 w-100  
+            <Form
+                mt-4
+                w-100
                 name="signup"
                 initialValues={{}}
                 onFinish={onFinish}
@@ -64,17 +62,15 @@ const Signup = () => {
                                 },
                                 {
                                     min: 2,
-                                    message:
-                                        "Your first name must be at least 2 characters.",
+                                    message: "Your first name must be at least 2 characters.",
                                 },
                             ]}
                         >
                             <Input
-                                prefix={
-                                    <UserAddOutlined className="site-form-item-icon" />
-                                }
+                                prefix={<UserAddOutlined className="site-form-item-icon" />}
                                 placeholder="First Name"
-                            />
+                                style={{ borderRadius: "5px" }}
+                                size="large" />
                         </Form.Item>
                     </Col>
 
@@ -88,7 +84,6 @@ const Signup = () => {
                             name="lastName"
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}
-                            size
                             rules={[
                                 {
                                     required: true,
@@ -96,18 +91,15 @@ const Signup = () => {
                                 },
                                 {
                                     min: 2,
-                                    message:
-                                        "Your last name must be at least 2 characters.",
+                                    message: "Your last name must be at least 2 characters.",
                                 },
                             ]}
                         >
                             <Input
-                                prefix={
-                                    <UserAddOutlined className="site-form-item-icon" />
-                                }
+                                prefix={<UserAddOutlined className="site-form-item-icon" />}
                                 placeholder="Last Name"
-                                size="middle"
-                            />
+                                size="large"
+                                style={{ borderRadius: "5px" }} />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -128,8 +120,12 @@ const Signup = () => {
                         },
                     ]}
                 >
-                    <Input placeholder="Email" size="middle" />
+                    <Input
+                        placeholder="Email"
+                        size="large"
+                        style={{ borderRadius: "5px" }} />
                 </Form.Item>
+
                 <Form.Item
                     name="phoneNumber"
                     rules={[
@@ -143,17 +139,19 @@ const Signup = () => {
                         },
                     ]}
                 >
-                    <Space direction="vertical" size="middle">
+                    <Space direction="vertical" size="large">
                         <Space.Compact>
                             <Input
                                 style={{ width: "20%" }}
                                 defaultValue="+94"
-                            />
+                                size="large" />
                             <Input
-                                style={{ width: "80%" }}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "0 5px 5px 0",
+                                }}
                                 placeholder="7xxxxxxx"
-                                size="middle"
-                            />
+                                size="large" />
                         </Space.Compact>
                     </Space>
                 </Form.Item>
@@ -176,18 +174,15 @@ const Signup = () => {
                                 },
                                 {
                                     min: 6,
-                                    message:
-                                        "Password must be minimum 6 characters.",
+                                    message: "Password must be minimum 6 characters.",
                                 },
                             ]}
                         >
                             <Input.Password
-                                prefix={
-                                    <LockOutlined className="site-form-item-icon" />
-                                }
+                                prefix={<LockOutlined className="site-form-item-icon" />}
                                 placeholder="Password"
-                                size="middle"
-                            />
+                                size="large"
+                                style={{ borderRadius: "5px" }} />
                         </Form.Item>
                     </Col>
 
@@ -209,10 +204,8 @@ const Signup = () => {
                                 },
                                 ({ getFieldValue }) => ({
                                     validator(_, value) {
-                                        if (
-                                            !value ||
-                                            getFieldValue("password") === value
-                                        ) {
+                                        if (!value ||
+                                            getFieldValue("password") === value) {
                                             return Promise.resolve();
                                         }
                                         return Promise.reject(
@@ -225,12 +218,10 @@ const Signup = () => {
                             ]}
                         >
                             <Input.Password
-                                prefix={
-                                    <LockOutlined className="site-form-item-icon" />
-                                }
+                                prefix={<LockOutlined className="site-form-item-icon" />}
                                 placeholder=" Confirm Password"
-                                size="middle"
-                            />
+                                size="large"
+                                style={{ borderRadius: "5px" }} />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -252,7 +243,9 @@ const Signup = () => {
                     <Button
                         type="primary"
                         htmlType="submit"
-                        className="login-form-button"
+                        className="signup-form-button"
+                        size="middle"
+                        style={{ borderRadius: "5px" }}
                     >
                         {" "}
                         Sign Up
@@ -263,16 +256,18 @@ const Signup = () => {
                 </Form.Item>
             </Form>
             <div className="or-divider">
-                <div className="text-center mt">or login with</div>
+                <Grid item xs={12}>
+                    <Divider>
+                        <Typography variant="caption">Sign up with</Typography>
+                    </Divider>
+                </Grid>
             </div>
 
-            <Button className="mt-3 mb-3 social-login-button">
-                <Icon icon="devicon:google" />
-            </Button>
-            <Button className="social-login-button">
-                <Icon icon="logos:facebook" />
-            </Button>
+            <Grid item xs={12} className="mt-3 ml-2 text-center">
+                <FirebaseSocial />
+            </Grid>
         </div>
+    </>
     );
 };
 

@@ -1,39 +1,35 @@
 const mongoose = require('mongoose');
 
-const salarySchema = new mongoose.Schema({
-    salaryID : {
+const paymentSchema = new mongoose.Schema({
+    transactionID : {
         type: String,
         required: true,
     },
-    employeeID : {
+    customerID : {
         type: String,
         required: true,
     },
-    employeeName : {
+    customerEmail : {
         type: String,
         required: true,
     },
-    employeeStatus : {
+    packageType : {
         type: String,
         required: true,
-    },  
-    basicSalary : {
+    },
+    amount : {
         type: Number,
         required: true,
     },
-    employeeEmail : {
+    paymentType : {
         type: String,
         required: true,
     },
-    
-    allowance : [],
-    deduction : [],
-    
-    netSalary : {
-        type: Number,
+    description : {
+        type: String,
         required: true,
     },
 }, { timestamps: true });
 
-const salaryModel= mongoose.model('salary', salarySchema);
-module.exports = salaryModel;
+const paymentModel= mongoose.model('payment', paymentSchema);
+module.exports = paymentModel;
