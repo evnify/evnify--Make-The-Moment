@@ -1,9 +1,40 @@
 import React from "react";
+import { Button, Dropdown, Space, Avatar, ConfigProvider } from "antd";
+import { Icon } from "@iconify/react";
+
+const items = [
+    {
+        label: (
+            <a
+                style={{ textDecoration: "none" }}
+                rel="noopener noreferrer"
+                href="https://www.antgroup.com"
+            >
+                Profile
+            </a>
+        ),
+        key: "0",
+    },
+    {
+        type: "divider",
+    },
+    {
+        label: (
+            <a
+                style={{ textDecoration: "none" }}
+                rel="noopener noreferrer"
+                href="https://www.aliyun.com"
+            >
+                Log Out
+            </a>
+        ),
+        key: "1",
+    },
+];
 
 function NavBar() {
     return (
         <div className="Admin__NavBar">
-            {/* Notification Icon */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -17,6 +48,52 @@ function NavBar() {
                 />
                 <circle cx="17" cy="7" r="4.5" fill="#FF5151" stroke="white" />
             </svg>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+            >
+                <path
+                    d="M3 5.35403C3 4.72971 3.23705 4.13095 3.65901 3.68948C4.08097 3.24801 4.65326 3 5.25 3H18.75C19.3467 3 19.919 3.24801 20.341 3.68948C20.7629 4.13095 21 4.72971 21 5.35403V14.7702C21 15.3945 20.7629 15.9933 20.341 16.4347C19.919 16.8762 19.3467 17.1242 18.75 17.1242H7.96575C7.66741 17.1243 7.3813 17.2483 7.17037 17.4691L3.96075 20.8271C3.88215 20.9095 3.78193 20.9657 3.67279 20.9886C3.56365 21.0114 3.45049 20.9999 3.34762 20.9554C3.24476 20.9109 3.15683 20.8355 3.09495 20.7387C3.03307 20.6419 3.00002 20.5281 3 20.4116V5.35403ZM8.625 10.0621C8.625 9.74994 8.50647 9.45056 8.2955 9.22983C8.08452 9.00909 7.79837 8.88509 7.5 8.88509C7.20163 8.88509 6.91548 9.00909 6.7045 9.22983C6.49353 9.45056 6.375 9.74994 6.375 10.0621C6.375 10.3743 6.49353 10.6736 6.7045 10.8944C6.91548 11.1151 7.20163 11.2391 7.5 11.2391C7.79837 11.2391 8.08452 11.1151 8.2955 10.8944C8.50647 10.6736 8.625 10.3743 8.625 10.0621ZM13.125 10.0621C13.125 9.74994 13.0065 9.45056 12.7955 9.22983C12.5845 9.00909 12.2984 8.88509 12 8.88509C11.7016 8.88509 11.4155 9.00909 11.2045 9.22983C10.9935 9.45056 10.875 9.74994 10.875 10.0621C10.875 10.3743 10.9935 10.6736 11.2045 10.8944C11.4155 11.1151 11.7016 11.2391 12 11.2391C12.2984 11.2391 12.5845 11.1151 12.7955 10.8944C13.0065 10.6736 13.125 10.3743 13.125 10.0621ZM16.5 11.2391C16.7984 11.2391 17.0845 11.1151 17.2955 10.8944C17.5065 10.6736 17.625 10.3743 17.625 10.0621C17.625 9.74994 17.5065 9.45056 17.2955 9.22983C17.0845 9.00909 16.7984 8.88509 16.5 8.88509C16.2016 8.88509 15.9155 9.00909 15.7045 9.22983C15.4935 9.45056 15.375 9.74994 15.375 10.0621C15.375 10.3743 15.4935 10.6736 15.7045 10.8944C15.9155 11.1151 16.2016 11.2391 16.5 11.2391Z"
+                    fill="#B2B2B2"
+                />
+            </svg>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Dropdown: {
+                            sizePopupArrow: "10px",
+                        },
+                    },
+                }}
+            >
+                <Dropdown
+                    menu={{
+                        items,
+                    }}
+                >
+                    <a
+                        onClick={(e) => e.preventDefault()}
+                        style={{ textDecoration: "none", color: "#454545"}}
+                    >
+                        <Space>
+                            <Avatar
+                                size={30}
+                                src={
+                                    <img
+                                        src="https://media.istockphoto.com/id/1300512215/photo/headshot-portrait-of-smiling-ethnic-businessman-in-office.webp?b=1&s=170667a&w=0&k=20&c=TXCiY7rYEvIBd6ibj2bE-VbJu0rRGy3MlHwxt2LHt9w="
+                                        alt="avatar"
+                                    />
+                                }
+                            />
+                            Easter Howard
+                            <Icon icon="gridicons:dropdown" />
+                        </Space>
+                    </a>
+                </Dropdown>
+            </ConfigProvider>
         </div>
     );
 }

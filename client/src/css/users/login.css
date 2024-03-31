@@ -1,7 +1,9 @@
 .login-container {
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 450px;
+    height: 530px;
+    margin: auto;
     margin-top: 100px;
+    margin-bottom: 100px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -28,4 +30,10 @@
 
 .bold {
     font-weight: bold;
+}
+
+.login-form-button{
+    width: 100%;
+    background: #533c56;
+    color: aliceblue;
 }
