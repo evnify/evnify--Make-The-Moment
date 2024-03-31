@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Space, Table, Tag, Button, Radio, Input, Modal } from "antd";
+import { Space, Table, Tag, Button, Radio, Input, Modal,DatePicker,Select  } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+
 const { Column } = Table;
 const { Search } = Input;
 
@@ -60,6 +61,10 @@ function Payroll() {
   };
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const onChange = (date, dateString) => {
+    console.log(date, dateString);
   };
 
   return (
@@ -149,13 +154,154 @@ function Payroll() {
       >
         <div className="create_paysheet_002">
           <div>
-               <div className="Create-paysheet-input">
-               <p>Select an Employee</p>
-              <Input placeholder="Basic usage" style={{margin:"0"}} />;
-               </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Select an Employee
+              </span>
+              <Input type="text" size="large"placeholder="Search Employ" />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Type
+              </span>
+              <Input type="text" size="large"placeholder="type" />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Date Range
+              </span>
+              <DatePicker onChange={onChange} />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Basic salary
+              </span>
+              <Input type="text" size="large"placeholder="Enter Salary" />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Allowances
+              </span>
+              <Input type="text" size="large"placeholder="Search " />
+              <Select
+    showSearch
+    style={{
+      width: 200,
+    }}
+    placeholder="Search to Select"
+    optionFilterProp="children"
+    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+    filterSort={(optionA, optionB) =>
+      (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+    }
+    options={[
+      {
+        value: '1',
+        label: 'Not Identified',
+      },
+      {
+        value: '2',
+        label: 'Closed',
+      },
+      {
+        value: '3',
+        label: 'Communicated',
+      },
+      {
+        value: '4',
+        label: 'Identified',
+      },
+      {
+        value: '5',
+        label: 'Resolved',
+      },
+      {
+        value: '6',
+        label: 'Cancelled',
+      },
+    ]}
+  />
+            </div>
           </div>
-          <div>
-            <Input placeholder="Basic usage" />
+          <div className="admin_payroll_table_right_side_002" >
+                <div className="admin_payroll_table_right_side_002_top_div">d
+                
+                </div>
+                <div>
+                <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "14px",
+                }}
+              >
+                Allowances
+              </span>
+              <Input type="text" size="large"placeholder="Search " />
+            </div>
+                </div>
+
           </div>
         </div>
       </Modal>

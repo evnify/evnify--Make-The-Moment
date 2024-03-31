@@ -49,3 +49,12 @@
   flex-direction: column;
   
 }
+.admin_payroll_table_right_side_002{
+  display: flex;
+  flex-direction: column;
+
+}
+
+.admin_payroll_table_right_side_002_top_div{
+  height: 300px;
+}
