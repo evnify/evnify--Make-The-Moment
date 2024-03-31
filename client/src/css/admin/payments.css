@@ -36,3 +36,16 @@
     margin-bottom: 30px;
     margin-left: 20px;
   }
+  .create_paysheet_002
+  {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+
+.Create-paysheet-input{
+  display: flex;
+  flex-direction: column;
+  
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Space, Table, Tag,Button, Radio,Input  } from "antd";
+import { Space, Table, Tag, Button, Radio, Input, Modal } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 const { Column } = Table;
@@ -14,7 +14,7 @@ const data = [
     Amount: "200000",
     Date: "2024/05/10",
     Status: "pending",
-    Action: true
+    Action: true,
   },
   {
     key: "2",
@@ -24,7 +24,7 @@ const data = [
     Amount: "200000",
     Date: "2024/05/10",
     Status: "pending",
-    Action: true
+    Action: true,
   },
   {
     key: "3",
@@ -34,7 +34,7 @@ const data = [
     Amount: "200000",
     Date: "2024/05/10",
     Status: "paid",
-    Action: true
+    Action: true,
   },
   {
     key: "4",
@@ -50,17 +50,28 @@ const data = [
 
 function Payroll() {
   const [size, setSize] = useState("large");
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // IS model open use state
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       <h1 className="payroll_002"> Recent Salaries </h1>
       <Search
-                                placeholder="Search "                              
-                                style={{
-                                    width: 300,
-                                    padding: "0px 0px 0px 30px",
-                                  
-                                }}
-                            />
+        placeholder="Search "
+        style={{
+          width: 300,
+          padding: "0px 0px 0px 30px",
+        }}
+      />
       <div className="container_002">
         <Radio.Group
           className="right-align"
@@ -74,7 +85,7 @@ function Payroll() {
             Pending
           </Radio.Button>
         </Radio.Group>
-        <button className="payroll_create_btn_002">
+        <button className="payroll_create_btn_002" onClick={showModal}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -90,7 +101,7 @@ function Payroll() {
           &nbsp; Create{" "}
         </button>
       </div>
-         {/* payrool_table */}
+      {/* payrool_table */}
       <div className="admin_payroll_table_002">
         <Table dataSource={data}>
           <Column title="Name" dataIndex="Name" key="Name" />
@@ -129,6 +140,25 @@ function Payroll() {
           />
         </Table>
       </div>
+
+      <Modal
+        title="Create New Paysheet"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <div className="create_paysheet_002">
+          <div>
+               <div className="Create-paysheet-input">
+               <p>Select an Employee</p>
+              <Input placeholder="Basic usage" style={{margin:"0"}} />;
+               </div>
+          </div>
+          <div>
+            <Input placeholder="Basic usage" />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
