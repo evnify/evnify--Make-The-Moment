@@ -106,7 +106,7 @@ function Payroll() {
           &nbsp; Create{" "}
         </button>
       </div>
-      {/* payrool_table */}
+      {/* payroll_table */}
       <div className="admin_payroll_table_002">
         <Table dataSource={data}>
           <Column title="Name" dataIndex="Name" key="Name" />
@@ -145,7 +145,8 @@ function Payroll() {
           />
         </Table>
       </div>
-
+        //Create New Paysheet"
+             
       <Modal
         title="Create New Paysheet"
         open={isModalOpen}
@@ -237,7 +238,6 @@ function Payroll() {
               >
                 Allowances
               </span>
-              <Input type="text" size="large"placeholder="Search " />
               <Select
     showSearch
     style={{
@@ -252,37 +252,30 @@ function Payroll() {
     options={[
       {
         value: '1',
-        label: 'Not Identified',
+        label: 'Performance Bonus',
       },
       {
         value: '2',
-        label: 'Closed',
+        label: 'Transport Allowance',
       },
       {
         value: '3',
-        label: 'Communicated',
+        label: 'Medical Allowance',
       },
       {
         value: '4',
-        label: 'Identified',
+        label: 'Anual Bonus',
       },
       {
         value: '5',
-        label: 'Resolved',
-      },
-      {
-        value: '6',
-        label: 'Cancelled',
-      },
+        label: 'pofit Share',
+      }
     ]}
   />
             </div>
           </div>
           <div className="admin_payroll_table_right_side_002" >
-                <div className="admin_payroll_table_right_side_002_top_div">d
-                
-                </div>
-                <div>
+                <div className="admin_payroll_table_right_side_002_top_div"> 
                 <div
               style={{
                 marginTop: "8px",
@@ -296,9 +289,63 @@ function Payroll() {
                   fontSize: "14px",
                 }}
               >
-                Allowances
+                Emp ID
               </span>
-              <Input type="text" size="large"placeholder="Search " />
+              <Input type="text" size="large"placeholder="employee id" />
+            </div>
+                
+                </div>
+                <div>
+                <div
+              style={{
+                marginTop: "0px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "1px",
+                  fontSize: "14px",
+                }}
+              >
+                Deductions
+              </span>
+              
+              <Select
+    showSearch
+    style={{
+      width: 200,
+    }}
+    placeholder="Search to Select"
+    optionFilterProp="children"
+    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+    filterSort={(optionA, optionB) =>
+      (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+    }
+    options={[
+      {
+        value: '1',
+        label: ' Social security deduction',
+      },
+      {
+        value: '2',
+        label: 'Income tax',
+      },
+      {
+        value: '3',
+        label: 'Health insurance deduction',
+      },
+      {
+        value: '4',
+        label: 'Loan deduction',
+      },
+      {
+        value: '5',
+        label: 'Other deduction',
+      }
+    ]}
+  />
             </div>
                 </div>
 
