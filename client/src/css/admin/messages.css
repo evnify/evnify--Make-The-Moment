@@ -1,0 +1,142 @@
+/*message Insight*/
+.messagre-insight-top{
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+.messagre-insight-card{
+    width: 350px;
+    height: 150px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-insight-main-insight{
+    width: 1210px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 22px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-insight-bottom-insight{
+    display: flex;
+    flex-direction: row;
+}
+
+.message-insight-categories{
+    width: 750px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 22px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-calender-view{
+    width: 400px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 55px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/*All message*/
+
+.message-Box-all-messages{
+    display: flex;
+    flex-direction: row;
+    width: 1220px;
+    height: 590px;
+    background-color: #fff;
+    margin: 30px 0 10px 22px;
+    
+}
+
+.message-all-users-bar{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 590px;
+    border-right: 1px solid #d8d8d8;
+}
+
+.message-all-users-bar-top{
+    height: 80px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 820px ;
+}
+
+.message-all-users-bar-top-right{
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 820px;
+}
+
+.message-reply-admin{
+    display: flex;
+    flex-direction: column;
+}
+
+.message-all-users-bar-bottom-search{
+  margin: 10px 0 0 20px;
+
+}
+.message-received-preview{
+    display: flex;
+    flex-direction: row;
+    margin: 20px 30px 0 0;
+    height: 80px;
+
+}
+
+.all-message-profile-pic img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 10px 0 0 10px;
+}
+
+.all-message-name{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.all-message-timeandname{
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.all-message-name-tag {
+    width: 220px;
+    text-align: left;
+    
+}
+
+.message-reply-admin-box{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0 0 20px;
+}
+
+.message-receved-admin{
+    display: flex;
+    flex-direction: row;
+}
+
+.message-send-admin{
+    display: flex;
+    flex-direction: row;
+    margin: 20px 20px 0 0;
+    justify-content: flex-end;
+}
