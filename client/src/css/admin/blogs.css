@@ -271,7 +271,7 @@
     padding-left: 10px;
 }
 
-/* tablte css */
+/* table css */
 .admin_existing_blog_table__view_back{
     background-color: #ffffff;
     height: 800px;
@@ -295,4 +295,18 @@
     padding-left: 10px;
     padding-top: 10px; 
     padding-bottom: 20px;
+}
+
+/* action btn css */
+.admin_existing_blog_delete_btn{
+    background: none;
+    border: none;
+}
+.admin_existing_blog_edit_btn{
+    background: none;
+    border: none;
+}
+.admin_existing_blog_view_btn{
+    background: none;
+    border: none;
 }

@@ -1,12 +1,27 @@
-import React, { useState } from "react";
-import { Radio, Space, Table, Tag } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+    Radio,
+    Space,
+    Table,
+    Tag,
+    Modal,
+    Input,
+    Select,
+    DatePicker,
+    Upload,
+    Button,
+    message,
+} from "antd";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 
+
+const { TextArea } = Input;
 
 const columns = [
     {
         title: "Name",
-        dataIndex: "name",
+        dataIndex: "blogTitle",
         key: "name",
         render: (text) => <a>{text}</a>,
     },
@@ -17,7 +32,7 @@ const columns = [
     },
     {
         title: "Date",
-        dataIndex: "date",
+        dataIndex: "eventDate",
         key: "date",
     },
     {
@@ -42,7 +57,7 @@ const columns = [
     },
     {
         title: "Description",
-        dataIndex: "description",
+        dataIndex: "blogTitleDescription",
         key: "description",
     },
     {
@@ -50,91 +65,51 @@ const columns = [
         key: "action",
         render: (_, record) => (
             <Space size="middle">
-                <Icon icon="material-symbols:delete-outline" />
-                <Icon icon="tabler:edit" />
-                <Icon icon="mdi:eye-outline" />
+                <button className="admin_existing_blog_delete_btn">
+                    {" "}
+                    <Icon icon="material-symbols:delete-outline" />
+                </button>
+                <button className="admin_existing_blog_edit_btn">
+                    <Icon icon="tabler:edit" />
+                </button>
+                <button className="admin_existing_blog_view_btn">
+                    <Icon icon="mdi:eye-outline" />
+                </button>
             </Space>
         ),
     },
 ];
-const data = [
-    {
-        key: "1",
-        name: "John Brown",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["developer"],
-        description: "Welcome to Brides, where every couple, every wedding, and every love is celebrated. ",
-    },
-    {
-        key: "2",
-        name: "Jim Green",
-        category: 42,
-        date: "2023.12.12",
-        tags: ["loser"],
-        description: "Every year, your daughter's birthday is a momentous occasion, a day to reflect on the incredible journey ",
-    },
-    {
-        key: "3",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "Experience the joy of togetherness on our Get-Together.",
-    },
-    {
-        key: "4",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "Welcome to our wedding wonderland! Whether you're a soon-to-be-wed couple, ",
-    },
-    {
-        key: "5",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "Saying goodbye to our incredible leader, Jone. Gratitude, memories, and best ",
-    },
-    {
-        key: "6",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "To the radiant bride-to-be: Wishing you a lifetime of love, laughter, and beautiful moments ahead. ",
-    },
-    {
-        key: "7",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "TBirthdays are those annual milestones that deserve to be celebrated in style.",
-    },
-    {
-        key: "8",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "To the radiant bride-to-be: Wishing you a lifetime of love, laughter, and beautiful moments ahead. ",
-    },
-    {
-        key: "9",
-        name: "Joe Black",
-        category: 32,
-        date: "2023.12.12",
-        tags: ["cool"],
-        description: "To the radiant bride-to-be: Wishing you a lifetime of love, laughter, and beautiful moments ahead. ",
-    },
-];
 
 function ExistingBlogs() {
+    const [Blogs, setBlogs] = useState([]);
+
+    useEffect(() => {
+        fetchBlogs();
+    }, []);
+
+    const fetchBlogs = async () => {
+        try {
+            const response = await axios.get("/api/blogs/getBlogs");
+            setBlogs(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const [top, setTop] = useState("topLeft");
     const [bottom, setBottom] = useState("bottomCenter");
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <div>
             <div className="admin_existing_blog_counts_containers">
@@ -142,7 +117,7 @@ function ExistingBlogs() {
                     <div className="admin_existing_blog_total_card1">
                         <div className="admin_existing_blog_card1_txt">
                             <h3>Total Blogs</h3>
-                            <h2>20</h2>
+                            <h2 onClick={showModal}> 20</h2>
                         </div>
                     </div>
                 </div>
@@ -183,8 +158,125 @@ function ExistingBlogs() {
                             top: "20px",
                             bottom: "20px",
                         }}
-                        dataSource={data}
+                        dataSource={Blogs} // Here, using the Blogs state instead of the data array
                     />
+                </div>
+                <div>
+                    <Modal
+                        title={null}
+                        width={1200}
+                        height={700}
+                        footer={null}
+                        open={isModalOpen}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                    >
+                        <div>
+                            <div className="admin_add_blog_section_one">
+                                <div className="admin_add_blog_section_Add_Blogs_tit">
+                                    <h3>Add Blogs</h3>
+                                </div>
+                                <div className="admin_add_blog_section_border">
+                                    <div className="admin_add_blog_section_add_blog_from">
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Blog Title
+                                        </h3>
+                                        <Input
+                                            placeholder="Title"
+                                            style={{ width: 350, height: 40 }}
+                                        />
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Title Description
+                                        </h3>
+                                        <Input
+                                            placeholder="Title Description"
+                                            style={{ width: 350, height: 40 }}
+                                        />
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Category
+                                        </h3>
+                                        <Select
+                                            defaultValue="Select"
+                                            style={{ width: 350, height: 40 }}
+                                        />
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Date
+                                        </h3>
+                                        <DatePicker
+                                            style={{ width: 350, height: 40 }}
+                                        />
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Tags
+                                        </h3>
+                                        <Space
+                                            style={{
+                                                width: "100%",
+                                                bottom: "10px",
+                                            }}
+                                            direction="vertical"
+                                        >
+                                            <Select
+                                                mode="multiple"
+                                                allowClear
+                                                style={{
+                                                    width: 350,
+                                                    height: 40,
+                                                }}
+                                                placeholder="Please select"
+                                                defaultValue={[]}
+                                            />
+                                        </Space>
+                                    </div>
+                                    <div className="admin_add_blog_section_image_add_border">
+                                        <h3 className="admin_add_blog_section_add_blog_title_name">
+                                            Images
+                                        </h3>
+                                        <div className="admin_add_blog_section_image_add">
+                                            <Upload listType="picture-card"></Upload>
+                                            <Modal>
+                                                <img
+                                                    alt="example"
+                                                    style={{ width: "100%" }}
+                                                />
+                                            </Modal>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="admin_add_blog_section_image_add_container">
+                                <div className="admin_add_blog_section_add_blog_add_description">
+                                    <h3 className="admin_add_blog_section_add_blog_title_name">
+                                        Description
+                                    </h3>
+                                    <TextArea
+                                        style={{
+                                            width: 1000,
+                                            height: 429,
+                                            marginBottom: 20,
+                                        }}
+                                        placeholder="Description"
+                                    />
+                                </div>
+                                <div className="admin_add_blog_section_blog_add_btn">
+                                    <Button
+                                        style={{ width: 100, height: 35 }}
+                                        type="primary"
+                                        danger
+                                        onClick={handleCancel}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        style={{ width: 100, height: 35 }}
+                                        type="primary"
+                                        onClick={handleOk}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
                 </div>
             </div>
         </div>
