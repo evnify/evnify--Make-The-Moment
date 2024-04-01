@@ -1,99 +1,102 @@
+// UserListTable.js
+
 import React, { useEffect, useState } from "react";
 import { Space, Table, Tag, Avatar } from "antd";
 import axios from "axios";
 import Loader from "./Loader";
+import { Icon } from "@iconify/react";
 
-const columns = [
-    {
-        title: "userID",
-        dataIndex: "userID",
-        key: "userID",
-    },
-    {
-        title: "",
-        dataIndex: "profilePic",
-        key: "profilePic",
-        render: (_, record) => (
-            <Avatar size={35} src={record.avatarSrc} alt="avatar" />
-        ),
-    },
 
-    {
-        title: "username",
-        dataIndex: "username",
-        key: "username",
-        render: (text) => <a>{text}</a>,
-    },
 
-    {
-        title: "Phone Number",
-        dataIndex: "phoneNumber",
-        key: "phoneNumber",
-    },
-    {
-        title: "Email Address",
-        dataIndex: "email",
-        key: "email",
-    },
-
-    {
-        title: "Type",
-        dataIndex: "userType",
-        key: "userType",
-    },
-    {
-        title: "Status",
-        key: "state",
-        dataIndex: "state",
-        render: (_, { tags }) => (
-            <>
-                {tags.map((tag) => {
-                    let color = "green";
-                    if (tag === "Suspended") {
-                        color = "red";
-                    }
-                    return (
-                        <Tag color={color} key={tag}>
-                            {tag.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
-    },
-
-    {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-    },
-
-    {
-        title: "",
-        key: "action",
-        render: (_, record) => (
-            <Space size="middle">
-                <a>Invite</a>
-                <a>Delete</a>
-            </Space>
-        ),
-    },
-];
 
 function UserListTable() {
     const [data, setData] = useState([]);
-    const [loading, setloading] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const columns = [
+        {
+            title: "user_ID",
+            dataIndex: "userID",
+            key: "userID",
+        },
+        {
+            title: "",
+            dataIndex: "profilePic",
+            key: "profilePic",
+            render: (_, record) => (
+                <Avatar size={35} src={record.profilePic} alt="avatar" />
+            ),
+        },
+        {
+            title: "username",
+            dataIndex: "username",
+            key: "username",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Phone Number",
+            dataIndex: "phoneNumber",
+            key: "phoneNumber",
+        },
+        {
+            title: "Email address11",
+            dataIndex: "email",
+            key: "email",
+        },
+        {
+            title: "Type",
+            dataIndex: "userType",
+            key: "userType",
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Suspended") {
+                    color = "red";
+                }
+                return <Tag color={color}>{status ? status.toUpperCase() : ""}</Tag>;
+            },
+            
+        },
+    
+        {
+            title: "address1",
+            dataIndex: "address1",
+            key: "address1",
+        },
+        {
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    <a>
+                        <Icon icon="material-symbols:delete-outline" />
+                    </a>
+                    <a>
+                        <Icon icon="tabler:edit" />
+                    </a>
+                    <a>
+                        <Icon icon="akar-icons:eye" />
+                    </a>
+                </Space>
+            ),
+        },
+    ];
 
     useEffect(() => {
         async function fetchUserList() {
             try {
-                const response = await axios.get(
-                    `${process.env.PUBLIC_URL}api/users/getUser`
-                );
+                setLoading(true);
+                const response = await axios.get("/api/users/getUser");
                 setData(response.data);
                 console.log("Data fetched:", response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
             }
         }
         fetchUserList();
@@ -104,7 +107,6 @@ function UserListTable() {
             {loading && <Loader />}
             <div className="col-md-12">
                 <Table
-                    bordered={true}
                     dataSource={data}
                     columns={columns}
                     pagination={{ pageSize: 15 }}

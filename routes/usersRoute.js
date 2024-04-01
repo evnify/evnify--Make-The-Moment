@@ -6,10 +6,22 @@ const generateUniquePwd = async () => {
     return Math.floor(10000000 + Math.random() * 90000000).toString();
 };
 
+const generateUniqueID = async () => {
+    let id = 'U' + Math.floor(10000000 + Math.random() * 90000000);
+    const existingLeave = await UserModel.findOne({ userID: id });
+    if (existingLeave) {
+        return generateUniqueID();
+    }
+    return id;
+};
+
+
 router.post("/addUser", async (req, res) => {
     const UserUserData = req.body;
     const password = await generateUniquePwd();
+    const userID = await generateUniqueID();
     UserUserData.password = password;
+    UserUserData.userID = userID;
 
     const newUser = new UserModel(UserUserData);
 
@@ -27,6 +39,21 @@ router.get("/getUser", async (req, res) => {
         const users = await UserModel.find();
         res.send(users);
         console.log(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+router.delete("/deleteUser/:id", async (req, res) => {
+    try {
+        const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
+        if (!deletedUser) {
+            return res.status(404).send("User not found");
+        }
+        res.send(deletedUser);
+        console.log("Deleted user:", deletedUser);
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal Server Error");

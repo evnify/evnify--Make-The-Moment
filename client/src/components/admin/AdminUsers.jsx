@@ -16,7 +16,6 @@ import {
 
 import axios from "axios";
 
-
 var index = 0;
 
 const { Search, TextArea } = Input;
@@ -28,9 +27,8 @@ function UserList() {
     // Type Selector
     const [items] = useState(["Admin", "Hr-Manager", "Customer"]);
 
-
     // Add user model use states
-    const [address, setAddress] = useState("");
+    const [address1, setaddress1] = useState("");
     const [userType, setuserType] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -43,7 +41,7 @@ function UserList() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (
-            !address ||
+            !address1 ||
             !userType ||
             !firstName ||
             !lastName ||
@@ -65,7 +63,7 @@ function UserList() {
         }
 
         const userData = {
-            address,
+            address1,
             userType,
             firstName,
             lastName,
@@ -75,7 +73,6 @@ function UserList() {
             profilePic,
         };
 
-       
         try {
             await axios.post("/api/users/addUser", userData);
         } catch (error) {
@@ -463,9 +460,7 @@ function UserList() {
                                             display: "flex",
                                             flexDirection: "column",
                                         }}
-                                    >
-                                        
-                                    </div>
+                                    ></div>
                                 </div>
                             </div>
 
@@ -476,7 +471,13 @@ function UserList() {
                                         width: 520,
                                     }}
                                     rows={4}
-                                    onChange={(e) => setAddress(e.target.value)}
+                                    onChange={(e) => {setaddress1(e.target.value)
+                                    console.log(e.target.value)
+                                    
+                                    }
+                                
+                                }
+                                    
                                 />
                             </div>
                         </div>

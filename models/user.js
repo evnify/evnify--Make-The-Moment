@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     
     userID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: false,
     },
 
@@ -53,9 +53,10 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: null,
     },
-    state: {
+    status: {
         type: String,
-        default: null,
+        default: "Active",
+
     },
 
     profilePic: {
