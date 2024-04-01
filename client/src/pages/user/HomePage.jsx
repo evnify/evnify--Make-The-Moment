@@ -1,10 +1,6 @@
 import React from "react";
 import Navbar from "../../components/users/navBar";
 import { Carousel } from "antd";
-import corosal1 from "../../assets/corosal01.svg";
-import corosal2 from "../../assets/corosal02.svg";
-import corosal3 from "../../assets/corosal03.svg";
-import corosal4 from "../../assets/corosal04.svg";
 
 function HomePage() {
     const contentStyle = {
@@ -19,42 +15,44 @@ function HomePage() {
     };
 
     return (
-        <div>
+        <div >
             <Navbar />
-            <Carousel autoplay>
+            <div className="center">
+            <Carousel autoplay style={{height: "669px", width: "1320px"}}>
                 <div>
                     <img
                         className="carousel_carouse"
-                        src={corosal1}
+                        src="https://i.ibb.co/9Hc5MQk/corosal-01.webp"
                         alt="corosal1"
-                        style={{ ...contentStyle }}
+                        style={{ ...contentStyle, height: "669px", width: "1320px"}}
                     />
                 </div>
                 <div>
                     <img
                         className="carousel_carouse"
-                        src={corosal2}
+                        src="https://i.ibb.co/SV5FMWH/corosal-02.webp"
                         alt="corosal2"
-                        style={contentStyle}
+                        style={{...contentStyle, height: "669px", width: "1320px"}}
                     />
                 </div>
                 <div>
                     <img
                         className="carousel_carouse"
-                        src={corosal3}
+                        src="https://i.ibb.co/ZJcGvvm/corosal-03.webp"
                         alt="corosal3"
-                        style={contentStyle}
+                        style={{...contentStyle, height: "669px", width: "1320px"}}
                     />
                 </div>
                 <div>
                     <img
                         className="carousel_carouse"
-                        src={corosal4}
+                        src="https://i.ibb.co/bFtJ3BN/corosal-04.webp"
                         alt="corosal4"
-                        style={contentStyle}
+                        style={{...contentStyle, height: "669px", width: "1320px"}}
                     />
                 </div>
             </Carousel>
+            </div>
         </div>
     );
 }

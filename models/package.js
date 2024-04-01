@@ -26,3 +26,6 @@ const packageSchema = new mongoose.Schema({
     contentImages: [],
 
 }, { timestamps: true });
+
+const packageModel = mongoose.model("packages", packageSchema);
+module.exports = packageModel;

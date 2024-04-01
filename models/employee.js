@@ -1,8 +1,33 @@
 const mongoose = require("mongoose");
 
-const employeeSchema = new mongoose.Schema({
+const leaveBalanceDefault = 
+    [{"Half Leave": 7},
+    {"Sick Leave": 7},
+    {"Casual Leave": 7}]
+;
 
+const employeeSchema = new mongoose.Schema({
     empID : {
+        type: String,
+        required: true,
+    },
+    firstName : {
+        type: String,
+        required: true,
+    },
+    lastName : {
+        type: String,
+        required: true,
+    },
+    email : {
+        type: String,
+        required: true,
+    },
+    username : {
+        type: String,
+        required: true,
+    },
+    profileImage : {
         type: String,
         required: true,
     },
@@ -22,12 +47,11 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    gender : {
-        type: String,
-        required: true,
+    leavesBalance : {
+        type: Array,
+        default: leaveBalanceDefault
     },
     leaves : [],
-    leavesBalance : [],
 
 }, { timestamps: true });
 
