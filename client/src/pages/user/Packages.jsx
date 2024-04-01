@@ -1,8 +1,7 @@
 import React from "react";
-import SideMenuItems from "../../components/users/SideMenuItems";
 import { DatePicker, Space, Input } from "antd";
 import{ShoppingCartOutlined } from '@ant-design/icons';
-import BigImageView from "../../components/users/BigImageView";
+import {BigImageView,SideMenuItems} from "../../components"
 const { Search } = Input;
 const onChange = (date, dateString) => {
   console.log(date, dateString);

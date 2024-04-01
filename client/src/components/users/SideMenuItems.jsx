@@ -1,7 +1,6 @@
 import React from "react";
-import { Checkbox } from "antd";
-import { Button } from "antd";
-import { Menu } from "antd";
+import { Checkbox ,Button,Menu} from "antd";
+
 
 
 function getItem(label, key, icon, children, type) {

@@ -119,4 +119,15 @@
   font-weight: 600;
   margin: 0 10px 0 20px ;
 }
+.saveAddressBtn_72{
+  border-radius: 11px;
+  background: #533c56;
+  width: 244px;
+  height: 45px;
+  padding: 12px 0px;
+  justify-content: center;
+  align-items: center;
+ margin-top: 10px;
   
+  color: #fff;
+}
