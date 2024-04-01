@@ -1,21 +1,7 @@
 import { React, useState } from "react";
 import axios from "axios";
-import {
-  ConfigProvider,
-  Modal,
-  Select,
-  DatePicker,
-  Checkbox,
-  Input,
-  Button,
-  Radio,
-  Divider,
-  Space,
-  message,
-  Upload,
-} from "antd";
+import { Modal, Checkbox, Input, Button, message, Cascader } from "antd";
 
-const { Search } = Input;
 function AddBillingAddress() {
   const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
   const [address, setAddress] = useState("");
@@ -35,10 +21,29 @@ function AddBillingAddress() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
+  //cascader for district
+  const options = [
+    {
+      value: "zhejiang",
+      label: "Zhejiang",
+      
+    },
+    {
+      value: "jiangsu",
+      label: "Jiangsu",
+      
+    },
+  ];
+  const onChange = (value, selectedOptions) => {
+    console.log(value, selectedOptions);
+  };
+  const filter = (inputValue, path) =>
+    path.some(
+      (option) =>
+        option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+    );
+  //--------
   const saveEmployee = async () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (
       !address ||
       !dob ||
@@ -50,8 +55,6 @@ function AddBillingAddress() {
       !username
     ) {
       return message.error("Please fill all the fields");
-    } else if (!emailRegex.test(email)) {
-      return message.error("Please enter a valid email address");
     }
 
     if (!profileImage || profileImage.trim() === "") {
@@ -84,7 +87,6 @@ function AddBillingAddress() {
   };
   return (
     <div>
-      <h1>hi</h1>
       <Button type="primary" onClick={showModal}>
         Open Modal
       </Button>
@@ -97,7 +99,7 @@ function AddBillingAddress() {
         width={550}
       >
         <div className="request_leave_model_body_container">
-          <div className="add_employee_top_container">
+          <div>
             <div
               style={{
                 marginTop: "10px",
@@ -122,99 +124,104 @@ function AddBillingAddress() {
             </div>
           </div>
 
-          <div className="add_employee_popup_details_container">
-              <div
-                style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <span
-                  style={{
-                    marginBottom: "3px",
-                    fontSize: "12px",
-                    fontWeight: 900,
-                  }}
-                >
-                  Country
-                </span>
-                <Input
-                  size="large"
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div
-                style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <span
-                  style={{
-                    marginBottom: "3px",
-                    fontSize: "12px",
-                    fontWeight: 900,
-                  }}
-                >
-                  Address Line1
-                </span>
-                <Input
-                  type="email"
-                  size="large"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div
-                style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <span
-                  style={{
-                    marginBottom: "3px",
-                    fontSize: "12px",
-                    fontWeight: 900,
-                  }}
-                >
-                  Address Line2
-                </span>
-                <Input
-                  size="large"
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </div>
-              <div
-                style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <span
-                  style={{
-                    marginBottom: "3px",
-                    fontSize: "12px",
-                    fontWeight: 900,
-                  }}
-                >
-                  Disctrict
-                </span>
-                <Search
-                    placeholder="input search text"
-                    allowClear
-                    //onSearch={onSearch}
-                    style={{
-                      width: 200,
-                    }}
-                  />
-              </div>
-            
-            <div className="add_employee_popup_details_container_right">
+          <div>
             <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                }}
+              >
+                Country
+              </span>
+              <Input
+                placeholder="Sri Lanka"
+                size="large"
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                }}
+              >
+                Address Line1
+              </span>
+              <Input
+                placeholder="New Kandy Road"
+                size="large"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                }}
+              >
+                Address Line2
+              </span>
+              <Input
+                placeholder="Address Line 2"
+                size="large"
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </div>
+            <div
+              style={{
+                marginTop: "8px",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <span
+                style={{
+                  marginBottom: "3px",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                }}
+              >
+                Disctrict
+              </span>
+
+              <Cascader
+                options={options}
+                onChange={onChange}
+                placeholder="Please select"
+                showSearch={{
+                  filter,
+                }}
+                onSearch={(value) => console.log(value)}
+              />
+            </div>
+          </div>
+          <div className="Add_Address_popup_container">
+            <div className="add_employee_popup_details_container_right">
+              <div
                 style={{
                   marginTop: "8px",
                   display: "flex",
@@ -228,16 +235,16 @@ function AddBillingAddress() {
                     fontWeight: 900,
                   }}
                 >
-                   City
-                   <Input
-                  size="large"
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+                  City
+                  <Input
+                    placeholder="Malabe"
+                    size="large"
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
                 </span>
               </div>
             </div>
             <div className="add_employee_popup_details_container_left">
-              
               <div
                 style={{
                   marginTop: "8px",
@@ -255,21 +262,23 @@ function AddBillingAddress() {
                   Postal Code
                 </span>
                 <Input
+                  placeholder="000000"
+                  type="number"
                   size="large"
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              
             </div>
           </div>
 
-          <div className="add_emp_address_container">
-            
-           <span style={{
-            marginTop: "3px",
-           }}>
-           <Checkbox>Make this as my default payment method</Checkbox>
-           </span>
+          <div>
+            <span
+              style={{
+                marginTop: "3px",
+              }}
+            >
+              <Checkbox>Make this as my default payment method</Checkbox>
+            </span>
           </div>
         </div>
         <div className=" center">

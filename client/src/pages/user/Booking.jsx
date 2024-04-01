@@ -151,8 +151,7 @@ function Booking() {
                       ))}
                     </div>
                     </div>
-                  </div>
-
+                  </div>               
                   <button className="createPackageBtn_72 ">
                     Create Your Package
                   </button>

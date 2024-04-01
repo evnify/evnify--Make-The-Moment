@@ -1,7 +1,9 @@
 import React from "react";
 import { DatePicker, Space, Input } from "antd";
 import{ShoppingCartOutlined } from '@ant-design/icons';
-import {BigImageView,SideMenuItems} from "../../components"
+import {AddBillingAddress, BigImageView,SideMenuItems} from "../../components"
+import { Booking } from "../../components/users";
+import PackageIncludesView from "../../components/users/PackageIncludesView";
 const { Search } = Input;
 const onChange = (date, dateString) => {
   console.log(date, dateString);
@@ -26,6 +28,9 @@ function Packages() {
       <button className="createPackageBtn_72 ">CONTINUE TO CHECKOUT </button>
       <div>
      <BigImageView/>
+     <AddBillingAddress/>
+     <Booking/>
+     <PackageIncludesView/>
      </div>
     </div>
   );

@@ -92,34 +92,32 @@
   width: 525px;
   height: 572px;
   border-radius: 11px;
-  background-color:white;
+  background-color: white;
   display: flex;
   flex-direction: column;
   padding: 20px 0 20px 0;
-    
-  }
-  .innerBoxBigImg_72 {
-    width: 465px;
-    height: 527px;
-    background: #E6E6E6;
-    border-radius: 11px;
-    margin: auto;
-    margin-top: 30px;
-    
-  }
-  .contentBoxBigImg_72 {
-    width: 467px;
-    height: 527px;
-    background: #E6E6E6;
-    border-radius: 8px;
-    transform: translate(-50%, -50%);
-  }
-.popUpPackageBigImg_72 p{
+}
+.innerBoxBigImg_72 {
+  width: 465px;
+  height: 527px;
+  background: #e6e6e6;
+  border-radius: 11px;
+  margin: auto;
+  margin-top: 30px;
+}
+.contentBoxBigImg_72 {
+  width: 467px;
+  height: 527px;
+  background: #e6e6e6;
+  border-radius: 8px;
+  transform: translate(-50%, -50%);
+}
+.popUpPackageBigImg_72 p {
   font-size: 20px;
   font-weight: 600;
-  margin: 0 10px 0 20px ;
+  margin: 0 10px 0 20px;
 }
-.saveAddressBtn_72{
+.saveAddressBtn_72 {
   border-radius: 11px;
   background: #533c56;
   width: 244px;
@@ -127,7 +125,45 @@
   padding: 12px 0px;
   justify-content: center;
   align-items: center;
- margin-top: 10px;
+  margin-top: 10px;
+
+  color: #fff;
+}
+.Add_Address_popup_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px 10px 0;
+  gap: 20px;
   
+}
+.Book_Package_container_72{
+  width: 795px;
+  height: 610px;
+  border-radius: 11px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px;
+}
+.Package_includes_view_72 {
+  width: 595px;
+  border-radius: 11px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 20px 0;
+}
+.cancel_Package_72 {
+  border-radius: 11px;
+  background:#424866;
+  width: 244px;
+  height: 45px;
+  padding: 12px 0px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+
   color: #fff;
 }
