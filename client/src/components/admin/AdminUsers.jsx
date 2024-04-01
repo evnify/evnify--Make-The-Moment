@@ -1,11 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import EmployeeListTable from "./UserListTable";
 import {
     ConfigProvider,
     Modal,
     Select,
-    DatePicker,
     Input,
     Button,
     Radio,
@@ -17,7 +16,7 @@ import {
 
 import axios from "axios";
 
-let index = 0;
+
 
 const { Search, TextArea } = Input;
 
@@ -26,12 +25,11 @@ function UserList() {
     const [addUserModelOpen, setaddUserModelOpen] = useState(false);
 
     // Type Selector
-    const [items, setItems] = useState(["Admin", "Hr-Manager", "Customer"]);
-    const [name, setName] = useState("");
+    const [items] = useState(["Admin", "Hr-Manager", "Customer"]);
+
 
     // Add employee model use states
     const [address, setAddress] = useState("");
-    const [dob, setDob] = useState("");
     const [type, setType] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -45,7 +43,6 @@ function UserList() {
 
         if (
             !address ||
-            !dob ||
             !type ||
             !firstName ||
             !lastName ||
@@ -70,7 +67,6 @@ function UserList() {
 
         const userData = {
             address,
-            dob,
             type,
             firstName,
             lastName,
@@ -81,7 +77,7 @@ function UserList() {
         };
 
         try {
-            await axios.post("/api/employees/addEmployee", userData);
+            await axios.post("/api/User/addUser", userData);
         } catch (error) {
             console.log(error);
         }
@@ -468,23 +464,7 @@ function UserList() {
                                             flexDirection: "column",
                                         }}
                                     >
-                                        <span
-                                            style={{
-                                                marginBottom: "3px",
-                                                fontSize: "12px",
-                                            }}
-                                        >
-                                            Date of Birth
-                                        </span>
-                                        <DatePicker
-                                            style={{
-                                                width: 205,
-                                                height: 40,
-                                            }}
-                                            onChange={(date, dateString) => {
-                                                setDob(dateString);
-                                            }}
-                                        />
+                                        
                                     </div>
                                 </div>
                             </div>
