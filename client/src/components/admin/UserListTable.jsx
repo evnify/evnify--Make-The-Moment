@@ -1,49 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { Space, Table, Tag, Avatar } from "antd";
 import axios from "axios";
+import Loader from "./Loader";
 
 const columns = [
     {
-        title: "ID",
-        dataIndex: "id",
-        key: "id",
+        title: "userID",
+        dataIndex: "userID",
+        key: "userID",
     },
     {
         title: "",
-        dataIndex: "avatar",
-        key: "avatar",
+        dataIndex: "profilePic",
+        key: "profilePic",
         render: (_, record) => (
             <Avatar size={35} src={record.avatarSrc} alt="avatar" />
         ),
     },
 
     {
-        title: "UserName",
-        dataIndex: "firstName",
+        title: "username",
+        dataIndex: "username",
         key: "username",
         render: (text) => <a>{text}</a>,
     },
 
     {
         title: "Phone Number",
-        dataIndex: "phonenumber",
-        key: "phonenumber",
+        dataIndex: "phoneNumber",
+        key: "phoneNumber",
     },
     {
         title: "Email Address",
-        dataIndex: "emailaddress",
-        key: "emailaddress",
+        dataIndex: "email",
+        key: "email",
     },
 
     {
         title: "Type",
-        dataIndex: "type",
-        key: "type",
+        dataIndex: "userType",
+        key: "userType",
     },
     {
         title: "Status",
-        key: "status",
-        dataIndex: "status",
+        key: "state",
+        dataIndex: "state",
         render: (_, { tags }) => (
             <>
                 {tags.map((tag) => {
@@ -81,12 +82,16 @@ const columns = [
 
 function UserListTable() {
     const [data, setData] = useState([]);
+    const [loading, setloading] = useState(false);
 
     useEffect(() => {
         async function fetchUserList() {
             try {
-                const response = await axios.get("api/users/getUser");
+                const response = await axios.get(
+                    `${process.env.PUBLIC_URL}api/users/getUser`
+                );
                 setData(response.data);
+                console.log("Data fetched:", response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -95,8 +100,19 @@ function UserListTable() {
     }, []);
 
     return (
-        <div>
-            <Table columns={columns} dataSource={data} scroll={{ x: true }} />
+        <div className="row">
+            {loading && <Loader />}
+            <div className="col-md-12">
+                <Table
+                    bordered={true}
+                    dataSource={data}
+                    columns={columns}
+                    pagination={{ pageSize: 15 }}
+                    footer={() => (
+                        <div className="footer-number">{`Total ${data.length} items`}</div>
+                    )}
+                />
+            </div>
         </div>
     );
 }

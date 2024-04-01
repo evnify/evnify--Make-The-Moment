@@ -19,6 +19,7 @@ import UserEmails from "./UserEmails";
 import NavBar from "./NavBar";
 import UserTab from "./UserTab";
 import UserTable from "./UserTable";
+import Loader from "./Loader";
 
 
 export {
@@ -42,5 +43,6 @@ export {
     UserEmails,
     NavBar,
     UserTab,
-    UserTable
+    UserTable,
+    Loader
 };
