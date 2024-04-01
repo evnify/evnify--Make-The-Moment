@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Icon } from '@iconify/react';
-
+import { Icon } from "@iconify/react";
 import { Menu, ConfigProvider } from "antd";
+import Navbar from "../../components/users/navBar";
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -15,20 +15,20 @@ function getItem(label, key, icon, children, type) {
 }
 
 const items = [
-    getItem("Statistics", "/employee", <Icon icon="streamline:graph-bar-increase" />),
-    getItem("Assigned Events", "/employee/events", <Icon icon="ic:round-event-note" />),
-    getItem("My Leaves", "/employee/leaves", <Icon icon="pepicons-pop:leave" />),
-    getItem("Salary", "/employee/salary", <Icon icon="mdi:auto-pay" />),
+    getItem("Profile", "/userprofile", <Icon icon="iconamoon:profile" />),
+    getItem("Booking", "/userprofile/booking", <Icon icon="prime:book" />),
+    getItem("Settings", "/userprofile/setting", <Icon icon="uil:setting" />),
+    getItem("Contact Us", "/userprofile/contactus",<Icon icon="grommet-icons:contact" />),
 ];
 
 // submenu keys of first level
 const rootSubmenuKeys = [];
 
-function EmpSideMenu() {
+function UserSideMenu() {
     const location = useLocation();
     const navigate = useNavigate();
-    const [openKeys, setOpenKeys] = useState(["/employee"]);
-    const [selectedKeys, setSelectedKeys] = useState("/employee");
+    const [openKeys, setOpenKeys] = useState(["/userprofile"]);
+    const [selectedKeys, setSelectedKeys] = useState("/userprofile");
 
     useEffect(() => {
         const pathName = location.pathname;
@@ -44,7 +44,9 @@ function EmpSideMenu() {
         }
     };
     return (
-        <div className="Emp_SideMenu">
+        <>
+            
+            <div className="User_SideMenu">
             <ConfigProvider
                 theme={{
                     components: {
@@ -52,6 +54,7 @@ function EmpSideMenu() {
                             iconSize: "20px",
                             itemHeight: "40px",
                             subMenuItemBg : "#ffffff",
+                            
                         },
                     },
                 }}
@@ -73,7 +76,8 @@ function EmpSideMenu() {
                 />
             </ConfigProvider>
         </div>
+        </>
     );
 }
 
-export default EmpSideMenu;
+export default UserSideMenu;

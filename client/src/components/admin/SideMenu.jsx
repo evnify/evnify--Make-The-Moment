@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from '@iconify/react';
+import {logo_dark_with_tag} from '../../assets'
 
 import { Menu, ConfigProvider } from "antd";
 
@@ -73,6 +74,7 @@ function SideMenu() {
     };
     return (
         <div className="Admin_SideMenu">
+            <img src={logo_dark_with_tag} alt="logo" className="admin_sidebar_logo" />
             <ConfigProvider
                 theme={{
                     components: {

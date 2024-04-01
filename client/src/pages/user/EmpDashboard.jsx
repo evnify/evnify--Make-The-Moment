@@ -1,5 +1,5 @@
 import React from "react";
-import {EmpRoutes, EmpSideMenu } from "../../components";
+import {EmpRoutes, EmpSideMenu, EmpHero } from "../../components";
 
 function EmpDashboard() {
     return (
@@ -7,6 +7,7 @@ function EmpDashboard() {
             <div className="Emp_SideMenuAndPageContent">
                 <EmpSideMenu />
                 <div className="Emp_PageContent">
+                    <EmpHero />
                     <EmpRoutes />
                 </div>
             </div>
