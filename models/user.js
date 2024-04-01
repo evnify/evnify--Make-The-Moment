@@ -1,6 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+    userID : {
+        type: String,
+        required: true,
+    },
     firstName: {
         type: String,
         required: true,
@@ -16,7 +20,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
     },
     phoneNumber: {
         type: String,
@@ -38,11 +41,7 @@ const userSchema = new mongoose.Schema({
         type: Array,
         required: false,
     },
-    address1: {
-        type: Array,
-        required: false,
-    },
-    address2: {
+    address: {
         type: Array,
         required: false,
     },
@@ -54,12 +53,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    
     profilePic: {
         type: String,
         required: false,
     }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('users', userSchema);
 
 module.exports = User;

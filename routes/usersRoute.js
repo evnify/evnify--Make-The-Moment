@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const employeeModel = require("../models/user");
+const UserModel = require("../models/user");
 
 const generateUniquePwd = async () => {
     let id = Math.floor(10000000 + Math.random() * 90000000);
@@ -10,7 +10,7 @@ const generateUniquePwd = async () => {
 
 const generateUniqueID = async () => {
     let id = 'U' + Math.floor(10000000 + Math.random() * 90000000);
-    const existingLeave = await employeeModel.findOne({ empID: id });
+    const existingLeave = await UserModel.findOne({ userId: id });
     if (existingLeave) {
         return generateUniqueID();
     }
@@ -19,15 +19,20 @@ const generateUniqueID = async () => {
 
 router.post('/addUser', async (req, res) => {
     const UserUserData = req.body;
-    const UserID = await generateUniqueID();
+    const userID = await generateUniqueID();
+    console.log(userID);
     const password = await generateUniquePwd();
 
-    employeeData.UserID = UserID;
+    UserUserData.userID = userID;
+    UserUserData.password = password;
 
     const newUser = new UserModel(UserUserData);
+
+    console.log(newUser);
     try {
         await newUser.save();
         res.send("User added successfully");
+        console.log("User added successfully"	);
     } catch (error) {
         return res.status(400).json({ message: error });
     }
@@ -36,8 +41,18 @@ router.post('/addUser', async (req, res) => {
 });
 
 router.get('/getUser', async (req, res) => {
-    const User = await UserModel.find();
-    res.send(User);
+    try {
+        const User = await UserModel.find();
+        res.send(User);
+        console.log(User)
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+
+
+
 
 module.exports = router;

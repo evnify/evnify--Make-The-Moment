@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Space, Table, Tag, Avatar } from "antd";
 import axios from "axios";
 
@@ -80,50 +80,21 @@ const columns = [
     },
 ];
 
-const data = [
-    {
-        key: "1",
-        avatarSrc: "https://i.ibb.co/CvqgyHS/Screenshot-2024-03-30-165241.png",
-        username: "John Brown",
-        id: 15454455,
-        username: "John Brown",
-        emailaddress: "JohnBrown@gmail.com",
-        phonenumber: "123-456-7890",
-        address: "New York No. 1 Lake Park",
-        tags: ["Active"],
-        type : "Admin",
-    },
-    {
-        key: "2",
-        username: "Jim Green",
-        id: 26467679,
-        emailaddress: "JohnBrown@gmail.com",
-        phonenumber: "123-456-7890",
-        address: "London No. 1 Lake Park",
-        tags: ["Active"],
-        type : "Admin",
-
-    },
-    {
-        key: "3",
-        username: "Joe Black",
-        id: 34647964,
-        emailaddress: "JohnBrown@gmail.com",
-        phonenumber: "123-456-7890",
-        address: "Sydney No. 1 Lake Park",
-        tags: ["Suspended"],
-        type : "Admin",
-
-    },
-];
-
 function UserListTable() {
+    const [data, setData] = useState([]);
+
     useEffect(() => {
-        async function fetchEmployeeList() {
-            const response = await axios.get("api/employees/getEmployees");
-            console.log(response.data);
+        async function fetchUserList() {
+            try {
+                const response = await axios.get("api/users/getUser");
+                setData(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         }
+        fetchUserList();
     }, []);
+
     return (
         <div>
             <Table columns={columns} dataSource={data} scroll={{ x: true }} />

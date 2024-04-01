@@ -16,6 +16,8 @@ import {
 
 import axios from "axios";
 
+var index = 0;
+
 
 
 const { Search, TextArea } = Input;
@@ -28,9 +30,9 @@ function UserList() {
     const [items] = useState(["Admin", "Hr-Manager", "Customer"]);
 
 
-    // Add employee model use states
+    // Add user model use states
     const [address, setAddress] = useState("");
-    const [type, setType] = useState("");
+    const [userType, setuserType] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -43,7 +45,7 @@ function UserList() {
 
         if (
             !address ||
-            !type ||
+            !userType ||
             !firstName ||
             !lastName ||
             !email ||
@@ -61,13 +63,11 @@ function UserList() {
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
             );
             console.log(profilePic);
-        } else {
-            console.log("Profile image already set:", profilePic);
         }
 
         const userData = {
             address,
-            type,
+            userType,
             firstName,
             lastName,
             email,
@@ -77,7 +77,7 @@ function UserList() {
         };
 
         try {
-            await axios.post("/api/User/addUser", userData);
+            await axios.post("/api/users/addUser", userData);
         } catch (error) {
             console.log(error);
         }
@@ -155,7 +155,7 @@ function UserList() {
 
         axios
             .post(
-                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                "https://api.imgbb.com/1/upload?key=d55d63245901bf5edae5392acc3083dc",
                 formData
             )
             .then((response) => {
@@ -315,7 +315,7 @@ function UserList() {
                                             height: 35,
                                         }}
                                         onChange={(value) => {
-                                            setType(value);
+                                            setuserType(value);
                                             console.log(value);
                                         }}
                                         placeholder="Select"
