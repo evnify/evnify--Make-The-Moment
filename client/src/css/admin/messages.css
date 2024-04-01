@@ -1,11 +1,11 @@
 /*message Insight*/
-.messagre-insight-top{
+.messagre-insight-top {
     display: flex;
     justify-content: space-between;
     margin: 20px;
 }
 
-.messagre-insight-card{
+.messagre-insight-card {
     width: 350px;
     height: 150px;
     padding: 20px;
@@ -14,7 +14,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.message-insight-main-insight{
+.message-insight-main-insight {
     width: 1210px;
     height: 400px;
     background-color: #fff;
@@ -23,12 +23,12 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.message-insight-bottom-insight{
+.message-insight-bottom-insight {
     display: flex;
     flex-direction: row;
 }
 
-.message-insight-categories{
+.message-insight-categories {
     width: 750px;
     height: 400px;
     background-color: #fff;
@@ -37,7 +37,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.message-calender-view{
+.message-calender-view {
     width: 400px;
     height: 400px;
     background-color: #fff;
@@ -49,17 +49,18 @@
 
 /*All message*/
 
-.message-Box-all-messages{
+.message-Box-all-messages {
     display: flex;
     flex-direction: row;
     width: 1220px;
-    height: 590px;
+    height: 610px;
     background-color: #fff;
-    margin: 30px 0 10px 22px;
-    
+    margin: 5px 0 10px 22px;
+    border-radius: 11px;
+
 }
 
-.message-all-users-bar{
+.message-all-users-bar {
     display: flex;
     flex-direction: column;
     width: 400px;
@@ -67,13 +68,7 @@
     border-right: 1px solid #d8d8d8;
 }
 
-.message-all-users-bar-top{
-    height: 80px;
-    border-bottom: 1px solid #d8d8d8;
-    width: 820px ;
-}
-
-.message-all-users-bar-top-right{
+.message-all-users-bar-top {
     display: flex;
     flex-direction: row;
     height: 80px;
@@ -81,16 +76,25 @@
     width: 820px;
 }
 
-.message-reply-admin{
+.message-all-users-bar-top-right {
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 820px;
+}
+
+.message-reply-admin {
     display: flex;
     flex-direction: column;
 }
 
-.message-all-users-bar-bottom-search{
-  margin: 10px 0 0 20px;
+.message-all-users-bar-bottom-search {
+    margin: 10px 0 0 20px;
 
 }
-.message-received-preview{
+
+.message-received-preview {
     display: flex;
     flex-direction: row;
     margin: 20px 30px 0 0;
@@ -98,45 +102,118 @@
 
 }
 
-.all-message-profile-pic img{
+.all-message-profile-pic img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin: 10px 0 0 10px;
 }
 
-.all-message-name{
+.all-message-name {
     display: flex;
     flex-direction: column;
     margin-left: 20px;
 }
 
-.all-message-timeandname{
+.all-message-timeandname {
     display: flex;
     flex-direction: row;
-    
+
+}
+
+.message-reply-admin-box-top {
+    height: 420px;
+    margin: 20px 0 0 20px;
+
 }
 
 .all-message-name-tag {
     width: 220px;
     text-align: left;
-    
+
 }
 
-.message-reply-admin-box{
+.message-reply-admin-box {
     display: flex;
     flex-direction: column;
-    margin: 20px 0 0 20px;
+
 }
 
-.message-receved-admin{
+.message-receved-admin {
     display: flex;
     flex-direction: row;
 }
 
-.message-send-admin{
+.message-send-admin {
     display: flex;
     flex-direction: row;
     margin: 20px 20px 0 0;
     justify-content: flex-end;
+}
+
+.message-Send-bar {
+    display: flex;
+    flex-direction: row;
+    border: 2px solid #d8d8d8;
+    height: 40px;
+    margin: 20px;
+    border-radius: 11px;
+}
+
+
+/*user email */
+
+.email-full-container {
+    display: flex;
+    flex-direction: row;
+    width: 1220px;
+    height: 610px;
+    background-color: #fff;
+    margin: 5px 0 10px 22px;
+    border-radius: 11px;
+}
+
+.email-container-left {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 610px;
+    border-right: 1px solid #d8d8d8;
+}
+
+.email-container-right {
+    display: flex;
+    flex-direction: row;
+    width: 820px;
+    height: 610px;
+}
+
+.left-side-full-email-view {
+    display: flex;
+    flex-direction: row;
+    width: 400px;
+    height: 130px;
+    border-bottom: 1px solid #000000;
+}
+
+.left-side-full-email-top {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    justify-content: space-between;
+    margin: 30px 100px 0 100px;
+
+}
+
+.left-side-full-email-view-text {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+
+}
+
+.name-email-view {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0 0 10px;
 }
