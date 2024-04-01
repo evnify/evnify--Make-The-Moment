@@ -47,6 +47,10 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    status : {
+        type: String,
+        default: "active",
+    },
     leavesBalance : {
         type: Array,
         default: leaveBalanceDefault

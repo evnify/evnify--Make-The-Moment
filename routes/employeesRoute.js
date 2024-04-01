@@ -35,9 +35,13 @@ router.post('/addEmployee', async (req, res) => {
 
 });
 
-router.get('/getEmployees', async (req, res) => {
-    const employees = await employeeModel.find();
-    res.send(employees);
+router.get('/getAllEmployees', async (req, res) => {
+    try {
+        const employees = await employeeModel.find();
+        res.send(employees);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
 });
 
 

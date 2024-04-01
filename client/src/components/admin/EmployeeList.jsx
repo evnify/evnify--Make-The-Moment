@@ -1,9 +1,5 @@
-import React, { useState, useRef } from "react";
-import EmployeeListTable from "./others/EmployeeListTable";
-import {
-    LoadingOutlined,
-    PlusOutlined,
-} from "@ant-design/icons";
+import React, { useState, useRef, useEffect } from "react";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import {
     ConfigProvider,
     Modal,
@@ -16,6 +12,9 @@ import {
     Space,
     message,
     Upload,
+    Avatar,
+    Tag,
+    Table,
 } from "antd";
 
 import axios from "axios";
@@ -23,7 +22,6 @@ import axios from "axios";
 let index = 0;
 
 const { Search, TextArea } = Input;
-
 
 function EmployeeList() {
     const [selectedType, setSelectedType] = useState("all");
@@ -61,20 +59,101 @@ function EmployeeList() {
     const [username, setUsername] = useState("");
     const [profileImage, setProfileImage] = useState("");
 
-    const saveEmployee = async () => {
+    //Employee table
+    const columns = [
+        {
+            title: "",
+            dataIndex: "profileImage",
+            key: "profileImage",
+            render: (_, record) => (
+                <Avatar
+                    size={35}
+                    src={record.profileImage}
+                    alt="profileImage"
+                />
+            ),
+        },
+        {
+            title: "ID",
+            dataIndex: "empID",
+            key: "empID",
+        },
+        {
+            title: "First Name",
+            dataIndex: "firstName",
+            key: "firstName",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Last Name",
+            dataIndex: "lastName",
+            key: "lastName",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
+        },
+        {
+            title: "Address",
+            dataIndex: "address",
+            key: "address",
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Suspended") {
+                    color = "red";
+                }
+                return <Tag color={color}>{status.toUpperCase()}</Tag>;
+            },
+        },
+        {
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    <a>Invite</a>
+                    <a>Delete</a>
+                </Space>
+            ),
+        },
+    ];
 
+    async function fetchEmployeeList() {
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
+        );
+        setEmployeeList(response.data);
+    }
+
+    const saveEmployee = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if(!address || !dob || !type || !firstName || !lastName || !email || !phoneNumber || !username ){
+
+        if (
+            !address ||
+            !dob ||
+            !type ||
+            !firstName ||
+            !lastName ||
+            !email ||
+            !phoneNumber ||
+            !username
+        ) {
             return message.error("Please fill all the fields");
-        }else if(!emailRegex.test(email)){
+        } else if (!emailRegex.test(email)) {
             return message.error("Please enter a valid email address");
         }
 
         if (!profileImage || profileImage.trim() === "") {
             // Set default profile image
-            setProfileImage("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png");
-            console.log(profileImage);
+            setProfileImage(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+            );
         } else {
             console.log("Profile image already set:", profileImage);
         }
@@ -90,18 +169,30 @@ function EmployeeList() {
             username,
             profileImage,
         };
-        
 
-        try{
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/addEmployee`,
+                empData
+            );
+            message.success("Employee added successfully");
+            setAddEmployeeModelOpen(false);
+            fetchEmployeeList();
 
-            await axios.post("/api/employees/addEmployee", empData)
-
-        }catch(error){
+            // Reset form fields
+            setAddress("");
+            setDob("");
+            setType("");
+            setFirstName("");
+            setLastName("");
+            setEmail("");
+            setPhoneNumber("");
+            setUsername("");
+            setProfileImage("");
+            setFileList([]);
+        } catch (error) {
             console.log(error);
         }
-        
-
-
     };
 
     const onSearch = (value) => console.log(value);
@@ -153,7 +244,6 @@ function EmployeeList() {
         }
     };
 
-
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
         reader.addEventListener("load", () => callback(reader.result));
@@ -190,7 +280,7 @@ function EmployeeList() {
                             name: "image.png",
                             status: "done",
                             url: response.data.data.url,
-                        }
+                        },
                     ]);
                     setProfileImage(response.data.data.url);
                     console.log(profileImage);
@@ -205,17 +295,29 @@ function EmployeeList() {
                 message.error("Error uploading image: " + error.message);
             });
     };
-    
 
-    
+    // Table Functions
+    const [employeeList, setEmployeeList] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10, 
+        current: 1,
+        position : ['bottomCenter']
+    });
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        setPagination(pagination);
+    };
+
+    useEffect(() => {
+        fetchEmployeeList();
+    }, []);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <ConfigProvider
                 theme={{
                     components: {
-                        Modal: {
-                        }
+                        Modal: {},
                     },
                 }}
             >
@@ -223,7 +325,7 @@ function EmployeeList() {
                     <div className="admin_employee_list_cards">
                         <div className="admin_emp_details_card card1">
                             <h1>Total Employees</h1>
-                            <h2>568</h2>
+                            <h2>{employeeList.length}</h2>
                         </div>
                         <div className="admin_emp_details_card card2">
                             <h1>Pending Leaves</h1>
@@ -358,6 +460,7 @@ function EmployeeList() {
                                             setType(value);
                                             console.log(value);
                                         }}
+                                        value={type}
                                         placeholder="Select"
                                         dropdownRender={(menu) => (
                                             <>
@@ -416,7 +519,13 @@ function EmployeeList() {
                                         >
                                             First Name
                                         </span>
-                                        <Input size="large" onChange={(e)=>setFirstName(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setFirstName(e.target.value)
+                                            }
+                                            value={firstName}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -433,7 +542,14 @@ function EmployeeList() {
                                         >
                                             Email
                                         </span>
-                                        <Input type="email" size="large" onChange={(e)=> setEmail(e.target.value)} />
+                                        <Input
+                                            type="email"
+                                            size="large"
+                                            onChange={(e) =>
+                                                setEmail(e.target.value)
+                                            }
+                                            value={email}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -450,7 +566,13 @@ function EmployeeList() {
                                         >
                                             Phone Number
                                         </span>
-                                        <Input size="large" onChange={(e)=>setPhoneNumber(e.target.value)} />
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setPhoneNumber(e.target.value)
+                                            }
+                                            value={phoneNumber}
+                                        />
                                     </div>
                                 </div>
                                 <div className="add_employee_popup_details_container_left">
@@ -469,7 +591,13 @@ function EmployeeList() {
                                         >
                                             Last Name
                                         </span>
-                                        <Input size="large" onChange={(e)=> setLastName(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setLastName(e.target.value)
+                                            }
+                                            value={lastName}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -486,7 +614,13 @@ function EmployeeList() {
                                         >
                                             Username
                                         </span>
-                                        <Input size="large" onChange={(e)=> setUsername(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setUsername(e.target.value)
+                                            }
+                                            value={username}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -523,6 +657,7 @@ function EmployeeList() {
                                         width: 520,
                                     }}
                                     rows={4}
+                                    value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
                             </div>
@@ -550,9 +685,16 @@ function EmployeeList() {
                             </button>
                         </div>
                     </Modal>
-                    
-                    <div style={{ width : "100%"}}>
-                    <EmployeeListTable/>
+
+                    <div style={{ width: "100%" }}>
+                        <div>
+                            <Table
+                                columns={columns}
+                                dataSource={employeeList}
+                                pagination={pagination}
+                                onChange={handleTableChange}
+                            />
+                        </div>
                     </div>
                 </div>
             </ConfigProvider>
