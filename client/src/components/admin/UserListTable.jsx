@@ -19,7 +19,7 @@ const columns = [
 
     {
         title: "UserName",
-        dataIndex: "username",
+        dataIndex: "firstName",
         key: "username",
         render: (text) => <a>{text}</a>,
     },
@@ -60,7 +60,6 @@ const columns = [
             </>
         ),
     },
-
 
     {
         title: "Address",

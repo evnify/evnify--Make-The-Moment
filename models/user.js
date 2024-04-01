@@ -1,10 +1,9 @@
-
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    userID : {
-        type: String,
-        required: true,
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
     },
 
     firstName: {
@@ -22,7 +21,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-       
     },
     phoneNumber: {
         type: String,
@@ -34,7 +32,7 @@ const userSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        default: 'user'
+        default: "user",
     },
     city: {
         type: Array,
@@ -49,7 +47,7 @@ const userSchema = new mongoose.Schema({
         type: Array,
         required: false,
     },
-    
+
     zipcode: {
         type: Number,
         default: null,
@@ -59,16 +57,12 @@ const userSchema = new mongoose.Schema({
         default: null,
     },
 
-
     profilePic: {
         type: String,
         required: false,
-    }
+    },
 });
 
-
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model("user", userSchema);
 
 module.exports = User;
-
-

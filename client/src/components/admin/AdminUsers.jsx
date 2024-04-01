@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import EmployeeListTable from "./UserListTable";
+import UserListTable from "./UserListTable";
 import {
     ConfigProvider,
     Modal,
@@ -16,9 +16,8 @@ import {
 
 import axios from "axios";
 
+
 var index = 0;
-
-
 
 const { Search, TextArea } = Input;
 
@@ -76,6 +75,7 @@ function UserList() {
             profilePic,
         };
 
+       
         try {
             await axios.post("/api/users/addUser", userData);
         } catch (error) {
@@ -505,7 +505,7 @@ function UserList() {
                     </Modal>
 
                     <div style={{ width: "100%" }}>
-                        <EmployeeListTable />
+                        <UserListTable />
                     </div>
                 </div>
             </ConfigProvider>
