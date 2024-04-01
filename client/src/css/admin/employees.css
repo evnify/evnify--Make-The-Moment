@@ -87,6 +87,7 @@
     background-color: #f5f5f5;
 }
 
+
 .admin_emp_list_top_menu_button {
     color: #fff;
     font-family: "Product Sans";
@@ -161,6 +162,14 @@
     justify-content: flex-start;
     align-items: center;
     gap: 20px;
+}
+
+.add_employee_top_container p{
+    font-family: "Product Sans";
+    font-size: 22px;
+    font-weight: 600;
+    color: #464646;
+
 }
 
 .avatar-container {

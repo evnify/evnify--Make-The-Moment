@@ -44,6 +44,28 @@ router.get('/getAllEmployees', async (req, res) => {
     }
 });
 
+router.post('/editEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, employeeData);
+        res.send("Employee updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post('/suspendEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, { status: 'Suspended' });
+        res.send("Employee suspended successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
 
 
 module.exports = router;
