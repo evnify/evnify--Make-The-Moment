@@ -28,7 +28,16 @@ router.post('/newLeave',async (req,res)=>{
         return res.status(400).json({message: error});
     }
 
-})
+});
+
+router.get('/getAllLeaves',async (req,res)=>{
+    try{
+        const allLeaves = await leaveModel.find();
+        res.send(allLeaves);
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
 
 
 
