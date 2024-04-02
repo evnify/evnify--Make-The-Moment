@@ -26,6 +26,11 @@ const messageSchema = new mongoose.Schema({
         type: String,
         default: "unread",
     },
+    sender:{
+        type:String,
+        required:true,
+        default: "customer"
+    }
 }, { timestamps: true });
 
 const messageModel = mongoose.model("message", messageSchema);

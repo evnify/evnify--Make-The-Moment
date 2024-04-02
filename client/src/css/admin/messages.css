@@ -124,7 +124,8 @@
 .message-reply-admin-box-top {
     height: 420px;
     margin: 20px 0 0 20px;
-
+    overflow-y: auto;
+    overflow-x: hidden; 
 }
 
 .all-message-name-tag {
@@ -142,6 +143,7 @@
 .message-receved-admin {
     display: flex;
     flex-direction: row;
+    margin: 20px 0 0 20px;
 }
 
 .message-send-admin {
@@ -183,7 +185,7 @@
 
 .email-container-right {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 820px;
     height: 610px;
 }
@@ -217,3 +219,41 @@
     flex-direction: row;
     margin: 10px 0 0 10px;
 }
+
+.email-container-right-top{
+    display: flex;
+    flex-direction: row;
+    width: 820px;
+    height: 80px;
+}
+
+.email-container-right-top-center-text{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0 0 20px;
+    width: 500px;
+}
+
+.email-content{
+    display: flex;
+    flex-direction: column;
+    margin: 50px 0 0 60px;
+    width: 700px;
+    text-align: justify;
+    white-space: pre-line;
+    line-height: 2.5;
+}
+
+.message-reply-admin-box-top::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+  }
+
+  /* Style the track (the area where the scrollbar handle moves) */
+.message-reply-admin-box-top::-webkit-scrollbar-track {
+    background: #ffffff; /* Set the background color of the track */
+  }
+
+  .message-reply-admin-box-top::-webkit-scrollbar-thumb {
+    background: #f1f1f1; /* Set the color of the scrollbar handle */
+    border-radius: 4px; /* Add border-radius for rounded corners */
+  }
