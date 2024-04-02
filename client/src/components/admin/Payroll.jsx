@@ -176,11 +176,9 @@ function Payroll() {
       </div>
         //Create New Paysheet"
              
-      <Modal
+      <Modal  footer={null}
         title="Create New Paysheet"
         open={isModalOpen}
-        onOk={saveSalary}
-        onCancel={handleCancel}
       >
         <div className="create_paysheet_002">
           <div>
@@ -377,11 +375,34 @@ function Payroll() {
       }
     ]}
   />
+  
             </div>
                 </div>
-
           </div>
         </div>
+        <h5 className=" total_salary_002">Total Salary : 200000 LKR</h5>
+        <br />
+        <button
+                                className="salary_save_btn_002"
+                                onClick={saveSalary}
+                                style={{
+                                    width: "120px",
+                                    height: "40px",
+                                }}
+                            >
+                              Save
+                            </button>
+                            <button
+                                className="salary_cansel_btn_002"
+                                onClick={handleCancel}
+                                style={{
+                                    width: "120px",
+                                    height: "40px",
+                                }}
+                            >
+                              Cansel
+                            </button>
+                      
       </Modal>
     </div>
   );
