@@ -73,6 +73,7 @@ function EmployeeList() {
     const [editPhoneNumber, setEditPhoneNumber] = useState("");
     const [editUsername, setEditUsername] = useState("");
     const [editProfileImage, setEditProfileImage] = useState("");
+    const [editStatus, setEditStatus] = useState("");
 
     const [fileListEdit, setFileListEdit] = useState([]);
 
@@ -241,10 +242,11 @@ function EmployeeList() {
                         <button
                             style={{
                                 fontSize: "20px",
-                                color: "#E0E0E0",
+                                color: "#9D9D9D",
                                 border: "none",
                                 background: "transparent",
                             }}
+                            onClick={() => showModal(record)}
                         >
                             <Icon icon="uil:setting" />
                         </button>
@@ -266,6 +268,8 @@ function EmployeeList() {
         setEditPhoneNumber(record.phoneNumber);
         setEditUsername(record.username);
         setEditProfileImage(record.profileImage);
+        setEditStatus(record.status);
+        console.log(record.status);
         setFileListEdit([
             {
                 uid: "1",
@@ -354,7 +358,6 @@ function EmployeeList() {
     const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
-    const [previewTitle, setPreviewTitle] = useState("");
     const [fileList, setFileList] = useState([]);
 
     const beforeUpload = (file) => {
@@ -409,9 +412,6 @@ function EmployeeList() {
         }
         setPreviewImage(file.url || file.preview);
         setPreviewOpen(true);
-        setPreviewTitle(
-            file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-        );
     };
 
     const customRequest = ({ file, onSuccess, onError }) => {
@@ -465,11 +465,18 @@ function EmployeeList() {
         setIsConformModalOpen(true);
     };
 
-    const handleCancelConform = () => {
+    const conformActive = () => {
+        setIsActiveModalOpen(true);
+    };
+
+    const handleSuspendCancelConform = () => {
         setIsConformModalOpen(false);
     };
 
+
+
     const [isConformModalOpen, setIsConformModalOpen] = useState(false);
+    const [isActiveModalOpen, setIsActiveModalOpen] = useState(false);
 
     const suspendUser = async () => {
         try {
@@ -486,24 +493,51 @@ function EmployeeList() {
         }
     };
 
+    const activeUser = async () => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/activeEmployee`,
+                { empID: tableModelContent.empID }
+            );
+            message.success("Employee activated successfully");
+            setTableModelOpen(false);
+            setIsActiveModalOpen(false);
+            fetchEmployeeList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
     useEffect(() => {
         fetchEmployeeList();
     }, []);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Active conformation model */}
+            <Modal
+                title="Are You Sure?"
+                open={isActiveModalOpen}
+                onOk={activeUser}
+                okText="Active"
+                onCancel={() => setIsActiveModalOpen(false)}
+                width={300}
+                centered
+            >
+                <p>This can't be undone.</p>
+            </Modal>
             {/* Suspend Conformation model */}
             <Modal
                 title="Are You Sure?"
                 open={isConformModalOpen}
                 onOk={suspendUser}
                 okText="Suspend"
-                onCancel={handleCancelConform}
+                onCancel={() => setIsConformModalOpen(false)}
                 width={300}
                 centered
             >
                 <p>This can't be undone.</p>
-                
             </Modal>
             {/* Table model */}
             <Modal
@@ -774,22 +808,37 @@ function EmployeeList() {
                             onChange={(e) => setEditAddress(e.target.value)}
                         />
                     </div>
-                    <button
-                        onClick={conformSuspend}
-                        style={{
-                            border: "none",
-                            background: "none",
-                            width: "fit-content",
-                            color: "red",
-                            margin: "10px 0 0 5px",
-                        }}
-                    >
-                        Suspend User
-                    </button>
+                    {editStatus === "Active" ? (
+                        <button
+                            onClick={conformSuspend}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "red",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Suspend User
+                        </button>
+                    ) :  (
+                        <button
+                            onClick={conformActive}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "green",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Activate User
+                        </button>
+                    )}
                 </div>
                 <div className="add_emp_popup_footer_container center">
                     <Button
-                        onClick={() => setAddEmployeeModelOpen(false)}
+                        onClick={() => setTableModelOpen(false)}
                         style={{
                             width: "120px",
                             height: "40px",

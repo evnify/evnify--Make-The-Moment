@@ -66,6 +66,16 @@ router.post('/suspendEmployee', async (req, res) => {
     }
 });
 
+router.post('/activeEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, { status: 'Active' });
+        res.send("Employee activated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
 
 module.exports = router;
