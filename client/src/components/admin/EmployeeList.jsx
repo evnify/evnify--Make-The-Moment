@@ -161,7 +161,7 @@ function EmployeeList() {
                 empData
             );
             message.success("Employee edit successfully");
-            setTableModelContent(false);
+            setTableModelOpen(false);
             fetchEmployeeList();
         } catch (error) {
             console.log(error);
@@ -469,9 +469,6 @@ function EmployeeList() {
         setIsActiveModalOpen(true);
     };
 
-    const handleSuspendCancelConform = () => {
-        setIsConformModalOpen(false);
-    };
 
 
 
