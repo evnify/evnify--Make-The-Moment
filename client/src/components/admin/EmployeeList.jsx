@@ -819,7 +819,7 @@ function EmployeeList() {
                                 margin: "10px 0 0 5px",
                             }}
                         >
-                            Suspend User
+                            Suspend Employee
                         </button>
                     ) :  (
                         <button
@@ -832,7 +832,7 @@ function EmployeeList() {
                                 margin: "10px 0 0 5px",
                             }}
                         >
-                            Activate User
+                            Activate Employee
                         </button>
                     )}
                 </div>
