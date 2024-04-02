@@ -1,39 +1,29 @@
 const mongoose = require('mongoose');
 
 const salarySchema = new mongoose.Schema({
-    salaryID : {
+    employeeID: {
         type: String,
         required: true,
     },
-    employeeID : {
+    type: {
         type: String,
         required: true,
     },
-    employeeName : {
-        type: String,
+    date: {
+        type: Date,
         required: true,
     },
-    employeeStatus : {
-        type: String,
-        required: true,
-    },  
-    basicSalary : {
+    basicSalary: {
         type: Number,
         required: true,
     },
-    employeeEmail : {
-        type: String,
-        required: true,
-    },
-    
-    allowance : [],
-    deduction : [],
-    
-    netSalary : {
+    allowances: [String],
+    deductions: [String],
+    netSalary: {
         type: Number,
         required: true,
     },
 }, { timestamps: true });
 
-const salaryModel= mongoose.model('salary', salarySchema);
+const salaryModel = mongoose.model('Salary', salarySchema);
 module.exports = salaryModel;

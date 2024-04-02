@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Space, Table, Tag, Button, Radio, Input, Modal,DatePicker,Select  } from "antd";
+import { Space, Table, Tag, Button, Radio, Input, Modal,DatePicker,Select, message  } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 
 const { Column } = Table;
 const { Search } = Input;
@@ -51,6 +52,34 @@ const data = [
 
 function Payroll() {
   const [size, setSize] = useState("large");
+  const [employeeID, setemployeeID] = useState("")
+  const [type, setType] = useState("")
+  const [date, setDate] = useState("")
+  const [basicSalary, setBasicSalary] = useState("")
+  const [allowances, setAllowances] = useState("")
+  const [deductions, setDeductions] = useState("")
+  const [netSalary, setNetSalary] = useState("")
+
+  const saveSalary = async () => {
+    const salary = {
+      employeeID: "1",
+      type : "monthly",
+      date: "2024/05/10",
+      basicSalary : 200000,
+      allowances: ["Performance Bonus", "Transport Allowance"],
+      deductions: ["Social security deduction", "Income tax"],
+      netSalary: 200000
+    };
+    console.log(salary);
+    try {
+      await axios.post("/api/salary/addPayroll", salary);
+      message.success("Salary added successfully");
+    }catch(err){
+      message.error("Failed to add salary");
+    }
+  }
+
+  const [employeeName, setemployeeName] = useState("")
 
   const [isModalOpen, setIsModalOpen] = useState(false); // IS model open use state
   const showModal = () => {
@@ -150,7 +179,7 @@ function Payroll() {
       <Modal
         title="Create New Paysheet"
         open={isModalOpen}
-        onOk={handleOk}
+        onOk={saveSalary}
         onCancel={handleCancel}
       >
         <div className="create_paysheet_002">
@@ -170,7 +199,8 @@ function Payroll() {
               >
                 Select an Employee
               </span>
-              <Input type="text" size="large"placeholder="Search Employ" />
+              <Input type="text" size="large"placeholder="employeeName"
+              onChange={(e) => setemployeeName(e.target.value)} />
             </div>
             <div
               style={{
@@ -187,7 +217,8 @@ function Payroll() {
               >
                 Type
               </span>
-              <Input type="text" size="large"placeholder="type" />
+              <Input type="text" size="large"placeholder="type"
+              onChange={(e)=>setType(e.target.value)} />
             </div>
             <div
               style={{
