@@ -7,7 +7,7 @@ import moment from 'moment';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
-import { SendOutlined } from '@ant-design/icons';
+import { SendOutlined , CaretDownOutlined } from '@ant-design/icons';
 
 const { Search } = Input
 
@@ -21,6 +21,7 @@ const items = [
         key: '1',
     }
 ];
+
 function AllMessages() {
 
     const [message, setMessage] = useState("");
@@ -62,7 +63,7 @@ function AllMessages() {
                 sendTime: moment().format("HH:mm:ss"),
                 category: "Price",
                 sender: "admin",
-                reciverId:customerID
+                reciverId: customerID
             };
             if (selectedMessageId) {
                 // Update existing message
@@ -112,7 +113,7 @@ function AllMessages() {
         setSentMessages(messages.filter(msg => msg.sender === 'admin'));
         setReceivedMessages(messages.filter(msg => msg.sender === 'customer'));
     }, [messages]);
-    
+
 
 
 
@@ -142,8 +143,16 @@ function AllMessages() {
             <div className="message-all-users-bar">
                 <div className="message-all-users-bar-top">
                     <div className="message-all-users-bar-top-msg-text" style={{ margin: "20px 0 0 40px" }}>
-                        <b style={{ fontSize: "28px" }}>Messages</b>
-
+                        <b style={{ fontSize: "28px" }}>Messages</b>                  
+                    </div>
+                    <div style={{margin:"32px 0 0 10px"}}>
+                    <Dropdown menu={{ items }} trigger={['click']}>
+                            <a onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                <CaretDownOutlined style={{fontSize: '24px', color: 'black',}}/>
+                                </Space>
+                            </a>
+                        </Dropdown>
                     </div>
                     <div style={{ margin: "35px 0 0 90px", fontSize: "12px" }}>
                         filter by date
@@ -159,33 +168,33 @@ function AllMessages() {
                             }}
                             size="large"
                         />
-                        <div>
-                                {/* Render grouped messages */}
-                                {Object.keys(groupedMessages).map((customerID) => (
-                                    <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
-                                     onClick={() => handlePreviewClick(customerID)}>
-                                        <div className="all-message-profile-pic">
-                                            <img src={messageDp} alt="DP" />
+                        <div className="message-group-preview">
+                            {/* Render grouped messages */}
+                            {Object.keys(groupedMessages).map((customerID) => (
+                                <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                    onClick={() => handlePreviewClick(customerID)}>
+                                    <div className="all-message-profile-pic">
+                                        <img src={messageDp} alt="DP" />
+                                    </div>
+                                    <div className="all-message-name">
+                                        <div className="all-message-timeandname">
+                                            <div className="all-message-name-tag">
+                                                <b>{customerID}</b>
+                                            </div>
+                                            <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                {groupedMessages[customerID][0].sendTime}
+                                            </div>
                                         </div>
-                                        <div className="all-message-name">
-                                            <div className="all-message-timeandname">
-                                                <div className="all-message-name-tag">
-                                                    <b>{customerID}</b>
-                                                </div>
-                                                <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                    {groupedMessages[customerID][0].sendTime}
-                                                </div>
-                                            </div>
-                                            <div style={{ fontSize: "15px", color: "#b3b3b3" }}>
-                                                {groupedMessages[customerID][0].message}
-                                            </div>
-                                            <div>
-                                                <Tag color="purple">purple</Tag>
-                                            </div>
+                                        <div style={{ fontSize: "15px", color: "#b3b3b3" }}>
+                                            {groupedMessages[customerID][0].message}
+                                        </div>
+                                        <div>
+                                            <Tag color="purple">purple</Tag>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
+                        </div>
 
                     </div>
                 </div>
@@ -210,14 +219,14 @@ function AllMessages() {
                     </div>
                     <div>
                         <div className="message-reply-admin-box">
-                        <div className="message-reply-admin-box-top">
-                                    {/* Render received messages for the selected user ID */}
-                                    {selectedUserID && receivedMessages.filter(msg => msg.customerID === selectedUserID).map((msg, index) => (
-                                        <div className="message-receved-admin">
-                                            <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                            <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
-                                                <p>{msg.message}</p>
-                                            </div>
+                            <div className="message-reply-admin-box-top">
+                                {/* Render received messages for the selected user ID */}
+                                {selectedUserID && receivedMessages.filter(msg => msg.customerID === selectedUserID).map((msg, index) => (
+                                    <div className="message-receved-admin">
+                                        <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                        <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
+                                            <p>{msg.message}</p>
+                                        </div>
                                         <div style={{ margin: "10px 0 0 10px" }}>
                                             <div
                                                 id={`fade-button-${msg._id}`}

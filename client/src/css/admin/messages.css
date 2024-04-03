@@ -73,6 +73,37 @@
     border-radius: 11px;
 }
 
+.message-group-preview{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 30px 0 0;
+    height: 450px;
+    width: 378px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
+.message-group-preview::-webkit-scrollbar {
+    width: 8px; 
+    border-radius: 10px;
+}
+
+.message-group-preview::-webkit-scrollbar-track {
+    background: #ffffff; 
+    
+}
+
+
+.message-group-preview::-webkit-scrollbar-thumb {
+    background: #f1f1f1; 
+    border-radius: 4px;
+}
+
+.message-group-preview::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+}
+
 .message-all-users-bar {
     display: flex;
     flex-direction: column;
@@ -139,6 +170,9 @@
     margin: 20px 0 0 20px;
     overflow-y: auto;
     overflow-x: hidden; 
+    max-height: 420px; /* Set the maximum height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    scroll-behavior: smooth; /* Add smooth scrolling behavior */
 }
 
 .all-message-name-tag {
@@ -152,6 +186,11 @@
     flex-direction: column;
 
 }
+
+.message-scroll-down-animation {
+    transition: transform 0.05s ease-in-out;
+  }
+  
 
 .message-receved-admin {
     display: flex;
@@ -271,3 +310,7 @@
     background: #f1f1f1; /* Set the color of the scrollbar handle */
     border-radius: 4px; /* Add border-radius for rounded corners */
   }
+
+  .message-reply-admin-box-top::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+}
