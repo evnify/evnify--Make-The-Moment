@@ -135,6 +135,7 @@ const Login = () => {
                             className="login-form-button"
                             style={{ borderRadius: "5px" }}
                             size="middle"
+                            onClick={handleLogin}
                         >
                             Log in
                         </Button>

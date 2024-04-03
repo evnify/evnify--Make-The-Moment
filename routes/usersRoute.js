@@ -61,13 +61,48 @@ router.post("/deleteUser", async (req, res) => {
     }
 });
 
+router.post('/editUser', async (req, res) => {
+    const userData = req.body;
+    const userID = userData.userID;
+    try {
+        await UserModel.findOneAndUpdate({ userID: userID }, userData);
+        res.send("Employee updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post('/suspendUser', async (req, res) => {
+    const userData = req.body;
+    const userID = userData.userID;
+    try {
+        await UserModel.findOneAndUpdate({ userID: userID }, { status: 'Suspended' });
+        res.send("User suspended successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post('/activeUser', async (req, res) => {
+    const userData = req.body;
+    const userID = userData.userID;
+    try {
+        await UserModel.findOneAndUpdate({ userID: userID }, { status: 'Active' });
+        res.send("User activated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
 
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const userData = req.body;
+    const email = userData.email;
+    const password = userData.password;
 
     try {
-        const user = await user.findOne({ email, password });
+        const user = await UserModel.findOne({ email, password });
 
         if (user) {
             const temp = {

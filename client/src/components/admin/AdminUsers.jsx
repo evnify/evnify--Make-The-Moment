@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 import {
@@ -81,9 +81,6 @@ function UserList() {
     const [tableModelOpen, setTableModelOpen] = useState(false);
     const [tableModelContent, setTableModelContent] = useState();
 
-    
-
-
     // Type Selector
     const [items, setItems] = useState(["Admin", "Hr-Manager", "Customer"]);
 
@@ -109,11 +106,11 @@ function UserList() {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [username, setUsername] = useState("");
+    const [status, setStatus] = useState("Active");
     const [profilePic, setprofilePic] = useState("");
 
     //Edit employee model use states
     const [editAddress, setEditAddress] = useState("");
-    const [editDob, setEditDob] = useState("");
     const [editType, setEditType] = useState("sick leave");
     const [editFirstName, setEditFirstName] = useState("");
     const [editLastName, setEditLastName] = useState("");
@@ -124,10 +121,9 @@ function UserList() {
     const [editStatus, setEditStatus] = useState("");
     const [fileListEdit, setFileListEdit] = useState([]);
 
-
     async function fetchUserList() {
         const response = await axios.get(
-            `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
+            `${process.env.PUBLIC_URL}/api/users/getUser`
         );
         setUserList(response.data);
     }
@@ -142,7 +138,9 @@ function UserList() {
             !lastName ||
             !email ||
             !phoneNumber ||
-            !username
+            !username ||
+            !profilePic ||
+            !status
         ) {
             return message.error("Please fill all the fields");
         } else if (!emailRegex.test(email)) {
@@ -166,6 +164,7 @@ function UserList() {
             phoneNumber,
             username,
             profilePic,
+            status,
         };
 
         try {
@@ -174,7 +173,6 @@ function UserList() {
             console.log(error);
         }
     };
-
 
     const customRequestEdit = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
@@ -216,13 +214,14 @@ function UserList() {
 
         if (
             !editAddress ||
-            !editDob ||
             !editType ||
             !editFirstName ||
             !editLastName ||
             !editEmail ||
             !editPhoneNumber ||
-            !editPhoneNumber
+            !editPhoneNumber ||
+            !editStatus ||
+            !editProfileImage
         ) {
             return message.error("Please fill all the fields");
         } else if (!emailRegex.test(editEmail)) {
@@ -248,6 +247,7 @@ function UserList() {
             username: editUsername,
             profilePic: editProfileImage,
             userID: tableModelContent.userID,
+            status: editStatus,
             _id: tableModelContent._id,
         };
 
@@ -255,7 +255,7 @@ function UserList() {
 
         try {
             await axios.post(
-                `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
+                `${process.env.PUBLIC_URL}/api/users/editUser`,
                 empData
             );
             message.success("Employee edit successfully");
@@ -326,8 +326,8 @@ function UserList() {
             title: "Action",
             dataIndex: "",
             key: "x",
-            render: (_, user) => {
-                if (user.state === "Active") {
+            render: (_, record) => {
+                if (record.state === "Active") {
                     return (
                         <button
                             className="adelete"
@@ -358,7 +358,7 @@ function UserList() {
                                     border: "none",
                                     background: "transparent",
                                 }}
-                                onClick={() => showModal(user)}
+                                onClick={() => showModal(record)}
                             >
                                 <Icon icon="uil:setting" />
                             </button>
@@ -372,17 +372,16 @@ function UserList() {
     const showModal = (record) => {
         setTableModelContent(record);
         setTableModelOpen(true);
-        setEditAddress(record.address);
-        setEditDob(record.dob);
-        setEditType(record.type);
+        setEditAddress(record.address1);
+        setEditType(record.userType);
         setEditFirstName(record.firstName);
         setEditLastName(record.lastName);
         setEditEmail(record.email);
         setEditPhoneNumber(record.phoneNumber);
         setEditUsername(record.username);
-        setEditProfileImage(record.profileImage);
+        setEditProfileImage(record.profilePic);
         setEditStatus(record.status);
-        console.log(record.status);
+        console.log(record.state);
         setFileListEdit([
             {
                 uid: "1",
@@ -459,9 +458,37 @@ function UserList() {
         );
     };
 
-    
     const [isConformModalOpen, setIsConformModalOpen] = useState(false);
     const [isActiveModalOpen, setIsActiveModalOpen] = useState(false);
+
+    const suspendUser = async () => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/suspendUser`,
+                { userID: tableModelContent.userID }
+            );
+            message.success("Employee suspended successfully");
+            setTableModelOpen(false);
+            setIsConformModalOpen(false);
+            fetchUserList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const activeUser = async () => {
+        try {
+            await axios.post(`${process.env.PUBLIC_URL}/api/users/activeUser`, {
+                userID: tableModelContent.userID,
+            });
+            message.success("Employee activated successfully");
+            setTableModelOpen(false);
+            setIsActiveModalOpen(false);
+            fetchUserList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const customRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
@@ -469,7 +496,7 @@ function UserList() {
 
         axios
             .post(
-                "https://api.imgbb.com/1/upload?key=d55d63245901bf5edae5392acc3083dc",
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
                 formData
             )
             .then((response) => {
@@ -499,7 +526,31 @@ function UserList() {
     };
 
     return (
-        <div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Active conformation model */}
+            <Modal
+                title="Are You Sure?"
+                open={isActiveModalOpen}
+                onOk={activeUser}
+                okText="Active"
+                onCancel={() => setIsActiveModalOpen(false)}
+                width={300}
+                centered
+            >
+                <p>This can't be undone.</p>
+            </Modal>
+            {/* Suspend Conformation model */}
+            <Modal
+                title="Are You Sure?"
+                open={isConformModalOpen}
+                onOk={suspendUser}
+                okText="Suspend"
+                onCancel={() => setIsConformModalOpen(false)}
+                width={300}
+                centered
+            >
+                <p>This can't be undone.</p>
+            </Modal>
             <Modal
                 centered
                 open={tableModelOpen}
@@ -734,9 +785,7 @@ function UserList() {
                                     display: "flex",
                                     flexDirection: "column",
                                 }}
-                            >
-                                
-                            </div>
+                            ></div>
                         </div>
                     </div>
 
@@ -762,7 +811,7 @@ function UserList() {
                                 margin: "10px 0 0 5px",
                             }}
                         >
-                            Suspend Employee
+                            Suspend User
                         </button>
                     ) : (
                         <button
@@ -775,7 +824,7 @@ function UserList() {
                                 margin: "10px 0 0 5px",
                             }}
                         >
-                            Activate Employee
+                            Activate User
                         </button>
                     )}
                 </div>
@@ -1128,7 +1177,11 @@ function UserList() {
                                 <Table
                                     dataSource={data}
                                     columns={columns}
-                                    pagination={{ pageSize: 15 }}
+                                    pagination={{
+                                        pageSize: 1,
+                                        showSizeChanger: true,
+                                        showQuickJumper: true,
+                                    }}
                                     footer={() => (
                                         <div className="footer-number">{`Total ${data.length} items`}</div>
                                     )}
