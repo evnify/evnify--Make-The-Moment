@@ -28,7 +28,7 @@ function ChatBox() {
     const sendMessage = async (e) => {
         try {
             const messages = {
-                customerID: "123",
+                customerID: "U7120025",
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),

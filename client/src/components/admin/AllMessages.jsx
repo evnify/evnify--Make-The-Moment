@@ -30,6 +30,8 @@ function AllMessages() {
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [anchorEls, setAnchorEls] = useState({});
     const [open, setOpen] = useState(false);
+    const [groupedMessages, setGroupedMessages] = useState({});
+    const [selectedUserID, setSelectedUserID] = useState(null); // Add state to track selected user ID
 
     // Function to handle opening dropdown menu for a specific message
     const handleClick = (event, messageId) => {
@@ -76,11 +78,24 @@ function AllMessages() {
         }
     };
 
+    const groupMessages = (messages) => {
+        const grouped = {};
+        messages.forEach((msg) => {
+            if (!grouped[msg.customerID]) {
+                grouped[msg.customerID] = [];
+            }
+            grouped[msg.customerID].push(msg);
+        });
+        setGroupedMessages(grouped);
+    };
+
 
     const fetchMessages = async () => {
         try {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
+            groupMessages(response.data);
+            console.log(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -113,6 +128,11 @@ function AllMessages() {
         }
     };
 
+    const handlePreviewClick = (userID) => {
+        setSelectedUserID(userID); // Set the selected user ID
+    };
+
+
     return <div>
 
         <div className="message-Box-all-messages">
@@ -137,46 +157,31 @@ function AllMessages() {
                             size="large"
                         />
                         <div>
-                            <div className="message-received-preview">
-                                <div className="all-message-profile-pic">
-                                    <img src={messageDp} alt="DP" />
-                                </div>
-                                <div className="all-message-name">
-                                    <div className="all-message-timeandname" >
-                                        <div className="all-message-name-tag"><b>Sasindu Nadeeshan</b></div>
-                                        <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>12.00</div>
+                                {/* Render grouped messages */}
+                                {Object.keys(groupedMessages).map((customerID) => (
+                                    <div key={customerID} className="message-received-preview" onClick={() => handlePreviewClick(customerID)}>
+                                        <div className="all-message-profile-pic">
+                                            <img src={messageDp} alt="DP" />
+                                        </div>
+                                        <div className="all-message-name">
+                                            <div className="all-message-timeandname">
+                                                <div className="all-message-name-tag">
+                                                    <b>{customerID}</b>
+                                                </div>
+                                                <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                    {moment(groupedMessages[customerID][0].sendTime).format('HH:mm')}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: "15px", color: "#b3b3b3" }}>
+                                                {groupedMessages[customerID][0].message}
+                                            </div>
+                                            <div>
+                                                <Tag color="purple">purple</Tag>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ fontSize: "15px", color: "#b3b3b3" }}>Nice Product</div>
-                                    <div><Tag color="purple">purple</Tag></div>
-                                </div>
+                                ))}
                             </div>
-                            <div className="message-received-preview">
-                                <div className="all-message-profile-pic">
-                                    <img src={messageDp} alt="DP" />
-                                </div>
-                                <div className="all-message-name">
-                                    <div className="all-message-timeandname" >
-                                        <div className="all-message-name-tag"><b>Sasindu Nadeeshan</b></div>
-                                        <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>12.00</div>
-                                    </div>
-                                    <div style={{ fontSize: "15px", color: "#b3b3b3" }}>Nice Product</div>
-                                    <div><Tag color="purple">purple</Tag></div>
-                                </div>
-                            </div>
-                            <div className="message-received-preview">
-                                <div className="all-message-profile-pic">
-                                    <img src={messageDp} alt="DP" />
-                                </div>
-                                <div className="all-message-name">
-                                    <div className="all-message-timeandname" >
-                                        <div className="all-message-name-tag"><b>Sasindu Nadeeshan</b></div>
-                                        <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>12.00</div>
-                                    </div>
-                                    <div style={{ fontSize: "15px", color: "#b3b3b3" }}>Nice Product</div>
-                                    <div><Tag color="purple">purple</Tag></div>
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -201,13 +206,14 @@ function AllMessages() {
                     </div>
                     <div>
                         <div className="message-reply-admin-box">
-                            <div className="message-reply-admin-box-top">
-                                {receivedMessages.map((msg, index) => (
-                                    <div className="message-receved-admin">
-                                        <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                        <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
-                                            <p> <p>{msg.message}</p></p>
-                                        </div>
+                        <div className="message-reply-admin-box-top">
+                                    {/* Render received messages for the selected user ID */}
+                                    {selectedUserID && receivedMessages.filter(msg => msg.customerID === selectedUserID).map((msg, index) => (
+                                        <div className="message-receved-admin">
+                                            <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                            <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
+                                                <p>{msg.message}</p>
+                                            </div>
                                         <div style={{ margin: "10px 0 0 10px" }}>
                                             <div
                                                 id={`fade-button-${msg._id}`}
