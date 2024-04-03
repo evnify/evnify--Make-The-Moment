@@ -53,13 +53,12 @@ function AllMessages() {
         e.preventDefault();
         try {
             const newMessage = {
-                customerID: "123",
+                customerID: "U71200743",
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
-                category: "newe new",
+                category: "Price",
                 sender: "admin",
-                status: "unread",
             };
             if (selectedMessageId) {
                 // Update existing message
@@ -209,6 +208,45 @@ function AllMessages() {
                                         <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
                                             <p> <p>{msg.message}</p></p>
                                         </div>
+                                        <div style={{ margin: "10px 0 0 10px" }}>
+                                            <div
+                                                id={`fade-button-${msg._id}`}
+                                                aria-controls={open ? 'fade-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={(e) => handleClick(e, msg._id)} // Pass the message ID here
+
+                                            >
+                                                <Icon icon="mage:dots" width="16" height="16" />
+                                            </div>
+                                            <Menu
+                                                id="fade-menu"
+                                                MenuListProps={{
+                                                    'aria-labelledby': `fade-button-${msg._id}`,
+                                                }}
+                                                anchorEl={anchorEls[msg._id]}
+                                                open={Boolean(anchorEls[msg._id])}
+                                                onClose={() => handleClose(msg._id)}
+                                                TransitionComponent={Fade}
+                                                anchorOrigin={{
+                                                    vertical: 'top', // Change the opening side to top
+                                                    horizontal: 'right',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'right',
+                                                }}
+                                                PaperProps={{
+                                                    style: {
+                                                        backgroundColor: 'white', // Change background color
+                                                        borderRadius: '8px', // Adjust border radius
+                                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Change box shadow
+                                                    },
+                                                }}
+                                            >
+                                                <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
+                                            </Menu>
+                                        </div>
                                     </div>
                                 ))}
                                 {sentMessages.map((msg, index) => (
@@ -266,38 +304,38 @@ function AllMessages() {
                                 {/* Render input field conditionally when a message is selected for editing */}
                                 {selectedMessageId && (
                                     <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
-                                    <div style={{ margin: "0px 10px 2px 20px" }}>
-                                        <Icon icon="mingcute:emoji-line" width="24" height="24" />
-                                    </div>
-                                    <Input
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        placeholder="Edit Message"
-                                        variant="borderless"
-                                        style={{ width: 690 }}
-                                    />
-                                    <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                                        <SendOutlined style={{ color: "black", fontSize: "22px" }} />
-                                    </button>
-                                </form>
+                                        <div style={{ margin: "0px 10px 2px 20px" }}>
+                                            <Icon icon="mingcute:emoji-line" width="24" height="24" />
+                                        </div>
+                                        <Input
+                                            value={message}
+                                            onChange={(e) => setMessage(e.target.value)}
+                                            placeholder="Edit Message"
+                                            variant="borderless"
+                                            style={{ width: 690 }}
+                                        />
+                                        <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
+                                            <SendOutlined style={{ color: "black", fontSize: "22px" }} />
+                                        </button>
+                                    </form>
                                 )}
                                 {!selectedMessageId && (
                                     <React.Fragment>
-                                          <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
-                                    <div style={{ margin: "0px 10px 2px 20px" }}>
-                                        <Icon icon="mingcute:emoji-line" width="24" height="24" />
-                                    </div>
-                                    <Input
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        placeholder="Type your message here"
-                                        variant="borderless"
-                                        style={{ width: 690 }}
-                                    />
-                                    <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                                        <SendOutlined style={{ color: "black", fontSize: "22px" }} />
-                                    </button>
-                                </form>
+                                        <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
+                                            <div style={{ margin: "0px 10px 2px 20px" }}>
+                                                <Icon icon="mingcute:emoji-line" width="24" height="24" />
+                                            </div>
+                                            <Input
+                                                value={message}
+                                                onChange={(e) => setMessage(e.target.value)}
+                                                placeholder="Type your message here"
+                                                variant="borderless"
+                                                style={{ width: 690 }}
+                                            />
+                                            <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
+                                                <SendOutlined style={{ color: "black", fontSize: "22px" }} />
+                                            </button>
+                                        </form>
                                     </React.Fragment>
                                 )}
                             </div>

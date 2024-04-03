@@ -1,7 +1,43 @@
  const express = require("express");
 const router = express.Router();
-
+const dotenv = require('dotenv');
 const messageModel = require("../models/message");
+dotenv.config();
+
+// // Initialize Mailgun with your API key and domain
+// const mg = mailgun({
+//   apiKey: process.env.MAILGUN_API_KEY,
+//   domain: process.env.MAILGUN_DOMAIN,
+// });
+
+// // Route to send an email
+// router.post('/email', async (req, res) => {
+//   try {
+//     const { email, subject, message } = req.body;
+//     console.log("email",email)
+//     // Construct the email data
+//     const data = {
+//       from: 'YourName <youremail@example.com>',
+//       to: email,
+//       subject: subject,
+//       html: `<p>${message}</p>`,
+//     };
+
+//     // Send the email using Mailgun
+//     mg.messages().send(data, (error, body) => {
+//       if (error) {
+//         console.error("Error sending email:", error);
+//         return res.status(500).json({ message: 'Error in sending email' });
+//       } else {
+//         console.log("Email sent successfully:", body);
+//         return res.status(200).json({ message: 'Email sent successfully' });
+//       }
+//     });
+//   } catch (err) {
+//     console.error("Error:", err);
+//     return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
 
 //Generate unique id for leave

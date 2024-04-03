@@ -1,10 +1,43 @@
-import React from "react";
+import Reactl,{useState} from "react";
 import { ChatBox } from "../../components";
 import { Button, Input, ConfigProvider } from 'antd';
 import { contactUSimg01, contactUSimg02,chooseUsIcon,westandoutIcon,missionIcon } from "../../assets";
+import axios from "axios";
 const { TextArea } = Input;
 
 function ContactUs() {
+    const [email, setEmail] = useState('');
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        if (!email || !subject || !message) {
+        //   return toast.error('Please fill email, subject and message');
+        console.log("Please fill email, subject and message")
+        }
+        try {
+          setLoading(true);
+          const { data } = await axios.post(`/api/messages/email`, {
+            email,
+            subject,
+            message,
+          });
+          setLoading(false);
+        //   toast.success(data.message);
+          console.log("success",data)
+        } catch (err) {
+          setLoading(false);
+        //   toast.error(
+        //     err.response && err.response.data.message
+        //       ? err.response.data.message
+        //       : err.message
+        //   );
+            console.log("error",err)
+        }
+      };
+
 
     return <div className="contact-us-bg-color">
         <div className="contact-us-main-about-us">
@@ -75,7 +108,39 @@ function ContactUs() {
                 <p>Have a question or want to learn more about our services? Contact us today and let us help you create an unforgettable event.</p>
             </div>
             <div className="contact-us-contact-us-section-form-right-dev">
-                <b>Name:</b>
+           < form onSubmit={submitHandler}>
+          <h1>Send Email</h1>
+          <div>
+            <label htmlFor="email">Email</label>
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+            ></input>
+          </div>
+          <div>
+            <label htmlFor="subject">Subject</label>
+            <input
+              id="subject"
+              type="text"
+              onChange={(e) => setSubject(e.target.value)}
+            ></input>
+          </div>
+          <div>
+            <label htmlFor="message">Message</label>
+            <textarea
+              id="message"
+              onChange={(e) => setMessage(e.target.value)}
+            ></textarea>
+          </div>
+          <div>
+            <label></label>
+            <button disabled={loading} type="submit">
+              {loading ? 'Sending...' : 'Submit'}
+            </button>
+          </div>
+        </form>
+
+        {/* <b>Name:</b>
                 <Input placeholder="Enter Your name here" />
                 <b>Email:</b>
                 <Input placeholder="Enter Your Email here" />
@@ -100,7 +165,8 @@ function ContactUs() {
             <Button type="primary" block className="Btn-btn-contact-us">
                 Primary
             </Button>
-        </ConfigProvider>
+        </ConfigProvider> */}
+
             </div>
         </div>
         <ChatBox />
