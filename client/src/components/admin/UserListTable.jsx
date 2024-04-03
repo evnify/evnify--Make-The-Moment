@@ -5,12 +5,7 @@ import Loader from "./Loader";
 import { Icon } from "@iconify/react";
 import Swal from "sweetalert2";
 
-
-
-
-
 function UserListTable() {
-
     const columns = [
         {
             title: "user_ID",
@@ -56,7 +51,9 @@ function UserListTable() {
                     color = "red";
                 }
                 return (
-                    <Tag color={color}>{status ? status.toUpperCase() : ""}</Tag>
+                    <Tag color={color}>
+                        {status ? status.toUpperCase() : ""}
+                    </Tag>
                 );
             },
         },
@@ -81,7 +78,31 @@ function UserListTable() {
                     );
                 } else {
                     return (
-                        <Icon onClick={() => handleDelete(user.userID)} icon="material-symbols:delete-outline" />
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => handleDelete(user.userID)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
+
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                // onClick={() => showModal(record)}
+                            >
+                                <Icon icon="uil:setting" />
+                            </button>
+                        </>
                     );
                 }
             },
@@ -120,7 +141,6 @@ function UserListTable() {
             // You can handle error message here
         }
     }
-    
 
     return (
         <div className="row">

@@ -23,6 +23,7 @@ const { Search, TextArea } = Input;
 function UserList() {
     const [selectedType, setSelectedType] = useState("all");
     const [addUserModelOpen, setaddUserModelOpen] = useState(false);
+    
 
     // Type Selector
     const [items] = useState(["Admin", "Hr-Manager", "Customer"]);
