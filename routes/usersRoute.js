@@ -46,25 +46,28 @@ router.get("/getUser", async (req, res) => {
 });
 
 
-router.delete("/deleteUser/:id", async (req, res) => {
+router.post("/deleteUser", async (req, res) => {
     try {
-        const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
+        const { userID } = req.body; // Extract userID from request body
+        const deletedUser = await UserModel.findOneAndDelete({ userID });
         if (!deletedUser) {
             return res.status(404).send("User not found");
         }
-        res.send(deletedUser);
         console.log("Deleted user:", deletedUser);
+        res.send("User deleted successfully");
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal Server Error");
     }
 });
 
+
+
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ email, password });
+        const user = await user.findOne({ email, password });
 
         if (user) {
             const temp = {

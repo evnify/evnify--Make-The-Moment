@@ -1,17 +1,15 @@
-// UserListTable.js
-
 import React, { useEffect, useState } from "react";
 import { Space, Table, Tag, Avatar } from "antd";
 import axios from "axios";
 import Loader from "./Loader";
 import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
+
 
 
 
 
 function UserListTable() {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
 
     const columns = [
         {
@@ -39,7 +37,7 @@ function UserListTable() {
             key: "phoneNumber",
         },
         {
-            title: "Email address11",
+            title: "Email Address",
             dataIndex: "email",
             key: "email",
         },
@@ -57,34 +55,41 @@ function UserListTable() {
                 if (status === "Suspended") {
                     color = "red";
                 }
-                return <Tag color={color}>{status ? status.toUpperCase() : ""}</Tag>;
+                return (
+                    <Tag color={color}>{status ? status.toUpperCase() : ""}</Tag>
+                );
             },
-            
         },
-    
         {
-            title: "address1",
+            title: "Address",
             dataIndex: "address1",
             key: "address1",
         },
         {
-            title: "",
-            key: "action",
-            render: (_, record) => (
-                <Space size="middle">
-                    <a>
-                        <Icon icon="material-symbols:delete-outline" />
-                    </a>
-                    <a>
-                        <Icon icon="tabler:edit" />
-                    </a>
-                    <a>
-                        <Icon icon="akar-icons:eye" />
-                    </a>
-                </Space>
-            ),
+            title: "Action",
+            dataIndex: "",
+            key: "x",
+            render: (_, user) => {
+                if (user.state === "Active") {
+                    return (
+                        <button
+                            className="adelete"
+                            onClick={() => handleDelete(user.userID)}
+                        >
+                            Suspend
+                        </button>
+                    );
+                } else {
+                    return (
+                        <Icon onClick={() => handleDelete(user.userID)} icon="material-symbols:delete-outline" />
+                    );
+                }
+            },
         },
     ];
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState({});
 
     useEffect(() => {
         async function fetchUserList() {
@@ -101,6 +106,21 @@ function UserListTable() {
         }
         fetchUserList();
     }, []);
+
+    async function handleDelete(userID) {
+        try {
+            const res = await axios.post("/api/users/deleteUser", { userID });
+            console.log("Server response: ", res.data);
+            if (res.status === 200) {
+                console.log("User deleted successfully");
+                // You can handle success message here
+            }
+        } catch (error) {
+            console.log("Error deleting user: ", error);
+            // You can handle error message here
+        }
+    }
+    
 
     return (
         <div className="row">
