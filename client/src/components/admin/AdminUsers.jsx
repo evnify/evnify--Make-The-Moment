@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import UserListTable from "./UserListTable";
+
 import {
     ConfigProvider,
     Modal,
@@ -12,21 +12,94 @@ import {
     Space,
     message,
     Upload,
+    Table,
+    Tag,
+    Avatar,
 } from "antd";
 
 import axios from "axios";
+import Loader from "./Loader";
+import { Icon } from "@iconify/react";
+import Swal from "sweetalert2";
 
 var index = 0;
 
 const { Search, TextArea } = Input;
 
 function UserList() {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        async function fetchUserList() {
+            try {
+                setLoading(true);
+                const response = await axios.get("/api/users/getUser");
+                setData(response.data);
+                console.log("Data fetched:", response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchUserList();
+    }, []);
+
+    const [userList, setUserList] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
+        position: ["bottomCenter"],
+    });
+
+    const conformSuspend = () => {
+        setIsConformModalOpen(true);
+    };
+
+    const conformActive = () => {
+        setIsActiveModalOpen(true);
+    };
+
+    async function handleDelete(userID) {
+        try {
+            const res = await axios.post("/api/users/deleteUser", { userID });
+            console.log("Server response: ", res.data);
+            if (res.status === 200) {
+                console.log("User deleted successfully");
+                // You can handle success message here
+            }
+        } catch (error) {
+            console.log("Error deleting user: ", error);
+            // You can handle error message here
+        }
+    }
+
     const [selectedType, setSelectedType] = useState("all");
     const [addUserModelOpen, setaddUserModelOpen] = useState(false);
+    const [tableModelOpen, setTableModelOpen] = useState(false);
+    const [tableModelContent, setTableModelContent] = useState();
+
     
 
+
     // Type Selector
-    const [items] = useState(["Admin", "Hr-Manager", "Customer"]);
+    const [items, setItems] = useState(["Admin", "Hr-Manager", "Customer"]);
+
+    const [name, setName] = useState("");
+    const inputRef = useRef(null);
+    const onNameChange = (event) => {
+        setName(event.target.value);
+    };
+    const addItem = (e) => {
+        e.preventDefault();
+        setItems([...items, name || `New item ${index++}`]);
+        setName("");
+        setTimeout(() => {
+            inputRef.current?.focus();
+        }, 0);
+    };
 
     // Add user model use states
     const [address1, setaddress1] = useState("");
@@ -37,6 +110,27 @@ function UserList() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [username, setUsername] = useState("");
     const [profilePic, setprofilePic] = useState("");
+
+    //Edit employee model use states
+    const [editAddress, setEditAddress] = useState("");
+    const [editDob, setEditDob] = useState("");
+    const [editType, setEditType] = useState("sick leave");
+    const [editFirstName, setEditFirstName] = useState("");
+    const [editLastName, setEditLastName] = useState("");
+    const [editEmail, setEditEmail] = useState("");
+    const [editPhoneNumber, setEditPhoneNumber] = useState("");
+    const [editUsername, setEditUsername] = useState("");
+    const [editProfileImage, setEditProfileImage] = useState("");
+    const [editStatus, setEditStatus] = useState("");
+    const [fileListEdit, setFileListEdit] = useState([]);
+
+
+    async function fetchUserList() {
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
+        );
+        setUserList(response.data);
+    }
 
     const saveUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -81,10 +175,228 @@ function UserList() {
         }
     };
 
+
+    const customRequestEdit = ({ file, onSuccess, onError }) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        axios
+            .post(
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                formData
+            )
+            .then((response) => {
+                if (response.data.data) {
+                    onSuccess();
+                    message.success("Image uploaded successfully");
+                    setFileListEdit([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: response.data.data.url,
+                        },
+                    ]);
+                    setEditProfileImage(response.data.data.url);
+                    console.log(profilePic);
+                    setLoading(false);
+                } else {
+                    onError();
+                    message.error("Failed to upload image");
+                }
+            })
+            .catch((error) => {
+                onError();
+                message.error("Error uploading image: " + error.message);
+            });
+    };
+
+    const saveEditEmployee = async () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            !editAddress ||
+            !editDob ||
+            !editType ||
+            !editFirstName ||
+            !editLastName ||
+            !editEmail ||
+            !editPhoneNumber ||
+            !editPhoneNumber
+        ) {
+            return message.error("Please fill all the fields");
+        } else if (!emailRegex.test(editEmail)) {
+            return message.error("Please enter a valid email address");
+        }
+
+        if (!editProfileImage || editProfileImage.trim() === "") {
+            // Set default profile image
+            setprofilePic(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+            );
+        } else {
+            console.log("Profile image already set:", editProfileImage);
+        }
+
+        const empData = {
+            address: editAddress,
+            type: editType,
+            firstName: editFirstName,
+            lastName: editLastName,
+            email: editEmail,
+            phoneNumber: editPhoneNumber,
+            username: editUsername,
+            profilePic: editProfileImage,
+            userID: tableModelContent.userID,
+            _id: tableModelContent._id,
+        };
+
+        console.log(empData);
+
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
+                empData
+            );
+            message.success("Employee edit successfully");
+            setTableModelOpen(false);
+            fetchUserList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const columns = [
+        {
+            title: "user_ID",
+            dataIndex: "userID",
+            key: "userID",
+        },
+        {
+            title: "",
+            dataIndex: "profilePic",
+            key: "profilePic",
+            render: (_, record) => (
+                <Avatar size={35} src={record.profilePic} alt="avatar" />
+            ),
+        },
+        {
+            title: "username",
+            dataIndex: "username",
+            key: "username",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Phone Number",
+            dataIndex: "phoneNumber",
+            key: "phoneNumber",
+        },
+        {
+            title: "Email Address",
+            dataIndex: "email",
+            key: "email",
+        },
+        {
+            title: "Type",
+            dataIndex: "userType",
+            key: "userType",
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Suspended") {
+                    color = "red";
+                }
+                return (
+                    <Tag color={color}>
+                        {status ? status.toUpperCase() : ""}
+                    </Tag>
+                );
+            },
+        },
+        {
+            title: "Address",
+            dataIndex: "address1",
+            key: "address1",
+        },
+        {
+            title: "Action",
+            dataIndex: "",
+            key: "x",
+            render: (_, user) => {
+                if (user.state === "Active") {
+                    return (
+                        <button
+                            className="adelete"
+                            onClick={() => handleDelete(user.userID)}
+                        >
+                            Suspend
+                        </button>
+                    );
+                } else {
+                    return (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => handleDelete(user.userID)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
+
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => showModal(user)}
+                            >
+                                <Icon icon="uil:setting" />
+                            </button>
+                        </>
+                    );
+                }
+            },
+        },
+    ];
+
+    const showModal = (record) => {
+        setTableModelContent(record);
+        setTableModelOpen(true);
+        setEditAddress(record.address);
+        setEditDob(record.dob);
+        setEditType(record.type);
+        setEditFirstName(record.firstName);
+        setEditLastName(record.lastName);
+        setEditEmail(record.email);
+        setEditPhoneNumber(record.phoneNumber);
+        setEditUsername(record.username);
+        setEditProfileImage(record.profileImage);
+        setEditStatus(record.status);
+        console.log(record.status);
+        setFileListEdit([
+            {
+                uid: "1",
+                name: "image.png",
+                status: "done",
+                url: record.profileImage,
+            },
+        ]);
+    };
+
     const onSearch = (value) => console.log(value);
 
     // Image upload
-    const [loading, setLoading] = useState(false);
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
@@ -147,6 +459,10 @@ function UserList() {
         );
     };
 
+    
+    const [isConformModalOpen, setIsConformModalOpen] = useState(false);
+    const [isActiveModalOpen, setIsActiveModalOpen] = useState(false);
+
     const customRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
         formData.append("image", file);
@@ -183,7 +499,309 @@ function UserList() {
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div>
+            <Modal
+                centered
+                open={tableModelOpen}
+                onOk={() => setTableModelOpen(false)}
+                onCancel={() => setTableModelOpen(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div className="add_employee_top_container">
+                        <div className="avatar-container">
+                            <Upload
+                                customRequest={customRequestEdit}
+                                listType="picture-circle"
+                                fileList={fileListEdit}
+                                onPreview={handlePreview}
+                                onChange={handleChange}
+                                beforeUpload={beforeUpload}
+                                onRemove={() => {
+                                    setFileListEdit([]);
+                                    setEditProfileImage(
+                                        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+                                    );
+                                }}
+                            >
+                                {fileListEdit.length >= 1 ? null : uploadButton}
+                            </Upload>
+                            <Modal
+                                open={previewOpen}
+                                footer={null}
+                                onCancel={handleCancel}
+                                title={"Preview: "}
+                            >
+                                <img
+                                    alt="example"
+                                    style={{
+                                        width: "100%",
+                                    }}
+                                    src={previewImage}
+                                />
+                            </Modal>
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                }}
+                            >
+                                Leave Type
+                            </span>
+                            <Select
+                                style={{
+                                    width: 220,
+                                    height: 35,
+                                }}
+                                onChange={(value) => {
+                                    setEditType(value);
+                                    console.log(value);
+                                }}
+                                value={editType}
+                                placeholder="Select"
+                                dropdownRender={(menu) => (
+                                    <>
+                                        {menu}
+                                        <Divider
+                                            style={{
+                                                margin: "8px 0",
+                                            }}
+                                        />
+                                        <Space
+                                            style={{
+                                                padding: "0 8px 4px",
+                                            }}
+                                        >
+                                            <Input
+                                                placeholder="Please enter item"
+                                                ref={inputRef}
+                                                value={name}
+                                                onChange={onNameChange}
+                                                onKeyDown={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            />
+                                            <Button
+                                                type="text"
+                                                icon={<PlusOutlined />}
+                                                onClick={addItem}
+                                            >
+                                                Add item
+                                            </Button>
+                                        </Space>
+                                    </>
+                                )}
+                                options={items.map((item) => ({
+                                    label: item,
+                                    value: item,
+                                }))}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="add_employee_popup_details_container">
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    First Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditFirstName(e.target.value)
+                                    }
+                                    value={editFirstName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Email
+                                </span>
+                                <Input
+                                    type="email"
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditEmail(e.target.value)
+                                    }
+                                    value={editEmail}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Phone Number
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditPhoneNumber(e.target.value)
+                                    }
+                                    value={editPhoneNumber}
+                                />
+                            </div>
+                        </div>
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Last Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditLastName(e.target.value)
+                                    }
+                                    value={editLastName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Username
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditUsername(e.target.value)
+                                    }
+                                    value={editUsername}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="add_emp_address_container">
+                        <span>Address</span>
+                        <TextArea
+                            style={{
+                                width: 520,
+                            }}
+                            rows={4}
+                            value={editAddress}
+                            onChange={(e) => setEditAddress(e.target.value)}
+                        />
+                    </div>
+                    {editStatus === "Active" ? (
+                        <button
+                            onClick={conformSuspend}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "red",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Suspend Employee
+                        </button>
+                    ) : (
+                        <button
+                            onClick={conformActive}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "green",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Activate Employee
+                        </button>
+                    )}
+                </div>
+                <div className="add_emp_popup_footer_container center">
+                    <Button
+                        onClick={() => setTableModelOpen(false)}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                        danger
+                    >
+                        Cancel
+                    </Button>
+                    <button
+                        className="add_emp_popup_footer_button"
+                        onClick={saveEditEmployee}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Save Changes
+                    </button>
+                </div>
+            </Modal>
             <ConfigProvider
                 theme={{
                     components: {
@@ -472,13 +1090,10 @@ function UserList() {
                                         width: 520,
                                     }}
                                     rows={4}
-                                    onChange={(e) => {setaddress1(e.target.value)
-                                    console.log(e.target.value)
-                                    
-                                    }
-                                
-                                }
-                                    
+                                    onChange={(e) => {
+                                        setaddress1(e.target.value);
+                                        console.log(e.target.value);
+                                    }}
                                 />
                             </div>
                         </div>
@@ -507,7 +1122,19 @@ function UserList() {
                     </Modal>
 
                     <div style={{ width: "100%" }}>
-                        <UserListTable />
+                        <div className="row">
+                            {loading && <Loader />}
+                            <div className="col-md-12">
+                                <Table
+                                    dataSource={data}
+                                    columns={columns}
+                                    pagination={{ pageSize: 15 }}
+                                    footer={() => (
+                                        <div className="footer-number">{`Total ${data.length} items`}</div>
+                                    )}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </ConfigProvider>

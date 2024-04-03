@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import EmployeeListTable from "./UserListTable";
+
 import UserTab from "./UserTab";
 import UserTable from "./UserTable";
 import {
@@ -546,7 +546,7 @@ function EmployeeList() {
                         </Modal>
 
                         <div style={{ width: "100%" }}>
-                            <EmployeeListTable />
+                            
                         </div>
                     </div>
                 </ConfigProvider>
