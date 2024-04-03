@@ -23,5 +23,4 @@ export {
     error_500,
     access_error,
     topImage,
-    access_error
 };

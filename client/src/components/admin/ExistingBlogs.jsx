@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import {
     Radio,
     Space,
@@ -13,76 +14,36 @@ import {
     message,
 } from "antd";
 import { Icon } from "@iconify/react";
+import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { set } from "mongoose";
 
-
-const { TextArea } = Input;
-
-const columns = [
-    {
-        title: "Name",
-        dataIndex: "blogTitle",
-        key: "name",
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: "Category",
-        dataIndex: "category",
-        key: "category",
-    },
-    {
-        title: "Date",
-        dataIndex: "eventDate",
-        key: "date",
-    },
-    {
-        title: "Tags",
-        key: "tags",
-        dataIndex: "tags",
-        render: (tags) => (
-            <span>
-                {tags.map((tag) => {
-                    let color = tag.length > 5 ? "geekblue" : "green";
-                    if (tag === "loser") {
-                        color = "volcano";
-                    }
-                    return (
-                        <Tag color={color} key={tag}>
-                            {tag.toUpperCase()}
-                        </Tag>
-                    );
-                })}
-            </span>
-        ),
-    },
-    {
-        title: "Description",
-        dataIndex: "blogTitleDescription",
-        key: "description",
-    },
-    {
-        title: "",
-        key: "action",
-        render: (_, record) => (
-            <Space size="middle">
-                <button className="admin_existing_blog_delete_btn">
-                    {" "}
-                    <Icon icon="material-symbols:delete-outline" />
-                </button>
-                <button className="admin_existing_blog_edit_btn">
-                    <Icon icon="tabler:edit" />
-                </button>
-                <button className="admin_existing_blog_view_btn">
-                    <Icon icon="mdi:eye-outline" />
-                </button>
-            </Space>
-        ),
-    },
-];
+const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
 
 function ExistingBlogs() {
-    const [Blogs, setBlogs] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
+        position: ["bottomCenter"],
+    });
 
+    const handleTableChange = (pagination, filters, sorter) => {
+        setPagination(pagination);
+    };
+
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewTitle, setPreviewTitle] = useState("");
+    const [fileList, setFileList] = useState([]);
+    const [Blogs, setBlogs] = useState([]);
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         fetchBlogs();
     }, []);
@@ -98,11 +59,67 @@ function ExistingBlogs() {
 
     const [top, setTop] = useState("topLeft");
     const [bottom, setBottom] = useState("bottomCenter");
-
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
+    const [editModelRecord, setEditModelRecord] = useState();
+
+    const [editBlogTitle, setEditBlogTitle] = useState("");
+    const [editBlogTitleDescription, setEditBlogTitleDescription] = useState("");
+    const [editCategory, setEditCategory] = useState("");
+    const [editEventDate, setEditEventDate] = useState("");
+    const [editTags, setEditTags] = useState([]);
+    const [editDescription, setEditDescription] = useState("");
+    const [editImages, setEditImages] = useState([]);
+    const [blogId, setBlogId] = useState("");
+
+
+    const showModal = (record) => {
         setIsModalOpen(true);
+        setEditModelRecord(record);
+        setEditBlogTitle(record.blogTitle);
+        setEditBlogTitleDescription(record.blogTitleDescription);
+        setEditCategory(record.category);
+        setEditEventDate(record.eventDate);
+        setEditTags(record.tags);
+        setEditDescription(record.description);
+        setBlogId(record._id);
+
+        for(let i=0; i<record.images.length; i++){
+            const temp = {
+                uid: i,
+                name: "image.png",
+                status: "done",
+                url: record.images[i],
+            };
+            setEditImages([...editImages, temp]);
+        }
+
+        setFileList(editImages);
+        setImages(record.images);
     };
+
+    const EditBlogs = async () => {
+        const blogData = {
+            _id: blogId,
+            blogTitle: editBlogTitle,
+            blogTitleDescription: editBlogTitleDescription,
+            category: editCategory,
+            eventDate: editEventDate,
+            tags: editTags,
+            description: editDescription,
+
+            images: images,
+        }
+        try {
+            await axios.post(`/api/blogs/updateBlog`, blogData);
+            message.success("Blog updated successfully");
+            fetchBlogs();
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const handleOk = () => {
         setIsModalOpen(false);
     };
@@ -110,6 +127,114 @@ function ExistingBlogs() {
         setIsModalOpen(false);
     };
 
+    const handleCancel1 = () => setPreviewOpen(false);
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+        setPreviewTitle(
+            file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+        );
+    };
+    const handleChange = ({ fileList: newFileList }) =>
+        setFileList(newFileList ?? []);
+    const uploadButton = (
+        <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </div>
+    );
+    const customRequest = ({ file, onSuccess, onError }) => {
+        const formData = new FormData();
+        formData.append("image", file);
+        axios
+            .post(
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                formData
+            )
+            .then((response) => {
+                if (response.data.data) {
+                    onSuccess();
+                    message.success("Image uploaded successfully");
+                    setImages([...images, response.data.data.url]);
+                    setLoading(false);
+                } else {
+                    onError();
+                    message.error("Failed to upload image");
+                }
+            })
+            .catch((error) => {
+                onError();
+                message.error("Error uploading image: " + error.message);
+            });
+    };
+    const { TextArea } = Input;
+    const columns = [
+        {
+            title: "Name",
+            dataIndex: "blogTitle",
+            key: "name",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Category",
+            dataIndex: "category",
+            key: "category",
+        },
+        {
+            title: "Date",
+            dataIndex: "eventDate",
+            key: "date",
+        },
+        {
+            title: "Tags",
+            key: "tags",
+            dataIndex: "tags",
+            render: (tags) => (
+                <span>
+                    {tags.map((tag) => {
+                        let color = tag.length > 5 ? "geekblue" : "green";
+                        if (tag === "loser") {
+                            color = "volcano";
+                        }
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag.toUpperCase()}
+                            </Tag>
+                        );
+                    })}
+                </span>
+            ),
+        },
+        {
+            title: "Description",
+            dataIndex: "blogTitleDescription",
+            key: "description",
+        },
+        {
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    <button className="admin_existing_blog_delete_btn">
+                        {" "}
+                        <Icon icon="material-symbols:delete-outline" />
+                    </button>
+                    <button
+                        className="admin_existing_blog_edit_btn"
+                        onClick={()=> showModal(record)}
+                    >
+                        <Icon icon="tabler:edit" />
+                    </button>
+                    <button className="admin_existing_blog_view_btn">
+                        <Icon icon="mdi:eye-outline" />
+                    </button>
+                </Space>
+            ),
+        },
+    ];
     return (
         <div>
             <div className="admin_existing_blog_counts_containers">
@@ -117,7 +242,7 @@ function ExistingBlogs() {
                     <div className="admin_existing_blog_total_card1">
                         <div className="admin_existing_blog_card1_txt">
                             <h3>Total Blogs</h3>
-                            <h2 onClick={showModal}> 20</h2>
+                            <h2> {Blogs.length}</h2>
                         </div>
                     </div>
                 </div>
@@ -153,13 +278,10 @@ function ExistingBlogs() {
                 <div>
                     <Table
                         columns={columns}
-                        pagination={{
-                            position: [bottom],
-                            top: "20px",
-                            bottom: "20px",
-                        }}
-                        dataSource={Blogs} // Here, using the Blogs state instead of the data array
-                    />
+                        pagination={pagination}
+                        onChange = {handleTableChange}
+                        dataSource={Blogs}
+                        />
                 </div>
                 <div>
                     <Modal
@@ -183,6 +305,8 @@ function ExistingBlogs() {
                                         </h3>
                                         <Input
                                             placeholder="Title"
+                                            value={editBlogTitle}
+                                            onChange={(e)=>setEditBlogTitle(e.target.value)}
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -190,13 +314,18 @@ function ExistingBlogs() {
                                         </h3>
                                         <Input
                                             placeholder="Title Description"
+                                            value={editBlogTitleDescription}
+                                            onChange={(e)=>setEditBlogTitleDescription(e.target.value)}
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
                                             Category
                                         </h3>
                                         <Select
+                                            disabled
                                             defaultValue="Select"
+                                            value={editCategory}
+                                            onChange={(e)=>setEditCategory(e.target.value)}
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -204,6 +333,8 @@ function ExistingBlogs() {
                                         </h3>
                                         <DatePicker
                                             style={{ width: 350, height: 40 }}
+                                            defaultValue={editEventDate ? moment(editEventDate) : null}
+                                            onChange={(date, dateString)=>setEditEventDate(dateString)}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
                                             Tags
@@ -223,6 +354,8 @@ function ExistingBlogs() {
                                                     height: 40,
                                                 }}
                                                 placeholder="Please select"
+                                                value={editTags}
+                                                onChange={(e)=>setEditTags(e.target.value)}
                                                 defaultValue={[]}
                                             />
                                         </Space>
@@ -232,11 +365,26 @@ function ExistingBlogs() {
                                             Images
                                         </h3>
                                         <div className="admin_add_blog_section_image_add">
-                                            <Upload listType="picture-card"></Upload>
-                                            <Modal>
+                                            <Upload
+                                                customRequest={customRequest}
+                                                listType="picture-card"
+                                                fileList={fileList}
+                                                onPreview={handlePreview}
+                                                onChange={handleChange}
+                                            >
+                                                {fileList.length >= 7
+                                                    ? null
+                                                    : uploadButton}
+                                            </Upload>
+                                            <Modal
+                                                open={previewOpen}
+                                                footer={null}
+                                                onCancel={handleCancel1}
+                                            >
                                                 <img
                                                     alt="example"
                                                     style={{ width: "100%" }}
+                                                    src={previewImage}
                                                 />
                                             </Modal>
                                         </div>
@@ -255,6 +403,8 @@ function ExistingBlogs() {
                                             marginBottom: 20,
                                         }}
                                         placeholder="Description"
+                                        value={editDescription}
+                                        onChange={(e)=>setEditDescription(e.target.value)}
                                     />
                                 </div>
                                 <div className="admin_add_blog_section_blog_add_btn">
@@ -269,7 +419,7 @@ function ExistingBlogs() {
                                     <Button
                                         style={{ width: 100, height: 35 }}
                                         type="primary"
-                                        onClick={handleOk}
+                                        onClick={EditBlogs}
                                     >
                                         Save
                                     </Button>

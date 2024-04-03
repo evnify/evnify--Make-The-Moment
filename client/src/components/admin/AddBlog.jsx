@@ -180,7 +180,7 @@ function AddBlog() {
                             <Upload
                                 customRequest={customRequest}
                                 listType="picture-card"
-                                fileList={fileList}
+                                fileList={fileList}v
                                 onPreview={handlePreview}
                                 onChange={handleChange}
                                 
@@ -189,7 +189,6 @@ function AddBlog() {
                             </Upload>
                             <Modal
                                 visible={previewOpen}
-                                title={previewTitle}
                                 footer={null}
                                 onCancel={handleCancel}
                             >

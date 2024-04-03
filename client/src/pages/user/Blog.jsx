@@ -1,9 +1,11 @@
 import React from "react";
 import{topImage}from "../../assets"
+import { Navbar } from "../../components";
 
 
 function Blog() {
     return <div className="blog_hero_section_container">
+        <Navbar />
     <div className="blog_hero_section_image_bg_container">
         <div className="blog_section_image_top_bg_color_container">
             <img src={topImage} alt="topImage" className="blog_section_image_top_container"/>
