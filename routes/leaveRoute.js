@@ -15,11 +15,12 @@ const generateUniqueID = async () => {
 };
 
 router.post('/newLeave',async (req,res)=>{
-    const leaveDate = req.body;
+    const leaveData = req.body;
     const leaveID = await generateUniqueID();
 
-    leaveDate.leaveID = leaveID;
-    const newLeave = new leaveModel(leaveDate);
+    leaveData.leaveID = leaveID;
+    console.log(leaveData);
+    const newLeave = new leaveModel(leaveData);
 
     try{
         await newLeave.save();
