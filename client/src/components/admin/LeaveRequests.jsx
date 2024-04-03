@@ -1,15 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Input, Table, Modal, Tag, Space } from "antd";
+import { Radio, Input, Table, Modal, Tag, Space, DatePicker, Button } from "antd";
 import { Icon } from "@iconify/react";
+import moment from "moment";
 import axios from "axios";
+import { set } from "mongoose";
 
-const { Search } = Input;
+const { Search, TextArea } = Input;
 
 function LeaveRequests() {
     const [selectedType, setSelectedType] = useState("all");
     const [leaveList, setLeaveList] = useState([]);
-    const [leaveRequestModelOpen,   setLeaveRequestModelOpen] = useState(false);
-    const [leaveRequestModelContent, setLeaveRequestModelContent] = useState({});
+    const [leaveRequestModelOpen, setLeaveRequestModelOpen] = useState(false);
+    const [leaveRequestModelContent, setLeaveRequestModelContent] = useState(
+        {}
+    );
+
+    const approveLeave = async (leaveID) => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/leaves/approveLeave`,
+                {
+                    leaveID,
+                }
+            );
+            fetchLeaves();
+            setLeaveRequestModelOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const declineLeave = async (leaveID) => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/leaves/declineLeave`,
+                {
+                    leaveID,
+                }
+            );
+            fetchLeaves();
+            setLeaveRequestModelOpen(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -17,13 +51,14 @@ function LeaveRequests() {
         position: ["bottomCenter"],
     });
 
+    const fetchLeaves = async () => {
+        const leaveData = await axios.get(
+            `${process.env.PUBLIC_URL}/api/leaves/getAllLeaves`
+        );
+        setLeaveList(leaveData.data);
+    };
+
     useEffect(() => {
-        const fetchLeaves = async () => {
-            const leaveData = await axios.get(
-                `${process.env.PUBLIC_URL}/api/leaves/getAllLeaves`
-            );
-            setLeaveList(leaveData.data);
-        };
         fetchLeaves();
     }, []);
 
@@ -44,8 +79,8 @@ function LeaveRequests() {
             render: (createdAt) => {
                 const date = new Date(createdAt);
                 const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
                 return `${year}-${month}-${day}`;
             },
         },
@@ -105,6 +140,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
+                                onClick={() => approveLeave(record.leaveID)}
                             >
                                 Approve
                             </button>
@@ -118,6 +154,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
+                                onClick={() => declineLeave(record.leaveID)}
                             >
                                 Decline
                             </button>
@@ -129,7 +166,6 @@ function LeaveRequests() {
                                     background: "transparent",
                                 }}
                                 onClick={() => leaveModelContent(record)}
-
                             >
                                 <Icon icon="carbon:view-filled" />
                             </button>
@@ -146,6 +182,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
+                                disabled
                             >
                                 Approve
                             </button>
@@ -159,6 +196,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
+                                disabled
                             >
                                 Decline
                             </button>
@@ -170,7 +208,6 @@ function LeaveRequests() {
                                     background: "transparent",
                                 }}
                                 onClick={() => leaveModelContent(record)}
-
                             >
                                 <Icon icon="carbon:view-filled" />
                             </button>
@@ -181,10 +218,30 @@ function LeaveRequests() {
         },
     ];
 
+    //Model leave content
+    const [name, setName] = useState("");
+    const [leaveID, setLeaveID] = useState("");
+    const [leaveType, setLeaveType] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [status, setStatus] = useState("");
+    const [reason, setReason] = useState("");
+    const [empID, setEmpID] = useState("");
+    const [createdAt, setCreatedAt] = useState("");
+
     const leaveModelContent = (record) => {
         setLeaveRequestModelOpen(true);
         setLeaveRequestModelContent(record);
-    }
+        setName(record.name);
+        setLeaveID(record.leaveID);
+        setLeaveType(record.leaveType);
+        setStartDate(record.startDate);
+        setEndDate(record.endDate);
+        setStatus(record.status);
+        setReason(record.reason);
+        setEmpID(record.empID);
+        setCreatedAt(record.createdAt);
+    };
 
     const onSearch = (value) => {
         console.log(value);
@@ -193,45 +250,223 @@ function LeaveRequests() {
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Modal
-                        centered
-                        title="Description"
-                        open={leaveRequestModelOpen}
-                        onOk={() => setLeaveRequestModelOpen(false)}
-                        onCancel={() => setLeaveRequestModelOpen(false)}
-                        footer={null}
-                        width={550}
-                    >
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Leave ID</h5>
-                                <h5>{leaveRequestModelContent.leaveID}</h5>
+                centered
+                open={leaveRequestModelOpen}
+                onOk={() => setLeaveRequestModelOpen(false)}
+                onCancel={() => setLeaveRequestModelOpen(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+
+                    <div className="add_employee_popup_details_container">
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    
+                                    value={name}
+                                    onClick={(e) => setName(e.target.value)}
+                                />
                             </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Name</h5>
-                                <h5>{leaveRequestModelContent.name}</h5>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Emp ID
+                                </span>
+                                <Input
+                                    type="email"
+                                    size="large"
+                                    value={empID}
+                                    onClick={(e) => setEmpID(e.target.value)}
+                                />
                             </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Emp ID</h5>
-                                <h5>{leaveRequestModelContent.empID}</h5>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Type</h5>
-                                <h5>{leaveRequestModelContent.leaveType}</h5>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Start Date</h5>
-                                <h5>{leaveRequestModelContent.startDate}</h5>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>End Date</h5>
-                                <h5>{leaveRequestModelContent.endDate}</h5>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <h5 style={{ marginRight: "auto" }}>Reason</h5>
-                                <h5>{leaveRequestModelContent.reason}</h5>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    From Date
+                                </span>
+                                <Input
+                                    size="large"
+                                    value={startDate}
+                                />
                             </div>
                         </div>
-                    </Modal>
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    height : "68px",
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                }}
+                                className="center"
+                            >
+                                {status === "Pending" ? (
+                                    <Tag color="orange">Pending</Tag>
+                                ) : status === "Approved" ? (
+                                    <Tag color="green">Approved</Tag>
+                                ) : (
+                                    <Tag color="red">Rejected</Tag>
+                                )}
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Type
+                                </span>
+                                <Input
+                                    size="large"
+                                    value={leaveType}
+                                    
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    End Date
+                                </span>
+                                <Input
+                                    size="large"
+                                    value={endDate}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="add_emp_address_container">
+                        <span>Reason</span>
+                        <TextArea
+                            style={{
+                                width: 520,
+                            }}
+                            rows={4}
+                            value={reason}
+                            
+                        />
+                    </div>
+                </div>
+                <div className="add_emp_popup_footer_container center">
+                {status === "Pending" ? (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#4CAF50",
+                                    width: "90px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                }}
+                                onClick={() => approveLeave(leaveID)}
+                            >
+                                Approve
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#FF5151",
+                                    width: "90px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                }}
+                                onClick={() => declineLeave(leaveID)}
+                            >
+                                Decline
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#DCDCDC",
+                                    width: "90px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                }}
+                                disabled
+                            >
+                                Approve
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#DCDCDC",
+                                    width: "90px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                }}
+                                disabled
+                            >
+                                Decline
+                            </button>
+                        </>
+                    )}
+                </div>
+            </Modal>
             <div className="admin_leave_request_container">
                 <div className="admin_leave_request_top_menu">
                     <div

@@ -39,6 +39,25 @@ router.get('/getAllLeaves',async (req,res)=>{
     }
 });
 
+router.post('/approveLeave',async (req,res)=>{
+    const leaveID = req.body.leaveID;
+    try{
+        await leaveModel.findOneAndUpdate({leaveID: leaveID},{status: "Approved"});
+        res.send("Leave request approved successfully");
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
+
+router.post('/declineLeave',async (req,res)=>{
+    const leaveID = req.body.leaveID;
+    try{
+        await leaveModel.findOneAndUpdate({leaveID: leaveID},{status: "Rejected"});
+        res.send("Leave request declined successfully");
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
 
 
 module.exports = router;
