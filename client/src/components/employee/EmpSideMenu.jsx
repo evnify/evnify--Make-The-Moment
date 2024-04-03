@@ -191,7 +191,7 @@ function EmpSideMenu() {
                                     height: 40,
                                 }}
                                 onChange={onChangeFromDate}
-                                value={endDate ? moment(startDate) : null}
+                                value={startDate ? moment(startDate) : null}
                             />
                         </div>
                         <div style={{ marginTop: "25px" }}>

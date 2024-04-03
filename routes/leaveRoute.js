@@ -60,5 +60,14 @@ router.post('/declineLeave',async (req,res)=>{
     }
 });
 
+router.post('/getLeaveByEmpID',async (req,res)=>{
+    const empID = req.body.empID;
+    try{
+        const leaves = await leaveModel.find({empID: empID});
+        res.send(leaves);
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
 
 module.exports = router;

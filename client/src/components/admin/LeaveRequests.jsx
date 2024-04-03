@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Radio, Input, Table, Modal, Tag, Space, DatePicker, Button } from "antd";
+import {
+    Radio,
+    Input,
+    Table,
+    Modal,
+    Tag,
+    Space,
+    DatePicker,
+    Button,
+} from "antd";
 import { Icon } from "@iconify/react";
-import moment from "moment";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
-import { set } from "mongoose";
+
+const { confirm } = Modal;
 
 const { Search, TextArea } = Input;
 
@@ -30,6 +40,27 @@ function LeaveRequests() {
         }
     };
 
+    const showApproveConfirm = (id) => {
+        confirm({
+            centered: true,
+            title: "Approve this Leave?",
+            icon: <ExclamationCircleFilled />,
+            content: "This action cannot be undone.",
+            okText: "Approve",
+            okType: "danger",
+            okButtonProps: {color: "green"
+            },
+            cancelText: "Cancel",
+            onOk() {
+                approveLeave(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
+
     const declineLeave = async (leaveID) => {
         try {
             await axios.post(
@@ -43,6 +74,25 @@ function LeaveRequests() {
         } catch (error) {
             console.log(error);
         }
+    };
+
+    const showDeclineConfirm = (id) => {
+        confirm({
+            centered: true,
+            title: "Decline this Leave?",
+            icon: <ExclamationCircleFilled />,
+            content: "This action cannot be undone.",
+            okText: "Decline",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                declineLeave(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
     };
 
     const [pagination, setPagination] = useState({
@@ -140,7 +190,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
-                                onClick={() => approveLeave(record.leaveID)}
+                                onClick={() => showApproveConfirm(record.leaveID)}
                             >
                                 Approve
                             </button>
@@ -154,7 +204,9 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
-                                onClick={() => declineLeave(record.leaveID)}
+                                onClick={() =>
+                                    showDeclineConfirm(record.leaveID)
+                                }
                             >
                                 Decline
                             </button>
@@ -258,7 +310,6 @@ function LeaveRequests() {
                 width={550}
             >
                 <div className="request_leave_model_body_container">
-
                     <div className="add_employee_popup_details_container">
                         <div className="add_employee_popup_details_container_left">
                             <div
@@ -278,7 +329,6 @@ function LeaveRequests() {
                                 </span>
                                 <Input
                                     size="large"
-                                    
                                     value={name}
                                     onClick={(e) => setName(e.target.value)}
                                 />
@@ -320,10 +370,7 @@ function LeaveRequests() {
                                 >
                                     From Date
                                 </span>
-                                <Input
-                                    size="large"
-                                    value={startDate}
-                                />
+                                <Input size="large" value={startDate} />
                             </div>
                         </div>
                         <div className="add_employee_popup_details_container_left">
@@ -331,7 +378,7 @@ function LeaveRequests() {
                                 style={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    height : "68px",
+                                    height: "68px",
                                     display: "flex",
                                     alignItems: "flex-end",
                                 }}
@@ -360,11 +407,7 @@ function LeaveRequests() {
                                 >
                                     Type
                                 </span>
-                                <Input
-                                    size="large"
-                                    value={leaveType}
-                                    
-                                />
+                                <Input size="large" value={leaveType} />
                             </div>
                             <div
                                 style={{
@@ -381,10 +424,7 @@ function LeaveRequests() {
                                 >
                                     End Date
                                 </span>
-                                <Input
-                                    size="large"
-                                    value={endDate}
-                                />
+                                <Input size="large" value={endDate} />
                             </div>
                         </div>
                     </div>
@@ -397,12 +437,11 @@ function LeaveRequests() {
                             }}
                             rows={4}
                             value={reason}
-                            
                         />
                     </div>
                 </div>
                 <div className="add_emp_popup_footer_container center">
-                {status === "Pending" ? (
+                    {status === "Pending" ? (
                         <>
                             <button
                                 style={{
@@ -414,7 +453,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
-                                onClick={() => approveLeave(leaveID)}
+                                onClick={() => showApproveConfirm(leaveID)}
                             >
                                 Approve
                             </button>
@@ -428,7 +467,7 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
-                                onClick={() => declineLeave(leaveID)}
+                                onClick={() => showDeclineConfirm(leaveID)}
                             >
                                 Decline
                             </button>
