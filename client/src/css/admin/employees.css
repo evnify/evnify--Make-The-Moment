@@ -192,6 +192,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    min-height: 600px;
 
     background: #ffffff;
     width: calc(100% - 30px);
@@ -217,3 +218,4 @@
     font-weight: 600;
     margin: 0 30px 0 22px;
 }
+
