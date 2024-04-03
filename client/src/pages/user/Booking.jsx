@@ -29,7 +29,12 @@ function Booking() {
     );
     setSelectedPackage(clickedPackage);
   };
-
+  const handleCreatePackage = () => {
+    // Redirect to packages page with selected package ID as URL parameter
+    if (selectedPackage) {
+      window.location.href = `/packages/${selectedPackage._id}`;
+    }
+  };
   return (
     <div style={{ backgroundColor: "#E3E7EC" }}>
       <div className="container">
@@ -107,8 +112,6 @@ function Booking() {
                           width: 100,
                           height: 100,
                           margin: 10,
-                          //top: `${150 + index * 50}px`,
-                          //   left: `${300 + index * 100}px`,
                           objectFit: "cover",
                           borderRadius: 10,
                           marginBottom: 20,
@@ -152,7 +155,7 @@ function Booking() {
                     </div>
                     </div>
                   </div>               
-                  <button className="createPackageBtn_72 ">
+                  <button className="createPackageBtn_72 "onClick={handleCreatePackage}>
                     Create Your Package
                   </button>
                 </div>

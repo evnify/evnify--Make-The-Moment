@@ -4,15 +4,14 @@ import { Modal, Checkbox, Input, Button, message, Cascader } from "antd";
 
 function AddBillingAddress() {
   const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
-  const [address, setAddress] = useState("");
-  const [dob, setDob] = useState("");
-  const [type, setType] = useState("sick leave");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [username, setUsername] = useState("");
-  const [profileImage, setProfileImage] = useState("");
+  const [addressLine1, setAddresLine1] = useState("");
+  const [addressLine2, setAddresLine2] = useState("");
+  const [district, setDistrict] = useState("");
+  const [country, setCounty] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+ 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -42,49 +41,33 @@ function AddBillingAddress() {
       (option) =>
         option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
-  //--------
-  const saveEmployee = async () => {
-    if (
-      !address ||
-      !dob ||
-      !type ||
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phoneNumber ||
-      !username
-    ) {
-      return message.error("Please fill all the fields");
+
+   const saveAddressData = () => {
+   if(!country||
+    !addressLine1||
+    !addressLine2||
+    !district||
+    !city||
+    !postalCode
+    ){
+      message.error("Please fill all the fields");
+      return;
+    }
+    
     }
 
-    if (!profileImage || profileImage.trim() === "") {
-      // Set default profile image
-      setProfileImage(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
-      );
-      console.log(profileImage);
-    } else {
-      console.log("Profile image already set:", profileImage);
-    }
 
-    const empData = {
-      address,
-      dob,
-      type,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      username,
-      profileImage,
+    const addressData = {
+      country,
+      addressLine1,
+      addressLine2,
+      district,
+      city,
+      postalCode
     };
 
-    try {
-      await axios.post("/api/employees/addEmployee", empData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
+  
   return (
     <div>
       <Button type="primary" onClick={showModal}>
@@ -144,7 +127,7 @@ function AddBillingAddress() {
               <Input
                 placeholder="Sri Lanka"
                 size="large"
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => setCounty(e.target.value)}
               />
             </div>
             <div
@@ -166,7 +149,7 @@ function AddBillingAddress() {
               <Input
                 placeholder="New Kandy Road"
                 size="large"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setAddresLine1(e.target.value)}
               />
             </div>
             <div
@@ -188,7 +171,7 @@ function AddBillingAddress() {
               <Input
                 placeholder="Address Line 2"
                 size="large"
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                onChange={(e) => setAddresLine2(e.target.value)}
               />
             </div>
             <div
@@ -239,7 +222,7 @@ function AddBillingAddress() {
                   <Input
                     placeholder="Malabe"
                     size="large"
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setCity(e.target.value)}
                   />
                 </span>
               </div>
@@ -265,7 +248,7 @@ function AddBillingAddress() {
                   placeholder="000000"
                   type="number"
                   size="large"
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setPostalCode(e.target.value)}
                 />
               </div>
             </div>
@@ -288,5 +271,6 @@ function AddBillingAddress() {
     </div>
   );
 }
+          
 
 export default AddBillingAddress;
