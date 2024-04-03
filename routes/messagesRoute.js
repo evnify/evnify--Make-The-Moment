@@ -53,11 +53,11 @@ const generateUniqueID = async () => {
 // Add a new message
 router.post('/newMessage', async (req, res) => {
 
-    const {customerID,message,sendDate,sendTime,category,status,sender} = req.body;
+    const {customerID,message,sendDate,sendTime,category,status,sender,reciverId} = req.body;
     const messageId = await generateUniqueID();
 
     message.messageId = messageId;
-    const newMessage = new messageModel({ messageId,customerID,message,sendDate,sendTime,category,status,sender});
+    const newMessage = new messageModel({ messageId,customerID,message,sendDate,sendTime,category,status,sender,reciverId});
     try {
         await newMessage.save();
         res.send("Message submitted successfully");

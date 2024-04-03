@@ -34,6 +34,10 @@ const messageSchema = new mongoose.Schema({
     sender:{
         type:String,
         required:true,
+    },
+    reciverId:{
+        type:String,
+        required:true,
     }
 }, { timestamps: true });
 

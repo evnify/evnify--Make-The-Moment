@@ -67,6 +67,12 @@
 
 }
 
+.message-received-preview.selected {
+    background-color: #f0f0f0; /* Gray background color */
+    width: 370px;
+    border-radius: 11px;
+}
+
 .message-all-users-bar {
     display: flex;
     flex-direction: column;

@@ -54,13 +54,15 @@ function AllMessages() {
     const sendMessage = async (e) => {
         e.preventDefault();
         try {
+            const customerID = selectedUserID;
             const newMessage = {
-                customerID: "U71200743",
+                customerID,
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
                 category: "Price",
                 sender: "admin",
+                reciverId:customerID
             };
             if (selectedMessageId) {
                 // Update existing message
@@ -110,6 +112,7 @@ function AllMessages() {
         setSentMessages(messages.filter(msg => msg.sender === 'admin'));
         setReceivedMessages(messages.filter(msg => msg.sender === 'customer'));
     }, [messages]);
+    
 
 
 
@@ -159,7 +162,8 @@ function AllMessages() {
                         <div>
                                 {/* Render grouped messages */}
                                 {Object.keys(groupedMessages).map((customerID) => (
-                                    <div key={customerID} className="message-received-preview" onClick={() => handlePreviewClick(customerID)}>
+                                    <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                     onClick={() => handlePreviewClick(customerID)}>
                                         <div className="all-message-profile-pic">
                                             <img src={messageDp} alt="DP" />
                                         </div>
@@ -169,7 +173,7 @@ function AllMessages() {
                                                     <b>{customerID}</b>
                                                 </div>
                                                 <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                    {moment(groupedMessages[customerID][0].sendTime).format('HH:mm')}
+                                                    {groupedMessages[customerID][0].sendTime}
                                                 </div>
                                             </div>
                                             <div style={{ fontSize: "15px", color: "#b3b3b3" }}>
@@ -201,7 +205,7 @@ function AllMessages() {
                             <b
                                 style={{
                                     fontSize: "20px",
-                                }}>Sasindu Nadeeshan</b>
+                                }}>{selectedUserID}</b>
                         </div>
                     </div>
                     <div>
@@ -255,7 +259,7 @@ function AllMessages() {
                                         </div>
                                     </div>
                                 ))}
-                                {sentMessages.map((msg, index) => (
+                                {selectedUserID && sentMessages.filter(msg => msg.customerID === selectedUserID).map((msg, index) => (
                                     <div className="message-send-admin" key={msg._id}>
                                         <div style={{ margin: "10px 0 0 10px" }}>
                                             <div
