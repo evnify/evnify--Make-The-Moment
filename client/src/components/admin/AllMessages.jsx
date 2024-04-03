@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Input, Space, Tag, Select, Dropdown } from 'antd';
 import { messageDp } from "../../assets";
-import { DownOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Fade from '@mui/material/Fade';
+
 const { Search } = Input
 
 const items = [
@@ -33,6 +36,15 @@ function AllMessages() {
     const [sentMessages, setSentMessages] = useState([]);
     const [receivedMessages, setReceivedMessages] = useState([]);
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     const fetchMessages = async () => {
         try {
             const response = await axios.get('/api/messages/allMessages');
@@ -53,26 +65,29 @@ function AllMessages() {
     }, [messages]);
 
 
+    // Function to delete a message by ID
+    const deleteMessage = async (messageId) => {
+        try {
+            await axios.delete(`/api/messages/${messageId}`);
+            // Refetch messages after deletion
+            fetchMessages();
+            console.log('Message deleted successfully');
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
     return <div>
+
         <div className="message-Box-all-messages">
             <div className="message-all-users-bar">
                 <div className="message-all-users-bar-top">
-                    <div style={{ margin: "20px 0 0 50px" }}>
-                        <Dropdown
-                            menu={{
-                                items2,
-                            }}
-                            trigger={['click']}
-                        >
-                            <a onClick={(e) => e.preventDefault()} style={{ color: '#000000', fontSize: '24px', fontWeight: 'bold' }}> {/* Change text color here */}
-                                <Space>
-                                    Messages
-                                    <DownOutlined />
-                                </Space>
-                            </a>
-                        </Dropdown>
+                    <div className="message-all-users-bar-top-msg-text" style={{ margin: "20px 0 0 40px" }}>
+                        <b style={{ fontSize: "28px" }}>Messages</b>
+
                     </div>
-                    <div style={{ margin: "30px 0 0 100px", fontSize: "12px" }}>
+                    <div style={{ margin: "35px 0 0 90px", fontSize: "12px" }}>
                         filter by date
                         <Icon icon="mingcute:filter-line" width="18" height="18" style={{ margin: "0 0 0 5px" }} />
                     </div>
@@ -152,30 +167,61 @@ function AllMessages() {
                     <div>
                         <div className="message-reply-admin-box">
                             <div className="message-reply-admin-box-top">
-                            {receivedMessages.map((msg, index) => (
-                                <div className="message-receved-admin">
-                                    <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                    <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
-                                        <p> <p>{msg.message}</p></p>
+                                {receivedMessages.map((msg, index) => (
+                                    <div className="message-receved-admin">
+                                        <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                        <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 0 0 15px", padding: "6px", maxWidth: "400px" }}>
+                                            <p> <p>{msg.message}</p></p>
+                                        </div>
                                     </div>
-                                    <Dropdown
-                                        menu={{
-                                            items,
-                                        }}
-                                    >
-                                        <a onClick={(e) => e.preventDefault()}>
-                                            <Space>
-                                                <DownOutlined />
-                                            </Space>
-                                        </a>
-                                    </Dropdown>
-                                </div>
-                            ))}
+                                ))}
                                 {sentMessages.map((msg, index) => (
                                     <div className="message-send-admin">
+                                        <div style={{ margin: "10px 0 0 10px" }}>
+                                            <div
+                                                id="fade-button"
+                                                aria-controls={open ? 'fade-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={handleClick}
+                                            >
+                                                <Icon icon="mage:dots" width="16" height="16" />
+                                            </div>
+                                            <Menu
+                                                id="fade-menu"
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'fade-button',
+                                                }}
+                                                anchorEl={anchorEl}
+                                                open={open}
+                                                onClose={handleClose}
+                                                TransitionComponent={Fade}
+                                                anchorOrigin={{
+                                                    vertical: 'top', // Change the opening side to top
+                                                    horizontal: 'right',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'right',
+                                                }}
+                                                PaperProps={{
+                                                    style: {
+                                                        backgroundColor: 'white', // Change background color
+                                                        borderRadius: '8px', // Adjust border radius
+                                                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Change box shadow
+                                                    },
+                                                }}
+                                            >
+                                                <MenuItem onClick={handleClose}>Edit</MenuItem>
+                                                <MenuItem onClick={handleClose}>Delete</MenuItem>
+                                            </Menu>
+                                        </div>
+
+
                                         <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 0", padding: "6px", maxWidth: "400px", color: "#ffffff" }}>
 
                                             <p>{msg.message}</p>
+
                                         </div>
                                         <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
                                     </div>

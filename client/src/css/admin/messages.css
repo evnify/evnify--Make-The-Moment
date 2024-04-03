@@ -60,6 +60,13 @@
 
 }
 
+.message-all-users-bar-top-msg-text{
+    display: flex;
+    flex-direction: row;
+  
+
+}
+
 .message-all-users-bar {
     display: flex;
     flex-direction: column;
@@ -246,6 +253,7 @@
 
 .message-reply-admin-box-top::-webkit-scrollbar {
     width: 8px; /* Set the width of the scrollbar */
+    
   }
 
   /* Style the track (the area where the scrollbar handle moves) */
