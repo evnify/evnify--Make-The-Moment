@@ -33,6 +33,7 @@ function ChatBox() {
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
                 category: "newe new",
+                sender: "customer",
                 status: "unread",
 
             };

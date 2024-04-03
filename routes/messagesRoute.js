@@ -3,11 +3,25 @@ const router = express.Router();
 
 const messageModel = require("../models/message");
 
+
+//Generate unique id for leave
+const generateUniqueID = async () => {
+    let id = 'TM' + Math.floor(100000 + Math.random() * 900000);
+    const existingMessage = await messageModel.findOne({ messageId: id });
+    if (existingMessage) {
+        return generateUniqueID();
+    }
+    return id;
+};
+
+// Add a new message
 router.post('/newMessage', async (req, res) => {
-    const {customerID,message,sendDate,sendTime,category,status} = req.body;
 
-    const newMessage = new messageModel({ customerID,message,sendDate,sendTime,category,status});
+    const {customerID,message,sendDate,sendTime,category,status,sender} = req.body;
+    const messageId = await generateUniqueID();
 
+    message.messageId = messageId;
+    const newMessage = new messageModel({ messageId,customerID,message,sendDate,sendTime,category,status,sender});
     try {
         await newMessage.save();
         res.send("Message submitted successfully");
@@ -45,6 +59,31 @@ router.delete('/deleteMessage/:id', async (req, res) => {
 
         // If the message is successfully deleted, send a success response
         res.json({ message: "Message deleted successfully" });
+    } catch (error) {
+        // If there's an error, send an error response
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.put('/updateMessage/:id', async (req, res) => {
+    const messageId = req.params.id;
+    const { message, sendDate, sendTime, category, status, sender } = req.body;
+
+    try {
+        // Find the message by ID and update it with the new data
+        const updatedMessage = await messageModel.findByIdAndUpdate(
+            messageId,
+            { message, sendDate, sendTime, category, status, sender },
+            { new: true } // Return the updated message after the update operation
+        );
+
+        if (!updatedMessage) {
+            // If the message with the specified ID is not found, return a 404 status
+            return res.status(404).json({ message: "Message not found" });
+        }
+
+        // If the message is successfully updated, send the updated message as a response
+        res.json(updatedMessage);
     } catch (error) {
         // If there's an error, send an error response
         res.status(500).json({ message: error.message });
