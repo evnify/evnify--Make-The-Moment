@@ -13,6 +13,16 @@ router.post("/addPayroll", async (req, res) => {
     }
 });
 
+router.get("/getAllPayroll", async (req, res) => {
+    try{
+        const payRoll = await salaryModel.find();
+        res.status(200).send(payRoll);
+    }catch(err){
+        return res.status(400).json({message: "something went wrong"});
+    }
+}
+);
+
 
 
 
