@@ -37,3 +37,7 @@ const bookingSchema = new mongoose.Schema({
     AssignedEmployees : [],
 
 }, { timestamps: true });
+
+const bookingModel =  mongoose.model("booking",bookingSchema);
+
+module.exports =  bookingModel;

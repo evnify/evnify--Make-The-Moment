@@ -26,6 +26,7 @@ router.get("/getpackages", async (req, res) => {
   });
 router.post("/getInventoriesByIds", async (req, res) => {
     const inventoryId = req.body.itemID;
+    console.log(inventoryId);
     try {
         const inventories = await Inventory.find({itemID:inventoryId});
         
