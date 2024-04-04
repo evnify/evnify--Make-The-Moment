@@ -469,9 +469,6 @@ function EmployeeList() {
         setIsActiveModalOpen(true);
     };
 
-
-
-
     const [isConformModalOpen, setIsConformModalOpen] = useState(false);
     const [isActiveModalOpen, setIsActiveModalOpen] = useState(false);
 
@@ -505,10 +502,32 @@ function EmployeeList() {
         }
     };
 
-
     useEffect(() => {
         fetchEmployeeList();
     }, []);
+
+    //Filter employee list
+    const [filteredEmployeeList, setFilteredEmployeeList] = useState([]);
+    const [searchKey, setSearchKey] = useState("");
+
+    useEffect(() => {
+        let tempList = employeeList;
+
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.firstName.toLowerCase().includes(searchKey) ||
+                    item.lastName.toLowerCase().includes(searchKey) ||
+                    item.empID.toLowerCase().includes(searchKey)
+            );
+        }
+
+        if (selectedType !== "all") {
+            tempList = tempList.filter((item) => item.status === selectedType);
+        }
+
+        setFilteredEmployeeList(tempList);
+    }, [searchKey, selectedType, employeeList]);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -818,7 +837,7 @@ function EmployeeList() {
                         >
                             Suspend Employee
                         </button>
-                    ) :  (
+                    ) : (
                         <button
                             onClick={conformActive}
                             style={{
@@ -891,7 +910,7 @@ function EmployeeList() {
                             <Search
                                 placeholder="Search "
                                 size="large"
-                                onSearch={onSearch}
+                                onSearch={(value) => setSearchKey(value)}
                                 style={{
                                     width: 265,
                                     height: 40,
@@ -912,10 +931,10 @@ function EmployeeList() {
                                 }}
                             >
                                 <Radio.Button value="all">All</Radio.Button>
-                                <Radio.Button value="active">
+                                <Radio.Button value="Active">
                                     Active
                                 </Radio.Button>
-                                <Radio.Button value="suspended">
+                                <Radio.Button value="Suspended">
                                     Suspended
                                 </Radio.Button>
                             </Radio.Group>
@@ -1234,7 +1253,7 @@ function EmployeeList() {
                         <div>
                             <Table
                                 columns={columns}
-                                dataSource={employeeList}
+                                dataSource={filteredEmployeeList}
                                 pagination={pagination}
                                 onChange={handleTableChange}
                             />
