@@ -114,6 +114,150 @@ function Payroll() {
         }
     }
 
+    // Edit model
+
+    const [editModelOpen, setEditModelOpen] = useState(false);
+    const [editEmpName, setEditEmpName] = useState("");
+    const [editType, setEditType] = useState("");
+    const [editFromDate, setEditFromDate] = useState("");
+    const [editToDate, setEditToDate] = useState("");
+    const [editBasicSalary, setEditBasicSalary] = useState("");
+    const [editAllowances, setEditAllowances] = useState([]);
+    const [editDeductions, setEditDeductions] = useState([]);
+    const [editEmpID, setEditEmpID] = useState("");
+    const [editTotalSalary, setEditTotalSalary] = useState(0);
+    const [editEmail, setEditEmail] = useState("");
+    const editInputRef = useRef(null);
+    const [editDeductionSelect, setEditDeductionSelect] = useState([
+        "Social security deduction",
+        "Income tax",
+        "Health insurance deduction",
+        "Loan deduction",
+        "Other deduction",
+    ]);
+    const [editAllowanceSelect, setEditAllowanceSelect] = useState([
+        "Performance Bonus",
+        "Transport Allowance",
+        "Medical Allowance",
+        "Anual Bonus",
+        "Profit Share",
+    ]);
+    const [editDeductionName, setEditDeductionName] = useState("");
+    const [editDeductionLabel, setEditDeductionLabel] = useState("");
+    const [editAllowanceName, setEditAllowanceName] = useState("");
+    const [editAllowanceLabel, setEditAllowanceLabel] = useState("");
+    const [editDeductionAmount, setEditDeductionAmount] = useState("");
+    const [editAllowanceAmount, setEditAllowanceAmount] = useState("");
+
+    const showEditSalaryModel = (record) => {
+        setEditModelOpen(true);
+        setEditEmpID(record.employeeID);
+        setEditEmpName(record.employeeName);
+        setEditType(record.type);
+        setEditFromDate(record.fromDate);
+        setEditToDate(record.toDate);
+        setEditBasicSalary(record.basicSalary);
+        setEditAllowances(record.allowances);
+        setEditDeductions(record.deductions);
+        setEditTotalSalary(record.netSalary);
+        setEditEmail(record.email);
+    };
+
+    const addEditAllowance = (e) => {
+        e.preventDefault();
+        setEditAllowanceSelect((prevState) => [
+            ...prevState,
+            editAllowanceLabel || `New item ${index++}`,
+        ]);
+        setEditAllowanceLabel("");
+        setTimeout(() => {
+            editInputRef.current?.focus();
+        }, 0);
+    };
+
+    const newEditAllowance = (e) => {
+        e.preventDefault();
+        if (editAllowanceName === "" || editAllowanceName === null)
+            return message.error("Please enter allowance name");
+        else if (editAllowanceAmount === "" || editAllowanceAmount === null)
+            return message.error("Please enter allowance amount");
+        else {
+            setEditAllowances((prevState) => [
+                ...prevState,
+                { name: editAllowanceName, amount: editAllowanceAmount },
+            ]);
+            setEditAllowanceName("");
+            setEditAllowanceAmount("");
+        }
+    };
+
+    const addEditDeduction = (e) => {
+        e.preventDefault();
+        setEditDeductionSelect((prevState) => [
+            ...prevState,
+            editDeductionLabel || `New item ${index++}`,
+        ]);
+        setEditDeductionLabel("");
+        setTimeout(() => {
+            editInputRef.current?.focus();
+        }, 0);
+    };
+
+    const newEditDeduction = (e) => {
+        e.preventDefault();
+        if (editDeductionName === "" || editDeductionName === null)
+            return message.error("Please enter deduction name");
+        else if (editDeductionAmount === "" || editDeductionAmount === null)
+            return message.error("Please enter deduction amount");
+        else {
+            setEditDeductions((prevState) => [
+                ...prevState,
+                { name: editDeductionName, amount: editDeductionAmount },
+            ]);
+            setEditDeductionName("");
+            setEditDeductionAmount("");
+        }
+    };
+
+    useEffect(() => {
+        let total = 0;
+        if (editBasicSalary === "") {
+            setEditTotalSalary(0);
+        } else {
+            editAllowances.forEach((allowance) => {
+                total += parseInt(allowance.amount);
+            });
+            editDeductions.forEach((deduction) => {
+                total -= parseInt(deduction.amount);
+            });
+            total += parseInt(editBasicSalary);
+            setEditTotalSalary(total);
+        }
+    }, [editAllowances, editDeductions, editBasicSalary]);
+
+    const saveEditedPayroll = async () => {
+        try{
+            await axios.post("${process.env.PUBLIC_URL}/api/salary/updatePayroll", {
+                salaryID: editEmpID,
+                employeeName: editEmpName,
+                type: editType,
+                fromDate: editFromDate,
+                toDate: editToDate,
+                basicSalary: editBasicSalary,
+                allowances: editAllowances,
+                deductions: editDeductions,
+                email: editEmail,
+                netSalary: editTotalSalary,
+            });
+            message.success("Payroll updated successfully");
+            setEditModelOpen(false);
+            fetchPayrollList();
+        } catch (error) {
+            message.error("Something went wrong");
+
+        }
+    };
+
 
     async function fetchPayrollList() {
         const response = await axios.get(
@@ -249,6 +393,7 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => showEditSalaryModel(record)}
                             >
                                 <Icon icon="mage:edit" />
                             </button>
@@ -259,7 +404,9 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
-                                onClick={() => showDeleteConform(record.salaryID)}
+                                onClick={() =>
+                                    showDeleteConform(record.salaryID)
+                                }
                             >
                                 <Icon icon="material-symbols:delete-outline" />
                             </button>
@@ -267,6 +414,7 @@ function Payroll() {
                     ) : (
                         <>
                             <button
+                                disabled
                                 style={{
                                     fontSize: "20px",
                                     color: "#9D9D9D",
@@ -277,6 +425,7 @@ function Payroll() {
                                 <Icon icon="icon-park-outline:correct" />
                             </button>
                             <button
+                                disabled
                                 style={{
                                     fontSize: "20px",
                                     color: "#9D9D9D",
@@ -287,6 +436,7 @@ function Payroll() {
                                 <Icon icon="mage:edit" />
                             </button>
                             <button
+                                disabled
                                 style={{
                                     fontSize: "20px",
                                     color: "#9D9D9D",
@@ -898,6 +1048,434 @@ function Payroll() {
                     <button
                         className="salary_save_btn_002"
                         onClick={savePayroll}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Save Salary
+                    </button>
+                    <button
+                        className="salary_cansel_btn_002"
+                        onClick={() => setIsModalOpen(false)}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </Modal>
+
+            {/* Edit model content */}
+            <Modal
+                footer={null}
+                title="Edit Paysheet"
+                open={editModelOpen}
+                onCancel={() => setEditModelOpen(false)}
+                centered
+            >
+                <div className="create_paysheet_002">
+                    <div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "14px",
+                                }}
+                            >
+                                Select an Employee
+                            </span>
+                            <Select
+                                showSearch
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                }}
+                                value={editEmpName}
+                                disabled
+                                placeholder="Search Employee"
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "14px",
+                                }}
+                            >
+                                Type
+                            </span>
+                            <Input
+                                disabled
+                                type="text"
+                                size="large"
+                                value={editType}
+                                onChange={(e) => setType(e.target.value)}
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                From Date
+                            </span>
+                            <DatePicker
+                                style={{
+                                    width: 205,
+                                    height: 40,
+                                }}
+                                value={
+                                    editFromDate ? moment(editFromDate) : null
+                                }
+                                onChange={(date, dateString) => {
+                                    setEditFromDate(dateString);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="admin_payroll_table_right_side_002">
+                        <div className="admin_payroll_table_right_side_002_top_div">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "14px",
+                                    }}
+                                >
+                                    Emp ID
+                                </span>
+                                <Input
+                                    disabled
+                                    type="text"
+                                    size="large"
+                                    value={editEmpID}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "14px",
+                                    }}
+                                >
+                                    Basic salary
+                                </span>
+                                <Input
+                                    type="number"
+                                    size="large"
+                                    placeholder="Enter Salary"
+                                    value={editBasicSalary}
+                                    onChange={(e) =>
+                                        setEditBasicSalary(e.target.value)
+                                    }
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    To Date
+                                </span>
+                                <DatePicker
+                                    style={{
+                                        width: 205,
+                                        height: 40,
+                                    }}
+                                    value={
+                                        editToDate ? moment(editToDate) : null
+                                    }
+                                    onChange={(date, dateString) => {
+                                        setEditToDate(dateString);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <span
+                        style={{
+                            marginBottom: "3px",
+                            fontSize: "14px",
+                        }}
+                    >
+                        Allowances
+                    </span>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "20px",
+                        }}
+                    >
+                        <Select
+                            style={{
+                                width: 220,
+                                height: 35,
+                            }}
+                            value={editAllowanceName}
+                            onChange={(value) => {
+                                setEditAllowanceName(value);
+                            }}
+                            dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Divider
+                                        style={{
+                                            margin: "8px 0",
+                                        }}
+                                    />
+                                    <Space
+                                        style={{
+                                            padding: "0 8px 4px",
+                                        }}
+                                    >
+                                        <Input
+                                            placeholder="Please enter item"
+                                            ref={inputRef}
+                                            value={editAllowanceLabel}
+                                            onChange={(e) =>
+                                                setEditAllowanceLabel(
+                                                    e.target.value
+                                                )
+                                            }
+                                            onKeyDown={(e) =>
+                                                e.stopPropagation()
+                                            }
+                                        />
+                                        <Button
+                                            type="text"
+                                            icon={<PlusOutlined />}
+                                            onClick={addEditAllowance}
+                                        >
+                                            Add item
+                                        </Button>
+                                    </Space>
+                                </>
+                            )}
+                            options={editAllowanceSelect.map((item) => ({
+                                label: item,
+                                value: item,
+                            }))}
+                        />
+                        <Input
+                            placeholder="Amount"
+                            style={{
+                                width: 120,
+                                marginRight: 10,
+                                height: 35,
+                            }}
+                            type="number"
+                            value={editAllowanceAmount}
+                            onChange={(e) =>
+                                setEditAllowanceAmount(e.target.value)
+                            }
+                        />
+                        <Button
+                            type="text"
+                            icon={<PlusOutlined />}
+                            onClick={newEditAllowance}
+                        >
+                            Add
+                        </Button>
+                    </div>
+                    {editAllowances.map((allowance, index) => (
+                        <div key={index}>
+                            <Input
+                                value={Object.values(allowance)[0]}
+                                style={{
+                                    width: 220,
+                                    marginRight: 20,
+                                    height: 35,
+                                    marginTop: 10,
+                                }}
+                                disabled
+                            />
+                            <Input
+                                value={Object.values(allowance)[1] + " LKR"}
+                                style={{
+                                    width: 120,
+                                    marginRight: 10,
+                                    height: 35,
+                                }}
+                                disabled
+                            />
+                        </div>
+                    ))}
+                </div>
+                <div
+                    style={{
+                        marginTop: "8px",
+                        display: "flex",
+                        flexDirection: "column",
+                    }}
+                >
+                    <span
+                        style={{
+                            marginBottom: "1px",
+                            fontSize: "14px",
+                        }}
+                    >
+                        Deductions
+                    </span>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "20px",
+                        }}
+                    >
+                        <Select
+                            style={{
+                                width: 220,
+                                height: 35,
+                            }}
+                            value={editDeductionName}
+                            onChange={(value) => {
+                                setEditDeductionName(value);
+                            }}
+                            dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Divider
+                                        style={{
+                                            margin: "8px 0",
+                                        }}
+                                    />
+                                    <Space
+                                        style={{
+                                            padding: "0 8px 4px",
+                                        }}
+                                    >
+                                        <Input
+                                            placeholder="Please enter item"
+                                            ref={inputRef}
+                                            value={editDeductionLabel}
+                                            onChange={(e) =>
+                                                setEditDeductionLabel(
+                                                    e.target.value
+                                                )
+                                            }
+                                            onKeyDown={(e) =>
+                                                e.stopPropagation()
+                                            }
+                                        />
+                                        <Button
+                                            type="text"
+                                            icon={<PlusOutlined />}
+                                            onClick={addEditDeduction}
+                                        >
+                                            Add item
+                                        </Button>
+                                    </Space>
+                                </>
+                            )}
+                            options={editDeductionSelect.map((item) => ({
+                                label: item,
+                                value: item,
+                            }))}
+                        />
+                        <Input
+                            placeholder="Amount"
+                            style={{
+                                width: 120,
+                                marginRight: 10,
+                                height: 35,
+                            }}
+                            type="number"
+                            value={editDeductionAmount}
+                            onChange={(e) => setEditDeductionAmount(e.target.value)}
+                        />
+                        <Button
+                            type="text"
+                            icon={<PlusOutlined />}
+                            onClick={newEditDeduction}
+                        >
+                            Add
+                        </Button>
+                    </div>
+                    {editDeductions.map((deduction, index) => (
+                        <div key={index}>
+                            <Input
+                                value={Object.values(deduction)[0]}
+                                style={{
+                                    width: 220,
+                                    marginRight: 20,
+                                    height: 35,
+                                    marginTop: 10,
+                                }}
+                                disabled
+                            />
+                            <Input
+                                value={Object.values(deduction)[1] + " LKR"}
+                                style={{
+                                    width: 120,
+                                    marginRight: 10,
+                                    height: 35,
+                                }}
+                                disabled
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                <h5 className=" total_salary_002">
+                    Total Salary : {editTotalSalary} LKR
+                </h5>
+                <div className="center">
+                    <button
+                        className="salary_save_btn_002"
+                        onClick={saveEditedPayroll}
                         style={{
                             width: "120px",
                             height: "40px",
