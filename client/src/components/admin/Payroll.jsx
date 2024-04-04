@@ -84,21 +84,33 @@ function Payroll() {
         setSalaryList(response.data);
     }
 
-    const paidSalary = async (id) => {
+    const paidSalary = async (record) => {
         try {
             const response = await axios.post(
                 `${process.env.PUBLIC_URL}/api/salary/setPaidByID`,
                 {
-                    salaryID: id,
+                    salaryID: record.salaryID,
                 }
             );
             if (response.status === 200) {
                 message.success("Salary paid successfully");
+                fetchPayrollList();
+                await axios.post(
+                    `${process.env.PUBLIC_URL}/api/emails/salaryConformation`,
+                    {
+                        name: record.employeeName,
+                        netSalary: record.netSalary,
+                        salaryID: record.salaryID,
+                        email: record.email,
+                        fromDate: record.fromDate,
+                        toDate: record.toDate,
+                    }
+                );
+                message.success("Email sent successfully");
             }
         } catch (error) {
             message.error("Something went wrong");
         }
-        fetchPayrollList();
     };
 
     const [pagination, setPagination] = useState({
@@ -188,7 +200,7 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
-                                onClick={() => showPaidConform(record.salaryID)}
+                                onClick={() => showPaidConform(record)}
                             >
                                 <Icon icon="icon-park-outline:correct" />
                             </button>
