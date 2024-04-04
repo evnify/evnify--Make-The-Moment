@@ -35,6 +35,16 @@ router.get("/getAllPayroll", async (req, res) => {
 }
 );
 
+router.post("/setPaidByID", async (req, res) => {
+    const salaryID = req.body.salaryID;
+    try{
+        await salaryModel.updateOne({salaryID: salaryID}, {status: "Paid"});
+        res.status(200).send("Salary paid successfully");
+    }catch(err){
+        return res.status(400).json({message: "something went wrong"});
+    }
+});
+
 
 
 

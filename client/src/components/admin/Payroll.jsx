@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Icon } from "@iconify/react";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+
 import {
     Input,
     Modal,
@@ -18,6 +20,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 
 const { Search } = Input;
+const { confirm } = Modal;
 
 function Payroll() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,6 +57,49 @@ function Payroll() {
     const [allowanceLabel, setAllowanceLabel] = useState("");
     const [deductionAmount, setDeductionAmount] = useState("");
     const [allowanceAmount, setAllowanceAmount] = useState("");
+
+    const showPaidConform = (id) => {
+        confirm({
+            centered: true,
+            title: "Is this salary paid?",
+            icon: <ExclamationCircleFilled />,
+            content: "Please confirm that this salary is paid",
+            okText: "Paid",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                paidSalary(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
+
+    async function fetchPayrollList() {
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/salary/getAllPayroll`
+        );
+        setSalaryList(response.data);
+    }
+
+    const paidSalary = async (id) => {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/salary/setPaidByID`,
+                {
+                    salaryID: id,
+                }
+            );
+            if (response.status === 200) {
+                message.success("Salary paid successfully");
+            }
+        } catch (error) {
+            message.error("Something went wrong");
+        }
+        fetchPayrollList();
+    };
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -142,6 +188,7 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => showPaidConform(record.salaryID)}
                             >
                                 <Icon icon="icon-park-outline:correct" />
                             </button>
@@ -342,12 +389,6 @@ function Payroll() {
         fetchEmployeeList();
 
         //Fetch All Payroll Details
-        async function fetchPayrollList() {
-            const response = await axios.get(
-                `${process.env.PUBLIC_URL}/api/salary/getAllPayroll`
-            );
-            setSalaryList(response.data);
-        }
         fetchPayrollList();
     }, []);
 
