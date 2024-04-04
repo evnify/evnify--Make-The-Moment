@@ -862,7 +862,7 @@ function Payroll() {
                     </button>
                 </div>
             </Modal>
-            <div className="admin_emp_list_container">
+            <div className="admin_salary_list_container">
                 <div className="admin_emp_list_top_menu">
                     <div
                         style={{
@@ -898,7 +898,7 @@ function Payroll() {
                             <Radio.Button value="Pending">Pending</Radio.Button>
                         </Radio.Group>
                         <button
-                            className="admin_emp_list_top_menu_button"
+                            className="admin_salary_list_top_menu_button"
                             onClick={() => setIsModalOpen(true)}
                         >
                             <svg
