@@ -9,6 +9,10 @@ const salarySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    email: {
+        type: String,
+        required: true,
+    },
     employeeName: {
         type: String,
         required: true,

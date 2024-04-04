@@ -36,6 +36,7 @@ function Payroll() {
     const [deductions, setDeductions] = useState([]);
     const [empID, setEmpID] = useState("");
     const [totalSalary, setTotalSalary] = useState(0);
+    const [email, setEmail] = useState("");
     const inputRef = useRef(null);
     const [deductionSelect, setDeductionSelect] = useState([
         "Social security deduction",
@@ -279,12 +280,12 @@ function Payroll() {
             empID,
             empName,
             type,
-            "from",
             fromDate,
             toDate,
             basicSalary,
             allowances,
             deductions,
+            email,
             totalSalary
         );
         if (empID === "" || empID === null) {
@@ -308,6 +309,7 @@ function Payroll() {
                     basicSalary: basicSalary,
                     allowances,
                     deductions,
+                    email: email,
                     netSalary: totalSalary,
                 }
             );
@@ -323,6 +325,7 @@ function Payroll() {
                 setAllowances([]);
                 setDeductions([]);
                 setTotalSalary(0);
+                fetchPayrollList();
             }
         } catch (error) {
             message.error("Something went wrong");
@@ -426,12 +429,14 @@ function Payroll() {
         value: employee.empID,
         label: `${employee.firstName} ${employee.lastName}`,
         type: employee.type,
+        email: employee.email,
     }));
 
     const handleEmployeeSelect = (selectedValue, selectedOption) => {
         setType(selectedOption.type);
         setEmpID(selectedOption.value);
         setEmpName(selectedOption.label);
+        setEmail(selectedOption.email);
     };
 
     const onSearch = (value) => console.log(value);
@@ -579,7 +584,7 @@ function Payroll() {
                                     Basic salary
                                 </span>
                                 <Input
-                                    type="text"
+                                    type="number"
                                     size="large"
                                     placeholder="Enter Salary"
                                     value={basicSalary}
