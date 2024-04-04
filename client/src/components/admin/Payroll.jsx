@@ -78,6 +78,43 @@ function Payroll() {
         });
     };
 
+    const showDeleteConform = (id) => {
+        confirm({
+            centered: true,
+            title: "Are you sure?",
+            icon: <ExclamationCircleFilled />,
+            content: "Please confirm that you want to delete this salary",
+            okText: "Delete",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                deleteSalaryById(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
+
+    async function deleteSalaryById(id) {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/salary/deletePayrollByID`,
+                {
+                    salaryID: id,
+                }
+            );
+            if (response.status === 200) {
+                message.success("Salary deleted successfully");
+                fetchPayrollList();
+            }
+        } catch (error) {
+            message.error("Something went wrong");
+        }
+    }
+
+
     async function fetchPayrollList() {
         const response = await axios.get(
             `${process.env.PUBLIC_URL}/api/salary/getAllPayroll`
@@ -222,6 +259,7 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => showDeleteConform(record.salaryID)}
                             >
                                 <Icon icon="material-symbols:delete-outline" />
                             </button>
