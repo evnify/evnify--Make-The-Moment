@@ -126,5 +126,19 @@ router.put('/updateMessage/:id', async (req, res) => {
     }
 });
 
+// Route to mark messages as read for a specific user ID
+router.put('/markMessagesAsRead/:userID', async (req, res) => {
+    try {
+      const userID = req.params.userID;
+      // Update messages with status 'unread' to 'read' for the given user ID
+      await messageModel.updateMany({ customerID: userID, status: 'unread' }, { status: 'read' });
+      res.status(200).json({ message: 'Messages marked as read successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });  
+
+
 
 module.exports = router;

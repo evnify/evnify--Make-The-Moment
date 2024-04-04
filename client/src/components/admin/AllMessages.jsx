@@ -7,7 +7,7 @@ import moment from 'moment';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
-import { SendOutlined , CaretDownOutlined } from '@ant-design/icons';
+import { SendOutlined , CaretDownOutlined,BellFilled} from '@ant-design/icons';
 
 const { Search } = Input
 
@@ -134,10 +134,23 @@ function AllMessages() {
 
     const handlePreviewClick = (userID) => {
         setSelectedUserID(userID); // Set the selected user ID
+        markMessagesAsRead(userID);
+    };
+
+     // Function to mark messages as read for the selected user ID
+     const markMessagesAsRead = async (userID) => {
+        try {
+            await axios.put(`/api/messages/markMessagesAsRead/${userID}`);
+            // After marking messages as read, fetch messages again to update the UI
+            fetchMessages();
+        } catch (error) {
+            console.log(error);
+        }
     };
 
 
-    return <div>
+
+    return <div>      
 
         <div className="message-Box-all-messages">
             <div className="message-all-users-bar">
@@ -185,8 +198,10 @@ function AllMessages() {
                                                 {groupedMessages[customerID][0].sendTime}
                                             </div>
                                         </div>
-                                        <div style={{ fontSize: "15px", color: "#b3b3b3" }}>
-                                            {groupedMessages[customerID][0].message}
+                                        <div style={{ fontSize: "15px", color: "#b3b3b3", display:"flex", flexDirection:"row"}}>
+                                        <div style={{width:"250px"}}>{groupedMessages[customerID][groupedMessages[customerID].length - 1].message}</div>
+                                            {/* Render BellFilled icon conditionally */}
+                                            {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{fontSize: '14px', color: 'red',}} />}
                                         </div>
                                         <div>
                                             <Tag color="purple">purple</Tag>

@@ -27,14 +27,16 @@ function ChatBox() {
 
     const sendMessage = async (e) => {
         try {
+            const customerID = "U71200743";
             const messages = {
-                customerID: "U7120025",
+                customerID,
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
                 category: "newe new",
                 sender: "customer",
                 status: "unread",
+                reciverId: customerID,
 
             };
             console.log(messages);
