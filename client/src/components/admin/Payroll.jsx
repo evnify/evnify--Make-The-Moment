@@ -148,6 +148,7 @@ function Payroll() {
     const [editAllowanceLabel, setEditAllowanceLabel] = useState("");
     const [editDeductionAmount, setEditDeductionAmount] = useState("");
     const [editAllowanceAmount, setEditAllowanceAmount] = useState("");
+    const [editSalaryID, setEditSalaryID] = useState("");
 
     const showEditSalaryModel = (record) => {
         setEditModelOpen(true);
@@ -161,6 +162,7 @@ function Payroll() {
         setEditDeductions(record.deductions);
         setEditTotalSalary(record.netSalary);
         setEditEmail(record.email);
+        setEditSalaryID(record.salaryID);
     };
 
     const addEditAllowance = (e) => {
@@ -237,8 +239,8 @@ function Payroll() {
 
     const saveEditedPayroll = async () => {
         try{
-            await axios.post("${process.env.PUBLIC_URL}/api/salary/updatePayroll", {
-                salaryID: editEmpID,
+            await axios.post(`${process.env.PUBLIC_URL}/api/salary/updatePayroll`, {
+                salaryID: editSalaryID,
                 employeeName: editEmpName,
                 type: editType,
                 fromDate: editFromDate,
@@ -343,6 +345,7 @@ function Payroll() {
             title: "Total Salary",
             dataIndex: "netSalary",
             key: "netSalary",
+            render: (netSalary) => `${netSalary} LKR`,
         },
         {
             title: "Created At",

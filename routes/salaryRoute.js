@@ -54,4 +54,17 @@ router.post("/deletePayrollByID", async (req, res) => {
     }
 });
 
+router.post("/updatePayroll", async (req, res) => {
+    const salaryData = req.body;
+    try {
+        await salaryModel.updateOne(
+            { salaryID: salaryData.salaryID },
+            salaryData
+        );
+        res.status(200).send("Salary updated successfully");
+    } catch (err) {
+        return res.status(400).json({ message: "something went wrong" });
+    }
+});
+
 module.exports = router;
