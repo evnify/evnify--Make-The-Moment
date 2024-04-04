@@ -92,6 +92,7 @@
   width: calc(100% - 30px);
   margin: 0 0 15px 15px;
   border-radius: 11px;
+  min-height: 600px;
 }
 
 .admin_salary_list_top_menu {
