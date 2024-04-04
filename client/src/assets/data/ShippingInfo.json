@@ -1,0 +1,172 @@
+{
+    "districts": [
+        {
+            "name": "Colombo",
+            "shipping_fee": 2000
+        },
+        {
+            "name": "Gampaha",
+            "shipping_fee": 2500
+        },
+        {
+            "name": "Kalutara",
+            "shipping_fee": 3000
+        },
+        {
+            "name": "Kandy",
+            "shipping_fee": 3500
+        },
+        {
+            "name": "Matale",
+            "shipping_fee": 3500
+        },
+        {
+            "name": "Nuwara Eliya",
+            "shipping_fee": 4000
+        },
+        {
+            "name": "Galle",
+            "shipping_fee": 4000
+        },
+        {
+            "name": "Matara",
+            "shipping_fee": 4500
+        },
+        {
+            "name": "Hambantota",
+            "shipping_fee": 5000
+        },
+        {
+            "name": "Jaffna",
+            "shipping_fee": 6000
+        },
+        {
+            "name": "Kilinochchi",
+            "shipping_fee": 6500
+        },
+        {
+            "name": "Mannar",
+            "shipping_fee": 6500
+        },
+        {
+            "name": "Mullaitivu",
+            "shipping_fee": 6500
+        },
+        {
+            "name": "Vavuniya",
+            "shipping_fee": 6500
+        },
+        {
+            "name": "Trincomalee",
+            "shipping_fee": 5500
+        },
+        {
+            "name": "Batticaloa",
+            "shipping_fee": 6000
+        },
+        {
+            "name": "Ampara",
+            "shipping_fee": 6000
+        },
+        {
+            "name": "Badulla",
+            "shipping_fee": 4500
+        },
+        {
+            "name": "Monaragala",
+            "shipping_fee": 5000
+        },
+        {
+            "name": "Ratnapura",
+            "shipping_fee": 3500
+        },
+        {
+            "name": "Kegalle",
+            "shipping_fee": 3000
+        },
+        {
+            "name": "Anuradhapura",
+            "shipping_fee": 5000
+        },
+        {
+            "name": "Polonnaruwa",
+            "shipping_fee": 5500
+        },
+        {
+            "name": "Matale",
+            "shipping_fee": 3500
+        },
+        {
+            "name": "Puttalam",
+            "shipping_fee": 4000
+        },
+        {
+            "name": "Kurunegala",
+            "shipping_fee": 3000
+        },
+        {
+            "name": "Batticaloa",
+            "shipping_fee": 6000
+        },
+        {
+            "name": "Nuwara Eliya",
+            "shipping_fee": 400
+        },
+        {
+            "name": "Ratnapura",
+            "shipping_fee": 350
+        },
+        {
+            "name": "Hambantota",
+            "shipping_fee": 500
+        },
+        {
+            "name": "Puttalam",
+            "shipping_fee": 400
+        },
+        {
+            "name": "Kilinochchi",
+            "shipping_fee": 650
+        },
+        {
+            "name": "Mullaitivu",
+            "shipping_fee": 650
+        },
+        {
+            "name": "Vavuniya",
+            "shipping_fee": 650
+        },
+        {
+            "name": "Jaffna",
+            "shipping_fee": 600
+        },
+        {
+            "name": "Kandy",
+            "shipping_fee": 350
+        },
+        {
+            "name": "Kurunegala",
+            "shipping_fee": 300
+        },
+        {
+            "name": "Galle",
+            "shipping_fee": 400
+        },
+        {
+            "name": "Matara",
+            "shipping_fee": 450
+        },
+        {
+            "name": "Kalutara",
+            "shipping_fee": 300
+        },
+        {
+            "name": "Gampaha",
+            "shipping_fee": 250
+        },
+        {
+            "name": "Colombo",
+            "shipping_fee": 200
+        }
+    ]
+}

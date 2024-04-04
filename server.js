@@ -13,6 +13,7 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const messagesRoute = require("./routes/messagesRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const salaryRoute = require("./routes/salaryRoute");
+const emailRoute = require("./routes/emailRoute");
 
 
 app.use(express.json());
@@ -29,6 +30,7 @@ app.use("/api/inventories", inventoryRoute);
 app.use("/api/messages", messagesRoute);
 app.use("/api/payments", paymentRoute);
 app.use("/api/salary", salaryRoute);
+app.use("/api/emails", emailRoute);
 
 
 const port = process.env.PORT || 5000;
