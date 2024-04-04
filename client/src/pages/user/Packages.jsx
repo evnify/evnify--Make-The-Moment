@@ -3,12 +3,9 @@ import { DatePicker, Space, Input } from "antd";
 import axios from "axios";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import {
-  AddBillingAddress,
-  BigImageView,
+  
   SideMenuItems,
 } from "../../components";
-import { Booking } from "../../components/users";
-import PackageIncludesView from "../../components/users/PackageIncludesView";
 import { useParams } from "react-router-dom";
 import { Tag, Carousel, Button } from "primereact";
 const { Search } = Input;
@@ -155,10 +152,7 @@ function Packages() {
       </div>
       <button className="createPackageBtn_72 ">CONTINUE TO CHECKOUT </button>
       <div>
-        <BigImageView />
-        <AddBillingAddress />
-        <Booking />
-        <PackageIncludesView />
+      
       </div>
     </div>
   );

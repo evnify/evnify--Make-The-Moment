@@ -9,7 +9,7 @@ function Booking() {
     async function getPackageData() {
       try {
         const response = await axios.get("/api/packages/getpackages");
-
+          console.log(response);
         setSelectedType(response.data);
         const basicPackage = response.data.find(
           (packages) => packages.packageType === "basic"

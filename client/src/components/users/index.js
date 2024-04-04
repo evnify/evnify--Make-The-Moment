@@ -8,6 +8,7 @@ import AddBillingAddress from './AddBillingAddress';
 import BigImageView from './BigImageView';
 import SideMenuItems from './SideMenuItems';
 import PackageIncludesView from './PackageIncludesView'
+import BookingSteps from './BookingSteps';
 export {
     UserSideMenu,   
     Booking,
@@ -18,7 +19,8 @@ export {
     AddBillingAddress,
     BigImageView,
     SideMenuItems,
-    PackageIncludesView
+    PackageIncludesView,
+    BookingSteps
 
 
 }

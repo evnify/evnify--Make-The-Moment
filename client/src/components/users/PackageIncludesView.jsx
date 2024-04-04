@@ -1,4 +1,5 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
+import axios from "axios";
 import {
   Modal,
   Checkbox,
@@ -9,6 +10,8 @@ import {
   ConfigProvider,
 } from "antd";
 function PackageIncludesView() {
+  const [bookingList, setBookingList] = useState([]);
+
   const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [dob, setDob] = useState("");
@@ -26,6 +29,19 @@ function PackageIncludesView() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(
+          `/api/bookings/getAllBookings`
+        );
+        setBookingList(response.data);
+      } catch (error) {
+        console.log("Error fetching bookings:", error);
+      }
+    };
+    fetchBookings(); 
+  }, []);
   return (
     <div>
       <Button type="primary" onClick={showModal}>
@@ -125,7 +141,81 @@ function PackageIncludesView() {
                 </div>
               </div>
               <div className="add_employee_popup_details_container_left">
-                <div>{/* Mapping should be here */}</div>
+                <div>{
+                  bookingList.map((booking)=>(
+                    <div>
+                       <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        marginBottom: "3px",
+                        fontSize: "12px",
+                        fontWeight: 900,
+                      }}
+                    >
+                      {booking.eventType}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        marginBottom: "3px",
+                        fontSize: "12px",
+                        fontWeight: 900,
+                      }}
+                    >
+                      {booking.packageType}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        marginBottom: "3px",
+                        fontSize: "12px",
+                        fontWeight: 900,
+                      }}
+                    >
+                     {booking.eventDate}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <span
+                      style={{
+                        marginBottom: "3px",
+                        fontSize: "12px",
+                        fontWeight: 900,
+                      }}
+                    >
+                      {booking.createdAt}
+                    </span>
+                  </div>
+                    </div>
+                  ))
+                  }</div>
               </div>
             </div>
             <hr />
