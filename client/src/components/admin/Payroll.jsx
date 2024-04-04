@@ -24,7 +24,6 @@ const { confirm } = Modal;
 
 function Payroll() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedType, setSelectedType] = useState("all");
 
     // Create model content
     const [empName, setEmpName] = useState("");
@@ -238,28 +237,29 @@ function Payroll() {
     }, [editAllowances, editDeductions, editBasicSalary]);
 
     const saveEditedPayroll = async () => {
-        try{
-            await axios.post(`${process.env.PUBLIC_URL}/api/salary/updatePayroll`, {
-                salaryID: editSalaryID,
-                employeeName: editEmpName,
-                type: editType,
-                fromDate: editFromDate,
-                toDate: editToDate,
-                basicSalary: editBasicSalary,
-                allowances: editAllowances,
-                deductions: editDeductions,
-                email: editEmail,
-                netSalary: editTotalSalary,
-            });
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/salary/updatePayroll`,
+                {
+                    salaryID: editSalaryID,
+                    employeeName: editEmpName,
+                    type: editType,
+                    fromDate: editFromDate,
+                    toDate: editToDate,
+                    basicSalary: editBasicSalary,
+                    allowances: editAllowances,
+                    deductions: editDeductions,
+                    email: editEmail,
+                    netSalary: editTotalSalary,
+                }
+            );
             message.success("Payroll updated successfully");
             setEditModelOpen(false);
             fetchPayrollList();
         } catch (error) {
             message.error("Something went wrong");
-
         }
     };
-
 
     async function fetchPayrollList() {
         const response = await axios.get(
@@ -630,11 +630,34 @@ function Payroll() {
         setEmail(selectedOption.email);
     };
 
-    const onSearch = (value) => console.log(value);
+    //Filters
+    const [searchKey, setSearchKey] = useState("");
+    const [selectedType, setSelectedType] = useState("all");
 
-    const SaveSalary = () => {
-        console.log("Save Salary");
-    };
+    const [filteredSalaryList, setFilteredSalaryList] = useState([]);
+
+    useEffect(() => {
+        let tempList = salaryList;
+
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.employeeName.toLowerCase().includes(searchKey) ||
+                    item.employeeID.toLowerCase().includes(searchKey)
+            );
+        }
+
+        if (selectedType !== "all") {
+            tempList = tempList.filter((item) => item.status === selectedType);
+        }
+
+        setFilteredSalaryList(tempList);
+
+        console.log("filteredSalaryList", tempList);
+        console.log("salaryList", salaryList);
+        console.log("searchKey", searchKey);
+        console.log("selectedType", selectedType);
+    }, [searchKey, selectedType, salaryList]);
 
     return (
         <div>
@@ -1437,7 +1460,9 @@ function Payroll() {
                             }}
                             type="number"
                             value={editDeductionAmount}
-                            onChange={(e) => setEditDeductionAmount(e.target.value)}
+                            onChange={(e) =>
+                                setEditDeductionAmount(e.target.value)
+                            }
                         />
                         <Button
                             type="text"
@@ -1511,7 +1536,7 @@ function Payroll() {
                         <Search
                             placeholder="Search by Name"
                             size="large"
-                            onSearch={onSearch}
+                            onSearch={(value) => setSearchKey(value)}
                             style={{
                                 width: 265,
                                 height: 40,
@@ -1557,7 +1582,7 @@ function Payroll() {
                     <div>
                         <Table
                             columns={columns}
-                            dataSource={salaryList}
+                            dataSource={filteredSalaryList}
                             pagination={pagination}
                             onChange={handleTableChange}
                         />
