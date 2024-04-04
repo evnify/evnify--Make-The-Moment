@@ -117,7 +117,7 @@ function UserList() {
     const [editEmail, setEditEmail] = useState("");
     const [editPhoneNumber, setEditPhoneNumber] = useState("");
     const [editUsername, setEditUsername] = useState("");
-    const [editProfileImage, setEditProfileImage] = useState("");
+    const [editProfilePic, setEditProfilePic] = useState("");
     const [editStatus, setEditStatus] = useState("");
     const [fileListEdit, setFileListEdit] = useState([]);
 
@@ -195,7 +195,7 @@ function UserList() {
                             url: response.data.data.url,
                         },
                     ]);
-                    setEditProfileImage(response.data.data.url);
+                    setEditProfilePic(response.data.data.url);
                     console.log(profilePic);
                     setLoading(false);
                 } else {
@@ -221,20 +221,20 @@ function UserList() {
             !editPhoneNumber ||
             !editPhoneNumber ||
             !editStatus ||
-            !editProfileImage
+            !editProfilePic
         ) {
             return message.error("Please fill all the fields");
         } else if (!emailRegex.test(editEmail)) {
             return message.error("Please enter a valid email address");
         }
 
-        if (!editProfileImage || editProfileImage.trim() === "") {
+        if (!editProfilePic || editProfilePic.trim() === "") {
             // Set default profile image
             setprofilePic(
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
             );
         } else {
-            console.log("Profile image already set:", editProfileImage);
+            console.log("Profile image already set:", editProfilePic);
         }
 
         const empData = {
@@ -245,7 +245,7 @@ function UserList() {
             email: editEmail,
             phoneNumber: editPhoneNumber,
             username: editUsername,
-            profilePic: editProfileImage,
+            profilePic: editProfilePic,
             userID: tableModelContent.userID,
             status: editStatus,
             _id: tableModelContent._id,
@@ -323,34 +323,23 @@ function UserList() {
             key: "address1",
         },
         {
-            title: "Action",
-            dataIndex: "",
-            key: "x",
-            render: (_, record) => {
-                if (record.state === "Active") {
-                    return (
-                        <button
-                            className="adelete"
-                            onClick={() => handleDelete(user.userID)}
-                        >
-                            Suspend
-                        </button>
-                    );
-                } else {
-                    return (
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    <button
+                        onClick={() => handleDelete(record.userID)}
+                        style={{
+                            fontSize: "20px",
+                            color: "#9D9D9D",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                    >
+                        <Icon icon="uil:trash-alt" />
+                    </button>
+                    {record.status === "active" ? (
                         <>
-                            <button
-                                style={{
-                                    fontSize: "20px",
-                                    color: "#9D9D9D",
-                                    border: "none",
-                                    background: "transparent",
-                                }}
-                                onClick={() => handleDelete(user.userID)}
-                            >
-                                <Icon icon="material-symbols:delete-outline" />
-                            </button>
-
                             <button
                                 style={{
                                     fontSize: "20px",
@@ -363,9 +352,21 @@ function UserList() {
                                 <Icon icon="uil:setting" />
                             </button>
                         </>
-                    );
-                }
-            },
+                    ) : (
+                        <button
+                            style={{
+                                fontSize: "20px",
+                                color: "#9D9D9D",
+                                border: "none",
+                                background: "transparent",
+                            }}
+                            onClick={() => showModal(record)}
+                        >
+                            <Icon icon="uil:setting" />
+                        </button>
+                    )}
+                </Space>
+            ),
         },
     ];
 
@@ -379,7 +380,7 @@ function UserList() {
         setEditEmail(record.email);
         setEditPhoneNumber(record.phoneNumber);
         setEditUsername(record.username);
-        setEditProfileImage(record.profilePic);
+        setEditProfilePic(record.profilePic);
         setEditStatus(record.status);
         console.log(record.state);
         setFileListEdit([
@@ -571,7 +572,7 @@ function UserList() {
                                 beforeUpload={beforeUpload}
                                 onRemove={() => {
                                     setFileListEdit([]);
-                                    setEditProfileImage(
+                                    setEditProfilePic(
                                         "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
                                     );
                                 }}
@@ -631,24 +632,7 @@ function UserList() {
                                             style={{
                                                 padding: "0 8px 4px",
                                             }}
-                                        >
-                                            <Input
-                                                placeholder="Please enter item"
-                                                ref={inputRef}
-                                                value={name}
-                                                onChange={onNameChange}
-                                                onKeyDown={(e) =>
-                                                    e.stopPropagation()
-                                                }
-                                            />
-                                            <Button
-                                                type="text"
-                                                icon={<PlusOutlined />}
-                                                onClick={addItem}
-                                            >
-                                                Add item
-                                            </Button>
-                                        </Space>
+                                        ></Space>
                                     </>
                                 )}
                                 options={items.map((item) => ({
@@ -1178,7 +1162,7 @@ function UserList() {
                                     dataSource={data}
                                     columns={columns}
                                     pagination={{
-                                        pageSize: 1,
+                                        pageSize: 5,
                                         showSizeChanger: true,
                                         showQuickJumper: true,
                                     }}

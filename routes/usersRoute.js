@@ -96,29 +96,62 @@ router.post('/activeUser', async (req, res) => {
 
 
 
+
 router.post("/login", async (req, res) => {
-    const userData = req.body;
-    const email = userData.email;
-    const password = userData.password;
+
+    const { email, password } = req.body
 
     try {
-        const user = await UserModel.findOne({ email, password });
-
+        const user = await UserModel.findOne({ email: email, password: password })
         if (user) {
+
             const temp = {
-                name: user.name,
+                userID: user.userID,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
                 email: user.email,
-                isAdmin: user.isAdmin,
-                isUser: user.isUser,
-                _id: user._id,
-            };
-            res.json(temp);
-        } else {
-            return res.status(400).json({ message: "Login failed!" });
+                userType: user.userType,
+                status: user.status
+            }
+            res.send(temp);
+        }
+        else {
+            return res.status(400).json({ message: 'Login Failed' });
         }
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(400).json({ error });
     }
+
 });
+
+
+
+
+
+router.post("/register", async (req, res) => {
+
+    const newuser = new UserModel(
+        {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+            password: req.body.password, 
+        });
+
+    try {
+        const user = await newuser.save();
+        return res.send('User Registered Successfully');
+    } catch (error) {
+        console.log("error in route")
+        console.log(newuser)
+        return res.status(400).json({ error });
+    }
+
+});
+
+
+
 
 module.exports = router;

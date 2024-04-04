@@ -36,11 +36,19 @@ const Login = () => {
 
                 const userData = response.data;
 
+                
+
+                if (userData.userType === "Admin") {
+                    navigate("/admin/*");
+                } else if (userData.userType === "Employee") {
+                    navigate("/employee/*");
+                } else {
+                    navigate("/");
+                }
+
                 localStorage.setItem("currentUser", JSON.stringify(userData));
                 window.location.reload();
 
-                // Redirect to the home page
-                navigate("/home");
             } catch (error) {
                 setLoading(false);
                 console.error("Login error:", error);
@@ -89,6 +97,7 @@ const Login = () => {
                             placeholder="Username"
                             style={{ borderRadius: "5px" }}
                             size="large"
+                            onChange={(e) => setemail(e.target.value)}
                         />
                     </Form.Item>
 
@@ -108,6 +117,7 @@ const Login = () => {
                             placeholder="Password"
                             style={{ borderRadius: "5px" }}
                             size="large"
+                            onChange={(e) => setpassword(e.target.value)}
                         />
                     </Form.Item>
 

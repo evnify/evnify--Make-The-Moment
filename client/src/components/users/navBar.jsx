@@ -14,6 +14,7 @@ import Logo from "../../assets/Logo/logo.png";
 import { Link } from "react-router-dom";
 import { Icon } from "@iconify/react";
 
+
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
 
@@ -250,7 +251,7 @@ function NavBarUser() {
                                                     />
                                                 }
                                             />
-                                            Praveen12
+                                            {user.username}
                                             <Icon icon="gridicons:dropdown" />
                                         </Space>
                                     </a>
