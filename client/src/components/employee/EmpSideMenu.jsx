@@ -12,7 +12,9 @@ import {
     DatePicker,
     Input,
     Button,
+    message,
 } from "antd";
+import moment from "moment";
 
 const { TextArea } = Input;
 
@@ -83,6 +85,13 @@ function EmpSideMenu() {
     };
 
     const submitLeaveRequest = async () => {
+        if (!leaveType || !startDate || !endDate || !reason) {
+            return message.error("Please fill all the fields");
+        } else if (startDate > endDate) {
+            return message.error("Start date should be less than end date");
+        } else if (startDate < new Date().toISOString().split("T")[0]) {
+            return message.error("Start date should be greater than today");
+        }
         try {
             const leave = {
                 empID: "emp001",
@@ -90,8 +99,15 @@ function EmpSideMenu() {
                 startDate,
                 endDate,
                 reason,
+                name: "John Doe",
             };
             await axios.post("/api/leaves/newLeave", leave);
+            message.success("Leave request submitted successfully");
+            setLeaveModelOpen(false);
+            setEndDate(null);
+            setStartDate(null);
+            setLeaveType("");
+            setReason("");
         } catch (error) {
             console.log(error);
         }
@@ -143,7 +159,7 @@ function EmpSideMenu() {
                                 Leave Type
                             </span>
                             <Select
-                                defaultValue="sick leave"
+                                value={leaveType}
                                 style={{
                                     width: 320,
                                     height: 40,
@@ -151,15 +167,15 @@ function EmpSideMenu() {
                                 onChange={(value) => setLeaveType(value)}
                                 options={[
                                     {
-                                        value: "sick leave",
+                                        value: "Sick Leave",
                                         label: "Sick Leave",
                                     },
                                     {
-                                        value: "half leave",
+                                        value: "Half Leave",
                                         label: "Half Leave",
                                     },
                                     {
-                                        value: "casual leave",
+                                        value: "Casual Leave",
                                         label: "Casual Leave",
                                     },
                                 ]}
@@ -175,6 +191,7 @@ function EmpSideMenu() {
                                     height: 40,
                                 }}
                                 onChange={onChangeFromDate}
+                                value={startDate ? moment(startDate) : null}
                             />
                         </div>
                         <div style={{ marginTop: "25px" }}>
@@ -187,6 +204,7 @@ function EmpSideMenu() {
                                     height: 40,
                                 }}
                                 onChange={onChangeToDate}
+                                value={endDate ? moment(endDate) : null}
                             />
                         </div>
                         <div
@@ -202,6 +220,7 @@ function EmpSideMenu() {
                                     width: 320,
                                 }}
                                 rows={6}
+                                value={reason}
                                 placeholder="Enter Reason for leave"
                                 onChange={(e) => setReason(e.target.value)}
                             />
