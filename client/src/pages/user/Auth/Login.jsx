@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, ConfigProvider, Row, Col } from "antd";
 import { Divider, Grid, Typography, useMediaQuery } from "@mui/material";
@@ -23,6 +23,8 @@ const Login = () => {
 
     const navigate = useNavigate();
 
+    
+
     const handleLogin = async () => {
         {
             const user = {
@@ -36,8 +38,6 @@ const Login = () => {
 
                 const userData = response.data;
 
-                
-
                 if (userData.userType === "Admin") {
                     navigate("/admin/*");
                 } else if (userData.userType === "Employee") {
@@ -48,7 +48,6 @@ const Login = () => {
 
                 localStorage.setItem("currentUser", JSON.stringify(userData));
                 window.location.reload();
-
             } catch (error) {
                 setLoading(false);
                 console.error("Login error:", error);

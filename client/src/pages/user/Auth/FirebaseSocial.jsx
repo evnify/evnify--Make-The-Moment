@@ -1,18 +1,14 @@
-// material-ui
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery, Button, Stack } from "@mui/material";
-
-// assets
 import Google from "../../../assets/icons/google.svg";
 import Facebook from "../../../assets/icons/facebook.svg";
 
-// ==============================|| FIREBASE - SOCIAL BUTTON ||============================== //
 const FirebaseSocial = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const googleHandler = async () => {
-        // login || singup
+    const googleHandler = () => {
+        window.open(`${process.env.REACT_APP_API_URL}/auth/google/callback`, "_self");
     };
 
     const facebookHandler = async () => {
@@ -39,7 +35,7 @@ const FirebaseSocial = () => {
                 onClick={googleHandler}
                 size="large"
             >
-                {!matchDownSM }
+                {!matchDownSM}
             </Button>
 
             <Button
@@ -50,7 +46,7 @@ const FirebaseSocial = () => {
                 onClick={facebookHandler}
                 size="large"
             >
-                {!matchDownSM }
+                {!matchDownSM}
             </Button>
         </Stack>
     );

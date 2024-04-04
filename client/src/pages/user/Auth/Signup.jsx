@@ -360,12 +360,14 @@ const Signup = () => {
                             size="middle"
                             style={{ borderRadius: "5px" }}
                             disabled={
-                                !form.isFieldsTouched(true) ||
+                                !form.isFieldsTouched(true) || // Disable button if any field hasn't been touched
                                 form
                                     .getFieldsError()
-                                    .filter(({ errors }) => errors.length)
-                                    .length
+                                    .filter(({ errors }) => errors.length) // Filter out fields with errors
+                                    .length // If there are any fields with errors, disable the button
                             }
+                            onClick={register}
+                            
                         >
                             Sign Up
                         </Button>

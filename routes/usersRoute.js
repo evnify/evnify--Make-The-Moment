@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserModel = require("../models/user");
+const passport = require("passport");
 
 const generateUniquePwd = async () => {
     return Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -150,6 +151,8 @@ router.post("/register", async (req, res) => {
     }
 
 });
+
+
 
 
 
