@@ -3,9 +3,21 @@ const router = express.Router();
 
 const salaryModel = require("../models/salary");
 
+const generateUniqueID = async () => {
+    let id = 'S' + Math.floor(10000000 + Math.random() * 90000000);
+    const available = await salaryModel.findOne({ salaryID: id });
+    if (available) {
+        return generateUniqueID();
+    }
+    return id;
+};
+
 router.post("/addPayroll", async (req, res) => {
+    const salaryData = req.body;
+    const salaryID = await generateUniqueID();
+    salaryData.salaryID = salaryID;
     try{
-        const payRoll = new salaryModel(req.body);
+        const payRoll = new salaryModel(salaryData);
         await payRoll.save();
         res.status(200).send("Payroll added successfully");
     }catch(err){

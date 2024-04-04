@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Icon } from "@iconify/react";
 import {
     Input,
     Modal,
@@ -9,6 +10,8 @@ import {
     Divider,
     Button,
     message,
+    Table,
+    Tag,
 } from "antd";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
@@ -52,32 +55,201 @@ function Payroll() {
     const [deductionAmount, setDeductionAmount] = useState("");
     const [allowanceAmount, setAllowanceAmount] = useState("");
 
-    const savePayroll = async() => {
-      console.log(empID, empName, type, "from", fromDate, toDate, basicSalary, allowances, deductions, totalSalary);
-      if (empID === "" || empID === null) {
-          return message.error("Please select an employee");
-      } else if (fromDate === "" || fromDate === null) {
-          return message.error("Please select a from date");
-      }
-      else if (toDate === "" || toDate === null) {
-          return message.error("Please select a to date");
-      }
-      else if (basicSalary === "" || basicSalary === null) {
-          return message.error("Please enter basic salary");
-      }
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
+        position: ["bottomCenter"],
+    });
+
+    const [salaryList, setSalaryList] = useState([]);
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        setPagination(pagination);
+    };
+
+    // Salary table columns
+    const columns = [
+        {
+            title: "Salary ID",
+            dataIndex: "salaryID",
+            key: "salaryID",
+        },
+        {
+            title: "Name",
+            dataIndex: "employeeName",
+            key: "employeeName",
+        },
+        {
+            title: "Emp ID",
+            dataIndex: "employeeID",
+            key: "employeeID",
+        },
+        {
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
+        },
+        {
+            title: "From Date",
+            dataIndex: "fromDate",
+            key: "fromDate",
+        },
+        {
+            title: "To Date",
+            dataIndex: "toDate",
+            key: "toDate",
+        },
+        {
+            title: "Total Salary",
+            dataIndex: "netSalary",
+            key: "netSalary",
+        },
+        {
+            title: "Created At",
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (createdAt) => {
+                const date = new Date(createdAt);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${year}-${month}-${day}`;
+            },
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Pending") {
+                    color = "orange";
+                }
+                return <Tag color={color}>{status.toUpperCase()}</Tag>;
+            },
+        },
+        {
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    {record.status === "Pending" ? (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="icon-park-outline:correct" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="mage:edit" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="icon-park-outline:correct" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="mage:edit" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
+                        </>
+                    )}
+                    <button
+                        style={{
+                            fontSize: "20px",
+                            color: "#757171",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                    >
+                        <Icon icon="mdi:download" />
+                    </button>
+                </Space>
+            ),
+        },
+    ];
+
+    const savePayroll = async () => {
+        console.log(
+            empID,
+            empName,
+            type,
+            "from",
+            fromDate,
+            toDate,
+            basicSalary,
+            allowances,
+            deductions,
+            totalSalary
+        );
+        if (empID === "" || empID === null) {
+            return message.error("Please select an employee");
+        } else if (fromDate === "" || fromDate === null) {
+            return message.error("Please select a from date");
+        } else if (toDate === "" || toDate === null) {
+            return message.error("Please select a to date");
+        } else if (basicSalary === "" || basicSalary === null) {
+            return message.error("Please enter basic salary");
+        }
         try {
             const response = await axios.post(
                 `${process.env.PUBLIC_URL}/api/salary/addPayroll`,
                 {
-                  employeeID : empID,
-                  employeeName : empName,
-                    type : type,
-                    fromDate : fromDate,
-                    toDate : toDate,
-                    basicSalary : basicSalary,
+                    employeeID: empID,
+                    employeeName: empName,
+                    type: type,
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    basicSalary: basicSalary,
                     allowances,
                     deductions,
-                    netSalary : totalSalary,
+                    netSalary: totalSalary,
                 }
             );
             if (response.status === 200) {
@@ -92,7 +264,6 @@ function Payroll() {
                 setAllowances([]);
                 setDeductions([]);
                 setTotalSalary(0);
-
             }
         } catch (error) {
             message.error("Something went wrong");
@@ -112,7 +283,6 @@ function Payroll() {
             inputRef.current?.focus();
         }, 0);
     };
-
 
     const addAllowance = (e) => {
         e.preventDefault();
@@ -165,28 +335,36 @@ function Payroll() {
         // Fetch all employees
         async function fetchEmployeeList() {
             const response = await axios.get(
-                `${process.env.PUBLIC_URL}/api/employees/getEmployees`
+                `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
             );
             setEmployees(response.data);
         }
         fetchEmployeeList();
+
+        //Fetch All Payroll Details
+        async function fetchPayrollList() {
+            const response = await axios.get(
+                `${process.env.PUBLIC_URL}/api/salary/getAllPayroll`
+            );
+            setSalaryList(response.data);
+        }
+        fetchPayrollList();
     }, []);
 
     // Calculate total Salary
     useEffect(() => {
         let total = 0;
         if (basicSalary === "") {
-          setTotalSalary(0);
-        }else{
-
-        allowances.forEach((allowance) => {
-            total += parseInt(allowance.amount);
-        });
-        deductions.forEach((deduction) => {
-            total -= parseInt(deduction.amount);
-        });
-        total += parseInt(basicSalary);
-        setTotalSalary(total);
+            setTotalSalary(0);
+        } else {
+            allowances.forEach((allowance) => {
+                total += parseInt(allowance.amount);
+            });
+            deductions.forEach((deduction) => {
+                total -= parseInt(deduction.amount);
+            });
+            total += parseInt(basicSalary);
+            setTotalSalary(total);
         }
     }, [allowances, deductions, basicSalary]);
 
@@ -617,28 +795,30 @@ function Payroll() {
                     ))}
                 </div>
 
-                <h5 className=" total_salary_002">Total Salary : {totalSalary} LKR</h5>
+                <h5 className=" total_salary_002">
+                    Total Salary : {totalSalary} LKR
+                </h5>
                 <div className="center">
-                <button
-                    className="salary_save_btn_002"
-                    onClick={savePayroll}
-                    style={{
-                        width: "120px",
-                        height: "40px",
-                    }}
-                >
-                    Save Salary
-                </button>
-                <button
-                    className="salary_cansel_btn_002"
-                    onClick={() => setIsModalOpen(false)}
-                    style={{
-                        width: "120px",
-                        height: "40px",
-                    }}
-                >
-                    Cancel
-                </button>
+                    <button
+                        className="salary_save_btn_002"
+                        onClick={savePayroll}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Save Salary
+                    </button>
+                    <button
+                        className="salary_cansel_btn_002"
+                        onClick={() => setIsModalOpen(false)}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Cancel
+                    </button>
                 </div>
             </Modal>
             <div className="admin_emp_list_container">
@@ -694,6 +874,16 @@ function Payroll() {
                             </svg>{" "}
                             &nbsp; Create{" "}
                         </button>
+                    </div>
+                </div>
+                <div style={{ width: "100%" }}>
+                    <div>
+                        <Table
+                            columns={columns}
+                            dataSource={salaryList}
+                            pagination={pagination}
+                            onChange={handleTableChange}
+                        />
                     </div>
                 </div>
             </div>

@@ -5,6 +5,10 @@ const salarySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    salaryID: {
+        type: String,
+        required: true,
+    },
     employeeName: {
         type: String,
         required: true,
@@ -24,6 +28,10 @@ const salarySchema = new mongoose.Schema({
     basicSalary: {
         type: String,
         required: true,
+    },
+    status: {
+        type: String,
+        default: 'Pending',
     },
     allowances: [],
     deductions: [],
