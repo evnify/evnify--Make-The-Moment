@@ -15,11 +15,12 @@ const generateUniqueID = async () => {
 };
 
 router.post('/newLeave',async (req,res)=>{
-    const leaveDate = req.body;
+    const leaveData = req.body;
     const leaveID = await generateUniqueID();
 
-    leaveDate.leaveID = leaveID;
-    const newLeave = new leaveModel(leaveDate);
+    leaveData.leaveID = leaveID;
+    console.log(leaveData);
+    const newLeave = new leaveModel(leaveData);
 
     try{
         await newLeave.save();
@@ -28,8 +29,45 @@ router.post('/newLeave',async (req,res)=>{
         return res.status(400).json({message: error});
     }
 
-})
+});
 
+router.get('/getAllLeaves',async (req,res)=>{
+    try{
+        const allLeaves = await leaveModel.find();
+        res.send(allLeaves);
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
 
+router.post('/approveLeave',async (req,res)=>{
+    const leaveID = req.body.leaveID;
+    try{
+        await leaveModel.findOneAndUpdate({leaveID: leaveID},{status: "Approved"});
+        res.send("Leave request approved successfully");
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
+
+router.post('/declineLeave',async (req,res)=>{
+    const leaveID = req.body.leaveID;
+    try{
+        await leaveModel.findOneAndUpdate({leaveID: leaveID},{status: "Rejected"});
+        res.send("Leave request declined successfully");
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
+
+router.post('/getLeaveByEmpID',async (req,res)=>{
+    const empID = req.body.empID;
+    try{
+        const leaves = await leaveModel.find({empID: empID});
+        res.send(leaves);
+    }catch(error){
+        return res.status(400).json({message: error});
+    }
+});
 
 module.exports = router;
