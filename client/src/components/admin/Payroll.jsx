@@ -52,6 +52,53 @@ function Payroll() {
     const [deductionAmount, setDeductionAmount] = useState("");
     const [allowanceAmount, setAllowanceAmount] = useState("");
 
+    const savePayroll = async() => {
+      console.log(empID, empName, type, "from", fromDate, toDate, basicSalary, allowances, deductions, totalSalary);
+      if (empID === "" || empID === null) {
+          return message.error("Please select an employee");
+      } else if (fromDate === "" || fromDate === null) {
+          return message.error("Please select a from date");
+      }
+      else if (toDate === "" || toDate === null) {
+          return message.error("Please select a to date");
+      }
+      else if (basicSalary === "" || basicSalary === null) {
+          return message.error("Please enter basic salary");
+      }
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/salary/addPayroll`,
+                {
+                  employeeID : empID,
+                  employeeName : empName,
+                    type : type,
+                    fromDate : fromDate,
+                    toDate : toDate,
+                    basicSalary : basicSalary,
+                    allowances,
+                    deductions,
+                    netSalary : totalSalary,
+                }
+            );
+            if (response.status === 200) {
+                message.success("Payroll added successfully");
+                setIsModalOpen(false);
+                setEmpID("");
+                setEmpName("");
+                setType("");
+                setFromDate(null);
+                setToDate(null);
+                setBasicSalary("");
+                setAllowances([]);
+                setDeductions([]);
+                setTotalSalary(0);
+
+            }
+        } catch (error) {
+            message.error("Something went wrong");
+        }
+    };
+
     let index = 0;
 
     const addDeduction = (e) => {
@@ -153,6 +200,7 @@ function Payroll() {
     const handleEmployeeSelect = (selectedValue, selectedOption) => {
         setType(selectedOption.type);
         setEmpID(selectedOption.value);
+        setEmpName(selectedOption.label);
     };
 
     const onSearch = (value) => console.log(value);
@@ -253,9 +301,9 @@ function Payroll() {
                                     width: 205,
                                     height: 40,
                                 }}
-                                defaultValue={fromDate ? moment(fromDate) : null}
+                                value={fromDate ? moment(fromDate) : null}
                                 onChange={(date, dateString) => {
-                                    setToDate(dateString);
+                                    setFromDate(dateString);
                                 }}
                             />
                         </div>
@@ -329,7 +377,7 @@ function Payroll() {
                                         width: 205,
                                         height: 40,
                                     }}
-                                    defaultValue={toDate ? moment(toDate) : null}
+                                    value={toDate ? moment(toDate) : null}
                                     onChange={(date, dateString) => {
                                         setToDate(dateString);
                                     }}
@@ -573,7 +621,7 @@ function Payroll() {
                 <div className="center">
                 <button
                     className="salary_save_btn_002"
-                    onClick={SaveSalary}
+                    onClick={savePayroll}
                     style={{
                         width: "120px",
                         height: "40px",

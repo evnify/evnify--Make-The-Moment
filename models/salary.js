@@ -5,22 +5,31 @@ const salarySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    employeeName: {
+        type: String,
+        required: true,
+    },
     type: {
         type: String,
         required: true,
     },
-    date: {
-        type: Date,
+    fromDate: {
+        type: String,
+        required: true,
+    },
+    toDate: {
+        type: String,
         required: true,
     },
     basicSalary: {
-        type: Number,
+        type: String,
         required: true,
     },
-    allowances: [String],
-    deductions: [String],
+    allowances: [],
+    deductions: [],
+
     netSalary: {
-        type: Number,
+        type: String,
         required: true,
     },
 }, { timestamps: true });
