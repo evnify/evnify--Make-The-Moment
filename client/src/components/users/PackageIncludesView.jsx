@@ -9,44 +9,27 @@ import {
   Cascader,
   ConfigProvider,
 } from "antd";
-function PackageIncludesView() {
+function PackageIncludesView({ isVisible, onClose }) {
   const [bookingList, setBookingList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
-  const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
-  const [address, setAddress] = useState("");
-  const [dob, setDob] = useState("");
-  const [type, setType] = useState("sick leave");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [username, setUsername] = useState("");
-  const [profileImage, setProfileImage] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  useEffect(() => {
+  useEffect((id) => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get(
-          `/api/bookings/getAllBookings`
-        );
+        const response = await axios.get(`/api/getBookingsById/${id}`);
         setBookingList(response.data);
       } catch (error) {
         console.log("Error fetching bookings:", error);
       }
     };
-    fetchBookings(); 
+    fetchBookings();
   }, []);
   return (
     <div>
-      <Button type="primary" onClick={showModal}>
-        Open Modal
-      </Button>
       <ConfigProvider
         theme={{
           components: {
@@ -56,12 +39,12 @@ function PackageIncludesView() {
       >
         <Modal
           centered
-          open={isModalOpen}
-          onOk={() => setAddEmployeeModelOpen(false)}
           onCancel={handleCancel}
+          open={isModalOpen}
+          onOk={() => setBookingList(false)}
+          bookingId={selectedBookingId}
           footer={null}
           width={715}
-          
         >
           <span>Package Includes</span>
           <hr />
@@ -141,81 +124,81 @@ function PackageIncludesView() {
                 </div>
               </div>
               <div className="add_employee_popup_details_container_left">
-                <div>{
-                  bookingList.map((booking)=>(
+                <div>
+                  {bookingList.map((booking) => (
                     <div>
-                       <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      {booking.eventType}
-                    </span>
-                  </div>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            marginBottom: "3px",
+                            fontSize: "12px",
+                            fontWeight: 900,
+                          }}
+                        >
+                          {booking.eventType}
+                        </span>
+                      </div>
 
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      {booking.packageType}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                     {booking.eventDate}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      {booking.createdAt}
-                    </span>
-                  </div>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            marginBottom: "3px",
+                            fontSize: "12px",
+                            fontWeight: 900,
+                          }}
+                        >
+                          {booking.packageType}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            marginBottom: "3px",
+                            fontSize: "12px",
+                            fontWeight: 900,
+                          }}
+                        >
+                          {booking.eventDate}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <span
+                          style={{
+                            marginBottom: "3px",
+                            fontSize: "12px",
+                            fontWeight: 900,
+                          }}
+                        >
+                          {booking.createdAt}
+                        </span>
+                      </div>
                     </div>
-                  ))
-                  }</div>
+                  ))}
+                </div>
               </div>
             </div>
             <hr />
@@ -282,25 +265,25 @@ function PackageIncludesView() {
                 </div>
                 <button className="cancel_Package_72 ">Cancel Booking</button>
               </div>
-            
-            <div className="add_employee_popup_details_container_left">
-              <div
-                style={{
-                  marginTop: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <span
+
+              <div className="add_employee_popup_details_container_left">
+                <div
                   style={{
-                    marginBottom: "3px",
-                    fontSize: "12px",
-                    fontWeight: 900,
+                    marginTop: "8px",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
-                  {/** Item price here */}hi
-                </span>
-                <button className="saveAddressBtn_72 ">Update Booking</button>
+                  <span
+                    style={{
+                      marginBottom: "3px",
+                      fontSize: "12px",
+                      fontWeight: 900,
+                    }}
+                  >
+                    {/** Item price here */}hi
+                  </span>
+                  <button className="saveAddressBtn_72 ">Update Booking</button>
                 </div>
               </div>
             </div>
