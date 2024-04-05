@@ -10,6 +10,7 @@ import {
 import error_404 from "./404.svg";
 import error_500 from "./500.svg";
 import access_error from "./no_access.svg";
+
 import contactUSimg01 from "./contactus-img-1.svg"
 import contactUSimg02 from "./contactus-img-02.svg"
 import missionIcon from "./our-mission-contactus.svg";
@@ -17,6 +18,8 @@ import chooseUsIcon from "./whychooseus--contactus.svg";
 import westandoutIcon from "./westandout-contactus.svg";
 import messageDp from "./messageDp.svg";
 import chatIcon from "./chat-us-icon.png";
+import topImage from "./TopImage.svg";
+
 
 export {
     Logo_black_with_tag,
@@ -28,11 +31,14 @@ export {
     error_404,
     error_500,
     access_error,
+
     contactUSimg01,
     contactUSimg02,
     missionIcon,
     chooseUsIcon,
     westandoutIcon,
     messageDp,
-    chatIcon
+    chatIcon,
+    topImage,
+
 };
