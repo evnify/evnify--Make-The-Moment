@@ -16,6 +16,7 @@ import missionIcon from "./our-mission-contactus.svg";
 import chooseUsIcon from "./whychooseus--contactus.svg";
 import westandoutIcon from "./westandout-contactus.svg";
 import messageDp from "./messageDp.svg";
+import chatIcon from "./chat-us-icon.png";
 
 export {
     Logo_black_with_tag,
@@ -32,5 +33,6 @@ export {
     missionIcon,
     chooseUsIcon,
     westandoutIcon,
-    messageDp
+    messageDp,
+    chatIcon
 };

@@ -4,6 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
 import moment from 'moment';
+import {chatIcon} from "../assets";
 
 function ChatBox() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,13 +82,16 @@ function ChatBox() {
     return (
         <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
             {isModalOpen ? (
-                <Button type="primary" onClick={handleCancel}>
-                    Close Modal
-                </Button>
+
+            <img src={chatIcon} alt="chatIco" onClick={handleCancel} style={{width:"65px", height:"65px"}} />
+                // <Button type="primary" onClick={handleCancel}>
+                //     Close Modal
+                // </Button>
             ) : (
-                <Button type="primary" onClick={handleOpenModal}>
-                    Open Modal
-                </Button>
+                <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{width:"65px", height:"65px"}}/>
+                // <Button type="primary" onClick={handleOpenModal}>
+                //     Open Modal
+                // </Button>
             )}
 
             <Modal
@@ -104,7 +108,7 @@ function ChatBox() {
                 style={{
                     position: 'absolute',
                     right: '50px',
-                    top: '190px',
+                    top: '170px',
                     overflow: 'auto',
                     border: '1px solid #e8e8e8', 
                     borderRadius: '8px', 
