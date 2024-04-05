@@ -90,7 +90,7 @@
     align-items: center;
     justify-content: right;
     background: #fff;
-    width: 380px;
+    width: 365px;
     height: 55px;
 
     flex-shrink: 0;
@@ -110,7 +110,7 @@
 .emp_hero_realtime_insights_container {
     border-radius: 11px;
     background: #fff;
-    width: 380px;
+    width: 365px;
     height: 146px;
     flex-shrink: 0;
 

@@ -319,6 +319,8 @@ function LeaveRequests() {
         setFilteredLeaves(tempList);
     }, [searchKey, selectedType, leaveList]);
 
+    
+
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <Modal
@@ -535,7 +537,7 @@ function LeaveRequests() {
                             alignItems: "center",
                         }}
                     >
-                        <h5>All Employees</h5>
+                        <h5>All Leaves</h5>
                         <Search
                             placeholder="Search "
                             size="large"

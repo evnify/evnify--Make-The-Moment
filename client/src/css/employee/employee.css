@@ -5,12 +5,13 @@
     height: 100vh;
 }
 
-.Emp_SideMenuAndPageContent {
+.Emp_SideMenuAndPage_Content {
     display: flex;
     flex: 1;
     justify-content: flex-start;
     align-items: flex-start;
     background-color: #efefef;
+    overflow-x: hidden;
 }
 .Emp_SideMenu {
     display: flex;
@@ -24,10 +25,12 @@
     border-radius: 11px;
 }
 
-.Emp_PageContent {
+.Emp_Page_Content {
     flex: 1;
     height: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
+    margin-left: 270px;
 }
 
 .emp_dashboard_logo {
@@ -87,3 +90,5 @@
     margin-top: 30px;
     
 }
+
+/* Leave Request */
