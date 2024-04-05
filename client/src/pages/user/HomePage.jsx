@@ -18,6 +18,7 @@ function HomePage() {
     const [size, setSize] = useState("large");
 
     return (
+        <div className="home_page_background_container">
         <div className="navbar_section">
             <Navbar />
             <div className="center">
@@ -165,9 +166,10 @@ function HomePage() {
                 </div>
                 <div className="home_page_package_section_container">
                     <div>
-                        <Card
+                        <Card className="home_page_package_card1"
                             style={{
                                 width: 300,
+                                
                             }}
                             cover={
                                 <img
@@ -180,7 +182,7 @@ function HomePage() {
                         </Card>
                     </div>
                     <div>
-                        <Card
+                        <Card className="home_page_package_card2"
                             style={{
                                 width: 300,
                             }}
@@ -195,7 +197,7 @@ function HomePage() {
                         </Card>
                     </div>
                     <div>
-                        <Card
+                        <Card className="home_page_package_card3"
                             style={{
                                 width: 300,
                             }}
@@ -224,7 +226,7 @@ function HomePage() {
                             </a>
                         </div>
                         <div className="home_page_our_blog_section_cards1">
-                            <Card
+                            <Card className="home_page_our_blog_card1"
                                 style={{
                                     width: 300,
                                 }}
@@ -241,7 +243,7 @@ function HomePage() {
                                 />
                             </Card>
                             <div>
-                                <Card
+                                <Card className="home_page_our_blog_card2"
                                     style={{
                                         width: 300,
                                     }}
@@ -259,7 +261,7 @@ function HomePage() {
                                 </Card>
                             </div>
                             <div>
-                                <Card
+                                <Card className="home_page_our_blog_card3"
                                     style={{
                                         width: 300,
                                     }}
@@ -279,7 +281,7 @@ function HomePage() {
                         </div>
                         <div className="home_page_our_blog_section_cards2">
                             <div>
-                                <Card
+                                <Card className="home_page_our_blog_card4"
                                     style={{
                                         width: 300,
                                     }}
@@ -297,7 +299,7 @@ function HomePage() {
                                 </Card>
                             </div>
                             <div>
-                                <Card
+                                <Card className="home_page_our_blog_card5"
                                     style={{
                                         width: 300,
                                     }}
@@ -315,7 +317,7 @@ function HomePage() {
                                 </Card>
                             </div>
                             <div>
-                                <Card
+                                <Card className="home_page_our_blog_card6"
                                     style={{
                                         width: 300,
                                     }}
@@ -335,6 +337,7 @@ function HomePage() {
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     );

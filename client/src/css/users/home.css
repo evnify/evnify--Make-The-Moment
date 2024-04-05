@@ -2,7 +2,10 @@
     margin-top: 15px;
     margin-bottom: 15px;
 }
-
+.home_page_background_container{
+    background-color: #f8f8fa;
+    width: 100%;
+}
 .home_page_category_name_container {
     margin-top: 70px;
     margin-left: 120px;
@@ -28,6 +31,7 @@
     height: 260px;
     background-image: url(https://i.ibb.co/tQmskp4/Group-64.png);
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card1 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -44,6 +48,7 @@
     height: 260px;
     background-image: url(https://i.ibb.co/S5zVSgY/18.png);
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card2 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -60,6 +65,7 @@
     height: 260px;
     background-image: url(https://i.ibb.co/F8Ymm2k/Group-65.png);
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card3 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -84,6 +90,7 @@
     background-image: url(https://i.ibb.co/W5ntTJz/Group-105.png);
     border-radius: 10px;
     gap: 18px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card4 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -100,6 +107,7 @@
     height: 260px;
     background-image: url(https://i.ibb.co/6W51Xqd/Group-108.png);
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card5 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -116,6 +124,7 @@
     height: 260px;
     background-image: url(https://i.ibb.co/kBQ7m0t/Group-107.png);
     border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .home_page_category_card6 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -130,7 +139,7 @@
 .home_page_square_section_container {
     background-color: #533c56;
     height: 252px;
-    width: 1536px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     margin-bottom: 40px;
@@ -167,11 +176,14 @@
 }
 .home_page_get_start_btn {
     background-color: #d9d9d9;
-    width: 119px;
+    width: 130px;
     height: 51px;
+    border-radius: 10px;
+    font-weight: 600;
 }
 .home_page_get_start_btn:hover {
     background-color: #99707e;
+    color: white;
 }
 .home_page_follow_text_section {
     display: flex;
@@ -225,14 +237,14 @@
 }
 .home_page_trending_txt1 h2 {
     color: var(--Core-black, #000);
-    font-size: 36px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
 }
 .home_page_trending_txt1 h3 {
     color: var(--Primary, var(--Core-black, #7848f4));
-    font-size: 36px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
@@ -243,6 +255,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    font-size: 18px;
 }
 .home_page_tr_pc_container {
     display: flex;
@@ -273,14 +286,14 @@
 }
 .home_page_our_blog_txt1 h2{
     color: var(--Core-black, #000);
-    font-size: 36px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
 }
 .home_page_our_blog_txt1 h3{
     color: var(--Primary, var(--Core-black, #7848f4));
-    font-size: 36px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
@@ -291,6 +304,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    font-size: 18px;
 }
 .home_page_our_blog_container{
     display: flex;
@@ -314,4 +328,31 @@
     gap: 90px;
     margin-top: 60px;
     margin-bottom: 60px;
+}
+.home_page_package_card1{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_package_card2{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_package_card3{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card1{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card2{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card3{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card4{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card5{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card6{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
