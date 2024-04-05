@@ -1,9 +1,7 @@
-import React, { useState, useRef } from "react";
-import EmployeeListTable from "./others/EmployeeListTable";
-import {
-    LoadingOutlined,
-    PlusOutlined,
-} from "@ant-design/icons";
+import React, { useState, useRef, useEffect } from "react";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { Icon } from "@iconify/react";
+import moment from "moment";
 import {
     ConfigProvider,
     Modal,
@@ -16,6 +14,9 @@ import {
     Space,
     message,
     Upload,
+    Avatar,
+    Tag,
+    Table,
 } from "antd";
 
 import axios from "axios";
@@ -24,10 +25,11 @@ let index = 0;
 
 const { Search, TextArea } = Input;
 
-
 function EmployeeList() {
     const [selectedType, setSelectedType] = useState("all");
     const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
+    const [tableModelOpen, setTableModelOpen] = useState(false);
+    const [tableModelContent, setTableModelContent] = useState();
 
     // Type Selector
     const [items, setItems] = useState([
@@ -53,7 +55,7 @@ function EmployeeList() {
     // Add employee model use states
     const [address, setAddress] = useState("");
     const [dob, setDob] = useState("");
-    const [type, setType] = useState("sick leave");
+    const [type, setType] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -61,20 +63,252 @@ function EmployeeList() {
     const [username, setUsername] = useState("");
     const [profileImage, setProfileImage] = useState("");
 
-    const saveEmployee = async () => {
+    //Edit employee model use states
+    const [editAddress, setEditAddress] = useState("");
+    const [editDob, setEditDob] = useState("");
+    const [editType, setEditType] = useState("sick leave");
+    const [editFirstName, setEditFirstName] = useState("");
+    const [editLastName, setEditLastName] = useState("");
+    const [editEmail, setEditEmail] = useState("");
+    const [editPhoneNumber, setEditPhoneNumber] = useState("");
+    const [editUsername, setEditUsername] = useState("");
+    const [editProfileImage, setEditProfileImage] = useState("");
+    const [editStatus, setEditStatus] = useState("");
 
+    const [fileListEdit, setFileListEdit] = useState([]);
+
+    const customRequestEdit = ({ file, onSuccess, onError }) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        axios
+            .post(
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                formData
+            )
+            .then((response) => {
+                if (response.data.data) {
+                    onSuccess();
+                    message.success("Image uploaded successfully");
+                    setFileListEdit([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: response.data.data.url,
+                        },
+                    ]);
+                    setEditProfileImage(response.data.data.url);
+                    console.log(profileImage);
+                    setLoading(false);
+                } else {
+                    onError();
+                    message.error("Failed to upload image");
+                }
+            })
+            .catch((error) => {
+                onError();
+                message.error("Error uploading image: " + error.message);
+            });
+    };
+
+    const saveEditEmployee = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if(!address || !dob || !type || !firstName || !lastName || !email || !phoneNumber || !username ){
+
+        if (
+            !editAddress ||
+            !editDob ||
+            !editType ||
+            !editFirstName ||
+            !editLastName ||
+            !editEmail ||
+            !editPhoneNumber ||
+            !editPhoneNumber
+        ) {
             return message.error("Please fill all the fields");
-        }else if(!emailRegex.test(email)){
+        } else if (!emailRegex.test(editEmail)) {
+            return message.error("Please enter a valid email address");
+        }
+
+        if (!editProfileImage || editProfileImage.trim() === "") {
+            // Set default profile image
+            setProfileImage(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+            );
+        } else {
+            console.log("Profile image already set:", editProfileImage);
+        }
+
+        const empData = {
+            address: editAddress,
+            dob: editDob,
+            type: editType,
+            firstName: editFirstName,
+            lastName: editLastName,
+            email: editEmail,
+            phoneNumber: editPhoneNumber,
+            username: editUsername,
+            profileImage: editProfileImage,
+            empID: tableModelContent.empID,
+            _id: tableModelContent._id,
+        };
+
+        console.log(empData);
+
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
+                empData
+            );
+            message.success("Employee edit successfully");
+            setTableModelOpen(false);
+            fetchEmployeeList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    //Employee table
+    const columns = [
+        {
+            title: "",
+            dataIndex: "profileImage",
+            key: "profileImage",
+            render: (_, record) => (
+                <Avatar
+                    size={35}
+                    src={record.profileImage}
+                    alt="profileImage"
+                />
+            ),
+        },
+        {
+            title: "ID",
+            dataIndex: "empID",
+            key: "empID",
+        },
+        {
+            title: "First Name",
+            dataIndex: "firstName",
+            key: "firstName",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Last Name",
+            dataIndex: "lastName",
+            key: "lastName",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Type",
+            dataIndex: "type",
+            key: "type",
+        },
+        {
+            title: "Address",
+            dataIndex: "address",
+            key: "address",
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Suspended") {
+                    color = "red";
+                }
+                return <Tag color={color}>{status.toUpperCase()}</Tag>;
+            },
+        },
+        {
+            title: "",
+            key: "action",
+            render: (_, record) => (
+                <Space size="middle">
+                    {record.status === "active" ? (
+                        <button
+                            style={{
+                                fontSize: "20px",
+                                color: "#9D9D9D",
+                                border: "none",
+                                background: "transparent",
+                            }}
+                            onClick={() => showModal(record)}
+                        >
+                            <Icon icon="uil:setting" />
+                        </button>
+                    ) : (
+                        <button
+                            style={{
+                                fontSize: "20px",
+                                color: "#9D9D9D",
+                                border: "none",
+                                background: "transparent",
+                            }}
+                            onClick={() => showModal(record)}
+                        >
+                            <Icon icon="uil:setting" />
+                        </button>
+                    )}
+                </Space>
+            ),
+        },
+    ];
+
+    const showModal = (record) => {
+        setTableModelContent(record);
+        setTableModelOpen(true);
+        setEditAddress(record.address);
+        setEditDob(record.dob);
+        setEditType(record.type);
+        setEditFirstName(record.firstName);
+        setEditLastName(record.lastName);
+        setEditEmail(record.email);
+        setEditPhoneNumber(record.phoneNumber);
+        setEditUsername(record.username);
+        setEditProfileImage(record.profileImage);
+        setEditStatus(record.status);
+        console.log(record.status);
+        setFileListEdit([
+            {
+                uid: "1",
+                name: "image.png",
+                status: "done",
+                url: record.profileImage,
+            },
+        ]);
+    };
+    async function fetchEmployeeList() {
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
+        );
+        setEmployeeList(response.data);
+    }
+
+    const saveEmployee = async () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            !address ||
+            !dob ||
+            !type ||
+            !firstName ||
+            !lastName ||
+            !email ||
+            !phoneNumber ||
+            !username
+        ) {
+            return message.error("Please fill all the fields");
+        } else if (!emailRegex.test(email)) {
             return message.error("Please enter a valid email address");
         }
 
         if (!profileImage || profileImage.trim() === "") {
             // Set default profile image
-            setProfileImage("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png");
-            console.log(profileImage);
+            setProfileImage(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+            );
         } else {
             console.log("Profile image already set:", profileImage);
         }
@@ -90,18 +324,32 @@ function EmployeeList() {
             username,
             profileImage,
         };
-        
 
-        try{
+        console.log(empData);
 
-            await axios.post("/api/employees/addEmployee", empData)
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/addEmployee`,
+                empData
+            );
+            message.success("Employee added successfully");
+            setAddEmployeeModelOpen(false);
+            fetchEmployeeList();
 
-        }catch(error){
+            // Reset form fields
+            setAddress("");
+            setDob(null);
+            setType("");
+            setFirstName("");
+            setLastName("");
+            setEmail("");
+            setPhoneNumber("");
+            setUsername("");
+            setProfileImage("");
+            setFileList([]);
+        } catch (error) {
             console.log(error);
         }
-        
-
-
     };
 
     const onSearch = (value) => console.log(value);
@@ -110,7 +358,6 @@ function EmployeeList() {
     const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
-    const [previewTitle, setPreviewTitle] = useState("");
     const [fileList, setFileList] = useState([]);
 
     const beforeUpload = (file) => {
@@ -153,7 +400,6 @@ function EmployeeList() {
         }
     };
 
-
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
         reader.addEventListener("load", () => callback(reader.result));
@@ -166,9 +412,6 @@ function EmployeeList() {
         }
         setPreviewImage(file.url || file.preview);
         setPreviewOpen(true);
-        setPreviewTitle(
-            file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-        );
     };
 
     const customRequest = ({ file, onSuccess, onError }) => {
@@ -190,7 +433,7 @@ function EmployeeList() {
                             name: "image.png",
                             status: "done",
                             url: response.data.data.url,
-                        }
+                        },
                     ]);
                     setProfileImage(response.data.data.url);
                     console.log(profileImage);
@@ -205,17 +448,419 @@ function EmployeeList() {
                 message.error("Error uploading image: " + error.message);
             });
     };
-    
 
-    
+    // Table Functions
+    const [employeeList, setEmployeeList] = useState([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
+        position: ["bottomCenter"],
+    });
+
+    const handleTableChange = (pagination, filters, sorter) => {
+        setPagination(pagination);
+    };
+
+    const conformSuspend = () => {
+        setIsConformModalOpen(true);
+    };
+
+    const conformActive = () => {
+        setIsActiveModalOpen(true);
+    };
+
+
+
+
+    const [isConformModalOpen, setIsConformModalOpen] = useState(false);
+    const [isActiveModalOpen, setIsActiveModalOpen] = useState(false);
+
+    const suspendUser = async () => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/suspendEmployee`,
+                { empID: tableModelContent.empID }
+            );
+            message.success("Employee suspended successfully");
+            setTableModelOpen(false);
+            setIsConformModalOpen(false);
+            fetchEmployeeList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const activeUser = async () => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/activeEmployee`,
+                { empID: tableModelContent.empID }
+            );
+            message.success("Employee activated successfully");
+            setTableModelOpen(false);
+            setIsActiveModalOpen(false);
+            fetchEmployeeList();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchEmployeeList();
+    }, []);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Active conformation model */}
+            <Modal
+                title="Are You Sure?"
+                open={isActiveModalOpen}
+                onOk={activeUser}
+                okText="Active"
+                onCancel={() => setIsActiveModalOpen(false)}
+                width={300}
+                centered
+            >
+                <p>This can't be undone.</p>
+            </Modal>
+            {/* Suspend Conformation model */}
+            <Modal
+                title="Are You Sure?"
+                open={isConformModalOpen}
+                onOk={suspendUser}
+                okText="Suspend"
+                onCancel={() => setIsConformModalOpen(false)}
+                width={300}
+                centered
+            >
+                <p>This can't be undone.</p>
+            </Modal>
+            {/* Table model */}
+            <Modal
+                centered
+                open={tableModelOpen}
+                onOk={() => setTableModelOpen(false)}
+                onCancel={() => setTableModelOpen(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div className="add_employee_top_container">
+                        <div className="avatar-container">
+                            <Upload
+                                customRequest={customRequestEdit}
+                                listType="picture-circle"
+                                fileList={fileListEdit}
+                                onPreview={handlePreview}
+                                onChange={handleChange}
+                                beforeUpload={beforeUpload}
+                                onRemove={() => {
+                                    setFileListEdit([]);
+                                    setEditProfileImage(
+                                        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+                                    );
+                                }}
+                            >
+                                {fileListEdit.length >= 1 ? null : uploadButton}
+                            </Upload>
+                            <Modal
+                                open={previewOpen}
+                                footer={null}
+                                onCancel={handleCancel}
+                                title={"Preview: "}
+                            >
+                                <img
+                                    alt="example"
+                                    style={{
+                                        width: "100%",
+                                    }}
+                                    src={previewImage}
+                                />
+                            </Modal>
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                }}
+                            >
+                                Leave Type
+                            </span>
+                            <Select
+                                style={{
+                                    width: 220,
+                                    height: 35,
+                                }}
+                                onChange={(value) => {
+                                    setEditType(value);
+                                    console.log(value);
+                                }}
+                                value={editType}
+                                placeholder="Select"
+                                dropdownRender={(menu) => (
+                                    <>
+                                        {menu}
+                                        <Divider
+                                            style={{
+                                                margin: "8px 0",
+                                            }}
+                                        />
+                                        <Space
+                                            style={{
+                                                padding: "0 8px 4px",
+                                            }}
+                                        >
+                                            <Input
+                                                placeholder="Please enter item"
+                                                ref={inputRef}
+                                                value={name}
+                                                onChange={onNameChange}
+                                                onKeyDown={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                            />
+                                            <Button
+                                                type="text"
+                                                icon={<PlusOutlined />}
+                                                onClick={addItem}
+                                            >
+                                                Add item
+                                            </Button>
+                                        </Space>
+                                    </>
+                                )}
+                                options={items.map((item) => ({
+                                    label: item,
+                                    value: item,
+                                }))}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="add_employee_popup_details_container">
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    First Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditFirstName(e.target.value)
+                                    }
+                                    value={editFirstName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Email
+                                </span>
+                                <Input
+                                    type="email"
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditEmail(e.target.value)
+                                    }
+                                    value={editEmail}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Phone Number
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditPhoneNumber(e.target.value)
+                                    }
+                                    value={editPhoneNumber}
+                                />
+                            </div>
+                        </div>
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Last Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditLastName(e.target.value)
+                                    }
+                                    value={editLastName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Username
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditUsername(e.target.value)
+                                    }
+                                    value={editUsername}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Date of Birth
+                                </span>
+                                <DatePicker
+                                    style={{
+                                        width: 205,
+                                        height: 40,
+                                    }}
+                                    defaultValue={moment(editDob)}
+                                    onChange={(date, dateString) => {
+                                        setEditDob(dateString);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="add_emp_address_container">
+                        <span>Address</span>
+                        <TextArea
+                            style={{
+                                width: 520,
+                            }}
+                            rows={4}
+                            value={editAddress}
+                            onChange={(e) => setEditAddress(e.target.value)}
+                        />
+                    </div>
+                    {editStatus === "Active" ? (
+                        <button
+                            onClick={conformSuspend}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "red",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Suspend Employee
+                        </button>
+                    ) :  (
+                        <button
+                            onClick={conformActive}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                width: "fit-content",
+                                color: "green",
+                                margin: "10px 0 0 5px",
+                            }}
+                        >
+                            Activate Employee
+                        </button>
+                    )}
+                </div>
+                <div className="add_emp_popup_footer_container center">
+                    <Button
+                        onClick={() => setTableModelOpen(false)}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                        danger
+                    >
+                        Cancel
+                    </Button>
+                    <button
+                        className="add_emp_popup_footer_button"
+                        onClick={saveEditEmployee}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Save Changes
+                    </button>
+                </div>
+            </Modal>
+
             <ConfigProvider
                 theme={{
                     components: {
-                        Modal: {
-                        }
+                        Modal: {},
                     },
                 }}
             >
@@ -223,7 +868,7 @@ function EmployeeList() {
                     <div className="admin_employee_list_cards">
                         <div className="admin_emp_details_card card1">
                             <h1>Total Employees</h1>
-                            <h2>568</h2>
+                            <h2>{employeeList.length}</h2>
                         </div>
                         <div className="admin_emp_details_card card2">
                             <h1>Pending Leaves</h1>
@@ -321,7 +966,7 @@ function EmployeeList() {
                                     </Upload>
                                     <Modal
                                         open={previewOpen}
-                                        title={previewTitle}
+                                        title={"Preview: "}
                                         footer={null}
                                         onCancel={handleCancel}
                                     >
@@ -358,6 +1003,7 @@ function EmployeeList() {
                                             setType(value);
                                             console.log(value);
                                         }}
+                                        value={type}
                                         placeholder="Select"
                                         dropdownRender={(menu) => (
                                             <>
@@ -416,7 +1062,13 @@ function EmployeeList() {
                                         >
                                             First Name
                                         </span>
-                                        <Input size="large" onChange={(e)=>setFirstName(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setFirstName(e.target.value)
+                                            }
+                                            value={firstName}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -433,7 +1085,14 @@ function EmployeeList() {
                                         >
                                             Email
                                         </span>
-                                        <Input type="email" size="large" onChange={(e)=> setEmail(e.target.value)} />
+                                        <Input
+                                            type="email"
+                                            size="large"
+                                            onChange={(e) =>
+                                                setEmail(e.target.value)
+                                            }
+                                            value={email}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -450,7 +1109,13 @@ function EmployeeList() {
                                         >
                                             Phone Number
                                         </span>
-                                        <Input size="large" onChange={(e)=>setPhoneNumber(e.target.value)} />
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setPhoneNumber(e.target.value)
+                                            }
+                                            value={phoneNumber}
+                                        />
                                     </div>
                                 </div>
                                 <div className="add_employee_popup_details_container_left">
@@ -469,7 +1134,13 @@ function EmployeeList() {
                                         >
                                             Last Name
                                         </span>
-                                        <Input size="large" onChange={(e)=> setLastName(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setLastName(e.target.value)
+                                            }
+                                            value={lastName}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -486,7 +1157,13 @@ function EmployeeList() {
                                         >
                                             Username
                                         </span>
-                                        <Input size="large" onChange={(e)=> setUsername(e.target.value)}/>
+                                        <Input
+                                            size="large"
+                                            onChange={(e) =>
+                                                setUsername(e.target.value)
+                                            }
+                                            value={username}
+                                        />
                                     </div>
                                     <div
                                         style={{
@@ -508,6 +1185,7 @@ function EmployeeList() {
                                                 width: 205,
                                                 height: 40,
                                             }}
+                                            defaultValue={moment(dob)}
                                             onChange={(date, dateString) => {
                                                 setDob(dateString);
                                             }}
@@ -523,6 +1201,7 @@ function EmployeeList() {
                                         width: 520,
                                     }}
                                     rows={4}
+                                    value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
                             </div>
@@ -550,9 +1229,16 @@ function EmployeeList() {
                             </button>
                         </div>
                     </Modal>
-                    
-                    <div style={{ width : "100%"}}>
-                    <EmployeeListTable/>
+
+                    <div style={{ width: "100%" }}>
+                        <div>
+                            <Table
+                                columns={columns}
+                                dataSource={employeeList}
+                                pagination={pagination}
+                                onChange={handleTableChange}
+                            />
+                        </div>
                     </div>
                 </div>
             </ConfigProvider>

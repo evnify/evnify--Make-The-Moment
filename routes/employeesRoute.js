@@ -35,11 +35,47 @@ router.post('/addEmployee', async (req, res) => {
 
 });
 
-router.get('/getEmployees', async (req, res) => {
-    const employees = await employeeModel.find();
-    res.send(employees);
+router.get('/getAllEmployees', async (req, res) => {
+    try {
+        const employees = await employeeModel.find();
+        res.send(employees);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
 });
 
+router.post('/editEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, employeeData);
+        res.send("Employee updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post('/suspendEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, { status: 'Suspended' });
+        res.send("Employee suspended successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post('/activeEmployee', async (req, res) => {
+    const employeeData = req.body;
+    const empID = employeeData.empID;
+    try {
+        await employeeModel.findOneAndUpdate({ empID: empID }, { status: 'Active' });
+        res.send("Employee activated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
 
 module.exports = router;
