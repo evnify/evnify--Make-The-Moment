@@ -1,23 +1,75 @@
 import React, { useState } from "react";
 import { Form, Input, Select, Upload, Button, Row, message } from "antd";
-import { uploadFile } from "../../controllers/uploadFileController";
-import InventoryController from "../../controllers/inventory.controller";
+
 import Title from "antd/es/typography/Title";
-import { set } from "mongoose";
+
+import { storage } from "./firebaseConfig";
+
+import { uploadBytesResumable, getDownloadURL, ref } from "firebase/storage";
+import axios from "axios";
+
+const baseURL = "http://localhost:5000/api/inventories";
+
+const uploadFile = async (file, path) => {
+    try {
+        const fileRef = ref(storage, `products/${file.name}`);
+        return await uploadBytesResumable(fileRef, file)
+            .then(async (res) => {
+                const url = await getDownloadURL(res.ref);
+                return url;
+            })
+            .catch((err) => {
+                throw Error(`${err}`);
+            });
+    } catch (error) {
+        throw Error(`${error}`);
+    }
+};
 
 const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
     const [loading, setLoading] = useState(false);
+    const createInventory = async (newInventory) => {
+        try {
+            const response = await axios.post(
+                "/api/inventories/addInventory",
+                newInventory
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error creating inventory:", error);
+            throw error;
+        }
+    };
+
+    const updateInventory = async (id, updatedInventory) => {
+        try {
+            const response = await axios.put(
+                `${baseURL}/${id}`,
+                updatedInventory
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error updating inventory:", error);
+            throw error;
+        }
+    };
+
     const onFinish = async (values) => {
+        console.log(values);
         try {
             await form.validateFields();
             setLoading(true);
+            if (values.unitPrice <= 0) {
+                message.error("Unit price must be greater than zero");
+                return;
+            }
+            if (values.quantity < 0) {
+                message.error("Please enter a non-negative value for quantity");
+                return;
+            }
             if (initialValues) {
                 const body = { ...values };
-
-                await new InventoryController().updateInventory(
-                    initialValues._id,
-                    body
-                );
+                await updateInventory(initialValues._id, body);
                 await onUpdate();
                 message.success("Inventory updated successful");
             } else {
@@ -26,7 +78,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 const url = await uploadFile(file, filePath);
                 const body = { ...values, itemImage: url };
 
-                await new InventoryController().createInventory(body);
+                await createInventory(body);
                 await onUpdate();
                 message.success("Inventory added successful");
             }
@@ -93,17 +145,6 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 <Input />
             </Form.Item>
 
-            {/* <Form.Item
-        name="category"
-        label="Category"
-        rules={[{ required: true, message: "Please select the category" }]}
-      >
-        <Select placeholder="Select a category">
-          <Select.Option value="cakeStand">Cake Stand</Select.Option>
-         
-        </Select>
-      </Form.Item> */}
-
             <Form.Item
                 name="unitPrice"
                 label="Unit Price"
@@ -111,7 +152,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                     { required: true, message: "Please input the unit price" },
                 ]}
             >
-                <Input type="number" addonAfter="$" />
+                <Input type="number" min="0.01" step="0.01" addonAfter="$" />
             </Form.Item>
 
             <Form.Item
@@ -119,6 +160,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 label="Quantity"
                 rules={[
                     { required: true, message: "Please input the quantity" },
+                    { validator: (_, value) => value >= 0 ? Promise.resolve() : Promise.reject("Please enter a non-negative value for quantity") }
                 ]}
             >
                 <Input type="number" />
@@ -147,14 +189,6 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                     </Select.Option>
                 </Select>
             </Form.Item>
-
-            {/* <Form.Item
-        name="color"
-        label="Colour"
-        rules={[{ required: true, message: "Please input the colour" }]}
-      >
-        <Input />
-      </Form.Item> */}
 
             <Form.Item
                 name="color"

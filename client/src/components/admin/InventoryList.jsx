@@ -8,11 +8,16 @@ import {
     Popconfirm,
     message,
     Image,
+    Input,
+    Space,
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
-import InventoryController from "../../controllers/inventory.controller";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+
+import axios from "axios";
+const baseURL = "http://localhost:5000/api/inventories";
+
 function InventoryList() {
     const [inventories, setInventories] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -25,15 +30,13 @@ function InventoryList() {
         fetchData();
     }, []);
 
-    const fetchData = () => {
-        new InventoryController()
-            .getAllInventories()
-            .then((res) => {
-                setInventories(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    const fetchData = async () => {
+        try {
+            const response = await axios.get("/api/inventories/getInventories");
+            setInventories(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleEdit = (record) => {
@@ -43,8 +46,7 @@ function InventoryList() {
     };
 
     const handleDelete = (id) => {
-        new InventoryController()
-            .deleteInventory(id)
+        deleteInventory(id)
             .then(() => {
                 message.success("Inventory deleted successfully");
                 fetchData();
@@ -55,6 +57,25 @@ function InventoryList() {
                     "Failed to delete inventory. Please try again later."
                 );
             });
+    };
+    const getAllInventories = async () => {
+        try {
+            const response = await axios.get(baseURL);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching all inventories:", error);
+            throw error;
+        }
+    };
+
+    const deleteInventory = async (id) => {
+        try {
+            await axios.delete("/api/inventories/deleteInventories");
+            return true; // Success
+        } catch (error) {
+            console.error("Error deleting inventory:", error);
+            throw error;
+        }
     };
 
     const columns = [
@@ -172,14 +193,14 @@ function InventoryList() {
     };
 
     return (
-        <div>
-            <div className="admin_inventory_list_counts_container">
+        <div className="admin_inventory_list_counts_container">
+            <div className="inventory_list_main_container">
                 {/*total card*/}
                 <div className="inventory_total_container1">
                     <div className="inventory_total_card1">
                         <div className="inventory_total_card1_txt">
                             <h3>Total Items</h3>
-                            <h2>510</h2>
+                            <h2>{inventories.length}</h2>
                         </div>
                     </div>
                 </div>
@@ -224,7 +245,6 @@ function InventoryList() {
                     </div>
                 </div>
             </div>
-
             <div
                 style={{
                     padding: 16,
@@ -235,6 +255,7 @@ function InventoryList() {
                 <Row justify={"space-between"}>
                     <h1>Inventory List</h1>
                     <Button
+                        className="add_inventory_button"
                         onClick={() => {
                             setAddOpen(true);
                             form.resetFields();
@@ -242,7 +263,12 @@ function InventoryList() {
                     >
                         Add Inventory
                     </Button>
-                    <Button onClick={handleExportPDF}>Generate PDF</Button>
+                    <Button
+                        className="inventory_generate_pdf_button"
+                        onClick={handleExportPDF}
+                    >
+                        Generate PDF
+                    </Button>
                 </Row>
                 <Table
                     dataSource={inventories}

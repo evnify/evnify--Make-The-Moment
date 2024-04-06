@@ -1,11 +1,15 @@
-/*inventory highlight*/
-.admin_inventory_list_counts_container {
+.inventory_list_main_container{
     display: flex;
     flex-direction: row;
 }
+/*inventory highlight*/
+.admin_inventory_list_counts_container{
+    display: flex;
+    flex-direction: column;
+}
 /* card1 */
-.inventory_total_container1 {
-    background-color: #e8f0fb;
+.inventory_total_container1{
+    background-color: #E8F0FB;
     height: 136px;
     width: 265px;
     margin-left: 16px;
@@ -16,26 +20,26 @@
     margin-top: 10px;
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
     margin-right: 20px;
-    margin-left: 20px;
+    margin-left: 20px
 }
-.inventory_total_card1_txt {
+.inventory_total_card1_txt{
     margin-top: 25px;
     margin-left: 5px;
 }
-.inventory_total_card1_txt {
-    color: #161e54;
+.inventory_total_card1_txt{
+    color: #161E54;
     font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans Display-Regular";
+    font-style: "Product Sans";
 }
-.inventory_total_card1_txt h3 {
+.inventory_total_card1_txt h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular";
+    font-family: "Product Sans Display-Regular" ;
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
 }
-.inventory_total_card1_txt h2 {
+.inventory_total_card1_txt h2{
     font-size: 36px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
@@ -44,8 +48,8 @@
 }
 
 /* card2 */
-.inventory_total_container2 {
-    background-color: #e4ffe1;
+.inventory_total_container2{
+    background-color: #E4FFE1;
     height: 136px;
     width: 265px;
     display: flex;
@@ -58,24 +62,24 @@
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
     margin-right: 20px;
 }
-.inventory_total_card2_txt {
+.inventory_total_card2_txt{
     margin-top: 25px;
     margin-left: 5px;
 }
-.inventory_total_card2 {
-    color: #161e54;
+.inventory_total_card2{
+    color: #161E54;
     font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans Display-Regular";
 }
-.inventory_total_card2 h3 {
+.inventory_total_card2 h3{
     font-size: 18px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
 }
-.inventory_total_card2 h2 {
+.inventory_total_card2 h2{
     font-size: 36px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
@@ -84,8 +88,8 @@
 }
 
 /* card3 */
-.inventory_total_container3 {
-    background-color: #fdebf9;
+.inventory_total_container3{
+    background-color: #FDEBF9;
     height: 136px;
     width: 265px;
     display: flex;
@@ -98,24 +102,24 @@
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
     margin-right: 20px;
 }
-.inventory_total_card3_txt {
+.inventory_total_card3_txt{
     margin-top: 25px;
     margin-left: 5px;
 }
-.inventory_total_card3 {
-    color: #161e54;
+.inventory_total_card3{
+    color: #161E54;
     font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans Display-Regular";
 }
-.inventory_total_card3 h3 {
+.inventory_total_card3 h3{
     font-size: 18px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
 }
-.inventory_total_card3 h2 {
+.inventory_total_card3 h2{
     font-size: 36px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
@@ -124,8 +128,8 @@
 }
 
 /* card4 */
-.inventory_total_container4 {
-    background-color: #dbcaff;
+.inventory_total_container4{
+    background-color: #DBCAFF;
     height: 136px;
     width: 265px;
     display: flex;
@@ -138,25 +142,26 @@
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
     margin-right: 20px;
 }
-.inventory_total_card4_txt {
+.inventory_total_card4_txt{
     margin-top: 25px;
     margin-left: 5px;
     font-style: "Product Sans Display-Regular";
+
 }
-.inventory_total_card4 {
-    color: #161e54;
+.inventory_total_card4{
+    color: #161E54;
     font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans Display-Regular";
 }
-.inventory_total_card4 h3 {
+.inventory_total_card4 h3{
     font-size: 18px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
 }
-.inventory_total_card4 h2 {
+.inventory_total_card4 h2{
     font-size: 36px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
@@ -165,8 +170,8 @@
 }
 
 /* card5 */
-.inventory_total_container5 {
-    background-color: #f4f4d5;
+.inventory_total_container5{
+    background-color: #F4F4D5;
     height: 136px;
     width: 265px;
     display: flex;
@@ -179,28 +184,50 @@
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
     margin-right: 20px;
 }
-.inventory_total_card5_txt {
+.inventory_total_card5_txt{
     margin-top: 25px;
     margin-left: 5px;
     font-style: "Product Sans Display-Regular";
+
 }
-.inventory_total_card5 {
-    color: #161e54;
+.inventory_total_card5{
+    color: #161E54;
     font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans Display-Regular";
 }
-.inventory_total_card5 h3 {
+.inventory_total_card5 h3{
     font-size: 18px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
 }
-.inventory_total_card5 h2 {
+.inventory_total_card5 h2{
     font-size: 36px;
     font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+}
+
+/*add item button*/
+
+.inventory_addItem_button{
+    background-color: #533C56;
+    color: #FFFFFF;
+    margin-left: 500px;
+
+
+}
+
+.add_inventory_button{
+    background-color: #533C56;
+    color: #FFFFFF;
+    margin-left: 500px;
+}
+
+.inventory_generate_pdf_button{
+    background-color: #4094F7;
+    color: #FFFFFF;
 }

@@ -3,7 +3,7 @@ const router = express.Router();
 const Inventory = require("../models/inventory");
 
 // Create a new inventory item
-router.post("/", async (req, res) => {
+router.post("/addInventory", async (req, res) => {
     try {
         const newItem = await Inventory.create(req.body);
         res.status(201).json(newItem);
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
 });
 
 // Get all inventory items
-router.get("/", async (req, res) => {
+router.get("/getInventories", async (req, res) => {
     try {
         const items = await Inventory.find();
         res.json(items);
@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update an inventory item
-router.put("/:id", async (req, res) => {
+router.put("/putInventories", async (req, res) => {
     try {
         const updatedItem = await Inventory.findByIdAndUpdate(
             req.params.id,
