@@ -63,7 +63,7 @@ function Packages() {
     };
     const handleCreatePackage = () => {
         if (selectedPackage) {
-            navigate(`/booking/${selectedPackage._id}`);
+            navigate(`/booking/${category}/${selectedPackage._id}`);
         }
     };
     return (
@@ -75,7 +75,6 @@ function Packages() {
                         .filter((packages) => packages.eventType === category)
                         .map(
                             (packages) => (
-                                console.log(packages),
                                 (
                                     <div key={packages._id}>
                                         <div
