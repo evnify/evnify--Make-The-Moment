@@ -1,0 +1,99 @@
+.home_footer_main_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 334px;
+    background-color: #533c56;
+    justify-content: center;
+}
+.footer_logo_image_section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.logo_image_section {
+    margin-top: 50px;
+    width: 120.609px;
+    height: 28px;
+}
+.footer_enter_email_section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 30px;
+}
+.enter_emil_section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.footer_main_section {
+    display: flex;
+    flex-direction: column;
+}
+.email_enter_txt_input {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    width: 248px;
+    height: 50px;
+}
+.subscribe_btn_container {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    font-family: "Product Sans";
+    width: 142px;
+    height: 50px;
+    background-color: #d9d9d9;
+    font-weight: 400;
+    font-size: 18px;
+}
+.subscribe_btn_container:hover {
+    background-color: #99707e;
+    color: white;
+}
+.footer_txt_btn_section {
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+    gap: 60px;
+}
+.footer_txt_btn_links {
+    text-decoration: none;
+    color: #fff;
+}
+.footer_hr_tag_css {
+    color: #fff;
+    border: 2px;
+}
+.footer_bottom_txt_section {
+    display: flex;
+    flex-direction: row;
+}
+.footer_bottom_txt_section h2 {
+    color: var(--White, #fff);
+    text-align: right;
+    font-family: "Product Sans";
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.footer_icon_and_txt_main_section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.footer_bottom_txt_section2 h2{
+    color: var(--White, #fff);
+    text-align: right;
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: end;
+}
