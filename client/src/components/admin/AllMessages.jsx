@@ -24,8 +24,7 @@ function AllMessages() {
     const [searchMessages, setFilteredMessages] = useState([]);
     const [groupedMessages, setGroupedMessages] = useState({});
     const [selectedUserID, setSelectedUserID] = useState(null);
-    
-
+    const [isSearching, setIsSearching] = useState(false);
 
 
     // Function to handle opening dropdown menu for a specific message
@@ -140,7 +139,7 @@ function AllMessages() {
     const handleFilterChange = (value) => {
         setSelectedFilter(value);
     };
-    
+
 
     let filteredMessages;
     switch (selectedFilter) {
@@ -191,17 +190,32 @@ function AllMessages() {
     const handleSearch = (value) => {
         // Convert search input to lowercase
         const searchValue = value.toLowerCase();
-        
+
         // Filter messages based on search input (case-insensitive)
-        let filtered = messages.filter(msg => 
+        const filtered = messages.filter(msg =>
             msg.message.toLowerCase().includes(searchValue)
         );
-    
+
+        // Map the filtered messages to the items array format
+        const searchResultItems = filtered.map((msg, index) => ({
+            label: msg.message, // Use the message content as the label
+            key: index.toString(), // Use the index as the key
+            name: msg.customerID, // Use the customer ID as the name
+
+        }));
+
         // Set the filtered messages state
-        setFilteredMessages(filtered);
+        setIsSearching(true);
+        setFilteredMessages(searchResultItems);
         console.log(searchMessages)
     };
-    
+
+
+    // Function to handle returning from search to message-received-preview
+    const handleReturnToPreview = () => {
+        setFilteredMessages([]);
+        setIsSearching(false);
+    };
 
 
     return <div>
@@ -212,51 +226,73 @@ function AllMessages() {
                     <div className="message-all-users-bar-top-msg-text" style={{ margin: "20px 0 0 40px" }}>
                         <b style={{ fontSize: "28px" }}>Messages</b>
                     </div>
-                    <div style={{ margin: "35px 0 0 100px", fontSize: "12px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
-                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("2")}>All</p>
-                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("0")}>Read</p>
-                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("1")}>Unread</p>
+                    <div style={{ margin: "35px 0 0 100px", fontSize: "12px", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("2")}>All</p>
+                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("0")}>Read</p>
+                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("1")}>Unread</p>
 
                     </div>
                 </div>
                 <div className="message-all-users-bar-bottom">
                     <div className="message-all-users-bar-bottom-search">
-                    <Search
-                                placeholder="Search messages"
-                                style={{
-                                    width: 350,
-                                }}
-                                size="large"
-                                onSearch={handleSearch}
-                            />
+                        <Search
+                            placeholder="Search messages"
+                            style={{
+                                width: 350,
+                            }}
+                            size="large"
+                            onSearch={handleSearch}
+                        />
                         <div className="message-group-preview">
-                            {/* Render grouped messages */}
-                            {Object.keys(filteredMessages).map((customerID) => (
-                                <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
-                                    onClick={() => handlePreviewClick(customerID)}>
-                                    <div className="all-message-profile-pic">
-                                        <img src={messageDp} alt="DP" />
-                                    </div>
-                                    <div className="all-message-name">
-                                        <div className="all-message-timeandname">
-                                            <div className="all-message-name-tag">
-                                                <b>{customerID}</b>
+                            {/* Render search messages if available, otherwise render grouped messages */}
+                            {isSearching ? (
+                                <>
+                                    <Button onClick={handleReturnToPreview} style={{ margin: "0 15px 0 0", width: "350px" }}>Back to Message Preview</Button>
+                                    {searchMessages.map((msg, index) => (
+                                        <div key={index} className="message-received-preview" style={{border:"1px solid #ffffff"}}>
+                                            <div className="all-message-name">
+                                                <div className="all-message-timeandname">
+                                                    <div className="all-message-name-tag">
+                                                        <b>{msg.name}</b>
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                     <p>{msg.label}</p>
+                                                     <Tag color="purple">price</Tag>
+                                                </div>
                                             </div>
-                                            <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                {groupedMessages[customerID][0].sendTime}
+                                        </div>
+                                    ))}
+                                </>
+                            ) :
+                                (Object.keys(filteredMessages).map((customerID) => (
+                                    <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                        onClick={() => handlePreviewClick(customerID)}>
+                                        <div className="all-message-profile-pic">
+                                            <img src={messageDp} alt="DP" />
+                                        </div>
+                                        <div className="all-message-name">
+                                            <div className="all-message-timeandname">
+                                                <div className="all-message-name-tag">
+                                                    <b>{customerID}</b>
+                                                </div>
+                                                <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                    {groupedMessages[customerID][0].sendTime}
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
+                                                <div style={{ width: "250px" }}>{groupedMessages[customerID][groupedMessages[customerID].length - 1].message}</div>
+                                                {/* Render BellFilled icon conditionally */}
+                                                {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
+                                            </div>
+                                            <div>
+                                                <Tag color="purple">purple</Tag>
                                             </div>
                                         </div>
-                                        <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
-                                            <div style={{ width: "250px" }}>{groupedMessages[customerID][groupedMessages[customerID].length - 1].message}</div>
-                                            {/* Render BellFilled icon conditionally */}
-                                            {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
-                                        </div>
-                                        <div>
-                                            <Tag color="purple">purple</Tag>
-                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                                )}
                         </div>
 
                     </div>
