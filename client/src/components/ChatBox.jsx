@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Flex, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
 import moment from 'moment';
-import {chatIcon} from "../assets";
+import { chatIcon } from "../assets";
 
 function ChatBox() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
-
-    const fetchMessages = async () => {
-        try {
-            const response = await axios.get('/api/messages/allMessages');
-            setMessages(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    useEffect(() => {
-        fetchMessages();
-    }, []);
-
-
+    const [groupedMessages, setGroupedMessages] = useState({});
+    const [customerID, setCustomerID] = useState(null);
+    const [sentMessages, setSentMessages] = useState([]);
+    const [receivedMessages, setReceivedMessages] = useState([]);
 
     const sendMessage = async (e) => {
         try {
-            const customerID = "123";
+            const customerID = "U71200743";
             const messages = {
                 customerID,
                 message,
@@ -47,7 +36,35 @@ function ChatBox() {
             console.log(error)
         }
     };
-    
+
+    const fetchMessages = async () => {
+        try {
+            const response = await axios.get('/api/messages/allMessages');
+            setMessages(response.data);
+            groupMessages(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+        setCustomerID("U71200743");
+    }, []);
+
+    const groupMessages = (messages) => {
+        const grouped = {};
+        messages.forEach((msg) => {
+            if (!grouped[msg.customerID]) {
+                grouped[msg.customerID] = [];
+            }
+            grouped[msg.customerID].push(msg);
+        });
+        setGroupedMessages(grouped);
+        console.log(grouped)
+    };
+
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -63,6 +80,21 @@ function ChatBox() {
         console.log("cancel")
     };
 
+    const handleFormSubmit = (e) => {
+        e.preventDefault(); // Prevent the default form submission behavior
+        if (message.trim() !== "") {
+            sendMessage(); // Call sendMessage function
+            setMessage(""); // Clear the input field after sending the message
+        }
+    };
+    
+
+    // Filter sent and received messages
+    useEffect(() => {
+        setSentMessages(messages.filter(msg => msg.sender === 'admin'));
+        setReceivedMessages(messages.filter(msg => msg.sender === 'customer'));
+    }, [messages]);
+
 
     const modalHeader = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '1px' }}>
@@ -73,22 +105,24 @@ function ChatBox() {
 
     const modalFooter = (
         <div>
-            <input type="text" placeholder="Type a message" onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
-            <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25' }} onClick={sendMessage}/>
-            
-        </div>
+        <form onSubmit={handleFormSubmit}>
+            <input type="text" placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
+            <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
+        </form> 
+    </div>
+    
     );
 
     return (
         <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
             {isModalOpen ? (
 
-            <img src={chatIcon} alt="chatIco" onClick={handleCancel} style={{width:"65px", height:"65px"}} />
+                <img src={chatIcon} alt="chatIco" onClick={handleCancel} style={{ width: "65px", height: "65px" }} />
                 // <Button type="primary" onClick={handleCancel}>
                 //     Close Modal
                 // </Button>
             ) : (
-                <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{width:"65px", height:"65px"}}/>
+                <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{ width: "65px", height: "65px" }} />
                 // <Button type="primary" onClick={handleOpenModal}>
                 //     Open Modal
                 // </Button>
@@ -110,16 +144,26 @@ function ChatBox() {
                     right: '50px',
                     top: '170px',
                     overflow: 'auto',
-                    border: '1px solid #e8e8e8', 
-                    borderRadius: '8px', 
-                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', 
+                    border: '1px solid #e8e8e8',
+                    borderRadius: '8px',
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                <div className="message-box-chatbox  " style={{ scrollbarWidth: "thin" }}>
-                    {messages.map((msg, index) => (
-                        <div key={index} className="sent-message-chatbox">{msg.message}</div>
+                <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
+                    {customerID && (groupedMessages[customerID] || []).map((msg, index) => (
+                        msg.sender === 'customer' ? (
+                            <div key={index} style={{ display: "flex", justifyContent:"flex-end"}}>
+                                <div className="sent-message-chatbox">{msg.message}</div>
+                            </div>
+                        ) : (
+                            <div key={index} style={{ display: "flex", float: "left"}}>
+                                <div className="received-message-chatbox">{msg.message}</div>
+                            </div>
+                        )
                     ))}
                 </div>
+
+
                 <div style={{ borderTop: '1px solid #e8e8e8', padding: '8px 0' }}>
                     {modalFooter}
                 </div>

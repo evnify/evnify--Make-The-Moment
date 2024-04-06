@@ -227,11 +227,11 @@ function AllMessages() {
                         <b style={{ fontSize: "28px" }}>Messages</b>
                     </div>
                     <div style={{ margin: "35px 0 0 100px", fontSize: "12px", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("2")}>All</p>
-                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("0")}>Read</p>
-                        <p style={{ padding: " 0 10px 0 0 " }} onClick={() => handleFilterChange("1")}>Unread</p>
-
+                        <p style={{ padding: " 0 10px 0 0 ", cursor: "pointer", textDecoration: selectedFilter === "2" ? "underline" : "none" }} onClick={() => handleFilterChange("2")}>All</p>
+                        <p style={{ padding: " 0 10px 0 0 ", cursor: "pointer", textDecoration: selectedFilter === "0" ? "underline" : "none" }} onClick={() => handleFilterChange("0")}>Read</p>
+                        <p style={{ padding: " 0 10px 0 0 ", cursor: "pointer", textDecoration: selectedFilter === "1" ? "underline" : "none" }} onClick={() => handleFilterChange("1")}>Unread</p>
                     </div>
+
                 </div>
                 <div className="message-all-users-bar-bottom">
                     <div className="message-all-users-bar-bottom-search">
@@ -249,17 +249,17 @@ function AllMessages() {
                                 <>
                                     <Button onClick={handleReturnToPreview} style={{ margin: "0 15px 0 0", width: "350px" }}>Back to Message Preview</Button>
                                     {searchMessages.map((msg, index) => (
-                                        <div key={index} className="message-received-preview" style={{border:"1px solid #ffffff"}}>
+                                        <div key={index} className="message-received-preview" style={{ border: "1px solid #ffffff" }}>
                                             <div className="all-message-name">
                                                 <div className="all-message-timeandname">
                                                     <div className="all-message-name-tag">
                                                         <b>{msg.name}</b>
-                                                        
+
                                                     </div>
                                                 </div>
                                                 <div>
-                                                     <p>{msg.label}</p>
-                                                     <Tag color="purple">price</Tag>
+                                                    <p>{msg.label}</p>
+                                                    <Tag color="purple">price</Tag>
                                                 </div>
                                             </div>
                                         </div>
@@ -287,7 +287,7 @@ function AllMessages() {
                                                 {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
                                             </div>
                                             <div>
-                                                <Tag color="purple">purple</Tag>
+                                                <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
                                             </div>
                                         </div>
                                     </div>
@@ -336,7 +336,7 @@ function AllMessages() {
                                                         aria-expanded={open ? 'true' : undefined}
                                                         onClick={(e) => handleClick(e, msg._id)}
                                                     >
-                                                        <Icon icon="mage:dots" width="16" height="16" />
+                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
                                                     </div>
                                                     <Menu
                                                         id="fade-menu"
@@ -377,7 +377,7 @@ function AllMessages() {
                                                         aria-expanded={open ? 'true' : undefined}
                                                         onClick={(e) => handleClick(e, msg._id)}
                                                     >
-                                                        <Icon icon="mage:dots" width="16" height="16" />
+                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
                                                     </div>
                                                     <Menu
                                                         id="fade-menu"
