@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, Menu, Space, theme, ConfigProvider } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import Logo from "../../assets/Logo/logo.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import {logo_dark_without_tag} from "../../assets"
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -173,7 +173,7 @@ function NavBarUser() {
             <nav style={styles.header}>
                 <div style={styles.container}>
                     <div style={styles.menuContainer}>
-                        <Link to="/"><img src={Logo} alt="logo" style={styles.logo} /></Link>
+                        <Link to="/"><img src={logo_dark_without_tag} alt="logo" style={styles.logo} /></Link>
                         <Menu
                             style={{
                                 ...styles.menu,
