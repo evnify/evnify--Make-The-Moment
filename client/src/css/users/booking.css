@@ -150,11 +150,83 @@
     background: #3f2d41;
 }
 
-.user_booking_page_filter{
+.user_booking_page_filter {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 400px;
     align-items: center;
     margin: 20px 0;
+}
+
+.user_booking_corosal {
+    width: calc(100% - 30px);
+}
+
+.user_booking_corosal h3 {
+    margin-left: 25px;
+    color: #000;
+    font-family: "Product Sans";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.Carousel_card_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    width: 250px;
+    border-radius: 11px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin: 15px;
+}
+
+.Carousel_card_container_image {
+    width: 250px;
+    height: 290px;
+    border-radius: 11px;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.Carousel_card_container_description {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    width: 100%;
+}
+
+.Carousel_card_container_description h4 {
+    color: #49516f;
+    font-family: "Product Sans";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-left: 10px;
+}
+
+.Carousel_card_container_description h6 {
+    color: var(#000);
+    font-family: "Product Sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-left: 15px;
+}
+
+.Carousel_card_container_description p {
+    color: #49516f;
+    font-family: "Product Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-right: 10px;
+    margin-top: 15px;
 }

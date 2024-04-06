@@ -1,10 +1,10 @@
 import { React, useState, useEffect } from "react";
 import { Input } from "antd";
-import axios from "axios";
-import { Navbar } from "../../components";
+import { Navbar, Footer } from "../../components";
 import { useParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { Checkbox, Button, Menu, DatePicker } from "antd";
+import { Checkbox, Menu, DatePicker, Button } from "antd";
+import { Carousel } from "primereact/carousel";
 const { Search } = Input;
 
 // Side Menu
@@ -99,16 +99,231 @@ const items = [
 // Main Component
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 function Booking() {
+    const [navbarSticky, setNavbarSticky] = useState(true);
     const { category, id } = useParams();
-    console.log(id);
+
+    // handel scroll view
+    useEffect(() => {
+        const handleScroll = () => {
+            const footer = document.getElementById("footer");
+            const navbar = document.getElementById("navbar");
+
+            if (footer) {
+                const footerTop = footer.getBoundingClientRect().top;
+                const navbarHeight = navbar.offsetHeight;
+
+                if (footerTop < window.innerHeight) {
+                    setNavbarSticky(false);
+                    navbar.style.position = "absolute";
+                    navbar.style.top = footerTop - navbarHeight + "px";
+                } else {
+                    setNavbarSticky(true);
+                    navbar.style.position = "sticky";
+                    navbar.style.top = "0";
+                }
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     const [date, setDate] = useState(null);
     const [searchKey, setSearchKey] = useState("");
 
+    //Carousel Functions
+    const [products, setProducts] = useState([]);
+    const responsiveOptions = [
+        {
+            breakpoint: "1400px",
+            numVisible: 2,
+            numScroll: 1,
+        },
+        {
+            breakpoint: "1199px",
+            numVisible: 3,
+            numScroll: 1,
+        },
+        {
+            breakpoint: "767px",
+            numVisible: 2,
+            numScroll: 1,
+        },
+        {
+            breakpoint: "575px",
+            numVisible: 1,
+            numScroll: 1,
+        },
+    ];
+
+    useEffect(() => {
+        setProducts([
+            {
+                id: "1000",
+                code: "f230fh0g3",
+                name: "Bamboo Watch",
+                description: "Product Description",
+                image: "bamboo-watch.jpg",
+                price: 65,
+                category: "Accessories",
+                quantity: 24,
+                inventoryStatus: "INSTOCK",
+                rating: 5,
+            },
+            {
+                id: "1001",
+                code: "nvklal433",
+                name: "Black Watch",
+                description: "Product Description",
+                image: "black-watch.jpg",
+                price: 72,
+                category: "Accessories",
+                quantity: 61,
+                inventoryStatus: "INSTOCK",
+                rating: 4,
+            },
+            {
+                id: "1002",
+                code: "zz21cz3c1",
+                name: "Blue Band",
+                description: "Product Description",
+                image: "blue-band.jpg",
+                price: 79,
+                category: "Fitness",
+                quantity: 2,
+                inventoryStatus: "LOWSTOCK",
+                rating: 3,
+            },
+            {
+                id: "1003",
+                code: "244wgerg2",
+                name: "Blue T-Shirt",
+                description: "Product Description",
+                image: "blue-t-shirt.jpg",
+                price: 29,
+                category: "Clothing",
+                quantity: 25,
+                inventoryStatus: "INSTOCK",
+                rating: 5,
+            },
+            {
+                id: "1004",
+                code: "h456wer53",
+                name: "Bracelet",
+                description: "Product Description",
+                image: "bracelet.jpg",
+                price: 15,
+                category: "Accessories",
+                quantity: 73,
+                inventoryStatus: "INSTOCK",
+                rating: 4,
+            },
+            {
+                id: "1005",
+                code: "av2231fwg",
+                name: "Brown Purse",
+                description: "Product Description",
+                image: "brown-purse.jpg",
+                price: 120,
+                category: "Accessories",
+                quantity: 0,
+                inventoryStatus: "OUTOFSTOCK",
+                rating: 4,
+            },
+            {
+                id: "1006",
+                code: "bib36pfvm",
+                name: "Chakra Bracelet",
+                description: "Product Description",
+                image: "chakra-bracelet.jpg",
+                price: 32,
+                category: "Accessories",
+                quantity: 5,
+                inventoryStatus: "LOWSTOCK",
+                rating: 3,
+            },
+            {
+                id: "1007",
+                code: "mbvjkgip5",
+                name: "Galaxy Earrings",
+                description: "Product Description",
+                image: "galaxy-earrings.jpg",
+                price: 34,
+                category: "Accessories",
+                quantity: 23,
+                inventoryStatus: "INSTOCK",
+                rating: 5,
+            },
+            {
+                id: "1008",
+                code: "vbb124btr",
+                name: "Game Controller",
+                description: "Product Description",
+                image: "game-controller.jpg",
+                price: 99,
+                category: "Electronics",
+                quantity: 2,
+                inventoryStatus: "LOWSTOCK",
+                rating: 4,
+            },
+        ]);
+    }, []);
+
+    const productTemplate = (product) => {
+        return (
+            <div className="Carousel_card_container">
+                <div
+                    className="Carousel_card_container_image"
+                    style={{
+                        backgroundImage: `url(https://s3-alpha-sig.figma.com/img/672a/15aa/ec109e9b7b26dfdacf4520bd38cb0dc4?Expires=1713139200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=DfvMS8rkthOkCUS7wJ-a2~B9KRk~ZXO3wkhineYvtmi~fcf72vscoLxDk5YSsCH1lPL1aJ59CIodrgqDBhnel9whF71FvRsvfhEwuO2~22yDEsP5~UXl8qVcGYV6gfD2Hu~m8UK~O6WdVZBhxD0CZd-yaRIvaW9Je90X0MdH~OGehZ6F2nAwwgsfy0Mqm8pZscRi~Qfvy~6FpSsd3pDaSEYji6AWZyMwjgz-~WOAsBcDdnhuCbCjxHravnSWKX1L9Vm0Huo~-lAOtPTrLHC~US1UGwY4bpQfEQOQuVzpXc6eqsx7YpfCNMJBP~QZmoHnOaxLO0PR-pyxYpK80tuRyw__)`,
+                    }}
+                ></div>
+                <div className="Carousel_card_container_description">
+                    <div
+                        className="center"
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
+                        <h4>{product.name}</h4>
+                        <ShoppingCartOutlined
+                            style={{ fontSize: "20px", margin: "0 20px 0 0" }}
+                        />
+                    </div>
+                    <div
+                        className="center"
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                        }}
+                    >
+                        <h6>{product.price} LKR</h6>
+                        <p>{product.inventoryStatus}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div style={{ backgroundColor: "#efefef" }}>
-            <Navbar />
-            <div style={{ position: "fixed" }}>
+            <div
+                id="navbar"
+                style={{
+                    position: navbarSticky ? "sticky" : "absolute",
+                    top: 0,
+                    zIndex: 1000,
+                }}
+            >
+                <Navbar />
+            </div>
+            <div style={{ position: "absolute" }}>
                 <div>
                     <div className="sideBar_72">
                         <p>
@@ -153,14 +368,53 @@ function Booking() {
                                 height: 40,
                             }}
                         />
-                        <ShoppingCartOutlined style={{ fontSize: "25px", margin: "0 60px" }} />
+                        <ShoppingCartOutlined
+                            style={{ fontSize: "25px", margin: "0 60px" }}
+                        />
                     </div>
                 </div>
-                <div className="center" style={{ width: "100%" }}>
+
+                <div className="user_booking_corosal">
+                    <h3>Chairs</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        responsiveOptions={responsiveOptions}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div className="user_booking_corosal">
+                    <h3>Tables</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        responsiveOptions={responsiveOptions}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div className="user_booking_corosal">
+                    <h3>Cake Holders</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        responsiveOptions={responsiveOptions}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div
+                    className="center"
+                    style={{ width: "100%", margin: "40px 0 80px 0" }}
+                >
                     <button className="createBookingBtn_72 ">
                         CONTINUE TO CHECKOUT
                     </button>
                 </div>
+            </div>
+            <div id="footer">
+                <Footer />
             </div>
         </div>
     );
