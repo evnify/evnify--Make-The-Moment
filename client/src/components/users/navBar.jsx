@@ -246,7 +246,7 @@ function NavBarUser() {
                                                 size={30}
                                                 src={
                                                     <img
-                                                        src="https://media.istockphoto.com/id/1300512215/photo/headshot-portrait-of-smiling-ethnic-businessman-in-office.webp?b=1&s=170667a&w=0&k=20&c=TXCiY7rYEvIBd6ibj2bE-VbJu0rRGy3MlHwxt2LHt9w="
+                                                        src={user.profilePic}
                                                         alt="avatar"
                                                     />
                                                 }

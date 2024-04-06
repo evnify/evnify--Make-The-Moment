@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 
 var index = 0;
 
+// searcj user
 const { Search, TextArea } = Input;
 
 function UserList() {
@@ -39,7 +40,6 @@ function UserList() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState({});
 
     useEffect(() => {
         async function fetchUserList() {
@@ -246,8 +246,8 @@ function UserList() {
             console.log("Profile image already set:", editProfilePic);
         }
 
-        const empData = {
-            address: editAddress,
+        const userData = {
+            address1: editAddress,
             type: editType,
             firstName: editFirstName,
             lastName: editLastName,
@@ -260,12 +260,12 @@ function UserList() {
             _id: tableModelContent._id,
         };
 
-        console.log(empData);
+        console.log(userData);
 
         try {
             await axios.post(
                 `${process.env.PUBLIC_URL}/api/users/editUser`,
-                empData
+                userData
             );
             message.success("Employee edit successfully");
             setTableModelOpen(false);
@@ -536,32 +536,36 @@ function UserList() {
     };
 
     const [searchKey, setSearchKey] = useState("");
-const [selectedType, setSelectedType] = useState("all");
-const [filteredUserList, setFilteredUserList] = useState([]);
+    const [selectedType, setSelectedType] = useState("all");
+    const [filteredUserList, setFilteredUserList] = useState([]);
 
-useEffect(() => {
-    let tempList = data;
+    useEffect(() => {
+        let tempList = data;
 
-    if (searchKey && searchKey !== "") {
-        tempList = tempList.filter(
-            (item) =>
-                item.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
-                item.email.toLowerCase().includes(searchKey.toLowerCase())    
-        );
-    }
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.firstName
+                        .toLowerCase()
+                        .includes(searchKey.toLowerCase()) ||
+                    item.email.toLowerCase().includes(searchKey.toLowerCase())
+            );
+        }
 
-    if (selectedType !== "all") {
-        tempList = tempList.filter((item) => item.status.toLowerCase() === selectedType.toLowerCase());
-    }
+        if (selectedType !== "all") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.status.toLowerCase() === selectedType.toLowerCase()
+            );
+        }
 
-    setFilteredUserList(tempList);
+        setFilteredUserList(tempList);
 
-    console.log("filteredUserList", tempList);
-    console.log("userList", data);
-    console.log("searchKey", searchKey);
-    console.log("selectedType", selectedType);
-}, [searchKey, selectedType, data]);
-
+        console.log("filteredUserList", tempList);
+        console.log("userList", data);
+        console.log("searchKey", searchKey);
+        console.log("selectedType", selectedType);
+    }, [searchKey, selectedType, data]);
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>

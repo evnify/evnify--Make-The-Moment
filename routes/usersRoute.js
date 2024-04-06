@@ -113,7 +113,9 @@ router.post("/login", async (req, res) => {
                 username: user.username,
                 email: user.email,
                 userType: user.userType,
-                status: user.status
+                status: user.status,
+                profilePic: user.profilePic,
+
             }
             res.send(temp);
         }
@@ -151,6 +153,36 @@ router.post("/register", async (req, res) => {
     }
 
 });
+
+router.post("/getUserByID", async (req, res) => {
+    const { userID } = req.body;
+    try {
+        const user = await UserModel.findOne({
+            userID: userID,
+        });
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        res.send(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+}
+);
+
+
+router.post("/updateUserProfile", async (req, res) => {
+    const { userID, profilePic } = req.body;
+    try {
+        await UserModel
+            .findOneAndUpdate({ userID: userID }, { profilePic: profilePic });
+        res.send("Profile updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
 
 
 
