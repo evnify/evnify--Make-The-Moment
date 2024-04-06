@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        default: "user",
+        default: "Customer",
     },
     city: {
         type: Array,

@@ -12,6 +12,7 @@ const Signup = () => {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const [confirm, setConfirm] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [currentModal, setCurrentModal] = useState(0);
@@ -75,6 +76,7 @@ const Signup = () => {
             email: email,
             phoneNumber: phoneNumber,
             password: password,
+            username: username,
         };
 
         try {
@@ -186,6 +188,36 @@ const Signup = () => {
                             </Form.Item>
                         </Col>
                     </Row>
+
+                    <Form.Item
+                        name="username" 
+                        labelCol={{ span: 24 }}
+                        wrapperCol={{ span: 24 }}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please input your username.",
+                            },
+                            {
+                                min: 4,
+                                message: "Your username must be at least 4 characters.",
+                            },
+                            {
+                                pattern: /^[A-Za-z0-9]+$/,
+                                message: "Your username can only contain letters and numbers.",
+                            },
+                        ]}
+                    >
+                        <Input
+
+                            placeholder="Username"
+                            size="large"
+                            style={{ borderRadius: "5px" }}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </Form.Item>
+
 
                     <Form.Item
                         name="email"

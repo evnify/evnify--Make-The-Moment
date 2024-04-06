@@ -20,7 +20,7 @@ import {
 import axios from "axios";
 import Loader from "./Loader";
 import { Icon } from "@iconify/react";
-import Swal from "sweetalert2";
+
 
 var index = 0;
 
@@ -218,7 +218,7 @@ function UserList() {
             });
     };
 
-    const saveEditEmployee = async () => {
+    const saveEditUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (
@@ -267,7 +267,7 @@ function UserList() {
                 `${process.env.PUBLIC_URL}/api/users/editUser`,
                 userData
             );
-            message.success("Employee edit successfully");
+            message.success("User edit successfully");
             setTableModelOpen(false);
             fetchUserList();
         } catch (error) {
@@ -410,6 +410,7 @@ function UserList() {
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
     const [fileList, setFileList] = useState([]);
+   
 
     const beforeUpload = (file) => {
         const isJpgOrPng =
@@ -477,7 +478,7 @@ function UserList() {
                 `${process.env.PUBLIC_URL}/api/users/suspendUser`,
                 { userID: tableModelContent.userID }
             );
-            message.success("Employee suspended successfully");
+            message.success("User suspended successfully");
             setTableModelOpen(false);
             setIsConformModalOpen(false);
             fetchUserList();
@@ -491,7 +492,7 @@ function UserList() {
             await axios.post(`${process.env.PUBLIC_URL}/api/users/activeUser`, {
                 userID: tableModelContent.userID,
             });
-            message.success("Employee activated successfully");
+            message.success("User activated successfully");
             setTableModelOpen(false);
             setIsActiveModalOpen(false);
             fetchUserList();
@@ -538,6 +539,7 @@ function UserList() {
     const [searchKey, setSearchKey] = useState("");
     const [selectedType, setSelectedType] = useState("all");
     const [filteredUserList, setFilteredUserList] = useState([]);
+
 
     useEffect(() => {
         let tempList = data;
@@ -604,7 +606,7 @@ function UserList() {
                 <div className="request_leave_model_body_container">
                     <div className="add_employee_top_container">
                         <div className="avatar-container">
-                            <Upload
+                        <Upload
                                 customRequest={customRequestEdit}
                                 listType="picture-circle"
                                 fileList={fileListEdit}
@@ -866,7 +868,7 @@ function UserList() {
                     </Button>
                     <button
                         className="add_emp_popup_footer_button"
-                        onClick={saveEditEmployee}
+                        onClick={saveEditUser}
                         style={{
                             width: "120px",
                             height: "40px",

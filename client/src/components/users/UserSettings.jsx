@@ -68,33 +68,7 @@ function UserSettings() {
     return (
         <div className="container">
             <div className="genral-setting">
-                <div className="setting-header">
-                    <h4>General Settings</h4>
-                    <p>Change your basic account settings.</p>
-                </div>
-
-                <div className="avtar">
-                    <p>Avatar</p>
-                    <div className="avatar-img">
-                        <Avatar size={64} icon={<UserOutlined />} />
-                    </div>
-                    <div className="avatar-btn">
-                        <button className="btn-change">Change</button>
-                        <button className="btn-remove">Remove</button>
-                    </div>
-                </div>
-
-                <div className="upload-box">
-                    <p>Cover Photo</p>
-                    <Dragger {...props} customRequest={customRequest}>
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">
-                            Click or drag file to this area to upload
-                        </p>
-                    </Dragger>
-                </div>
+                
 
                 <div className="Basic-info">
                     <div className="setting-header">

@@ -134,13 +134,19 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
 
+    const userID = await generateUniqueID();
+
     const newuser = new UserModel(
         {
+            
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: req.body.password, 
+            userID: userID,
+            username: req.body.username,
+            profilePic: req.body.profilePic,
         });
 
     try {
@@ -159,6 +165,7 @@ router.post("/getUserByID", async (req, res) => {
     try {
         const user = await UserModel.findOne({
             userID: userID,
+
         });
         if (!user) {
             return res.status(404).send("User not found");
@@ -173,7 +180,7 @@ router.post("/getUserByID", async (req, res) => {
 
 
 router.post("/updateUserProfile", async (req, res) => {
-    const { userID, profilePic } = req.body;
+    const { userID, profilePic,username } = req.body;
     try {
         await UserModel
             .findOneAndUpdate({ userID: userID }, { profilePic: profilePic });
@@ -183,10 +190,6 @@ router.post("/updateUserProfile", async (req, res) => {
     }
 }
 );
-
-
-
-
 
 
 module.exports = router;

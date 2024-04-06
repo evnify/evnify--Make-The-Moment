@@ -3,8 +3,12 @@ import { useState } from "react";
 import { Upload, message, Modal } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { Input, Select, Divider, Space } from "antd";
+const { Search, TextArea } = Input;
+
 
 function UserProfile() {
+
     const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -15,15 +19,20 @@ function UserProfile() {
     useEffect(() => {
         const fetchUserByID = async () => {
             const userID = localStorage.getItem("userID");
+
+            console.log(userID);
             try {
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);
-                setFileList([{
-                    uid: "1",
-                    name: "image.png",
-                    status: "done",
-                    url: res.data.profilePic,
-                }]);
+                setFileList([
+                    {
+                        uid: "1",
+                        name: "image.png",
+                        status: "done",
+                        url: res.data.profilePic,
+                    },
+                ]);
+                console.log(res.data);
             } catch (error) {
                 console.error(error);
             }
@@ -85,8 +94,6 @@ function UserProfile() {
         setPreviewOpen(true);
     };
 
-
-
     const updateUserProfile = async (profilePic) => {
         const userID = localStorage.getItem("userID");
         try {
@@ -98,7 +105,6 @@ function UserProfile() {
             console.error(error);
         }
     };
-    
 
     const customRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
@@ -140,7 +146,7 @@ function UserProfile() {
         <div className="container">
             <div className="bg-image ">
                 <div className="profile-card">
-                    <div className="avatar-container">
+                    <div className="avatarImg-container">
                         <Upload
                             customRequest={customRequest}
                             listType="picture-circle"
@@ -170,12 +176,14 @@ function UserProfile() {
                 </div>
 
                 <div className="profile-info">
-                    <h2>John Doe</h2>
+                    <h2>
+                        {user.firstName} {user.lastName}
+                    </h2>
                     <p>
                         <strong>Email:</strong>
                         <span>
                             <a href="mailto:  [email protected]">
-                                [email protected]
+                                {user.email}
                             </a>
                         </span>
                     </p>
@@ -183,8 +191,119 @@ function UserProfile() {
                 <button className="btn btn-primary edit">Edit Profile</button>
             </div>
 
-            <div className="profile-details"></div>
+        
+
+            <div className="add_user_details_container">
+                <div className="add_user_container_left">
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            style={{
+                                marginBottom: "3px",
+                                fontSize: "12px",
+                            }}
+                        >
+                            First Name
+                        </span>
+                        <Input size="large" />
+                    </div>
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            style={{
+                                marginBottom: "3px",
+                                fontSize: "12px",
+                            }}
+                        >
+                            Email
+                        </span>
+                        <Input type="email" size="large"  />
+                    </div>
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            style={{
+                                marginBottom: "3px",
+                                fontSize: "12px",
+                            }}
+                        >
+                            Phone Number
+                        </span>
+                        <Input size="large"  />
+                    </div>
+                </div>
+                <div className="add_user_details_container_left">
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            style={{
+                                marginBottom: "3px",
+                                fontSize: "12px",
+                            }}
+                        >
+                            Last Name
+                        </span>
+                        <Input size="large"  />
+                    </div>
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            style={{
+                                marginBottom: "3px",
+                                fontSize: "12px",
+                            }}
+                        >
+                            Username
+                        </span>
+                        <Input size="large"  />
+                    </div>
+                    <div
+                        style={{
+                            marginTop: "8px",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    ></div>
+                </div>
+            </div>
+
+            <div className="add_emp_address_container">
+                <span>Address</span>
+                <TextArea
+                    style={{
+                        width: 520,
+                    }}
+                    rows={4}
+                    
+                />
+            </div>
         </div>
+        
     );
 }
 
