@@ -27,6 +27,16 @@ var index = 0;
 const { Search, TextArea } = Input;
 
 function UserList() {
+    const [searchkey, setsearchkey] = useState("");
+
+    const filterBySearch = (data) => {
+        return data.filter(
+            (item) =>
+                item.username.toLowerCase().includes(searchkey.toLowerCase()) ||
+                item.email.toLowerCase().includes(searchkey.toLowerCase())
+        );
+    };
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({});
@@ -76,7 +86,6 @@ function UserList() {
         }
     }
 
-    const [selectedType, setSelectedType] = useState("all");
     const [addUserModelOpen, setaddUserModelOpen] = useState(false);
     const [tableModelOpen, setTableModelOpen] = useState(false);
     const [tableModelContent, setTableModelContent] = useState();
@@ -526,6 +535,34 @@ function UserList() {
             });
     };
 
+    const [searchKey, setSearchKey] = useState("");
+const [selectedType, setSelectedType] = useState("all");
+const [filteredUserList, setFilteredUserList] = useState([]);
+
+useEffect(() => {
+    let tempList = data;
+
+    if (searchKey && searchKey !== "") {
+        tempList = tempList.filter(
+            (item) =>
+                item.firstName.toLowerCase().includes(searchKey.toLowerCase()) ||
+                item.email.toLowerCase().includes(searchKey.toLowerCase())    
+        );
+    }
+
+    if (selectedType !== "all") {
+        tempList = tempList.filter((item) => item.status.toLowerCase() === selectedType.toLowerCase());
+    }
+
+    setFilteredUserList(tempList);
+
+    console.log("filteredUserList", tempList);
+    console.log("userList", data);
+    console.log("searchKey", searchKey);
+    console.log("selectedType", selectedType);
+}, [searchKey, selectedType, data]);
+
+
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             {/* Active conformation model */}
@@ -853,9 +890,9 @@ function UserList() {
                         >
                             <h5>All Users</h5>
                             <Search
-                                placeholder="Search "
+                                placeholder="Search by Name"
                                 size="large"
-                                onSearch={onSearch}
+                                onSearch={(value) => setSearchKey(value)}
                                 style={{
                                     width: 265,
                                     height: 40,
@@ -1159,7 +1196,7 @@ function UserList() {
                             {loading && <Loader />}
                             <div className="col-md-12">
                                 <Table
-                                    dataSource={data}
+                                    dataSource={filteredUserList}
                                     columns={columns}
                                     pagination={{
                                         pageSize: 5,
