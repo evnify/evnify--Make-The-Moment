@@ -28,7 +28,7 @@ function ChatBox() {
 
     const sendMessage = async (e) => {
         try {
-            const customerID = "U71200743";
+            const customerID = "123";
             const messages = {
                 customerID,
                 message,

@@ -11,16 +11,6 @@ import { SendOutlined, CaretDownOutlined, BellFilled } from '@ant-design/icons';
 
 const { Search } = Input
 
-const items = [
-    {
-        label: <a>Read</a>,
-        key: '0',
-    },
-    {
-        label: <a>Unread</a>,
-        key: '1',
-    }
-];
 
 function AllMessages() {
 
@@ -31,8 +21,12 @@ function AllMessages() {
     const [selectedMessageId, setSelectedMessageId] = useState(null);
     const [anchorEls, setAnchorEls] = useState({});
     const [open, setOpen] = useState(false);
+    const [searchMessages, setFilteredMessages] = useState([]);
     const [groupedMessages, setGroupedMessages] = useState({});
-    const [selectedUserID, setSelectedUserID] = useState(null); // Add state to track selected user ID
+    const [selectedUserID, setSelectedUserID] = useState(null);
+    
+
+
 
     // Function to handle opening dropdown menu for a specific message
     const handleClick = (event, messageId) => {
@@ -90,6 +84,7 @@ function AllMessages() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
+        console.log(grouped)
     };
 
 
@@ -98,7 +93,6 @@ function AllMessages() {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
             groupMessages(response.data);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -108,12 +102,58 @@ function AllMessages() {
         fetchMessages();
     }, []);
 
+
     // Filter sent and received messages
     useEffect(() => {
         setSentMessages(messages.filter(msg => msg.sender === 'admin'));
         setReceivedMessages(messages.filter(msg => msg.sender === 'customer'));
     }, [messages]);
 
+    // Filter unread messages
+    const filterUnreadMessages = () => {
+        const unreadMessages = Object.keys(groupedMessages).reduce((accumulator, customerID) => {
+            const unreadMsgs = groupedMessages[customerID].filter(msg => msg.status === 'unread');
+            if (unreadMsgs.length > 0) {
+                accumulator[customerID] = unreadMsgs;
+            }
+            return accumulator;
+        }, {});
+        console.log("Unread Messages:", unreadMessages);
+        return unreadMessages;
+    };
+    // Filter read messages
+    const filterReadMessages = () => {
+        const readMessages = Object.keys(groupedMessages).reduce((accumulator, customerID) => {
+            const unreadMsgs = groupedMessages[customerID].some(msg => msg.status === 'unread');
+            if (!unreadMsgs) {
+                accumulator[customerID] = groupedMessages[customerID];
+            }
+            return accumulator;
+        }, {});
+        console.log("Read Messages:", readMessages);
+        return readMessages;
+    };
+
+
+    const [selectedFilter, setSelectedFilter] = useState(null);
+
+    const handleFilterChange = (value) => {
+        setSelectedFilter(value);
+    };
+    
+
+    let filteredMessages;
+    switch (selectedFilter) {
+        case '0': // Read
+            filteredMessages = filterReadMessages();
+            break;
+        case '1': // Unread
+            filteredMessages = filterUnreadMessages();
+            break;
+        case '2': // All
+        default:
+            filteredMessages = groupedMessages;
+    }
 
 
 
@@ -148,6 +188,20 @@ function AllMessages() {
         }
     };
 
+    const handleSearch = (value) => {
+        // Convert search input to lowercase
+        const searchValue = value.toLowerCase();
+        
+        // Filter messages based on search input (case-insensitive)
+        let filtered = messages.filter(msg => 
+            msg.message.toLowerCase().includes(searchValue)
+        );
+    
+        // Set the filtered messages state
+        setFilteredMessages(filtered);
+        console.log(searchMessages)
+    };
+    
 
 
     return <div>
@@ -158,32 +212,26 @@ function AllMessages() {
                     <div className="message-all-users-bar-top-msg-text" style={{ margin: "20px 0 0 40px" }}>
                         <b style={{ fontSize: "28px" }}>Messages</b>
                     </div>
-                    <div style={{ margin: "32px 0 0 10px" }}>
-                        <Dropdown menu={{ items }} trigger={['click']}>
-                            <a onClick={(e) => e.preventDefault()}>
-                                <Space>
-                                    <CaretDownOutlined style={{ fontSize: '24px', color: 'black', }} />
-                                </Space>
-                            </a>
-                        </Dropdown>
-                    </div>
-                    <div style={{ margin: "35px 0 0 90px", fontSize: "12px" }}>
-                        filter by date
-                        <Icon icon="mingcute:filter-line" width="18" height="18" style={{ margin: "0 0 0 5px" }} />
+                    <div style={{ margin: "35px 0 0 100px", fontSize: "12px", display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("2")}>All</p>
+                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("0")}>Read</p>
+                         <p style={{padding:" 0 10px 0 0 "}} onClick={() => handleFilterChange("1")}>Unread</p>
+
                     </div>
                 </div>
                 <div className="message-all-users-bar-bottom">
                     <div className="message-all-users-bar-bottom-search">
-                        <Search
-                            placeholder="input search text"
-                            style={{
-                                width: 350,
-                            }}
-                            size="large"
-                        />
+                    <Search
+                                placeholder="Search messages"
+                                style={{
+                                    width: 350,
+                                }}
+                                size="large"
+                                onSearch={handleSearch}
+                            />
                         <div className="message-group-preview">
                             {/* Render grouped messages */}
-                            {Object.keys(groupedMessages).map((customerID) => (
+                            {Object.keys(filteredMessages).map((customerID) => (
                                 <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
                                     onClick={() => handlePreviewClick(customerID)}>
                                     <div className="all-message-profile-pic">
