@@ -1,10 +1,10 @@
 .navbar_section {
-    margin-top: 15px;
     margin-bottom: 15px;
 }
 .home_page_background_container{
     background-color: #f8f8fa;
     width: 100%;
+    overflow-y: hidden;
 }
 .home_page_category_name_container {
     margin-top: 70px;
@@ -29,9 +29,13 @@
 .home_page_category_card1 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/tQmskp4/Group-64.png);
+    background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(https://i.ibb.co/QbLbzwN/wedding.png);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card1:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card1 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -46,9 +50,13 @@
 .home_page_category_card2 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/S5zVSgY/18.png);
+    background-image: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/Jk5p9Fv/birthday.png);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card2:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card2 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -63,9 +71,13 @@
 .home_page_category_card3 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/F8Ymm2k/Group-65.png);
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/0Y6gqBz/get.png);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card3:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card3 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -87,10 +99,14 @@
 .home_page_category_card4 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/W5ntTJz/Group-105.png);
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/3Rxm12m/farewell.png);
     border-radius: 10px;
     gap: 18px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card4:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card4 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -105,9 +121,13 @@
 .home_page_category_card5 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/6W51Xqd/Group-108.png);
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/SQfxTff/brideto.png);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card5:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card5 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -122,9 +142,13 @@
 .home_page_category_card6 {
     width: 364px;
     height: 260px;
-    background-image: url(https://i.ibb.co/kBQ7m0t/Group-107.png);
+    background-image:linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(https://i.ibb.co/LJDTMZs/annavia.png);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    cursor: pointer;
+}
+.home_page_category_card6:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_category_card6 h3 {
     color: rgba(255, 255, 255, 0.8);
@@ -162,6 +186,7 @@
     width: 417px;
     height: 41px;
     margin-top: 43px;
+    margin-left: px;
 }
 .home_page_square_text_section h3 {
     color: var(--Background-Grey, #f8f8fa);
@@ -190,6 +215,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 90px;
+    margin-bottom: 90px;
     justify-content: center;
 }
 .home_page_follow_text_section h1 {
@@ -215,13 +241,24 @@
 .social_media_icon_section {
     display: flex;
     flex-direction: row;
-    gap: 36px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    gap: 46px;
+    margin-top: 50px;
+    margin-bottom: 50px;
     justify-content: center;
 }
 .social_media_icon1 {
-    margin-top: 0%;
+    margin-top: 45px;
+    margin-right: -20px;
+}
+.social_media_icon2{
+    margin-right: 10px;
+}
+.social_media_icon3{
+    margin-top: 25px;
+}
+.social_media_icon4{
+    margin-top: 40px;
+    margin-left: -20px;
 }
 .home_page_trending_package_section {
     display: flex;
@@ -232,8 +269,8 @@
     flex-direction: row;
     justify-content: space-between;
     margin-top: 30px;
-    margin-left: 80px;
-    margin-right: 80px;
+    margin-left: 140px;
+    margin-right: 140px;
 }
 .home_page_trending_txt1 h2 {
     color: var(--Core-black, #000);
@@ -268,7 +305,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 90px;
+    gap: 70px;
     margin-top: 60px;
     margin-bottom: 60px;
 }
@@ -281,8 +318,8 @@
     flex-direction: row;
     justify-content: space-between;
     margin-top: 30px;
-    margin-left: 80px;
-    margin-right: 80px;
+    margin-left: 140px;
+    margin-right: 140px;
 }
 .home_page_our_blog_txt1 h2{
     color: var(--Core-black, #000);
@@ -317,7 +354,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 90px;
+    gap: 70px;
     margin-top: 60px;
     margin-bottom: 60px;
 }
@@ -325,34 +362,61 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 90px;
+    gap: 70px;
     margin-top: 60px;
     margin-bottom: 60px;
 }
 .home_page_package_card1{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.home_page_package_card1:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 .home_page_package_card2{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_package_card2:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_package_card3{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.home_page_package_card3:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 .home_page_our_blog_card1{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card1:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_our_blog_card2{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.home_page_our_blog_card2:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 .home_page_our_blog_card3{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card3:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .home_page_our_blog_card4{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.home_page_our_blog_card4:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 .home_page_our_blog_card5{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
+.home_page_our_blog_card5:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 .home_page_our_blog_card6{
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.home_page_our_blog_card6:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
