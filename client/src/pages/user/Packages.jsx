@@ -92,116 +92,165 @@ function Packages() {
                             <div className="user_packages_main_section_container">
                                 <div className="user_packages_main_section">
                                     <div className="user_packages_left_content">
-                                        <img
-                                            key={1}
-                                            alt={selectedPackage.packageType}
-                                            src={
-                                                selectedPackage.contentImages[0]
-                                            }
-                                            style={{
-                                                width: 250,
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                        <img
-                                            key={2}
-                                            alt={selectedPackage.packageType}
-                                            src={
-                                                selectedPackage.contentImages[0]
-                                            }
-                                            style={{
-                                                width: 250,
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                        <img
-                                            key={3}
-                                            alt={selectedPackage.packageType}
-                                            src={
-                                                selectedPackage.contentImages[0]
-                                            }
-                                            style={{
-                                                width: 250,
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                        <img
-                                            key={4}
-                                            alt={selectedPackage.packageType}
-                                            src={
-                                                selectedPackage.contentImages[0]
-                                            }
-                                            style={{
-                                                width: 250,
-                                                objectFit: "cover",
-                                            }}
-                                        />
-                                        <p
-                                            style={{
-                                                width: 220,
-                                                textAlign: "justify"
-                                            }}
-                                        >
-                                            {selectedPackage.description}
-                                        </p>
+                                        <div className="user_package_main_container1">
+                                            <div className="user_package_basic_plan_image1">
+                                                <img
+                                                    key={1}
+                                                    alt={
+                                                        selectedPackage.packageType
+                                                    }
+                                                    src={
+                                                        selectedPackage
+                                                            .contentImages[3]
+                                                    }
+                                                    style={{
+                                                        width: 140.105,
+                                                        height: 137.499,
+                                                        objectFit: "cover",
+                                                        objectPosition: "top",
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="user_package_basic_plan_image2">
+                                                <img
+                                                    key={2}
+                                                    alt={
+                                                        selectedPackage.packageType
+                                                    }
+                                                    src={
+                                                        selectedPackage
+                                                            .contentImages[1]
+                                                    }
+                                                    style={{
+                                                        width: 102.31,
+                                                        height: 153.79,
+                                                        objectFit: "cover",
+                                                        objectPosition: "top",
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="user_package_main_container2">
+                                            <div className="user_package_basic_plan_image3">
+                                                <img
+                                                    key={3}
+                                                    alt={
+                                                        selectedPackage.packageType
+                                                    }
+                                                    src={
+                                                        selectedPackage
+                                                            .contentImages[2]
+                                                    }
+                                                    style={{
+                                                        width: 173.991,
+                                                        height: 278.256,
+                                                        objectFit: "cover",
+                                                        objectPosition: "top",
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="user_package_basic_plan_image4">
+                                                <img
+                                                    key={4}
+                                                    alt={
+                                                        selectedPackage.packageType
+                                                    }
+                                                    src={
+                                                        selectedPackage
+                                                            .contentImages[0]
+                                                    }
+                                                    style={{
+                                                        width: 187.676,
+                                                        height: 260.661,
+                                                        objectFit: "cover",
+                                                        objectPosition: "top",
+                                                    }}
+                                                />
+                                                <p
+                                                    className="user_package_basic_plan_txt_section"
+                                                    style={{
+                                                        width: 220,
+                                                        textAlign: "justify",
+                                                    }}
+                                                >
+                                                    {
+                                                        selectedPackage.description
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="user_packages_right_content">
-                                        <div className="user_packages_right_content_card">
-                                            <h3>What You'll Get!</h3>
-
-                                            {selectedPackage.inventories.map(
-                                                (item) => (
-                                                    <div>
-                                                        <ul>
-                                                            <li>
-                                                                {item.count}{" "}
-                                                                {item.name}s
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                )
-                                            )}
-                                            <p>
-                                                <b>
-                                                    LKR {selectedPackage.price}
-                                                </b>
-                                            </p>
+                                    <div>
+                                        <div className="user_packages_right_content">
+                                            <div className="user_packages_right_content_card_1">
+                                                <div>
+                                                    <h3>What You'll Get!</h3>
+                                                    {selectedPackage.inventories.map(
+                                                        (item) => (
+                                                            <div>
+                                                                <ul>
+                                                                    <li>
+                                                                        {
+                                                                            item.count
+                                                                        }{" "}
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                        s
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                                <p
+                                                    style={{
+                                                        textAlign: "center",
+                                                        fontSize: 25,
+                                                    }}
+                                                >
+                                                    <b>
+                                                        {selectedPackage.price}{" "}
+                                                        LKR
+                                                    </b>
+                                                </p>
+                                            </div>
+                                            <div
+                                                className="user_packages_right_content_card_2"
+                                                style={{
+                                                    backgroundColor: "#CEBEC9",
+                                                }}
+                                            >
+                                                <h3>Extras</h3>
+                                                {selectedPackage.extras.map(
+                                                    (item) => (
+                                                        <div>
+                                                            <ul>
+                                                                <li>{item}</li>
+                                                            </ul>
+                                                            <p></p>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
                                         </div>
                                         <div
-                                            className="user_packages_right_content_card"
                                             style={{
-                                                backgroundColor: "#CEBEC9",
+                                                display: "flex",
+                                                flexDirection: "row",
+                                                justifyContent: "flex-end",
+                                                marginRight: 30,
+                                                marginBottom: 30,
                                             }}
                                         >
-                                            <h3>Extras</h3>
-                                            {selectedPackage.extras.map(
-                                                (item) => (
-                                                    <div>
-                                                        <ul>
-                                                            <li>{item}</li>
-                                                        </ul>
-                                                        <p></p>
-                                                    </div>
-                                                )
-                                            )}
+                                            <button
+                                                className="createPackageBtn_72 "
+                                                onClick={handleCreatePackage}
+                                            >
+                                                Create Your Package
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        justifyContent: "flex-end",
-                                        marginRight: 20,
-                                        marginBottom: 30,
-                                    }}
-                                >
-                                    <button
-                                        className="createPackageBtn_72 "
-                                        onClick={handleCreatePackage}
-                                    >
-                                        Create Your Package
-                                    </button>
                                 </div>
                             </div>
                         </div>
