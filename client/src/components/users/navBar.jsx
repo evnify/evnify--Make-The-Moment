@@ -124,6 +124,7 @@ function NavBarUser() {
             display: "flex",
             gap: token.size,
             width: "100%",
+            marginTop:"15px"
         },
     };
 
@@ -172,7 +173,7 @@ function NavBarUser() {
             <nav style={styles.header}>
                 <div style={styles.container}>
                     <div style={styles.menuContainer}>
-                        <img src={Logo} alt="logo" style={styles.logo} />
+                        <Link to="/"><img src={Logo} alt="logo" style={styles.logo} /></Link>
                         <Menu
                             style={{
                                 ...styles.menu,

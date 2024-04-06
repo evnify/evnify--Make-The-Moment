@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Navbar, Footer } from "../../components";
 import { Carousel, Button, Card, Avatar } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import{ig, fb, li, yt} from "../../assets"
 const { Meta } = Card;
 
 function HomePage() {
@@ -31,6 +32,18 @@ function HomePage() {
                         <div>
                             <img
                                 className="carousel_carouse"
+                                src="https://i.ibb.co/ZHND8FX/corosal-04.png"
+                                alt="corosal4"
+                                style={{
+                                    ...contentStyle,
+                                    height: "669px",
+                                    width: "1320px",
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <img
+                                className="carousel_carouse"
                                 src="https://i.ibb.co/9Hc5MQk/corosal-01.webp"
                                 alt="corosal1"
                                 style={{
@@ -43,7 +56,7 @@ function HomePage() {
                         <div>
                             <img
                                 className="carousel_carouse"
-                                src="https://i.ibb.co/SV5FMWH/corosal-02.webp"
+                                src="https://i.ibb.co/LP4NP1c/weding.png"
                                 alt="corosal2"
                                 style={{
                                     ...contentStyle,
@@ -67,7 +80,7 @@ function HomePage() {
                         <div>
                             <img
                                 className="carousel_carouse"
-                                src="https://i.ibb.co/bFtJ3BN/corosal-04.webp"
+                                src="https://i.ibb.co/1nbJY8T/dp.png"
                                 alt="corosal4"
                                 style={{
                                     ...contentStyle,
@@ -136,25 +149,25 @@ function HomePage() {
                 <div className="social_media_icon_section">
                     <div className="social_media_icon1">
                         <img
-                            src="https://i.ibb.co/1RcqtzG/image-18.png"
+                            src={ig}
                             alt="instergram"
                         />
                     </div>
-                    <div>
+                    <div className="social_media_icon2">
                         <img
-                            src="https://i.ibb.co/WB7dstQ/Frame-1321314634.png"
+                            src={yt}
                             alt="youtube"
                         />
                     </div>
-                    <div>
+                    <div className="social_media_icon3">
                         <img
-                            src="https://i.ibb.co/HY6DjBW/Frame-1321314635.png"
+                            src={fb}
                             alt="facebook"
                         />
                     </div>
-                    <div>
+                    <div className="social_media_icon4">
                         <img
-                            src="https://i.ibb.co/Gp7pVHR/Frame-1321314636.png"
+                            src={li}
                             alt="linkedin"
                         />
                     </div>
@@ -166,9 +179,9 @@ function HomePage() {
                                 <h2>Trending&nbsp;</h2>
                                 <h3>Packages</h3>
                             </div>
-                            <a href="" className="home_page_ancer_tag_css">
-                                <h4>See All</h4>
-                            </a>
+                            <div className="home_page_ancer_tag_css">
+                                <Link to="/packages" style={{ textDecoration: 'none' }}><h4>See All</h4></Link>
+                            </div>
                         </div>
                     </div>
                     <div className="home_page_package_section_container">
@@ -239,12 +252,11 @@ function HomePage() {
                                     <h2>Our&nbsp;</h2>
                                     <h3>Blog</h3>
                                 </div>
-                                <a
-                                    href=""
+                                <div
                                     className="home_page_blog_ancer_tag_css"
                                 >
-                                    <h4>See All</h4>
-                                </a>
+                                    <Link to="/blog" style={{ textDecoration: 'none' }}><h4>See All</h4></Link>
+                                </div>
                             </div>
                             <div className="home_page_our_blog_section_cards1">
                                 <Card

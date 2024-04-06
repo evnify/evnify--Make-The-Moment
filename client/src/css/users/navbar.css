@@ -19,6 +19,7 @@
     border-radius: 5px;
     background: #533c56;
     color: aliceblue;
+    margin-top: 10px;
 }
 
 .btn_signin {
@@ -30,6 +31,7 @@
     align-items: center;
     gap: 8px;
     border-radius: 5px;
+    margin-top: 10px;
 }
 .home_page_blog_card_txt h2 {
     color: var(--Core-black, #000);
