@@ -115,6 +115,10 @@
     color: #fff;
 }
 
+.createPackageBtn_72:hover {
+    background: #3f2d41;
+}
+
 .user_package_main_container1 {
     display: flex;
     flex-direction: column;

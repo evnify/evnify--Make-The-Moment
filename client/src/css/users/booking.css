@@ -121,3 +121,40 @@
 .booking_page_main_container {
     margin-left: 335px;
 }
+
+.createPackageBtn_72 {
+    border-radius: 11px;
+    background: #533c56;
+    display: flex;
+    width: 244px;
+    height: 45px;
+    padding: 12px 0px;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+.createBookingBtn_72 {
+    border-radius: 11px;
+    background: #533c56;
+    display: flex;
+    width: 380px;
+    height: 45px;
+    padding: 12px 0px;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+.createBookingBtn_72:hover {
+    background: #3f2d41;
+}
+
+.user_booking_page_filter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 400px;
+    align-items: center;
+    margin: 20px 0;
+}

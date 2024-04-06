@@ -134,23 +134,33 @@ function Booking() {
                 </div>
             </div>
             <div className="booking_page_main_container">
-                <div direction="vertical">
+                <div className="user_booking_page_filter">
                     <DatePicker
                         onChange={(date, dateString) => setDate(dateString)}
-                    />
-                    <Search
-                        placeholder="input search text"
-                        allowClear
-                        onSearch={(value) => setSearchKey(value)}
                         style={{
-                            width: 200,
+                            width: 250,
+                            height: 40,
                         }}
                     />
-                    <ShoppingCartOutlined />
+                    <div className="center">
+                        <Search
+                            placeholder="Search"
+                            allowClear
+                            onSearch={(value) => setSearchKey(value)}
+                            size="large"
+                            style={{
+                                width: 300,
+                                height: 40,
+                            }}
+                        />
+                        <ShoppingCartOutlined style={{ fontSize: "25px", margin: "0 60px" }} />
+                    </div>
                 </div>
-                <button className="createPackageBtn_72 ">
-                    CONTINUE TO CHECKOUT
-                </button>
+                <div className="center" style={{ width: "100%" }}>
+                    <button className="createBookingBtn_72 ">
+                        CONTINUE TO CHECKOUT
+                    </button>
+                </div>
             </div>
         </div>
     );
