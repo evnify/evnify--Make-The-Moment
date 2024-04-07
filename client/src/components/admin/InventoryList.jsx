@@ -25,6 +25,7 @@ function InventoryList() {
     const [editOpen, setEditOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [form] = Form.useForm();
+    
 
     useEffect(() => {
         fetchData();
@@ -43,6 +44,17 @@ function InventoryList() {
         setEditData(record);
         setEditOpen(true);
         form.setFieldsValue(record);
+    };
+    const handleUpdate = async (id, newData) => {
+        try {
+            await axios.put(`/api/inventories/putInventories/${id}`, newData);
+            message.success("Inventory updated successfully");
+            fetchData(); // Refresh the data after update
+            setEditOpen(false); // Close the edit modal
+        } catch (error) {
+            console.error("Error updating inventory:", error);
+            message.error("Failed to update inventory. Please try again later.");
+        }
     };
 
     const handleDelete = (id) => {
@@ -70,8 +82,9 @@ function InventoryList() {
 
     const deleteInventory = async (id) => {
         try {
-            await axios.delete("/api/inventories/deleteInventories");
+            await axios.delete(`/api/inventories/deleteInventories/${id}`);
             return true; // Success
+            console.log("Inventory deleted successfully");
         } catch (error) {
             console.error("Error deleting inventory:", error);
             throw error;

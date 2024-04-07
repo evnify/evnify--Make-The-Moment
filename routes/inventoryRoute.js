@@ -53,7 +53,7 @@ router.put("/putInventories", async (req, res) => {
 });
 
 // Delete an inventory item
-router.delete("/:id", async (req, res) => {
+router.delete("/deleteInventories/:id", async (req, res) => {
     try {
         const deletedItem = await Inventory.findByIdAndDelete(req.params.id);
         if (!deletedItem) {
