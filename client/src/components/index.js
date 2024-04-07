@@ -6,7 +6,6 @@ import { EmpSideMenu, EmpHero } from "./employee";
 import UserRoutes from "./UserRoutes";
 import {
     UserSideMenu,
-    BigImageView,
     SideMenuItems,
     AddBillingAddress,
     PackageIncludesView,
@@ -25,7 +24,6 @@ export {
     EmpHero,
     UserRoutes,
     UserSideMenu,
-    BigImageView,
     AddBillingAddress,
     SideMenuItems,
     PackageIncludesView,

@@ -162,6 +162,18 @@ function Booking() {
 
     //Cart Functions
     const [cart, setCart] = useState([]);
+
+    useEffect(() => {
+        const savedCart = JSON.parse(localStorage.getItem("cart"));
+        if (savedCart) {
+            setCart(savedCart);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }, [cart]);
+
     const addToCart = (product) => {
         const itemInCartIndex = cart.findIndex(
             (item) => item.itemID === product.itemID
@@ -186,17 +198,6 @@ function Booking() {
             setCart([...cart, newItem]);
         }
         message.success("Item added to cart");
-    };
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
     };
 
     //Carousel Functions
@@ -405,12 +406,8 @@ function Booking() {
                     },
                 }}
             >
-                <Button type="primary" onClick={showModal}>
-                    Open Modal
-                </Button>
                 <Modal
                     open={previewOpen}
-                    onOk={handleOk}
                     onCancel={() => setPreviewOpen(false)}
                     footer={null}
                     width={700}
@@ -466,6 +463,10 @@ function Booking() {
                     </div>
                 </Modal>
             </ConfigProvider>
+
+            {/* Booking Modal */}
+            
+
             {loading ? (
                 <div className="center" style={{ height: "100vh" }}>
                     <Loader />
