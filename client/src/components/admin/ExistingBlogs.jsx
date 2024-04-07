@@ -15,8 +15,8 @@ import {
 } from "antd";
 import { Icon } from "@iconify/react";
 import { PlusOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { set } from "mongoose";
+import axios, { all } from "axios";
+const { Search, TextArea } = Input;
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -57,20 +57,22 @@ function ExistingBlogs() {
         }
     };
 
+    const [response, setResponse] = useState([]);
+
     const [top, setTop] = useState("topLeft");
     const [bottom, setBottom] = useState("bottomCenter");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editModelRecord, setEditModelRecord] = useState();
 
     const [editBlogTitle, setEditBlogTitle] = useState("");
-    const [editBlogTitleDescription, setEditBlogTitleDescription] = useState("");
+    const [editBlogTitleDescription, setEditBlogTitleDescription] =
+        useState("");
     const [editCategory, setEditCategory] = useState("");
     const [editEventDate, setEditEventDate] = useState("");
     const [editTags, setEditTags] = useState([]);
     const [editDescription, setEditDescription] = useState("");
     const [editImages, setEditImages] = useState([]);
     const [blogId, setBlogId] = useState("");
-
 
     const showModal = (record) => {
         setIsModalOpen(true);
@@ -83,7 +85,7 @@ function ExistingBlogs() {
         setEditDescription(record.description);
         setBlogId(record._id);
 
-        for(let i=0; i<record.images.length; i++){
+        for (let i = 0; i < record.images.length; i++) {
             const temp = {
                 uid: i,
                 name: "image.png",
@@ -108,7 +110,7 @@ function ExistingBlogs() {
             description: editDescription,
 
             images: images,
-        }
+        };
         try {
             await axios.post(`/api/blogs/updateBlog`, blogData);
             message.success("Blog updated successfully");
@@ -118,7 +120,6 @@ function ExistingBlogs() {
             console.error(error);
         }
     };
-
 
     const handleOk = () => {
         setIsModalOpen(false);
@@ -220,11 +221,16 @@ function ExistingBlogs() {
                 <Space size="middle">
                     <button className="admin_existing_blog_delete_btn">
                         {" "}
-                        <Icon icon="material-symbols:delete-outline" />
+                        <Icon
+                            icon="bi:trash-fill"
+                            onClick={() => handleDelete(record._id)}
+                        />
+
+                        
                     </button>
                     <button
                         className="admin_existing_blog_edit_btn"
-                        onClick={()=> showModal(record)}
+                        onClick={() => showModal(record)}
                     >
                         <Icon icon="tabler:edit" />
                     </button>
@@ -235,6 +241,54 @@ function ExistingBlogs() {
             ),
         },
     ];
+
+    const [searchKey, setSearchKey] = useState("");
+    const [selectedType, setSelectedType] = useState("all");
+    const [filteredBlogList, setFilteredBlogList] = useState([]);
+
+    useEffect(() => {
+        let tempList = Blogs;
+        console.log(tempList);
+
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.blogTitle &&
+                    item.blogTitle
+                        .toLowerCase()
+                        .includes(searchKey.toLowerCase())
+            );
+        }
+
+        if (selectedType !== "all") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.category &&
+                    item.category.toLowerCase() === selectedType.toLowerCase()
+            );
+        }
+
+        setFilteredBlogList(tempList);
+
+        console.log("filteredUserList", tempList);
+        console.log("userList", Blogs);
+        console.log("searchKey", searchKey);
+        console.log("selectedType", selectedType);
+    }, [searchKey, selectedType, Blogs]);
+
+
+    const handleDelete = async (id) => {
+        try {
+            await axios.post(`/api/blogs/deleteBlogById`, { id: id });
+            message.success("Blog deleted successfully");
+            fetchBlogs();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+
     return (
         <div>
             <div className="admin_existing_blog_counts_containers">
@@ -273,15 +327,59 @@ function ExistingBlogs() {
             </div>
             <div className="admin_existing_blog_table__view_back">
                 <div className="admin_existing_blog_section_manage_blogs">
-                    <h3>Manage Blogs</h3>
+                    <div className="admin_emp_list_top_menu">
+                        <div
+                            style={{
+                                marginRight: "auto",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <h5>All Blogs</h5>
+                            <Search
+                                placeholder="Search by Name"
+                                size="large"
+                                onSearch={(value) => setSearchKey(value)}
+                                style={{
+                                    width: 265,
+                                    height: 40,
+                                }}
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginLeft: "auto",
+                                alignItems: "center",
+                            }}
+                        >
+                            <select
+                                class="form-select admin_existing_blog_select_filter_section"
+                                aria-label="Default select example"
+                                value={selectedType}
+                                onChange={(e) =>
+                                    setSelectedType(e.target.value)
+                                }
+                            >
+                                <option value="all">All</option>
+                                <option value="farewell">Farewell</option>
+                                <option value="bridetobe">Bride to Be</option>
+                                <option value="gettogether">
+                                    Get Together
+                                </option>
+                                <option value="anniversary">Aniversary</option>
+                                <option value="birthday">Birthday</option>
+                                <option value="wedding">Wedding</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <Table
                         columns={columns}
                         pagination={pagination}
-                        onChange = {handleTableChange}
-                        dataSource={Blogs}
-                        />
+                        onChange={handleTableChange}
+                        dataSource={filteredBlogList}
+                    />
                 </div>
                 <div>
                     <Modal
@@ -295,9 +393,10 @@ function ExistingBlogs() {
                     >
                         <div>
                             <div className="admin_add_blog_section_one">
-                                <div className="admin_add_blog_section_Add_Blogs_tit">
-                                    <h3>Add Blogs</h3>
+                                <div className="admin_add_blog_section_Add_Blog_title">
+                                    <h3>Add Blog</h3>
                                 </div>
+
                                 <div className="admin_add_blog_section_border">
                                     <div className="admin_add_blog_section_add_blog_from">
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -306,7 +405,9 @@ function ExistingBlogs() {
                                         <Input
                                             placeholder="Title"
                                             value={editBlogTitle}
-                                            onChange={(e)=>setEditBlogTitle(e.target.value)}
+                                            onChange={(e) =>
+                                                setEditBlogTitle(e.target.value)
+                                            }
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -315,7 +416,11 @@ function ExistingBlogs() {
                                         <Input
                                             placeholder="Title Description"
                                             value={editBlogTitleDescription}
-                                            onChange={(e)=>setEditBlogTitleDescription(e.target.value)}
+                                            onChange={(e) =>
+                                                setEditBlogTitleDescription(
+                                                    e.target.value
+                                                )
+                                            }
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -325,7 +430,9 @@ function ExistingBlogs() {
                                             disabled
                                             defaultValue="Select"
                                             value={editCategory}
-                                            onChange={(e)=>setEditCategory(e.target.value)}
+                                            onChange={(e) =>
+                                                setEditCategory(e.target.value)
+                                            }
                                             style={{ width: 350, height: 40 }}
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
@@ -333,8 +440,14 @@ function ExistingBlogs() {
                                         </h3>
                                         <DatePicker
                                             style={{ width: 350, height: 40 }}
-                                            defaultValue={editEventDate ? moment(editEventDate) : null}
-                                            onChange={(date, dateString)=>setEditEventDate(dateString)}
+                                            defaultValue={
+                                                editEventDate
+                                                    ? moment(editEventDate)
+                                                    : null
+                                            }
+                                            onChange={(date, dateString) =>
+                                                setEditEventDate(dateString)
+                                            }
                                         />
                                         <h3 className="admin_add_blog_section_add_blog_title_name">
                                             Tags
@@ -355,7 +468,9 @@ function ExistingBlogs() {
                                                 }}
                                                 placeholder="Please select"
                                                 value={editTags}
-                                                onChange={(e)=>setEditTags(e.target.value)}
+                                                onChange={(e) =>
+                                                    setEditTags(e.target.value)
+                                                }
                                                 defaultValue={[]}
                                             />
                                         </Space>
@@ -404,7 +519,9 @@ function ExistingBlogs() {
                                         }}
                                         placeholder="Description"
                                         value={editDescription}
-                                        onChange={(e)=>setEditDescription(e.target.value)}
+                                        onChange={(e) =>
+                                            setEditDescription(e.target.value)
+                                        }
                                     />
                                 </div>
                                 <div className="admin_add_blog_section_blog_add_btn">

@@ -1,6 +1,6 @@
 import React from "react";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Button, Input, Space } from "antd";
+import { Input, Space } from "antd";
 
 const ChangePw = () => {
     const [passwordVisible, setPasswordVisible] = React.useState(false);
