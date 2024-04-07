@@ -13,7 +13,7 @@ import {
     EmpDashboard,
     ForgetPassword,
 } from "./pages";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes ,Navigate } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
         <div className="App">
             <BrowserRouter basename="/">
                 <Routes>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<HomePage  />} />
                     <Route path="/userprofile/*" element={<UserProfile />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<SignUp />} />
