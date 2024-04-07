@@ -20,6 +20,7 @@ const inventoryRoute = require("./routes/inventoryRoute");
 const messagesRoute = require("./routes/messagesRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const salaryRoute = require("./routes/salaryRoute");
+const emailRoute = require("./routes/emailRoute");
 
 app.use(express.json());
 
@@ -34,6 +35,7 @@ app.use("/api/messages", messagesRoute);
 app.use("/api/payments", paymentRoute);
 app.use("/api/salary", salaryRoute);
 app.use("/auth", authRoute);
+app.use("/api/emails", emailRoute);
 
 app.use(
     cookiesSession({
