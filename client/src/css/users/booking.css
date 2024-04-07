@@ -51,10 +51,12 @@
 .innerBoxBigImg_72 {
     width: 465px;
     height: 527px;
-    background: #e6e6e6;
     border-radius: 11px;
     margin: auto;
     margin-top: 30px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 .contentBoxBigImg_72 {
     width: 467px;
@@ -238,4 +240,15 @@
     line-height: normal;
     margin-right: 10px;
     margin-top: 15px;
+}
+
+.booking_cart_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    border: none;
+    background: transparent;
+    padding: 5px;
+    margin: 10px 30px 10px 30px;
 }

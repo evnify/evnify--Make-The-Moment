@@ -3,10 +3,18 @@ import { Input } from "antd";
 import { Navbar, Footer } from "../../components";
 import { useParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
-import { Checkbox, Menu, DatePicker, Button } from "antd";
+import {
+    Checkbox,
+    Menu,
+    DatePicker,
+    Button,
+    Modal,
+    message,
+    ConfigProvider,
+} from "antd";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
-import { EmployeeList, Loader } from "../../components/admin";
+import { Loader } from "../../components/admin";
 const { Search } = Input;
 
 // Side Menu
@@ -27,6 +35,8 @@ function Booking() {
     const { category, id } = useParams();
     const [loading, setLoading] = useState(false);
     const [color, setColor] = useState("");
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewProduct, setPreviewProduct] = useState({});
 
     const items = [
         getItem("Category", "sub1", null, [
@@ -150,6 +160,45 @@ function Booking() {
     const [date, setDate] = useState(null);
     const [searchKey, setSearchKey] = useState("");
 
+    //Cart Functions
+    const [cart, setCart] = useState([]);
+    const addToCart = (product) => {
+        const itemInCartIndex = cart.findIndex(
+            (item) => item.itemID === product.itemID
+        );
+
+        if (itemInCartIndex !== -1) {
+            const updatedCart = [...cart];
+            updatedCart[itemInCartIndex].addedQty += 1;
+            setCart(updatedCart);
+        } else {
+            const newItem = {
+                _id: product._id,
+                itemID: product.itemID,
+                itemName: product.itemName,
+                itemImage: product.itemImage,
+                color: product.color,
+                itemType: product.itemType,
+                addedQty: 1,
+                unitPrice: product.unitPrice,
+                quantity: product.quantity,
+            };
+            setCart([...cart, newItem]);
+        }
+        message.success("Item added to cart");
+    };
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     //Carousel Functions
     const [products, setProducts] = useState([]);
 
@@ -160,6 +209,10 @@ function Booking() {
                     className="Carousel_card_container_image"
                     style={{
                         backgroundImage: `url(${product[0].itemImage})`,
+                    }}
+                    onClick={() => {
+                        setPreviewOpen(true);
+                        setPreviewProduct(product[0]);
                     }}
                 ></div>
                 <div className="Carousel_card_container_description">
@@ -172,9 +225,24 @@ function Booking() {
                         }}
                     >
                         <h4>{product[0].itemName}</h4>
-                        <ShoppingCartOutlined
-                            style={{ fontSize: "20px", margin: "0 20px 0 0" }}
-                        />
+                        <button
+                            style={{
+                                fontSize: "20px",
+                                margin: "0 20px 0 0",
+                                zIndex: 1000,
+                                transition: "transform 0.3s ease",
+                            }}
+                            className="center booking_cart_button"
+                            onClick={(event) => {
+                                addToCart(product[0]);
+                                event.target.style.transform = "scale(1.1)";
+                                setTimeout(() => {
+                                    event.target.style.transform = "scale(1)";
+                                }, 300);
+                            }}
+                        >
+                            <ShoppingCartOutlined />
+                        </button>
                     </div>
                     <div
                         className="center"
@@ -216,7 +284,6 @@ function Booking() {
         const fetchInventories = async () => {
             setLoading(true);
             try {
-                console.log(selectedPackage);
                 if (selectedPackage) {
                     let temp = selectedPackage[0].inventories;
                     let inventories = [];
@@ -260,7 +327,6 @@ function Booking() {
                         .includes(searchKey.toLowerCase())
                 ) {
                     temp.push(product);
-                    console.log("color", temp);
                 }
             });
 
@@ -303,12 +369,7 @@ function Booking() {
 
     useEffect(() => {
         const filterProductsByType = () => {
-            setLoading(false);
-
             if (filteredProducts.length === 0) return null;
-
-            console.log("filterd", filteredProducts);
-            console.log("cha", chairs);
 
             filteredProducts.map((item) => {
                 if (item[0].category.toLowerCase() === "chairs") {
@@ -325,6 +386,7 @@ function Booking() {
                     setOther((itm) => [...(itm || []), item]);
                 }
             });
+            setLoading(false);
         };
 
         filterProductsByType();
@@ -332,6 +394,78 @@ function Booking() {
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
+            {/* image view */}
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Modal: {
+                            contentBg: "rgba(0,0,0,0)",
+                            boxShadow: "none",
+                        },
+                    },
+                }}
+            >
+                <Button type="primary" onClick={showModal}>
+                    Open Modal
+                </Button>
+                <Modal
+                    open={previewOpen}
+                    onOk={handleOk}
+                    onCancel={() => setPreviewOpen(false)}
+                    footer={null}
+                    width={700}
+                    height={635}
+                    centered
+                >
+                    <div className="center">
+                        <div className="popUpPackageBigImg_72">
+                            <p>{previewProduct.itemName}</p>
+                            <div
+                                className="innerBoxBigImg_72"
+                                style={{
+                                    backgroundImage: `url(${previewProduct.itemImage})`,
+                                }}
+                            ></div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    marginTop: "15px",
+                                    justifyContent: "space-between",
+                                }}
+                            >
+                                <h5
+                                    style={{
+                                        color: "#49516F",
+                                        margin: "10px 0 10px 40px",
+                                    }}
+                                >
+                                    Price: 1000 LKR
+                                </h5>
+                                <button
+                                    className="center booking_cart_button"
+                                    onClick={(event) => {
+                                        addToCart(previewProduct);
+                                        event.target.style.transform =
+                                            "scale(1.1)";
+                                        setTimeout(() => {
+                                            event.target.style.transform =
+                                                "scale(1)";
+                                        }, 300);
+                                    }}
+                                >
+                                    <ShoppingCartOutlined
+                                        style={{
+                                            fontSize: "25px",
+                                            marginRight: "10px",
+                                        }}
+                                    />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+            </ConfigProvider>
             {loading ? (
                 <div className="center" style={{ height: "100vh" }}>
                     <Loader />
@@ -399,12 +533,15 @@ function Booking() {
                                         height: 40,
                                     }}
                                 />
-                                <ShoppingCartOutlined
+                                <button
                                     style={{
                                         fontSize: "25px",
                                         margin: "0 60px",
                                     }}
-                                />
+                                    className="center booking_cart_button"
+                                >
+                                    <ShoppingCartOutlined />
+                                </button>
                             </div>
                         </div>
                         {filteredProducts.length > 0 ? (
