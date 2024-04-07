@@ -120,6 +120,7 @@
 
 .booking_page_main_container {
     margin-left: 335px;
+    min-height: 100vh;
 }
 
 .createPackageBtn_72 {
@@ -182,6 +183,9 @@
     border-radius: 11px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     margin: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    height: 350px;
 }
 
 .Carousel_card_container:hover {

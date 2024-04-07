@@ -163,126 +163,13 @@ function Booking() {
         },
     ];
 
-    useEffect(() => {
-        setProducts([
-            {
-                id: "1000",
-                code: "f230fh0g3",
-                name: "Bamboo Watch",
-                description: "Product Description",
-                image: "bamboo-watch.jpg",
-                price: 65,
-                category: "Accessories",
-                quantity: 24,
-                inventoryStatus: "INSTOCK",
-                rating: 5,
-            },
-            {
-                id: "1001",
-                code: "nvklal433",
-                name: "Black Watch",
-                description: "Product Description",
-                image: "black-watch.jpg",
-                price: 72,
-                category: "Accessories",
-                quantity: 61,
-                inventoryStatus: "INSTOCK",
-                rating: 4,
-            },
-            {
-                id: "1002",
-                code: "zz21cz3c1",
-                name: "Blue Band",
-                description: "Product Description",
-                image: "blue-band.jpg",
-                price: 79,
-                category: "Fitness",
-                quantity: 2,
-                inventoryStatus: "LOWSTOCK",
-                rating: 3,
-            },
-            {
-                id: "1003",
-                code: "244wgerg2",
-                name: "Blue T-Shirt",
-                description: "Product Description",
-                image: "blue-t-shirt.jpg",
-                price: 29,
-                category: "Clothing",
-                quantity: 25,
-                inventoryStatus: "INSTOCK",
-                rating: 5,
-            },
-            {
-                id: "1004",
-                code: "h456wer53",
-                name: "Bracelet",
-                description: "Product Description",
-                image: "bracelet.jpg",
-                price: 15,
-                category: "Accessories",
-                quantity: 73,
-                inventoryStatus: "INSTOCK",
-                rating: 4,
-            },
-            {
-                id: "1005",
-                code: "av2231fwg",
-                name: "Brown Purse",
-                description: "Product Description",
-                image: "brown-purse.jpg",
-                price: 120,
-                category: "Accessories",
-                quantity: 0,
-                inventoryStatus: "OUTOFSTOCK",
-                rating: 4,
-            },
-            {
-                id: "1006",
-                code: "bib36pfvm",
-                name: "Chakra Bracelet",
-                description: "Product Description",
-                image: "chakra-bracelet.jpg",
-                price: 32,
-                category: "Accessories",
-                quantity: 5,
-                inventoryStatus: "LOWSTOCK",
-                rating: 3,
-            },
-            {
-                id: "1007",
-                code: "mbvjkgip5",
-                name: "Galaxy Earrings",
-                description: "Product Description",
-                image: "galaxy-earrings.jpg",
-                price: 34,
-                category: "Accessories",
-                quantity: 23,
-                inventoryStatus: "INSTOCK",
-                rating: 5,
-            },
-            {
-                id: "1008",
-                code: "vbb124btr",
-                name: "Game Controller",
-                description: "Product Description",
-                image: "game-controller.jpg",
-                price: 99,
-                category: "Electronics",
-                quantity: 2,
-                inventoryStatus: "LOWSTOCK",
-                rating: 4,
-            },
-        ]);
-    }, []);
-
     const productTemplate = (product) => {
         return (
             <div className="Carousel_card_container">
                 <div
                     className="Carousel_card_container_image"
                     style={{
-                        backgroundImage: `url(https://s3-alpha-sig.figma.com/img/672a/15aa/ec109e9b7b26dfdacf4520bd38cb0dc4?Expires=1713139200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=DfvMS8rkthOkCUS7wJ-a2~B9KRk~ZXO3wkhineYvtmi~fcf72vscoLxDk5YSsCH1lPL1aJ59CIodrgqDBhnel9whF71FvRsvfhEwuO2~22yDEsP5~UXl8qVcGYV6gfD2Hu~m8UK~O6WdVZBhxD0CZd-yaRIvaW9Je90X0MdH~OGehZ6F2nAwwgsfy0Mqm8pZscRi~Qfvy~6FpSsd3pDaSEYji6AWZyMwjgz-~WOAsBcDdnhuCbCjxHravnSWKX1L9Vm0Huo~-lAOtPTrLHC~US1UGwY4bpQfEQOQuVzpXc6eqsx7YpfCNMJBP~QZmoHnOaxLO0PR-pyxYpK80tuRyw__)`,
+                        backgroundImage: `url(${product[0].itemImage})`,
                     }}
                 ></div>
                 <div className="Carousel_card_container_description">
@@ -294,7 +181,7 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h4>{product.name}</h4>
+                        <h4>{product[0].itemName}</h4>
                         <ShoppingCartOutlined
                             style={{ fontSize: "20px", margin: "0 20px 0 0" }}
                         />
@@ -307,8 +194,8 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h6>{product.price} LKR</h6>
-                        <p>{product.inventoryStatus}</p>
+                        <h6>{product[0].unitPrice} LKR</h6>
+                        <p>{product[0].inventoryStatus}</p>
                     </div>
                 </div>
             </div>
@@ -316,7 +203,7 @@ function Booking() {
     };
 
     // Fetch data from the database
-    const [selectedPackage, setSelectedPackage] = useState(null);
+    const [selectedPackage, setSelectedPackage] = useState([]);
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
@@ -326,9 +213,7 @@ function Booking() {
                         _id: id,
                     }
                 );
-                const data = response.data;
-                setSelectedPackage(data[0]);
-                console.log(data[0]);
+                setSelectedPackage(response.data);
             } catch (error) {
                 console.error(error);
             }
@@ -340,8 +225,10 @@ function Booking() {
     useEffect(() => {
         const fetchInventories = async () => {
             try {
+                console.log(selectedPackage);
                 if (selectedPackage) {
-                    let temp = selectedPackage.inventories;
+                    console.log("Selected type", selectedPackage);
+                    let temp = selectedPackage[0].inventories;
                     let inventories = [];
                     for (let i = 0; i < temp.length; i++) {
                         console.log(temp[i].id);
@@ -352,10 +239,11 @@ function Booking() {
                             }
                         );
                         if (response.data.length > 0) {
-                        inventories.push(response.data);
+                            inventories.push(response.data);
                         }
                     }
                     console.log(inventories);
+                    setProducts(inventories);
                 }
             } catch (error) {
                 console.error(error);
@@ -364,6 +252,9 @@ function Booking() {
 
         fetchInventories();
     }, [selectedPackage]);
+
+
+    //Filters
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -434,7 +325,11 @@ function Booking() {
                         value={products}
                         numScroll={1}
                         numVisible={4}
-                        responsiveOptions={responsiveOptions}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
                         itemTemplate={productTemplate}
                     />
                 </div>
@@ -444,7 +339,11 @@ function Booking() {
                         value={products}
                         numScroll={1}
                         numVisible={4}
-                        responsiveOptions={responsiveOptions}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
                         itemTemplate={productTemplate}
                     />
                 </div>
@@ -454,7 +353,53 @@ function Booking() {
                         value={products}
                         numScroll={1}
                         numVisible={4}
-                        responsiveOptions={responsiveOptions}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div className="user_booking_corosal">
+                    <h3>Plates</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div className="user_booking_corosal">
+                    <h3>Wine Glasses</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
+                        itemTemplate={productTemplate}
+                    />
+                </div>
+                <div className="user_booking_corosal">
+                    <h3>Other</h3>
+                    <Carousel
+                        value={products}
+                        numScroll={1}
+                        numVisible={4}
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "row",
+                        }}
                         itemTemplate={productTemplate}
                     />
                 </div>
