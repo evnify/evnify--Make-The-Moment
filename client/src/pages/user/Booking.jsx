@@ -8,7 +8,6 @@ import { Carousel } from "primereact/carousel";
 import axios from "axios";
 const { Search } = Input;
 
-
 // Side Menu
 function getItem(label, key, icon, children, type) {
     return {
@@ -317,7 +316,7 @@ function Booking() {
     };
 
     // Fetch data from the database
-    const[selectedPackage, setSelectedPackage] = useState(null);
+    const [selectedPackage, setSelectedPackage] = useState(null);
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
@@ -328,50 +327,43 @@ function Booking() {
                     }
                 );
                 const data = response.data;
-                setSelectedPackage(data);
-                console.log(data);
-
-                let temp = data.inventories
-                let inventories = []
-                for (let i = 0; i < temp.length; i++) {
-                    const response = await axios.post(
-                        `${process.env.PUBLIC_URL}/api/inventories/getInventoryByID`,
-                        {
-                            itemID: temp[i].id,
-                        }
-                    );
-                    inventories.push(response.data);
-                }
+                setSelectedPackage(data[0]);
+                console.log(data[0]);
             } catch (error) {
                 console.error(error);
             }
+        };
 
-            
-        }
-
-        const fetchInventories = async (data) => {
-            try {
-                let temp = data.inventories
-                let inventories = []
-                for (let i = 0; i < temp.length; i++) {
-                    const response = await axios.post(
-                        `${process.env.PUBLIC_URL}/api/inventories/getInventoryByID`,
-                        {
-                            itemID: temp[i].id,
-                        }
-                    );
-                    inventories.push(response.data);
-                }
-                console.log(inventories);
-            } catch (error) {
-                console.error(error);
-            }
-        }
         fetchBookingDetails();
-        fetchInventories(selectedPackage.inventories);
-    }
-    , [id]);
+    }, [id]);
 
+    useEffect(() => {
+        const fetchInventories = async () => {
+            try {
+                if (selectedPackage) {
+                    let temp = selectedPackage.inventories;
+                    let inventories = [];
+                    for (let i = 0; i < temp.length; i++) {
+                        console.log(temp[i].id);
+                        const response = await axios.post(
+                            `${process.env.PUBLIC_URL}/api/packages/getInventoryByID`,
+                            {
+                                itemID: temp[i].id,
+                            }
+                        );
+                        if (response.data.length > 0) {
+                        inventories.push(response.data);
+                        }
+                    }
+                    console.log(inventories);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchInventories();
+    }, [selectedPackage]);
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>

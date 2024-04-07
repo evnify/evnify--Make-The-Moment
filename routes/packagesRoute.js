@@ -33,7 +33,17 @@ router.post("/getBookingByID", async (req, res) => {
     } catch (error) {
         return res.status(400).json({ message: error });
     }
-}
-);
+});
+
+router.post("/getInventoryByID", async (req, res) => {
+    const inventoryID = req.body.itemID;
+    try {
+        const inventory = await Inventory.find({ itemID: inventoryID });
+        
+        res.send(inventory);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
 module.exports = router;
