@@ -44,7 +44,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
     const updateInventory = async (id, updatedInventory) => {
         try {
             const response = await axios.put(
-                `${baseURL}/${id}`,
+                `/api/inventories/putInventories/${id}`,
                 updatedInventory
             );
             return response.data;
@@ -53,6 +53,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
             throw error;
         }
     };
+    
 
     const onFinish = async (values) => {
         console.log(values);

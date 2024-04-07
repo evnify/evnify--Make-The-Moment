@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update an inventory item
-router.put("/putInventories", async (req, res) => {
+router.put("/putInventories/:id", async (req, res) => {
     try {
         const updatedItem = await Inventory.findByIdAndUpdate(
             req.params.id,
@@ -51,6 +51,7 @@ router.put("/putInventories", async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 // Delete an inventory item
 router.delete("/deleteInventories/:id", async (req, res) => {

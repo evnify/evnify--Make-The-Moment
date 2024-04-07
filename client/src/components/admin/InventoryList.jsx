@@ -45,6 +45,8 @@ function InventoryList() {
         setEditOpen(true);
         form.setFieldsValue(record);
     };
+
+   
     const handleUpdate = async (id, newData) => {
         try {
             await axios.put(`/api/inventories/putInventories/${id}`, newData);
