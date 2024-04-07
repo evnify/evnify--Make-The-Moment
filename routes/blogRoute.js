@@ -34,7 +34,7 @@ router.post('/updateBlog', async (req, res) => {
 }
 );
 
-router.post('/deleteBlogById', async (req, res) => {
+router.post("/deleteBlogById", async (req, res) => {
     const { id } = req.body;
     try {
         await blogModel.findByIdAndDelete(id);

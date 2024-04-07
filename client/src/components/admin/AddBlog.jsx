@@ -17,13 +17,12 @@ const getBase64 = (file) =>
 
 const options = [
     { value: "farewell", label: "farewell" },
-    { value: "bride to be", label: "bride to be" },
-    { value: "get together", label: "get together" },
+    { value: "bridetobe", label: "bride to be" },
+    { value: "gettogether", label: "get together" },
     { value: "anniversary", label: "anniversary" },
-    { value: "party", label: "party" },
-    { value: "home", label: "home" },
-    { value: "guest", label: "guest" },
-    { value: "decorate", label: "decorate" },
+    {value: "wedding", label: "wedding"},
+    {value : "birthday", label: "birthday"},
+    
 ];
 
 function AddBlog() {
