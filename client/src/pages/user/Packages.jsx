@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Navbar } from "../../components";
+import { Footer, Navbar } from "../../components";
 import { useNavigate } from "react-router-dom";
 
 function Packages() {
@@ -396,6 +396,7 @@ function Packages() {
                     </div>
                 )}
             </div>
+            <Footer />
         </>
     );
 }

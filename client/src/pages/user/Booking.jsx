@@ -406,7 +406,7 @@ function Booking() {
                 </div>
                 <div
                     className="center"
-                    style={{ width: "100%", margin: "40px 0 80px 0" }}
+                    style={{ width: "100%", margin: "20px 0 80px 0" }}
                 >
                     <button className="createBookingBtn_72 ">
                         CONTINUE TO CHECKOUT
