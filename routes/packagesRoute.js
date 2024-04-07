@@ -13,28 +13,6 @@ router.get("/getpackages", async (req, res) => {
     }
 });
 
-router.post("/getItemById", async (req, res) => {
-    const itemId = req.body.itemId;
-    try {
-        const item = await Package.findOne({ _id: itemId });
-
-        res.send(item);
-    } catch (error) {
-        return res.status(400).json({ message: error });
-    }
-});
-router.post("/getInventoriesByIds", async (req, res) => {
-    const inventoryId = req.body.itemID;
-    console.log(inventoryId);
-    try {
-        const inventories = await Inventory.find({ itemID: inventoryId });
-
-        res.send(inventories);
-    } catch (error) {
-        return res.status(400).json({ message: error });
-    }
-});
-
 router.post("/getPackagesByType", async (req, res) => {
     const eventType = req.body.eventType;
     try {
@@ -45,5 +23,17 @@ router.post("/getPackagesByType", async (req, res) => {
         return res.status(400).json({ message: error });
     }
 });
+
+router.post("/getBookingByID", async (req, res) => {
+    const bookingID = req.body._id;
+    try {
+        const booking = await Package.find({ _id: bookingID });
+
+        res.send(booking);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
 
 module.exports = router;

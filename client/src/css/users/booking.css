@@ -184,6 +184,10 @@
     margin: 15px;
 }
 
+.Carousel_card_container:hover {
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
 .Carousel_card_container_image {
     width: 250px;
     height: 290px;

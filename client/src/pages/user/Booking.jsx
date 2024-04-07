@@ -5,7 +5,9 @@ import { useParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { Checkbox, Menu, DatePicker, Button } from "antd";
 import { Carousel } from "primereact/carousel";
+import axios from "axios";
 const { Search } = Input;
+
 
 // Side Menu
 function getItem(label, key, icon, children, type) {
@@ -34,6 +36,9 @@ const items = [
         </Menu.Item>,
         <Menu.Item key="tables">
             <Checkbox>Wine Glasses</Checkbox>
+        </Menu.Item>,
+        <Menu.Item key="tables">
+            <Checkbox>Other</Checkbox>
         </Menu.Item>,
     ]),
     getItem("Color", "sub2", null, [
@@ -310,6 +315,63 @@ function Booking() {
             </div>
         );
     };
+
+    // Fetch data from the database
+    const[selectedPackage, setSelectedPackage] = useState(null);
+    useEffect(() => {
+        const fetchBookingDetails = async () => {
+            try {
+                const response = await axios.post(
+                    `${process.env.PUBLIC_URL}/api/packages/getBookingByID`,
+                    {
+                        _id: id,
+                    }
+                );
+                const data = response.data;
+                setSelectedPackage(data);
+                console.log(data);
+
+                let temp = data.inventories
+                let inventories = []
+                for (let i = 0; i < temp.length; i++) {
+                    const response = await axios.post(
+                        `${process.env.PUBLIC_URL}/api/inventories/getInventoryByID`,
+                        {
+                            itemID: temp[i].id,
+                        }
+                    );
+                    inventories.push(response.data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            
+        }
+
+        const fetchInventories = async (data) => {
+            try {
+                let temp = data.inventories
+                let inventories = []
+                for (let i = 0; i < temp.length; i++) {
+                    const response = await axios.post(
+                        `${process.env.PUBLIC_URL}/api/inventories/getInventoryByID`,
+                        {
+                            itemID: temp[i].id,
+                        }
+                    );
+                    inventories.push(response.data);
+                }
+                console.log(inventories);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchBookingDetails();
+        fetchInventories(selectedPackage.inventories);
+    }
+    , [id]);
+
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
