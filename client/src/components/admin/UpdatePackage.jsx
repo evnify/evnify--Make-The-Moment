@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Img from "../../assets/corosal04.svg";
 
 const UpdatePackage = () => {
     const [packageType, setPackageType] = useState("");
@@ -19,7 +18,7 @@ const handleSubmit = (event) => {
 return (
   <>
     <h3>Update Package Details</h3>
-    <img src={Img} alt="" className="img-fluid" />
+    <img src={""} alt="" className="img-fluid" />
     <div className="row mt-3">
     <form onSubmit={handleSubmit}>
       <div className="col-lg-6">

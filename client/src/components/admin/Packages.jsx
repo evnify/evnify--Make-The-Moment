@@ -1,380 +1,281 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
-import Img from "../../assets/corosal04.svg";
-import AddPackage from "./AddPackage";
-import UpdatePackage from "./UpdatePackage";
-import Viewpackage from "./Viewpackage";
+import React, { useState, useEffect } from 'react';
+import { Space, Table, Modal, Select, Input, Upload, Button, message } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { Icon } from "@iconify/react";
+import axios from "axios";
+const { TextArea } = Input;
 
 function Packages() {
-  const [visibleModal1, setVisibleModal1] = useState(false);
-  const [visibleModal2, setVisibleModal2] = useState(false);
-  const [visibleModal3, setVisibleModal3] = useState(false);
-  const [visibleModal4, setVisibleModal4] = useState(false);
 
-  const showModal1 = () => {
-    setVisibleModal1(true);
-  };
+  const [packageList, setPackageList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [inventories, setInventories] = useState([]);
+  const [newPackageData, setNewPackageData] = useState({
+    packageType: '',
+    eventType: '',
+    price: '',
+    description: '',
+    baseImage: 'https://s3-alpha-sig.figma.com/img/b6fa/f4a9/06e0655ca5fa95b62a51b0952…',
+    inventories: [],
+    extras: '',
+    contentImages: [],
+  });
 
-  const showModal2 = () => {
-    setVisibleModal2(true);
+  const showModal = () => {
+    setIsModalOpen(true);
   };
-  const showModal3 = () => {
-    setVisibleModal3(true);
+  const handleOk = () => {
+    setIsModalOpen(false);
   };
-  const showModal4 = () => {
-    setVisibleModal4(true);
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
-
-  const handleOk1 = (e) => {
-    console.log(e);
-    setVisibleModal1(false);
-  };
-
-  const handleOk2 = (e) => {
-    console.log(e);
-    setVisibleModal2(false);
-  };
-  const handleOk3 = (e) => {
-    console.log(e);
-    setVisibleModal3(false);
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
   };
 
-  const handleOk4 = (e) => {
-    console.log(e);
-    setVisibleModal4(false);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPackageData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
   };
 
-  const handleCancel1 = (e) => {
-    console.log(e);
-    setVisibleModal1(false);
+  // Create a new package
+  const handleAddPackage = async () => {
+    try {
+      console.log('New Package Data:', newPackageData); // Logging new package data
+      const response = await axios.post('/api/packages/addPackage', newPackageData);
+      console.log('New package added:', response.data);
+      // Optionally, you can fetch all packages again to update the package list
+      fetchAllPackages();
+      message.success('New package added successfully');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error adding new package:', error);
+      message.error('Failed to add new package');
+    }
   };
 
-  const handleCancel2 = (e) => {
-    console.log(e);
-    setVisibleModal2(false);
+  //fetch all packages
+  const fetchAllPackages = async () => {
+    try {
+      const response = await axios.get(`/api/packages/allPackages`);
+      setPackageList(response.data);
+      console.log('All Packages:', response.data); // Logging all packages
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const handleCancel3 = (e) => {
-    console.log(e);
-    setVisibleModal3(false);
-  };
+  useEffect(() => {
+    fetchAllPackages();
+  }, []); // Run only once on component mount
 
-  const handleCancel4 = (e) => {
-    console.log(e);
-    setVisibleModal4(false);
+  // fetch all inventories
+  const fetchAllInventories = async () => {
+    try {
+      const response = await axios.get(`/api/packages/allInventory`);
+      setInventories(response.data);
+      console.log('All Inventories:', response.data); // Logging all inventories
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchAllInventories();
+  }, []); // Run only once on component mount
+
+  // Create Inventories Dropdown Data
+  const pkgData = inventories.map((inventory) => {
+    return {
+      value: inventory.itemName,
+      label: inventory.itemName,
+    };
+  });
+
+  // Package table columns
+  const columns = [
+    {
+      title: "Package ID",
+      dataIndex: "PackageID",
+      key: "PackageID",
+    },
+    {
+      title: "Package Type",
+      dataIndex: "packageType",
+      key: "packageType",
+    },
+    {
+      title: "Event Type",
+      dataIndex: "eventType",
+      key: "eventType",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <button
+            style={{
+              fontSize: "20px",
+              color: "#757171",
+              border: "none",
+              background: "transparent",
+            }}
+          >
+            <Icon icon="mdi:download" />
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
+  //upload images
+  const props = {
+    name: 'file',
+    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
   };
 
   return (
-    <>
-      {/* Charts */}
-      <div class="container">
-        <div class="row">
-          <div class="col"></div>
-          <div class="col"></div>
-        </div>
-        <div className="bg-white p-5">
-          <h2>Packages</h2>
-        </div>
-        {/* Package Table */}
-        <div>
-          <div className="d-flex justify-content-between">
-            <form>
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search by ID"
-                aria-label="Search"
-              />
-            </form>
-            <div>
-              <button className="btn btn-outline-secondary me-3" type="submit">
-                Filter
-              </button>
-              <Button type="primary" onClick={showModal1}>
-                +Create New
-              </Button>
-            </div>
-          </div>
+    <div>
+      <div className='booking-package-insight-div'>
+        <div className='booking-package-div-insight-left'></div>
+        <div className='booking-package-div-insight-right'></div>
+      </div>
 
-          <div className="mt-3">
-            <table className="table ">
-              <thead>
-                <tr className="table-secondary">
-                  <th scope="col">PackageID</th>
-                  <th scope="col">PackageType</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">p1</th>
-                  <td>Standard</td>
-                  <td>Wedding</td>
-                  <td>Rs.300000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p2</th>
-                  <td>Premium</td>
-                  <td>Wedding</td>
-                  <td>Rs.400000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p3</th>
-                  <td>Basic</td>
-                  <td>Birthday</td>
-                  <td>Rs.200000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p4</th>
-                  <td>Premium</td>
-                  <td>Anniversary</td>
-                  <td>Rs.150000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <div className='booking-package-details-change'>
+        <div className='booking-package-details-change-top'>
+          <div>Search</div>
+          <div>Filter</div>
+          <div>
+            <Modal
+              title="Add New Package"
+              visible={isModalOpen}
+              onOk={handleAddPackage}
+              onCancel={handleCancel}
+              width={1100}
+            >
+              <div className='package-details-add-model'>
+                <div className='package-details-add-model-left'>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    Package Type
+                    <Select
+                      defaultValue="Basic"
+                      style={{ width: 250 }}
+                      onChange={(value) => setNewPackageData({ ...newPackageData, packageType: value })}
+                      options={[
+                        { value: 'Basic', label: 'Basic' },
+                        { value: 'Standard', label: 'Standard' },
+                        { value: 'Premium', label: 'Premium' },
+                      ]}
+                    />
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
+                      <Select
+                        defaultValue="Wedding"
+                        style={{ width: 250 }}
+                        onChange={(value) => setNewPackageData({ ...newPackageData, eventType: value })}
+                        options={[
+                          { value: 'Wedding', label: 'Wedding' },
+                          { value: 'Get-Together', label: 'Get-Together' },
+                          { value: 'Birthday', label: 'Birthday' },
+                          { value: 'Bride To Be', label: 'Bride To Be' },
+                          { value: 'Farewell Party ', label: 'Farewell Party' },
+                          { value: 'Anniversary Party', label: 'Anniversary Party' },
+                        ]}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
+                      <Input 
+                        placeholder="Enter price" 
+                        style={{ width: "250px" }} 
+                        onChange={(e) => setNewPackageData({ ...newPackageData, price: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
+                      <Select
+                        showSearch
+                        style={{ width: 200, height: 40 }}
+                        placeholder="Search Inventories"
+                        optionFilterProp="children"
+                        filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                        filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                        onChange={(value) => setNewPackageData({ ...newPackageData, inventories: value })}
+                        options={pkgData}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
+                      <TextArea 
+                        rows={4} 
+                        style={{ width: "250px" }} 
+                        onChange={(e) => setNewPackageData({ ...newPackageData, description: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
+                      <Input 
+                        placeholder="Enter extras" 
+                        style={{ width: "250px" }} 
+                        onChange={(e) => setNewPackageData({ ...newPackageData, extras: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                  </div>
+                </div>
+                <div className='package-details-add-model-right'>
+                  <p style={{ marginTop: "10px" }}>Package Image</p>
+                  <div className='package-details-add-model-right-top'>
+                    <Upload {...props}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
+                  <p >Package Content</p>
+                  <div className='package-details-add-model-right-down'>
+                    <Upload {...props}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+
+            <button onClick={showModal} style={{
+              width: "100px", height: "40px", border: "none",
+              borderRadius: "5px", background: "#533c56", color: "white", cursor: "pointer",
+              fontSize: "16px", marginLeft: "20px",
+            }}>
+              Create New
+            </button>
           </div>
         </div>
+        <div><Table columns={columns} dataSource={packageList} /></div>
       </div>
-      {/* Modals */}
-      <div>
-        {/* Add Package Moda; */}
-        <Modal
-          title="Add Package"
-          visible={visibleModal1}
-          onOk={handleOk1}
-          onCancel={handleCancel1}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={1000}
-        >
-          <AddPackage />
-        </Modal>
-
-        <Modal
-          title="Delete"
-          visible={visibleModal2}
-          onOk={handleOk2}
-          onCancel={handleCancel2}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={400}
-        >
-          <p>Delete</p>
-        </Modal>
-        <Modal
-          title="Update form"
-          visible={visibleModal3}
-          onOk={handleOk3}
-          onCancel={handleCancel3}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={900}
-        >
-          <UpdatePackage />
-        </Modal>
-        <Modal
-          title="View form"
-          visible={visibleModal4}
-          onOk={handleOk4}
-          onCancel={handleCancel4}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={900}
-        >
-          <Viewpackage />
-        </Modal>
-      </div>
-    </>
-  );
+    </div>
+  )
 }
 
 export default Packages;

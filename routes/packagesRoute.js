@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Package = require('../models/package');
+const inventories = require('../models/inventory');
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -72,12 +73,49 @@ router.delete('/deleteUser/:id', (req, res) => {
         .catch(err => res.json(err))
 })
 
-module.exports = router;
 
 
+//get all packages
+router.get('/allPackages', async (req, res) => {
+    try {
+        const packages = await Package.find();
+        res.json(packages);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
+//get all inventory
+router.get('/allInventory', async (req, res) => {
+    try {
+        const inven = await inventories.find();
+        res.json(inven);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
-
+// Add a new package
+router.post('/addPackage', async (req, res) => {
+    const { packageType, eventType, price, description, baseImage, inventories, extras, contentImages } = req.body;
+    try {
+      const newPackage = new Package({
+        packageType,
+        eventType,
+        price,
+        description,
+        baseImage,
+        inventories,
+        extras,
+        contentImages
+      });
+      const savedPackage = await newPackage.save();
+      res.status(201).json(savedPackage);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
+  
 
 
 module.exports = router;
