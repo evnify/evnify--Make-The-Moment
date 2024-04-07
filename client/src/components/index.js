@@ -5,7 +5,7 @@ import EmpRoutes from "./EmpRoutes";
 import ChatBox from "./ChatBox";
 import { EmpSideMenu, EmpHero } from "./employee";
 import UserRoutes from "./UserRoutes";
-import { UserSideMenu, Navbar, Footer } from "./users";
+import { UserSideMenu, Navbar, Footer,SideMenuItems } from "./users";
 
 export {
     SideMenu,
@@ -19,5 +19,6 @@ export {
     UserSideMenu,
     Navbar,
     Footer,
+    SideMenuItems
 };
 

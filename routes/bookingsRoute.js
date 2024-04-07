@@ -40,4 +40,22 @@ router.delete('/deleteBooking/:id', async (req, res) => {
     }
 }   );
 
+router.post('/saveAddress', async (req, res) => {
+    try {
+        const addressData = req.body;
+    
+        // Find the booking document based on some identifier (e.g., booking ID)
+        const booking = await Booking.findOneAndUpdate(
+          { _id: req.body.bookingId }, // Assuming bookingId is sent from the frontend
+          { $push: { eventLocation: addressData } }, // Add addressData to eventLocation array
+          { new: true }
+        );
+    
+        // Return success response
+        return res.status(200).json({ message: 'Address saved successfully', booking });
+      } catch (error) {
+        console.error("Error saving address:", error);
+        return res.status(500).json({ error: 'Failed to save address. Please try again later.' });
+      }
+    });
 module.exports = router;

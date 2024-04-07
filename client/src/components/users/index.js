@@ -7,7 +7,6 @@ import ContactUS from "./ContactUS";
 import AddBillingAddress from "./AddBillingAddress";
 import BigImageView from "./BigImageView";
 import SideMenuItems from "./SideMenuItems";
-import PackageIncludesView from "./PackageIncludesView";
 import BookingSteps from "./BookingSteps";
 import Footer from "./Footer";
 
@@ -21,7 +20,6 @@ export {
   AddBillingAddress,
   BigImageView,
   SideMenuItems,
-  PackageIncludesView,
   BookingSteps,
   Footer,
 };

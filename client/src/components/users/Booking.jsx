@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Table, Tag, Space ,ConfigProvider,Modal} from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
-import PackageIncludesView from "./PackageIncludesView";
+
 
 function Booking() {
   const [bookingList, setBookingList] = useState([]);
-  const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBookingData, setSelectedBookingData] = useState(null)
 
@@ -35,16 +34,20 @@ const handleTableChange = (pagination, filters, sorter) => {
   setPagination(pagination);
 };
 
-const handleViewClick = async (id) => {
-  try {
-    const response = await axios.get(`/api/getBookingsById/${id}`);
-    setSelectedBookingData(response.data);
-    setIsModalOpen(true);
-    setSelectedBookingId(id);
-  } catch (error) {
-    console.log("Error fetching booking details:", error);
+const handleViewClick = async (record) => {
+  if (record && record.id) {
+    try {
+      const response = await axios.get(`/api/getBookingsById/${record.id}`);
+      setSelectedBookingData(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log("Error fetching booking details:", error);
+    }
+  } else {
+    console.error("Invalid record:", record);
   }
 };
+
   const columns = [
     {
       title: "Date",
@@ -93,7 +96,7 @@ const handleViewClick = async (id) => {
     {
       title: "",
       key: "action",
-      render: (_, record) => (
+      render: (text, record) => (
         <Space size="middle">
           <button
             style={{
@@ -106,7 +109,7 @@ const handleViewClick = async (id) => {
               fontWeight: 500,
               borderRadius: "5px",
             }}
-            onClick={() => record && handleViewClick(record._id)}
+            onClick={() => record && handleViewClick(record)}
 
           >
             View
@@ -145,7 +148,7 @@ const handleViewClick = async (id) => {
           onCancel={handleCancel}
           open={isModalOpen}
           // onOk={() => setBookingList(false)}
-         //id={selectedBookingId}
+        
           footer={null}
           width={715}
           
