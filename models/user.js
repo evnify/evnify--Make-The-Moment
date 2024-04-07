@@ -1,6 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+    
+    userID: {
+        type: String,
+        required: false,
+    },
+
     firstName: {
         type: String,
         required: true,
@@ -16,11 +22,10 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
     },
     phoneNumber: {
         type: String,
-        required: true,
+        required: false,
     },
     password: {
         type: String,
@@ -28,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     userType: {
         type: String,
-        default: 'user'
+        default: "Customer",
     },
     city: {
         type: Array,
@@ -38,28 +43,28 @@ const userSchema = new mongoose.Schema({
         type: Array,
         required: false,
     },
+
     address1: {
         type: Array,
         required: false,
     },
-    address2: {
-        type: Array,
-        required: false,
-    },
+
     zipcode: {
         type: Number,
         default: null,
     },
-    state: {
+    status: {
         type: String,
-        default: null,
+        default: "Active",
+
     },
+
     profilePic: {
         type: String,
         required: false,
-    }
+    },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("user", userSchema);
 
 module.exports = User;

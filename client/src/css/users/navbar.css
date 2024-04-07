@@ -33,6 +33,18 @@
     border-radius: 5px;
     margin-top: 10px;
 }
+.navbar_alogin{
+    display: flex;
+    justify-content: right;
+    gap: 25px;
+    align-items: center;
+    height: 51px;
+    background-color: #fff;
+    border-radius: 11px;
+    margin: 10px;
+    padding: 0 15px;
+    }
+
 .home_page_blog_card_txt h2 {
     color: var(--Core-black, #000);
     font-size: 24px;

@@ -48,8 +48,7 @@ function LeaveRequests() {
             content: "This action cannot be undone.",
             okText: "Approve",
             okType: "danger",
-            okButtonProps: {color: "green"
-            },
+            okButtonProps: { color: "green" },
             cancelText: "Cancel",
             onOk() {
                 approveLeave(id);
@@ -190,7 +189,9 @@ function LeaveRequests() {
                                     color: "#fff",
                                     borderRadius: "5px",
                                 }}
-                                onClick={() => showApproveConfirm(record.leaveID)}
+                                onClick={() =>
+                                    showApproveConfirm(record.leaveID)
+                                }
                             >
                                 Approve
                             </button>
@@ -295,9 +296,30 @@ function LeaveRequests() {
         setCreatedAt(record.createdAt);
     };
 
-    const onSearch = (value) => {
-        console.log(value);
-    };
+    // Filter leaves
+    const [searchKey, setSearchKey] = useState("");
+    const [filteredLeaves, setFilteredLeaves] = useState([]);
+
+    useEffect(() => {
+        let tempList = leaveList;
+
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.name.toLowerCase().includes(searchKey) ||
+                    item.leaveID.toLowerCase().includes(searchKey) ||
+                    item.empID.toLowerCase().includes(searchKey)
+            );
+        }
+
+        if (selectedType !== "all") {
+            tempList = tempList.filter((item) => item.status === selectedType);
+        }
+
+        setFilteredLeaves(tempList);
+    }, [searchKey, selectedType, leaveList]);
+
+    
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -515,11 +537,11 @@ function LeaveRequests() {
                             alignItems: "center",
                         }}
                     >
-                        <h5>All Employees</h5>
+                        <h5>All Leaves</h5>
                         <Search
                             placeholder="Search "
                             size="large"
-                            onSearch={onSearch}
+                            onSearch={(value) => setSearchKey(value)}
                             style={{
                                 width: 265,
                                 height: 40,
@@ -534,13 +556,16 @@ function LeaveRequests() {
                             }}
                             size="large"
                             style={{
-                                width: 250,
+                                width: 350,
                             }}
                         >
                             <Radio.Button value="all">All</Radio.Button>
-                            <Radio.Button value="active">Active</Radio.Button>
-                            <Radio.Button value="suspended">
-                                Suspended
+                            <Radio.Button value="Approved">
+                                Approved
+                            </Radio.Button>
+                            <Radio.Button value="Pending">Pending</Radio.Button>
+                            <Radio.Button value="Rejected">
+                                Rejected
                             </Radio.Button>
                         </Radio.Group>
                     </div>
@@ -549,7 +574,7 @@ function LeaveRequests() {
                     <div>
                         <Table
                             columns={columns}
-                            dataSource={leaveList}
+                            dataSource={filteredLeaves}
                             pagination={pagination}
                             onChange={handleTableChange}
                         />
