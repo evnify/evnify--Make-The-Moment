@@ -18,9 +18,10 @@ function UserProfile() {
 
     useEffect(() => {
         const fetchUserByID = async () => {
-            const userID = localStorage.getItem("userID");
-
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            const userID = {	userID: user.userID	};
             console.log(userID);
+
             try {
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);

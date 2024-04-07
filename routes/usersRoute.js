@@ -7,13 +7,14 @@ const generateUniquePwd = async () => {
     return Math.floor(10000000 + Math.random() * 90000000).toString();
 };
 
+
 const generateUniqueID = async () => {
-    let id = 'U' + Math.floor(10000000 + Math.random() * 90000000);
-    const existingLeave = await UserModel.findOne({ userID: id });
-    if (existingLeave) {
-        return generateUniqueID();
+    let userID = 'U' + Math.floor(10000000 + Math.random() * 90000000);
+    const userId = await UserModel.findOne({ userID: userID });
+    if (userId) {
+        return generateUniqueID(userID); // Pass the userID as an argument
     }
-    return id;
+    return userID;
 };
 
 
@@ -147,6 +148,7 @@ router.post("/register", async (req, res) => {
             userID: userID,
             username: req.body.username,
             profilePic: req.body.profilePic,
+            
         });
 
     try {
