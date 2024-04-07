@@ -332,6 +332,7 @@
     font-weight: 300;
     line-height: 11.939px;
     letter-spacing: 0.995px;
+    width: 130px;
 }
 .booking_cart_item_qty {
     display: flex;
