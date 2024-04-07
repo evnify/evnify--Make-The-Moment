@@ -201,6 +201,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog4_main {
     background-color: #fff;
@@ -234,6 +235,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog5_main {
     background-color: #fff;
@@ -267,6 +269,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog6_main {
     background-color: #fff;
@@ -320,6 +323,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog7_main {
     background-color: #fff;
@@ -352,6 +356,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog8_main {
     background-color: #fff;
@@ -384,6 +389,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+    cursor: pointer;
 }
 .blog_page_blog9_main {
     background-color: #fff;
