@@ -11,6 +11,7 @@ import {
     Modal,
     message,
     ConfigProvider,
+    Steps,
 } from "antd";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
@@ -393,6 +394,11 @@ function Booking() {
         filterProductsByType();
     }, [filteredProducts]);
 
+    //Booking popup
+    const [bookingModal, setBookingModal] = useState(false);
+    const [bookingData, setBookingData] = useState([]);
+    const [current, setCurrent] = useState(0);
+
     return (
         <div style={{ backgroundColor: "#efefef" }}>
             {/* image view */}
@@ -465,7 +471,85 @@ function Booking() {
             </ConfigProvider>
 
             {/* Booking Modal */}
-            
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Modal: {
+                            contentBg: "#E6E6E6",
+                        },
+                        Steps: {},
+                    },
+                }}
+            >
+                <Modal
+                    open={bookingModal}
+                    onCancel={() => setBookingModal(false)}
+                    footer={null}
+                    width={1080}
+                    centered
+                >
+                    <div className="booking_model_main_container">
+                        <Steps
+                            current={current}
+                            onChange={(current) => setCurrent(current)}
+                            style={{
+                                marginBottom: 24,
+                                marginTop: 10,
+                                textAlign: "center",
+                                width: 400,
+                            }}
+                            items={[
+                                {
+                                    title: "Step 1",
+                                },
+                                {
+                                    title: "Step 2",
+                                },
+                                {
+                                    title: "Step 3",
+                                },
+                            ]}
+                        />
+                        <div className="booking_cart_item_container">
+                            <div style={{ marginRight: "230px" }}>
+                                <h4>Your Package</h4>
+                            </div>
+                            <div className="booking_cart_item">
+                                {cart.map((item) => (
+                                    <div
+                                        className="booking_cart_item_body"
+                                        key={item.itemId}
+                                    >
+                                        <div className="booking_cart_item_image">
+                                            <img src={item.itemImage} />
+                                        </div>
+                                        <div className="booking_cart_item_description">
+                                            <h5>{item.itemName}</h5>
+                                            <p>{item.unitPrice} LKR</p>
+                                        </div>
+                                        <div className="booking_cart_item_qty">
+                                            <input type="number" value={item.addedQty} />
+                                        </div>
+                                        <hr />
+                                    </div>
+                                    
+                                ))}
+                            </div>
+                            <div className="booking_cart_item_footer">
+                                <p>Subtotal({cart.length} Items)</p>
+                                <h6>LKR 69500</h6>
+                            </div>
+                            <button
+                                className="createBookingBtn_72 "
+                                onClick={() => setBookingModal(true)}
+                            >
+                                CONTINUE TO CHECKOUT
+                            </button>
+                            <p>Please, get it now before it sells out.</p>
+                        </div>
+                    </div>
+                </Modal>
+            </ConfigProvider>
 
             {loading ? (
                 <div className="center" style={{ height: "100vh" }}>
@@ -650,7 +734,10 @@ function Booking() {
                                         margin: "20px 0 80px 0",
                                     }}
                                 >
-                                    <button className="createBookingBtn_72 ">
+                                    <button
+                                        className="createBookingBtn_72 "
+                                        onClick={() => setBookingModal(true)}
+                                    >
                                         CONTINUE TO CHECKOUT
                                     </button>
                                 </div>

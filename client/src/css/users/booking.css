@@ -252,3 +252,101 @@
     padding: 5px;
     margin: 10px 30px 10px 30px;
 }
+
+.booking_cart_item_container {
+    display: flex;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 500px;
+    width: 795px;
+    border-radius: 11px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin: 15px;
+}
+
+.booking_model_main_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 980px;
+    border-radius: 11px;
+    margin: 0 15px 15px 15px;
+}
+
+.booking_cart_item {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+    height: 240px;
+    width: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.booking_cart_item_footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 160px;
+    margin-top: 20px;
+}
+
+.booking_cart_item_image {
+    width: 55.37px;
+    height: 74.972px;
+}
+
+.booking_cart_item_image img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+}
+
+.booking_cart_item_body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.booking_cart_item_description {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.booking_cart_item_description h5 {
+    color: #000;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 11.939px;
+    letter-spacing: 0.995px;
+}
+.booking_cart_item_qty {
+    display: flex;
+    justify-content: center;
+    align-items: space-between;
+    flex-direction: row;
+    gap: 10px;
+    width: 290px;
+}
+
+.booking_cart_item_qty input {
+    width: 50px;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid #363636;
+    padding: 5px;
+    margin-bottom: 20px;
+}
