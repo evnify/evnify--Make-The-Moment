@@ -3,6 +3,7 @@ const router = express.Router();
 
 const Package = require('../models/package');
 const inventories = require('../models/inventory');
+const packageModel = require('../models/package');
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -65,6 +66,18 @@ router.patch('/updateUser/:id', async (req, res) => {
     }
 });
 
+
+//Generate unique id for leave
+const generateUniqueID = async () => {
+    let id = 'PKG' + Math.floor(100000 + Math.random() * 900000);
+    const existingPackage = await packageModel.findOne({ packageId: id });
+    if (existingPackage) {
+        return generateUniqueID();
+    }
+    return id;
+};
+
+
 // Delete a user
 router.delete('/deleteUser/:id', (req, res) => {
     const id = req.params.id;
@@ -97,9 +110,12 @@ router.get('/allInventory', async (req, res) => {
 
 // Add a new package
 router.post('/addPackage', async (req, res) => {
+    const packageId = await generateUniqueID();
+    Package.packageId = packageId;
     const { packageType, eventType, price, description, baseImage, inventories, extras, contentImages } = req.body;
     try {
       const newPackage = new Package({
+        packageId,
         packageType,
         eventType,
         price,
@@ -116,6 +132,22 @@ router.post('/addPackage', async (req, res) => {
     }
   });
   
+  //delete package by id
+
+    router.delete('/deletePackage/:id', async (req, res) => {
+        const packageId = req.params.id;
+        try {
+            const deletedPackage = await Package
+                .findByIdAndDelete(packageId);
+            if (!deletedPackage) {
+                return res.status(404).json({ message: "Package not found" });
+            }
+            res.json({ message: "Package deleted successfully" });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+    );
 
 
 module.exports = router;

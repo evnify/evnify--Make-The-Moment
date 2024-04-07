@@ -10,6 +10,9 @@ function Packages() {
   const [packageList, setPackageList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inventories, setInventories] = useState([]);
+  const [extras, setExtras] = useState([]);
+  const [extrasData, setExtrasData] = useState("");
+  const [inventoryQuantities, setInventoryQuantities] = useState({});
   const [newPackageData, setNewPackageData] = useState({
     packageType: '',
     eventType: '',
@@ -17,9 +20,17 @@ function Packages() {
     description: '',
     baseImage: 'https://s3-alpha-sig.figma.com/img/b6fa/f4a9/06e0655ca5fa95b62a51b0952…',
     inventories: [],
-    extras: '',
+    extras: [],
     contentImages: [],
   });
+
+  useEffect(() => {
+    // Update newPackageData whenever extras change
+    setNewPackageData(prevData => ({
+      ...prevData,
+      extras: extras
+    }));
+  }, [extras]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -41,6 +52,29 @@ function Packages() {
       [name]: value
     }));
   };
+
+  // Update handleInventory function to include quantity input
+  const handleInventory = (values) => {
+    const updatedQuantities = {};
+    values.forEach(value => {
+      // If the inventory is already selected, keep its quantity as it is
+      if (inventoryQuantities[value]) {
+        updatedQuantities[value] = inventoryQuantities[value];
+      } else {
+        // Otherwise, initialize the quantity as 2
+        updatedQuantities[value] = 1;
+      }
+    });
+    setInventoryQuantities(updatedQuantities);
+    setNewPackageData(prevData => ({
+      ...prevData,
+      inventories: values.map(value => ({
+        itemType: value,
+        quantity: updatedQuantities[value] // Set quantity as per user input or default to 2
+      }))
+    }));
+  };
+
 
   // Create a new package
   const handleAddPackage = async () => {
@@ -94,12 +128,26 @@ function Packages() {
     };
   });
 
+  // Delete an inventory
+  const handleDeleteInventory = async (packageId) => {
+    try {
+      // Make an HTTP request to delete the inventory by its ID
+      await axios.delete(`/api/packages/deletePackage/${packageId}`);
+      message.success('Inventory deleted successfully');
+      fetchAllPackages();
+    } catch (error) {
+      console.error('Error deleting inventory:', error);
+      message.error('Failed to delete inventory');
+    }
+  };
+  
+
   // Package table columns
   const columns = [
     {
       title: "Package ID",
-      dataIndex: "PackageID",
-      key: "PackageID",
+      dataIndex: "packageId",
+      key: "packageId",
     },
     {
       title: "Package Type",
@@ -120,7 +168,7 @@ function Packages() {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (record) => (
         <Space size="middle">
           <button
             style={{
@@ -130,7 +178,9 @@ function Packages() {
               background: "transparent",
             }}
           >
-            <Icon icon="mdi:download" />
+            <Icon icon="mdi:delete" style={{margin:"0 10px 0 0"}} onClick={() => handleDeleteInventory(record._id)}/>
+            <Icon icon="mdi:pencil" style={{margin:"0 5px 0 5px"}} />
+            <Icon icon="mdi:download" style={{margin:"0 0 0 10px "}} />
           </button>
         </Space>
       ),
@@ -156,6 +206,14 @@ function Packages() {
     },
   };
 
+
+
+  const handelAddExtra = () => {
+    setExtras([...extras, extrasData]);
+    setExtrasData("");
+    console.log(extras);
+  }
+
   return (
     <div>
       <div className='booking-package-insight-div'>
@@ -180,7 +238,7 @@ function Packages() {
                   <div style={{ display: "flex", flexDirection: "column" }}>
                     Package Type
                     <Select
-                      defaultValue="Basic"
+                      defaultValue=""
                       style={{ width: 250 }}
                       onChange={(value) => setNewPackageData({ ...newPackageData, packageType: value })}
                       options={[
@@ -192,7 +250,7 @@ function Packages() {
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
                       <Select
-                        defaultValue="Wedding"
+                        defaultValue=""
                         style={{ width: 250 }}
                         onChange={(value) => setNewPackageData({ ...newPackageData, eventType: value })}
                         options={[
@@ -207,9 +265,9 @@ function Packages() {
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
-                      <Input 
-                        placeholder="Enter price" 
-                        style={{ width: "250px" }} 
+                      <Input
+                        placeholder="Enter price"
+                        style={{ width: "250px" }}
                         onChange={(e) => setNewPackageData({ ...newPackageData, price: e.target.value })}
                       />
                     </div>
@@ -217,30 +275,68 @@ function Packages() {
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
                       <Select
                         showSearch
-                        style={{ width: 200, height: 40 }}
+                        mode="multiple" // Enable multiple selection
+                        style={{ width: 250 }}
                         placeholder="Search Inventories"
                         optionFilterProp="children"
                         filterOption={(input, option) => (option?.label ?? "").includes(input)}
                         filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-                        onChange={(value) => setNewPackageData({ ...newPackageData, inventories: value })}
+                        onChange={handleInventory} // Use handleInventory function
                         options={pkgData}
                       />
+                      {/* Display selected inventories and quantity inputs */}
+                      {Object.entries(inventoryQuantities).map(([inventory, quantity]) => (
+                        <div key={inventory} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                          <span style={{ marginLeft: "5px" }}>{inventory}</span>
+                          <span><Input
+                            style={{ width: 100, marginLeft: "10px" }}
+                            value={quantity}
+                            onChange={(e) => {
+                              const updatedQuantities = { ...inventoryQuantities, [inventory]: e.target.value };
+                              setInventoryQuantities(updatedQuantities);
+                              setNewPackageData(prevData => ({
+                                ...prevData,
+                                inventories: Object.keys(updatedQuantities).map(itemType => ({
+                                  itemType,
+                                  quantity: updatedQuantities[itemType]
+                                }))
+                              }));
+                            }}
+                          /></span>
+                        </div>
+                      ))}
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
-                      <TextArea 
-                        rows={4} 
-                        style={{ width: "250px" }} 
+                      <TextArea
+                        rows={4}
+                        style={{ width: "250px" }}
                         onChange={(e) => setNewPackageData({ ...newPackageData, description: e.target.value })}
                       />
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
-                      <Input 
-                        placeholder="Enter extras" 
-                        style={{ width: "250px" }} 
-                        onChange={(e) => setNewPackageData({ ...newPackageData, extras: e.target.value })}
+                      <Input
+                        placeholder="Enter extras"
+                        style={{ width: "250px" }}
+                        onChange={(e) => setExtrasData(e.target.value)}
                       />
+                      <button onClick={handelAddExtra} style={{
+                        width: "50px", height: "30px",
+                        border: "none", borderRadius: "5px",
+                        marginTop: "5px", background: "#533c56", color: "white", cursor: "pointer",
+                        marginLeft:"10px"
+                      }}>
+                        add
+                      </button>
+                      {extras.map((extra, index) => (
+                        <Input
+                          key={index}
+                          style={{ width: "250px", border: "none", marginTop: "2px" }}
+                          value={extra}
+                          disabled
+                        />
+                      ))}
                     </div>
                   </div>
                   <div>
