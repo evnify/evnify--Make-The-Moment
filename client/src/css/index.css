@@ -25,6 +25,8 @@
 @import url('./users/navbar.css');
 @import url('./users/verify.css');
 @import url('./users/forgetpw.css');
+@import url('./users/usersidemenu.css');
+@import url('./users/footer.css');
 
 @import url("./employee/employeeDashboard.css");
 @import url("./employee/employee.css");

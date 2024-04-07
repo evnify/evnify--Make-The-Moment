@@ -8,9 +8,8 @@
     flex-shrink: 0;
 }
 
-
 .btn_signup {
-    display:flex;
+    display: flex;
     height: 35px;
     width: 110px;
     padding: 6px var(--Spacing-space-6, 32px);
@@ -20,10 +19,11 @@
     border-radius: 5px;
     background: #533c56;
     color: aliceblue;
+    margin-top: 10px;
 }
 
-.btn_signin{
-    display:flex;
+.btn_signin {
+    display: flex;
     height: 35px;
     width: 110px;
     padding: 6px var(--Spacing-space-6, 32px);
@@ -31,5 +31,41 @@
     align-items: center;
     gap: 8px;
     border-radius: 5px;
+    margin-top: 10px;
+}
+.navbar_alogin{
+    display: flex;
+    justify-content: right;
+    gap: 25px;
+    align-items: center;
+    height: 51px;
+    background-color: #fff;
+    border-radius: 11px;
+    margin: 10px;
+    padding: 0 15px;
+    }
 
+.home_page_blog_card_txt h2 {
+    color: var(--Core-black, #000);
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 10px;
+}
+.home_page_blog_card_txt h1 {
+    color: var(--Primary, #7848f4);
+    font-family: "Product Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.home_page_package_txt_section h1 {
+    color: var(--Core-black, #000);
+    font-size: 24px;
+    font-family: "Product Sans";
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }

@@ -1,0 +1,131 @@
+.payroll_002
+{color: var(--Gray-900, #0F172A);
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-left: 30px; }
+
+.container_002 {
+    text-align: right;
+    
+  }
+  
+  .align-right-button_002 {
+    margin-right: 30px; 
+    
+  }
+  .payroll_create_btn_002{
+    color: #fff;
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #533c56;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 11px;
+    margin-right: 30px;
+  }
+  .create_paysheet_002
+  {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+
+.Create-paysheet-input{
+  display: flex;
+  flex-direction: column;
+  
+}
+.admin_payroll_table_right_side_002{
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+
+.salary_save_btn_002{
+  color: #fff;
+  font-family: "Product Sans";
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #376dca;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 11px;
+  margin-right: 30px;
+  margin-top: 5px;
+}
+.salary_cansel_btn_002{
+  color: #fff;
+  font-family: "Product Sans";
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #c40f0f;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 11px;
+  margin-right: 30px;
+  margin-top: 5px;
+  margin-left: 10;
+}
+.total_salary_002{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 30px;
+  margin-left: 110px;
+  margin-top: 20px;
+}
+
+.admin_salary_list_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  background: #ffffff;
+  width: calc(100% - 30px);
+  margin: 0 0 15px 15px;
+  border-radius: 11px;
+  min-height: 600px;
+}
+
+.admin_salary_list_top_menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  padding: 0 15px;
+  border-radius: 11px 11px 0 0;
+  background-color: #f5f5f5;
+}
+
+
+.admin_salary_list_top_menu_button {
+  color: #fff;
+  font-family: "Product Sans";
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #533c56;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 11px;
+}
+
+.admin_salary_list_top_menu_button:hover {
+  background-color: #402e43;
+}
+
+.admin_salary_list_top_menu h5 {
+  color: #464646;
+  font-family: "Product Sans";
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 30px 0 22px;
+}
