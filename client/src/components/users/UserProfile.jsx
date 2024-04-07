@@ -6,15 +6,15 @@ import axios from "axios";
 import { Input, Select, Divider, Space } from "antd";
 const { Search, TextArea } = Input;
 
-
 function UserProfile() {
-
     const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [fileList, setFileList] = useState([]);
     const [profileImage, setProfileImage] = useState();
     const [user, setUser] = useState({});
+
+
 
     useEffect(() => {
         const fetchUserByID = async () => {
@@ -191,119 +191,304 @@ function UserProfile() {
                 <button className="btn btn-primary edit">Edit Profile</button>
             </div>
 
-        
+            <div
+                className="add_user_details_container_right"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "5px",
+                }}
+            >
+                {/* First Name and Last Name */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                First Name
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.firstName}
+                            />
 
-            <div className="add_user_details_container">
-                <div className="add_user_container_left">
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <span
-                            style={{
-                                marginBottom: "3px",
-                                fontSize: "12px",
-                            }}
-                        >
-                            First Name
-                        </span>
-                        <Input size="large" />
+                            {/* Adjust width here */}
+                        </div>
                     </div>
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <span
+
+                    <div style={{ flex: 1 }}>
+                        <div
                             style={{
-                                marginBottom: "3px",
-                                fontSize: "12px",
+                                display: "flex",
+                                flexDirection: "column",
                             }}
                         >
-                            Email
-                        </span>
-                        <Input type="email" size="large"  />
-                    </div>
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <span
-                            style={{
-                                marginBottom: "3px",
-                                fontSize: "12px",
-                            }}
-                        >
-                            Phone Number
-                        </span>
-                        <Input size="large"  />
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Last Name
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.lastName}
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="add_user_details_container_left">
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <span
+                {/* Email and Phone Number */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
                             style={{
-                                marginBottom: "3px",
-                                fontSize: "12px",
+                                display: "flex",
+                                flexDirection: "column",
                             }}
                         >
-                            Last Name
-                        </span>
-                        <Input size="large"  />
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Email
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.email}
+                            />
+                        </div>
                     </div>
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <span
+                    <div style={{ flex: 1 }}>
+                        <div
                             style={{
-                                marginBottom: "3px",
-                                fontSize: "12px",
+                                display: "flex",
+                                flexDirection: "column",
                             }}
                         >
-                            Username
-                        </span>
-                        <Input size="large"  />
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                user Id
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.userID}
+                            />
+                        </div>
                     </div>
-                    <div
-                        style={{
-                            marginTop: "8px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    ></div>
                 </div>
-            </div>
+                {/* Username and Password */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Username
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.username}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Status
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.status}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* User Type and City */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                User Type
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.userType}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
 
-            <div className="add_emp_address_container">
-                <span>Address</span>
-                <TextArea
-                    style={{
-                        width: 520,
-                    }}
-                    rows={4}
-                    
-                />
+                                    
+                                }}
+                            >
+                                City
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.city}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* Province and Address 1 */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Province
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.province}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Address
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.address}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* Zipcode and Status */}
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                    <div style={{ marginRight: "8px", flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Zip Code
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                value={user.zipcode}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                }}
+                            >
+                                Phone Number
+                            </span>
+                            <Input
+                                size="large"
+                                style={{ width: "340px", marginRight: "40px" }}
+                                
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
     );
 }
 

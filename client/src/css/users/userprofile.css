@@ -135,3 +135,15 @@
     align-items: center;
     gap: 40px;
 }
+
+
+.add_user_details_container_right{
+    width: 963px;
+    height:500px;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    margin: auto;
+    margin-top: 18px;
+    
+}

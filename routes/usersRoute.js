@@ -160,7 +160,7 @@ router.post("/register", async (req, res) => {
 
 });
 
-router.post("/getUserByID", async (req, res) => {
+router.post("/getUserById", async (req, res) => {
     const { userID } = req.body;
     try {
         const user = await UserModel.findOne({
