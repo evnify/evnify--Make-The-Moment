@@ -1,0 +1,37 @@
+.blog_hero_section_container{
+    background-color: #efefef;
+    width: 100%;
+}
+.blog_hero_section_image_bg_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+.blog_section_image_top_bg_color_container{
+    background-color: #ffffff;
+    height: 250px;
+    width: 1132px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.blog_section_image_top_container{
+    height: 224px;
+    width: 1113px;
+}
+.blog_section_Recent_blog_posts_txt{
+    color: var(--Gray-900, #101828);
+    font-family: product-sans;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 32px;
+    padding-left: 155px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.blog_section_resent_blog_one{
+    
+}
