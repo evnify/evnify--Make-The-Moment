@@ -1,0 +1,317 @@
+/*message Insight*/
+.messagre-insight-top {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+.messagre-insight-card {
+    width: 350px;
+    height: 150px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-insight-main-insight {
+    width: 1210px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 22px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-insight-bottom-insight {
+    display: flex;
+    flex-direction: row;
+}
+
+.message-insight-categories {
+    width: 750px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 22px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message-calender-view {
+    width: 400px;
+    height: 400px;
+    background-color: #fff;
+    margin: 30px 0 10px 55px;
+    border-radius: 11px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/*All message*/
+
+.message-Box-all-messages {
+    display: flex;
+    flex-direction: row;
+    width: 1220px;
+    height: 610px;
+    background-color: #fff;
+    margin: 5px 0 10px 22px;
+    border-radius: 11px;
+
+}
+
+.message-all-users-bar-top-msg-text{
+    display: flex;
+    flex-direction: row;
+  
+
+}
+
+.message-received-preview.selected {
+    background-color: #f0f0f0; /* Gray background color */
+    width: 370px;
+    border-radius: 11px;
+}
+
+.message-group-preview{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 30px 0 0;
+    height: 450px;
+    width: 378px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
+.message-group-preview::-webkit-scrollbar {
+    width: 8px; 
+    border-radius: 10px;
+}
+
+.message-group-preview::-webkit-scrollbar-track {
+    background: #ffffff; 
+    
+}
+
+
+.message-group-preview::-webkit-scrollbar-thumb {
+    background: #f1f1f1; 
+    border-radius: 4px;
+}
+
+.message-group-preview::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+}
+
+.message-all-users-bar {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 590px;
+    border-right: 1px solid #d8d8d8;
+}
+
+.message-all-users-bar-top {
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 820px;
+}
+
+.message-all-users-bar-top-right {
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    border-bottom: 1px solid #d8d8d8;
+    width: 820px;
+}
+
+.message-reply-admin {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-all-users-bar-bottom-search {
+    margin: 10px 0 0 20px;
+
+}
+
+.message-received-preview {
+    display: flex;
+    flex-direction: row;
+    margin: 20px 30px 0 0;
+    height: 80px;
+    max-height: 80px;
+
+}
+
+.all-message-profile-pic img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 10px 0 0 10px;
+}
+
+.all-message-name {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.all-message-timeandname {
+    display: flex;
+    flex-direction: row;
+
+}
+
+.message-reply-admin-box-top {
+    height: 420px;
+    margin: 20px 0 0 20px;
+    overflow-y: auto;
+    overflow-x: hidden; 
+    max-height: 420px; /* Set the maximum height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    scroll-behavior: smooth; /* Add smooth scrolling behavior */
+}
+
+.all-message-name-tag {
+    width: 220px;
+    text-align: left;
+
+}
+
+.message-reply-admin-box {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.message-scroll-down-animation {
+    transition: transform 0.05s ease-in-out;
+  }
+  
+
+.message-receved-admin {
+    display: flex;
+    flex-direction: row;
+    margin: 20px 0 0 20px;
+}
+
+.message-send-admin {
+    display: flex;
+    flex-direction: row;
+    margin: 20px 20px 0 0;
+    justify-content: flex-end;
+}
+
+.message-Send-bar {
+    display: flex;
+    flex-direction: row;
+    border: 2px solid #d8d8d8;
+    height: 40px;
+    margin: 20px;
+    border-radius: 11px;
+}
+
+
+/*user email */
+
+.email-full-container {
+    display: flex;
+    flex-direction: row;
+    width: 1220px;
+    height: 610px;
+    background-color: #fff;
+    margin: 5px 0 10px 22px;
+    border-radius: 11px;
+}
+
+.email-container-left {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 610px;
+    border-right: 1px solid #d8d8d8;
+}
+
+.email-container-right {
+    display: flex;
+    flex-direction: column;
+    width: 820px;
+    height: 610px;
+}
+
+.left-side-full-email-view {
+    display: flex;
+    flex-direction: row;
+    width: 400px;
+    height: 130px;
+    border-bottom: 1px solid #000000;
+}
+
+.left-side-full-email-top {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    justify-content: space-between;
+    margin: 30px 100px 0 100px;
+
+}
+
+.left-side-full-email-view-text {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+
+}
+
+.name-email-view {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0 0 10px;
+}
+
+.email-container-right-top{
+    display: flex;
+    flex-direction: row;
+    width: 820px;
+    height: 80px;
+}
+
+.email-container-right-top-center-text{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0 0 20px;
+    width: 500px;
+}
+
+.email-content{
+    display: flex;
+    flex-direction: column;
+    margin: 50px 0 0 60px;
+    width: 700px;
+    text-align: justify;
+    white-space: pre-line;
+    line-height: 2.5;
+}
+
+.message-reply-admin-box-top::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+    
+  }
+
+  /* Style the track (the area where the scrollbar handle moves) */
+.message-reply-admin-box-top::-webkit-scrollbar-track {
+    background: #ffffff; /* Set the background color of the track */
+  }
+
+  .message-reply-admin-box-top::-webkit-scrollbar-thumb {
+    background: #f1f1f1; /* Set the color of the scrollbar handle */
+    border-radius: 4px; /* Add border-radius for rounded corners */
+  }
+
+  .message-reply-admin-box-top::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+}
