@@ -1,0 +1,267 @@
+/*chat box*/
+
+
+/* Modal.css */
+.message-box-chatbox {
+  height: 350px; /* Set a fixed height */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.sent-message-chatbox  {
+  display: flex;
+  flex-direction: column;
+  background-color: #533c56;
+  padding: 5px 10px;
+  margin-bottom: 8px;
+  border-radius: 12px 12px 0px 12px;
+  color: white;
+  min-width: 150px;
+  max-width: 250px;
+  
+}
+
+.received-message-chatbox  {
+  display: flex;
+  flex-direction: column;
+  background-color: #e6e6e6;
+  padding: 5px 10px;
+  margin-bottom: 8px;
+  border-radius: 12px 12px 12px 0px;
+  min-width: 150px;
+  max-width: 250px;
+}
+
+.type-message-chatbox  {
+  background-color: #f2f2f2;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.type-message-chatbox :focus {
+  outline: none;
+}
+
+
+/*contact us page*/
+
+.contact-us-bg-color {
+  background-color: #E6E6E6;
+  justify-content: center;
+  padding: 40px;
+  font-family: 'Product Sans', sans-serif;
+}
+
+.contact-us-main-about-us{
+  margin: auto;
+  height: 600px;
+  width: 1216px;
+  background-image: url('../../assets/about-us-main-image.svg'); 
+  background-size: cover; 
+  background-position: center; 
+  text-align: center;
+}
+
+.contact-us-about-us-text{
+  font-size: 20px;
+  padding: 120px;
+}
+
+.contact-us-main-about-us-h1{
+  font-size: 80px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  color: #ffffff;
+}
+
+.contact-us-main-about-us-div{
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
+}
+
+.contact-us-about-us-seemore-button{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 30px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.contact-us-about-us-seemore-button:hover {
+  background-color: #8c5c93; /* Change the hover background color to blue */
+  border-color: #533C56; /* Change the hover border color to blue */
+  color: #fff; /* Change the hover text color to white */
+}
+
+.contact-us-about-us-text button{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 30px;
+}
+.scetion-divider-hr{
+  border: 2px solid #533C56;
+  width: 100%;
+  margin: auto;
+  margin-top:30px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.contact-us-main-about-us-section{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  height: 830px;
+  width: 1216px;
+ background-color: #ffffff;
+  background-size: cover; 
+  background-position: center; 
+  text-align: center;
+}
+
+.contact-us-about-us-section-text{
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  padding: 40px;
+}
+
+.contact-us-about-us-section-text-div{
+  justify-content: right;
+  margin: 0 50px 10px 50px;
+  text-align: justify;
+}
+.contact-us-about-us-section-text-div-with-ic{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
+}
+
+
+.contact-us-about-us-section-text-div-imgflw{
+  display: block;
+  float: left;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  margin-right: 30px;
+  ;
+}
+
+.contact-us-about-us-section-text-div-para{
+  justify-content: right;
+  margin: 0 0 0 30px;
+  text-align: justify;
+  width: 650px;
+}
+
+.contact-us-about-us-section-whychooseus{
+  font-size: 15px;
+  padding: 40px 40px 30px 40px;
+  margin: 20px 0 0 40px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.contact-us-about-us-section-whychooseus-point{
+  display: flex;
+  flex-direction: row;
+  margin: 20px;
+  text-align: justify;
+}
+
+.contact-us-about-us-section-howwestandout{
+  border-radius: 50%;
+  padding-left: 40px;
+  margin-left: 40px;
+  margin-right: 40px;
+  text-align: left;
+}
+
+.contact-us-contact-us-section-form{
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  height: 730px;
+  width: 1216px;
+ background-color: #ffffff;
+  background-size: cover; 
+  background-position: center; 
+  text-align: center;
+}
+
+.contact-us-contact-us-section-form img{
+  display: block;
+  float: left;
+  margin-top: 100px;
+  height: 600px;
+}
+
+.contact-us-contact-us-section-form-form{
+  float: right;
+  margin: 100px;
+}
+
+.contact-us-contact-us-section-form-center-dev{
+  width: 400px;
+  margin-top: 200px;
+}
+
+.contact-us-contact-us-section-form-right-dev{
+  width: 400px;
+  margin-top: 200px;
+  margin-left: 40px;
+}
+
+.contact-us-form-button{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 40px;
+  padding: 5px 10px;
+  width: 400px;
+}
+
+.contact-us-form-button:hover {
+  background-color:  #8c5c93; /* Change the hover background color to blue */
+  border-color:  #533C56; /* Change the hover border color to blue */
+  color: #fff; /* Change the hover text color to white */
+}
+
+.contact-us-contact-us-section-form-right-dev b{
+  float: left;
+}
+.contact-us-contact-us-section-form-right-dev input {
+  background-color: #f0f2f5;
+  height: 40px;
+  margin: 0 0 40px 0;
+}
+.Btn-btn-contact-us{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.Btn-btn-contact-us:hover {
+  background-color: #1890ff; /* Change the hover background color to blue */
+  border-color: #1890ff; /* Change the hover border color to blue */
+  color: #fff; /* Change the hover text color to white */
+}

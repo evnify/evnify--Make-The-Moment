@@ -1,0 +1,164 @@
+.genral-setting {
+    width: 879px;
+    height: 700px;
+    flex-shrink: 0;
+    margin-top: 20px;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #ffffff);
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.change-password {
+    width: 879px;
+    height: 712px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--Theme-Colors-White, #fff);
+    margin-top: 20px;
+
+    /* shadow-sm */
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.setting-header {
+    margin: 30px;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+.avtar {
+    margin: 30px;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    display: flex;
+    align-items: center;
+    margin-left: 50px;
+
+
+}
+
+.avtar-btn {
+    margin-top: 10px;
+    gap: 10px;
+    
+}
+.avtar-img{
+    margin-left: 200px;
+}
+
+.btn-change {
+    display: inline-flex;
+    padding: 6px 12px;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--Gray-300, #dfe3e8);
+    background: var(--Core-white, #fff);
+    margin: 0 20px 20px 0;
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.btn-change:hover {
+    background: var(--Gray-100, #f4f6f9);
+}   
+
+.btn-remove{
+    display: inline-flex;
+    padding: 6px 12px;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--Gray-300, #dfe3e8);
+    background: var(--Core-white, #fff);
+    margin: 0 20px 20px 0;
+    box-shadow: 0px 1px 1px 0.5px rgba(5, 44, 101, 0.06);
+}
+
+.btn-remove:hover {
+    background: var(--Gray-100, #f4f6f9);
+}
+
+.upload-box{
+    width: 600px;
+    margin-left: 45px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.change-password-form{
+    margin: 30px;
+    margin-top: 25px;
+    margin-left: 50px;
+}
+
+.pw-requirement{
+    margin-bottom: 20px;
+    margin-left: 260px;
+}
+.pw-requirement h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.pw-requirement ul {
+    padding-left: 20px;
+}
+.save-btn {
+    margin-top: 30px;
+    margin-left: 260px;
+}
+.save-btn button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.save-btn button:hover {
+    background-color: #0056b3;
+}
+.deactivate-section {
+    margin-top: 30px;
+}
+.deactivate-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.deactivate-section p {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+.deactivate-section button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.deactivate-section button:hover {
+    background-color: #c82333;
+}
+
+
+.deactivate-acc{
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #c70000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 260px;
+}
+
+.deactivate-acc:hover {
+    background-color: #c82333;
+}
