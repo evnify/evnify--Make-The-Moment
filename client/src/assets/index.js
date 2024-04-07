@@ -19,6 +19,10 @@ import westandoutIcon from "./westandout-contactus.svg";
 import messageDp from "./messageDp.svg";
 import chatIcon from "./chat-us-icon.png";
 import topImage from "./TopImage.svg";
+import ig from "./ig.svg";
+import fb from "./fb.svg";
+import li from "./li.svg";
+import yt from "./yt.svg";
 
 
 export {
@@ -40,5 +44,8 @@ export {
     messageDp,
     chatIcon,
     topImage,
-
+    ig,
+    fb,
+    li,
+    yt,
 };
