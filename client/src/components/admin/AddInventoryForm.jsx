@@ -127,13 +127,20 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
             </Form.Item>
 
             <Form.Item
-                name="itemID"
-                label="Item ID"
+                name="category"
+                label="Category"
                 rules={[
-                    { required: true, message: "Please input the item id" },
+                    { required: true, message: "Please select the colour" },
                 ]}
             >
-                <Input />
+                <Select placeholder="Category">
+                    <Select.Option value="chairs">Chairs</Select.Option>
+                    <Select.Option value="tables">Tables</Select.Option>
+                    <Select.Option value="cakeholders">Cake Holders</Select.Option>
+                    <Select.Option value="plates">Plates</Select.Option>
+                    <Select.Option value="wineglasses">Wine Glasses</Select.Option>
+                    <Select.Option value="other">Other</Select.Option>
+                </Select>
             </Form.Item>
 
             <Form.Item
@@ -200,9 +207,11 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
             >
                 <Select placeholder="Select colour">
                     <Select.Option value="black">Black</Select.Option>
+                    <Select.Option value="brown">Brown</Select.Option>
                     <Select.Option value="white">White</Select.Option>
-                    <Select.Option value="gold">Gold</Select.Option>
                     <Select.Option value="red">Red</Select.Option>
+                    <Select.Option value="gray">Gray</Select.Option>
+                    <Select.Option value="tan">Tan</Select.Option>
                 </Select>
             </Form.Item>
 
