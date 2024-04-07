@@ -177,12 +177,10 @@ function UserList() {
             message.success("User added successfully");
             setaddUserModelOpen(false);
             fetchUserList();
-
         } catch (error) {
             console.log(error);
             message.error("Failed to add user");
             setaddUserModelOpen(false);
-            
         }
     };
 
@@ -272,6 +270,8 @@ function UserList() {
                 `${process.env.PUBLIC_URL}/api/users/editUser`,
                 userData
             );
+            fetchUserList();
+
             message.success("User edit successfully");
             setTableModelOpen(false);
             fetchUserList();
@@ -404,7 +404,7 @@ function UserList() {
                 uid: "1",
                 name: "image.png",
                 status: "done",
-                url: record.profileImage,
+                url: record.profilePic,
             },
         ]);
     };
@@ -1219,18 +1219,11 @@ function UserList() {
                                 onClick={() => {
                                     saveUser();
                                     setaddUserModelOpen(false); // Assuming this sets the modal to be closed
-                                    
-                                   
-
                                 }}
                                 style={{
                                     width: "120px",
                                     height: "40px",
                                 }}
-
-
-
-                               
                             >
                                 Add User
                             </button>
