@@ -1,8 +1,8 @@
-import React, { useState, CSSProperties } from "react";
+import React, { useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 
 const Loader = () => {
-    let [loading, setLoading] = useState(true);
+    let [loading] = useState(true);
 
     return (
         <div style={{ marginTop: "150px" }}>
