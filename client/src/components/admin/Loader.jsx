@@ -5,7 +5,7 @@ const Loader = () => {
     let [loading, setLoading] = useState(true);
 
     return (
-        <div style={{ marginTop: "150px" }}>
+        <div>
             <center>
                 <div className="sweet-loading">
                     <BeatLoader

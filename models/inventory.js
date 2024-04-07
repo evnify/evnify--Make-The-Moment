@@ -29,6 +29,10 @@ const inventorySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category : {
+        type: String,
+        required: true,
+    },
     status : {
         type: String,
         default: "Available",
