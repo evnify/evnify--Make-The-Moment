@@ -48,9 +48,17 @@ function ChatBox() {
     };
 
     useEffect(() => {
-        fetchMessages();
+        fetchMessages(); // Fetch messages when the component mounts
         setCustomerID("U71200743");
+
+        // Polling to fetch new messages 
+        const interval = setInterval(() => {
+            fetchMessages();
+        }, 3000); // Adjust the interval time as needed
+
+        return () => clearInterval(interval);
     }, []);
+
 
     const groupMessages = (messages) => {
         const grouped = {};
@@ -61,9 +69,7 @@ function ChatBox() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
-        console.log(grouped)
     };
-
 
 
     const handleOpenModal = () => {
@@ -87,7 +93,7 @@ function ChatBox() {
             setMessage(""); // Clear the input field after sending the message
         }
     };
-    
+
 
     // Filter sent and received messages
     useEffect(() => {
@@ -105,12 +111,12 @@ function ChatBox() {
 
     const modalFooter = (
         <div>
-        <form onSubmit={handleFormSubmit}>
-            <input type="text" placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
-            <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
-        </form> 
-    </div>
-    
+            <form onSubmit={handleFormSubmit}>
+                <input type="text" placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
+                <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
+            </form>
+        </div>
+
     );
 
     return (
@@ -152,12 +158,23 @@ function ChatBox() {
                 <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
                     {customerID && (groupedMessages[customerID] || []).map((msg, index) => (
                         msg.sender === 'customer' ? (
-                            <div key={index} style={{ display: "flex", justifyContent:"flex-end"}}>
-                                <div className="sent-message-chatbox">{msg.message}</div>
+                            <div key={index} style={{ display: "flex", justifyContent: "flex-end" }}>
+                                <div className="sent-message-chatbox">
+                                    <div>{msg.message}</div>
+                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
+                                        {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                                    </div>
+                                </div>
                             </div>
                         ) : (
-                            <div key={index} style={{ display: "flex", float: "left"}}>
-                                <div className="received-message-chatbox">{msg.message}</div>
+                            <div key={index} style={{ display: "flex", float: "left" }}>
+                                <div className="received-message-chatbox">
+                                <div style={{fontWeight:"bold",color:"#533c56"}}>Evnify</div>
+                                    <div>{msg.message}</div>
+                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
+                                        {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                                    </div>
+                                </div>
                             </div>
                         )
                     ))}

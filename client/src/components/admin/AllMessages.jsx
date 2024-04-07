@@ -56,6 +56,7 @@ function AllMessages() {
                 sendTime: moment().format("HH:mm:ss"),
                 category: "Price",
                 sender: "admin",
+                status: "read",
                 reciverId: customerID
             };
             if (selectedMessageId) {
@@ -83,7 +84,7 @@ function AllMessages() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
-        console.log(grouped)
+       
     };
 
 
@@ -98,9 +99,13 @@ function AllMessages() {
     };
 
     useEffect(() => {
-        fetchMessages();
-    }, []);
+        const interval = setInterval(() => {
+            fetchMessages();
+        }, 3000); // Adjust the interval time as needed
 
+        // Clear the interval when the component unmounts
+        return () => clearInterval(interval);
+    }, []);
 
     // Filter sent and received messages
     useEffect(() => {
@@ -282,7 +287,10 @@ function AllMessages() {
                                                 </div>
                                             </div>
                                             <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
-                                                <div style={{ width: "250px" }}>{groupedMessages[customerID][groupedMessages[customerID].length - 1].message}</div>
+                                                <div style={{ width: "250px"}}>
+                                                    {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
+                                                </div>
+
                                                 {/* Render BellFilled icon conditionally */}
                                                 {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
                                             </div>
@@ -325,8 +333,9 @@ function AllMessages() {
                                         {msg.sender === 'customer' ? (
                                             <div className="message-receved-admin">
                                                 <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", maxWidth: "400px", color: "black" }}>
-                                                    <p>{msg.message}</p>
+                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px",minWidth:"150px", maxWidth: "400px", color: "black", display:"flex", flexDirection:"column"}}>
+                                                    <div><p>{msg.message}</p></div>
+                                                    <div style={{fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
                                                 </div>
                                                 <div style={{ margin: "10px 0 0 5px" }}>
                                                     <div
@@ -408,8 +417,9 @@ function AllMessages() {
                                                         <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
                                                     </Menu>
                                                 </div>
-                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", maxWidth: "400px", color: "#ffffff" }}>
-                                                    <p>{msg.message}</p>
+                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px",minWidth:"150px", maxWidth: "400px", color: "#ffffff",display:"flex", flexDirection:"column" }}>
+                                                <div><p>{msg.message}</p></div>
+                                                    <div style={{fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
                                                 </div>
                                                 <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
                                             </div>

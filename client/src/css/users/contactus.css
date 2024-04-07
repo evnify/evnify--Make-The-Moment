@@ -11,21 +11,27 @@
 }
 
 .sent-message-chatbox  {
-  background-color: #7b63ff;
-  padding: 10px 20PX;
+  display: flex;
+  flex-direction: column;
+  background-color: #533c56;
+  padding: 5px 10px;
   margin-bottom: 8px;
   border-radius: 12px 12px 0px 12px;
   color: white;
   min-width: 150px;
+  max-width: 250px;
   
 }
 
 .received-message-chatbox  {
+  display: flex;
+  flex-direction: column;
   background-color: #e6e6e6;
-  padding: 10px 20PX;
+  padding: 5px 10px;
   margin-bottom: 8px;
   border-radius: 12px 12px 12px 0px;
   min-width: 150px;
+  max-width: 250px;
 }
 
 .type-message-chatbox  {
