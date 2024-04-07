@@ -1,0 +1,37 @@
+.User_SideMenu{
+    background-color: white;
+    height: calc(100vh - 30px);
+    width: fit-content;
+    margin: 15px 0 15px 15px;
+    margin-left: 15px;
+    padding: 60px 0 0 0;
+    border-radius: 11px;
+}
+
+.User_SideMenu h3{
+    margin-left: 32px;
+    margin-bottom: 20px;
+    font-size:x-large;
+
+}
+
+
+.logout_btn_Container{
+    margin-top: 250px;
+    margin-bottom: 20px;
+    margin-left: 32px;
+
+
+}
+
+.user_logout_btn{
+    background-color: transparent;
+    border: none;
+    padding-right: 40px;
+}
+
+.user_setting{
+    display: flex;
+    margin-left: 32px;
+    margin-bottom: 20px;
+}
