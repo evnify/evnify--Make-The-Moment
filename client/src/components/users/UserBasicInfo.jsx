@@ -1,9 +1,9 @@
 import React from "react";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+
 import { Input, Space } from "antd";
 
 const UserProfileForm = () => {
-    const [passwordVisible, setPasswordVisible] = React.useState(false);
+    
 
     return (
         <><Space direction="vertical">

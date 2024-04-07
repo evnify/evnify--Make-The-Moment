@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import {
     ConfigProvider,
@@ -20,24 +21,12 @@ import {
 import axios from "axios";
 import Loader from "./Loader";
 import { Icon } from "@iconify/react";
-
+import { set } from "mongoose";
 
 var index = 0;
-
-// searcj user
-const { Search, TextArea } = Input;
+const { confirm } = Modal;
 
 function UserList() {
-    const [searchkey, setsearchkey] = useState("");
-
-    const filterBySearch = (data) => {
-        return data.filter(
-            (item) =>
-                item.username.toLowerCase().includes(searchkey.toLowerCase()) ||
-                item.email.toLowerCase().includes(searchkey.toLowerCase())
-        );
-    };
-
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -66,10 +55,12 @@ function UserList() {
 
     const conformSuspend = () => {
         setIsConformModalOpen(true);
+        fetchUserList();
     };
 
     const conformActive = () => {
         setIsActiveModalOpen(true);
+        fetchUserList();
     };
 
     async function handleDelete(userID) {
@@ -78,7 +69,7 @@ function UserList() {
             console.log("Server response: ", res.data);
             if (res.status === 200) {
                 console.log("User deleted successfully");
-                // You can handle success message here
+                fetchUserList();
             }
         } catch (error) {
             console.log("Error deleting user: ", error);
@@ -118,7 +109,7 @@ function UserList() {
     const [status, setStatus] = useState("Active");
     const [profilePic, setprofilePic] = useState("");
 
-    //Edit employee model use states
+    //Edit User model use states
     const [editAddress, setEditAddress] = useState("");
     const [editType, setEditType] = useState("sick leave");
     const [editFirstName, setEditFirstName] = useState("");
@@ -137,6 +128,11 @@ function UserList() {
         setUserList(response.data);
     }
 
+    useEffect(() => {
+        fetchUserList();
+    }, []);
+
+    // add user
     const saveUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -178,8 +174,13 @@ function UserList() {
 
         try {
             await axios.post("/api/users/addUser", userData);
+            message.success("User added successfully");
+            setaddUserModelOpen(false);
+            fetchUserList();
         } catch (error) {
             console.log(error);
+            message.error("Failed to add user");
+            setaddUserModelOpen(false);
         }
     };
 
@@ -217,6 +218,8 @@ function UserList() {
                 message.error("Error uploading image: " + error.message);
             });
     };
+
+    // save edit user
 
     const saveEditUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -267,6 +270,8 @@ function UserList() {
                 `${process.env.PUBLIC_URL}/api/users/editUser`,
                 userData
             );
+            fetchUserList();
+
             message.success("User edit successfully");
             setTableModelOpen(false);
             fetchUserList();
@@ -274,6 +279,8 @@ function UserList() {
             console.log(error);
         }
     };
+
+    //table colum
 
     const columns = [
         {
@@ -337,7 +344,7 @@ function UserList() {
             render: (_, record) => (
                 <Space size="middle">
                     <button
-                        onClick={() => handleDelete(record.userID)}
+                        onClick={() => showDeleteConform(record.userID)}
                         style={{
                             fontSize: "20px",
                             color: "#9D9D9D",
@@ -397,7 +404,7 @@ function UserList() {
                 uid: "1",
                 name: "image.png",
                 status: "done",
-                url: record.profileImage,
+                url: record.profilePic,
             },
         ]);
     };
@@ -410,7 +417,6 @@ function UserList() {
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
     const [fileList, setFileList] = useState([]);
-   
 
     const beforeUpload = (file) => {
         const isJpgOrPng =
@@ -423,6 +429,25 @@ function UserList() {
             message.error("Image must smaller than 2MB!");
         }
         return isJpgOrPng && isLt2M;
+    };
+
+    const showDeleteConform = (id) => {
+        confirm({
+            centered: true,
+            title: "Are you sure?",
+            icon: <ExclamationCircleFilled />,
+            content: "Please confirm that you want to delete this salary",
+            okText: "Delete",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                handleDelete(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
     };
 
     const handleCancel = () => setPreviewOpen(false);
@@ -501,6 +526,8 @@ function UserList() {
         }
     };
 
+    // add user image upload
+
     const customRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
         formData.append("image", file);
@@ -540,6 +567,8 @@ function UserList() {
     const [selectedType, setSelectedType] = useState("all");
     const [filteredUserList, setFilteredUserList] = useState([]);
 
+    // search  user
+    const { Search, TextArea } = Input;
 
     useEffect(() => {
         let tempList = data;
@@ -567,6 +596,8 @@ function UserList() {
         console.log("userList", data);
         console.log("searchKey", searchKey);
         console.log("selectedType", selectedType);
+
+        fetchUserList();
     }, [searchKey, selectedType, data]);
 
     return (
@@ -606,7 +637,7 @@ function UserList() {
                 <div className="request_leave_model_body_container">
                     <div className="add_employee_top_container">
                         <div className="avatar-container">
-                        <Upload
+                            <Upload
                                 customRequest={customRequestEdit}
                                 listType="picture-circle"
                                 fileList={fileListEdit}
@@ -650,7 +681,7 @@ function UserList() {
                                     marginBottom: "3px",
                                 }}
                             >
-                                Leave Type
+                                User Type
                             </span>
                             <Select
                                 style={{
@@ -659,7 +690,6 @@ function UserList() {
                                 }}
                                 onChange={(value) => {
                                     setEditType(value);
-                                    console.log(value);
                                 }}
                                 value={editType}
                                 placeholder="Select"
@@ -1186,7 +1216,10 @@ function UserList() {
                             </Button>
                             <button
                                 className="add_emp_popup_footer_button"
-                                onClick={saveUser}
+                                onClick={() => {
+                                    saveUser();
+                                    setaddUserModelOpen(false); // Assuming this sets the modal to be closed
+                                }}
                                 style={{
                                     width: "120px",
                                     height: "40px",
