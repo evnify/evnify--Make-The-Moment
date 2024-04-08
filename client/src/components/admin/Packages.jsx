@@ -8,7 +8,8 @@ const { TextArea } = Input;
 function Packages() {
 
   const [packageList, setPackageList] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [inventories, setInventories] = useState([]);
   const [extras, setExtras] = useState([]);
   const [extrasData, setExtrasData] = useState("");
@@ -23,7 +24,6 @@ function Packages() {
     extras: [],
     contentImages: [],
   });
-
   useEffect(() => {
     // Update newPackageData whenever extras change
     setNewPackageData(prevData => ({
@@ -32,14 +32,39 @@ function Packages() {
     }));
   }, [extras]);
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const [editPackageData, setEditPackageData] = useState({
+    packageId: '',
+    packageType: '',
+    eventType: '',
+    price: '',
+    description: '',
+    baseImage: '',
+    inventories: [],
+    extras: [],
+    contentImages: [],
+  });
+
+
+  // Add modal functions
+  const showModalAdd = () => {
+    setIsAddModalOpen(true);
   };
-  const handleOk = () => {
-    setIsModalOpen(false);
+  const handleOkAdd = () => {
+    setIsAddModalOpen(false);
   };
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const handleCancelAdd = () => {
+    setIsAddModalOpen(false);
+  };
+
+  // Edit modal functions
+  const showModalEdit = () => {
+    setIsEditModalOpen(true);
+  };
+  const handleOkEdit = () => {
+    setIsEditModalOpen(false);
+  };
+  const handleCancelEdit = () => {
+    setIsEditModalOpen(false);
   };
   const handleChange = (value) => {
     console.log(`selected ${value}`);
@@ -74,6 +99,23 @@ function Packages() {
       }))
     }));
   };
+  const handleAddNewInventory = (value) => {
+    const existingInventory = editPackageData.inventories.find(inventory => inventory.itemType === value);
+    if (!existingInventory) {
+      const newInventory = { itemType: value, quantity: 1 };
+      setEditPackageData(prevData => ({
+        ...prevData,
+        inventories: [...prevData.inventories, newInventory]
+      }));
+    }
+  };
+
+  const handleEditInventoryQuantity = (index, newQuantity) => {
+    const updatedInventories = [...editPackageData.inventories];
+    updatedInventories[index].quantity = newQuantity;
+    setEditPackageData({ ...editPackageData, inventories: updatedInventories });
+  };
+
 
 
   // Create a new package
@@ -85,7 +127,7 @@ function Packages() {
       // Optionally, you can fetch all packages again to update the package list
       fetchAllPackages();
       message.success('New package added successfully');
-      setIsModalOpen(false);
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error('Error adding new package:', error);
       message.error('Failed to add new package');
@@ -140,7 +182,49 @@ function Packages() {
       message.error('Failed to delete inventory');
     }
   };
-  
+
+  //update package
+
+  // Function to fetch package details by ID
+  const fetchPackageById = async (packageId) => {
+    try {
+      const response = await axios.get(`/api/packages/getPackage/${packageId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching package details:', error);
+      throw new Error('Failed to fetch package details');
+    }
+  };
+  // Function to handle editing package
+  const handleEditPackage = async (packageId) => {
+    try {
+      const packageData = await fetchPackageById(packageId);
+      // Set editPackageData with fetched package details
+      setEditPackageData(packageData);
+      setIsEditModalOpen(true); // Open the Edit Package Modal
+      console.log('Edit Package Data:', packageData); // Logging edit package data
+
+    } catch (error) {
+      console.error('Error handling edit package:', error);
+      message.error('Failed to fetch package details');
+    }
+  };
+
+  const handleUpdatePackage = async () => {
+    try {
+      // Send a PUT request to update the package
+      const response = await axios.put(`/api/packages/updatePackage/${editPackageData._id}`, editPackageData);
+      console.log('Package updated:', response.data);
+      // Optionally, you can fetch all packages again to update the package list
+      fetchAllPackages();
+      message.success('Package updated successfully');
+      setIsEditModalOpen(false); // Close the Edit Package Modal
+    } catch (error) {
+      console.error('Error updating package:', error);
+      message.error('Failed to update package');
+    }
+  };
+
 
   // Package table columns
   const columns = [
@@ -178,9 +262,9 @@ function Packages() {
               background: "transparent",
             }}
           >
-            <Icon icon="mdi:delete" style={{margin:"0 10px 0 0"}} onClick={() => handleDeleteInventory(record._id)}/>
-            <Icon icon="mdi:pencil" style={{margin:"0 5px 0 5px"}} />
-            <Icon icon="mdi:download" style={{margin:"0 0 0 10px "}} />
+            <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeleteInventory(record._id)} />
+            <Icon icon="mdi:pencil" style={{ margin: "0 5px 0 5px" }} onClick={() => handleEditPackage(record._id)} />
+            <Icon icon="mdi:download" style={{ margin: "0 0 0 10px " }} />
           </button>
         </Space>
       ),
@@ -206,6 +290,34 @@ function Packages() {
     },
   };
 
+  // Function to remove an extra item from the edit package data
+  const handleRemoveEditExtra = (index) => {
+    const updatedExtras = [...editPackageData.extras];
+    updatedExtras.splice(index, 1);
+    setEditPackageData({ ...editPackageData, extras: updatedExtras });
+  };
+
+  // Function to handle editing an extra item in the edit package data
+  const handleEditExtra = (index, newValue) => {
+    const updatedExtras = [...editPackageData.extras];
+    updatedExtras[index] = newValue;
+    setEditPackageData({ ...editPackageData, extras: updatedExtras });
+  };
+  // Function to add a new extra item to the edit package data
+  const handleAddNewExtra = () => {
+    if (extrasData.trim() !== '') {
+      const updatedExtras = [...editPackageData.extras];
+      updatedExtras.push(extrasData);
+      setEditPackageData({ ...editPackageData, extras: updatedExtras });
+      setExtrasData('');
+    }
+  };
+
+  const handleRemoveInventory = (index) => {
+    const updatedInventories = [...editPackageData.inventories];
+    updatedInventories.splice(index, 1); // Remove the inventory at the specified index
+    setEditPackageData({ ...editPackageData, inventories: updatedInventories });
+  };
 
 
   const handelAddExtra = () => {
@@ -228,9 +340,9 @@ function Packages() {
           <div>
             <Modal
               title="Add New Package"
-              visible={isModalOpen}
+              visible={isAddModalOpen}
               onOk={handleAddPackage}
-              onCancel={handleCancel}
+              onCancel={handleCancelAdd}
               width={1100}
             >
               <div className='package-details-add-model'>
@@ -325,7 +437,7 @@ function Packages() {
                         width: "50px", height: "30px",
                         border: "none", borderRadius: "5px",
                         marginTop: "5px", background: "#533c56", color: "white", cursor: "pointer",
-                        marginLeft:"10px"
+                        marginLeft: "10px"
                       }}>
                         add
                       </button>
@@ -359,7 +471,7 @@ function Packages() {
               </div>
             </Modal>
 
-            <button onClick={showModal} style={{
+            <button onClick={showModalAdd} style={{
               width: "100px", height: "40px", border: "none",
               borderRadius: "5px", background: "#533c56", color: "white", cursor: "pointer",
               fontSize: "16px", marginLeft: "20px",
@@ -369,6 +481,159 @@ function Packages() {
           </div>
         </div>
         <div><Table columns={columns} dataSource={packageList} /></div>
+        <Modal
+          title="Edit Package"
+          visible={isEditModalOpen}
+          onOk={handleUpdatePackage}
+          onCancel={handleCancelEdit}
+          width={1100}
+        >
+          <div className='package-details-add-model'>
+            <div className='package-details-add-model-left'>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                Package Type
+                <Select
+                  defaultValue={editPackageData.packageType}
+                  style={{ width: 250 }}
+                  onChange={(value) => setEditPackageData({ ...editPackageData, packageType: value })}
+                  options={[
+                    { value: 'Basic', label: 'Basic' },
+                    { value: 'Standard', label: 'Standard' },
+                    { value: 'Premium', label: 'Premium' },
+                  ]}
+                />
+
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
+                  <Select
+                    defaultValue={editPackageData.eventType}
+                    style={{ width: 250 }}
+                    onChange={(value) => setEditPackageData({ ...editPackageData, eventType: value })}
+                    options={[
+                      { value: 'Wedding', label: 'Wedding' },
+                      { value: 'Get-Together', label: 'Get-Together' },
+                      { value: 'Birthday', label: 'Birthday' },
+                      { value: 'Bride To Be', label: 'Bride To Be' },
+                      { value: 'Farewell Party ', label: 'Farewell Party' },
+                      { value: 'Anniversary Party', label: 'Anniversary Party' },
+                    ]}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
+                  <Input
+                    placeholder="Enter price"
+                    style={{ width: "250px" }}
+                    value={editPackageData.price}
+                    onChange={(e) => setEditPackageData({ ...editPackageData, price: e.target.value })}
+                  />
+                </div>
+                {/* Display existing inventories and quantity inputs */}
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
+                  <Select
+                    showSearch
+                    
+                    style={{ width: 250 }}
+                    placeholder="Search Inventories"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                    filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                    onChange={handleAddNewInventory} // Use handleAddNewInventory function to add new inventories
+                    options={pkgData}
+                  />
+                  {/* Display selected inventories and quantity inputs */}
+                  {editPackageData.inventories.map((inventory, index) => (
+                    <div key={index} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                      <span style={{ marginLeft: "5px" }}>{inventory.itemType}</span>
+                      <span>
+                        <Input
+                          style={{ width: 100, marginLeft: "10px" }}
+                          value={inventory.quantity}
+                          onChange={(e) => handleEditInventoryQuantity(index, e.target.value)}
+                        />
+                        <button
+                          style={{ marginLeft: "10px", background: "transparent", border: "none", color: "#f00", cursor: "pointer" }}
+                          onClick={() => handleRemoveInventory(index)} // Call handleRemoveInventory function when the remove button is clicked
+                        >
+                          Remove
+                        </button>
+                      </span>
+                    </div>
+                  ))}
+
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
+                  <TextArea
+                    rows={4}
+                    style={{ width: "250px" }}
+                    value={editPackageData.description}
+                    onChange={(e) => setEditPackageData({ ...editPackageData, description: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
+                  <Input
+                    placeholder="Enter extras"
+                    style={{ width: "250px" }}
+                    value={extrasData} // Display the value from state
+                    onChange={(e) => setExtrasData(e.target.value)}
+                  />
+                  <button onClick={handleAddNewExtra} style={{
+                    width: "50px", height: "30px",
+                    border: "none", borderRadius: "5px",
+                    marginTop: "5px", background: "#533c56", color: "white", cursor: "pointer",
+                    marginLeft: "10px"
+                  }}>
+                    add
+                  </button>
+                  {editPackageData.extras.map((extra, index) => (
+                    <div key={index} style={{ display: "flex", alignItems: "center" }}>
+                      <Input
+                        style={{ width: "250px", border: "none", marginTop: "5px" }}
+                        value={extra}
+                        onChange={(e) => handleEditExtra(index, e.target.value)}
+                      />
+                      <button
+                        style={{
+                          marginLeft: "10px",
+                          background: "transparent",
+                          border: "none",
+                          color: "#f00",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => handleRemoveEditExtra(index)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                </div>
+
+              </div>
+              <div>
+              </div>
+            </div>
+            <div className='package-details-add-model-right'>
+              <p style={{ marginTop: "10px" }}>Package Image</p>
+              <div className='package-details-add-model-right-top'>
+                <Upload {...props}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </div>
+              <p >Package Content</p>
+              <div className='package-details-add-model-right-down'>
+                <Upload {...props}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </div>
+            </div>
+          </div>
+        </Modal>
+
       </div>
     </div>
   )

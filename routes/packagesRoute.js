@@ -149,5 +149,33 @@ router.post('/addPackage', async (req, res) => {
     }
     );
 
+    //get package by id
+    router.get('/getPackage/:id', async (req, res) => {
+        const packageId = req.params.id;
+        try {
+            const package = await Package.findById(packageId);
+            if (!package) {
+                return res.status(404).json({ message: "Package not found" });
+            }
+            res.json(package);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    });
+
+        // Update package route
+    router.put('/updatePackage/:packageId', async (req, res) => {
+        const packageId = req.params.packageId;
+        const updatedPackageData = req.body; // New package data
+    
+        try {
+        // Update the package in the database using the packageId
+        const updatedPackage = await Package.findByIdAndUpdate(packageId, updatedPackageData, { new: true });
+        res.status(200).json(updatedPackage);
+        } catch (error) {
+        console.error('Error updating package:', error);
+        res.status(500).json({ message: 'Failed to update package' });
+        }
+    });
 
 module.exports = router;
