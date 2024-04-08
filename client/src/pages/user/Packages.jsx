@@ -14,7 +14,7 @@ function Packages() {
     const customPackage = {
         _id: "custom",
         packageType: "Customize",
-        eventType: "Wedding",
+        eventType: `${category}`,
         description:
             "We offer an hourly rate and are adaptable to your needs. We truly value the importance of creating a warm atmosphere, especially for intimate cozy weddings!",
         baseImage:
@@ -27,7 +27,10 @@ function Packages() {
         ],
     };
 
+    console.log(customPackage);
+
     useEffect(() => {
+        console.log(category);
         async function getPackageData() {
             try {
                 const response = await axios.post(
@@ -73,28 +76,24 @@ function Packages() {
                 <div className="packageTypeContainer_72">
                     {selectedType
                         .filter((packages) => packages.eventType === category)
-                        .map(
-                            (packages) => (
-                                (
-                                    <div key={packages._id}>
-                                        <div
-                                            className="user_package_type_card_72"
-                                            style={{
-                                                backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(${packages.baseImage})`,
-                                            }}
-                                            onClick={() =>
-                                                handleImageClick(packages._id)
-                                            }
-                                        >
-                                            <h2>
-                                                {packages.packageType.toUpperCase()}
-                                            </h2>
-                                            <h2>PLAN</h2>
-                                        </div>
-                                    </div>
-                                )
-                            )
-                        )}
+                        .map((packages) => (
+                            <div key={packages._id}>
+                                <div
+                                    className="user_package_type_card_72"
+                                    style={{
+                                        backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(${packages.baseImage})`,
+                                    }}
+                                    onClick={() =>
+                                        handleImageClick(packages._id)
+                                    }
+                                >
+                                    <h2>
+                                        {packages.packageType.toUpperCase()}
+                                    </h2>
+                                    <h2>PLAN</h2>
+                                </div>
+                            </div>
+                        ))}
                 </div>
                 <hr style={{ width: "80%" }} />
                 {(selectedPackage &&
