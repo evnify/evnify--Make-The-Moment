@@ -8,13 +8,11 @@ import {
     Popconfirm,
     message,
     Image,
-    Input,
-    Space,
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-
+ 
 import axios from "axios";
 const baseURL = "http://localhost:5000/api/inventories";
 
