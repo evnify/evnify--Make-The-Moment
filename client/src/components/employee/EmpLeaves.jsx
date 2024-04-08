@@ -67,6 +67,25 @@ function EmpLeaves() {
         });
     };
 
+    const showEditConfirm = (id) => {
+        confirm({
+            centered: true,
+            title: "Are you sure?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Save",
+            okButtonProps: { color: "green" },
+            cancelText: "Cancel",
+            onOk() {
+                editLeaveRequest();
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
+
+
     const columns = [
         {
             title: "Leave ID",
@@ -400,7 +419,7 @@ function EmpLeaves() {
                         <Button
                             key="submit"
                             type="primary"
-                            onClick={editLeaveRequest}
+                            onClick={showEditConfirm}
                             style={{
                                 width: "120px",
                                 height: "40px",
