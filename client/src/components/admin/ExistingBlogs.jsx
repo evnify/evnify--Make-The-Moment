@@ -14,7 +14,7 @@ import {
     message,
 } from "antd";
 import { Icon } from "@iconify/react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import axios, { all } from "axios";
 const { Search, TextArea } = Input;
 
@@ -214,25 +214,33 @@ function ExistingBlogs() {
             dataIndex: "blogTitleDescription",
             key: "description",
             render: (text) => (
-                <p style={{ width: "250px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <p
+                    style={{
+                        width: "250px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                    }}
+                >
                     {text.length > 25 ? `${text.substring(0, 25)}...` : text}
                 </p>
-            )
-            
+            ),
         },
         {
             title: "",
             key: "action",
             render: (_, record) => (
                 <Space size="middle">
-                    <button className="admin_existing_blog_delete_btn">
-                        {" "}
-                        <Icon
-                            icon="bi:trash-fill"
-                            onClick={() => handleDelete(record._id)}
-                        />
-
-                        
+                    <button
+                        style={{
+                            fontSize: "20px",
+                            color: "#757171",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                        onClick={() => showDeleteConform(record._id)}
+                    >
+                        <Icon icon="material-symbols:delete-outline" />
                     </button>
                     <button
                         className="admin_existing_blog_edit_btn"
@@ -282,6 +290,7 @@ function ExistingBlogs() {
         console.log("selectedType", selectedType);
     }, [searchKey, selectedType, Blogs]);
 
+    const { confirm } = Modal;
 
     const handleDelete = async (id) => {
         try {
@@ -293,6 +302,24 @@ function ExistingBlogs() {
         }
     };
 
+    const showDeleteConform = (id) => {
+        confirm({
+            centered: true,
+            title: "Are you sure?",
+            icon: <ExclamationCircleFilled />,
+            content: "Please confirm that you want to delete this salary",
+            okText: "Delete",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                handleDelete(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
 
 
     return (
