@@ -26,11 +26,28 @@ function NavBarUser() {
 
     useEffect(() => {
         const fetchUserByID = async () => {
-            const user = JSON.parse(localStorage.getItem("currentUser"));
+            // Retrieve user from localStorage
+            const userJSON = localStorage.getItem("currentUser");
+    
+            // Check if user exists in localStorage
+            if (!userJSON) {
+                console.error("User not found in localStorage.");
+                return;
+            }
+    
+            // Parse user JSON
+            const user = JSON.parse(userJSON);
+    
+            // Check if user has a valid userID
+            if (!user || !user.userID) {
+                console.error("Invalid user object or userID not found.");
+                return;
+            }
+    
             const userID = { userID: user.userID };
-            console.log(userID);
-
+    
             try {
+                // Fetch user data by ID
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);
                 setFileList([
@@ -43,11 +60,13 @@ function NavBarUser() {
                 ]);
                 console.log(res.data);
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching user data:", error);
             }
         };
+    
         fetchUserByID();
     }, []);
+    
 
     function logout() {
         localStorage.removeItem("currentUser");

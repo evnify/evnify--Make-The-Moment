@@ -18,23 +18,11 @@ function UserProfile() {
 
     useEffect(() => {
         const fetchUserByID = async () => {
-            // Check if currentUser exists in localStorage
-            const currentUserString = localStorage.getItem("currentUser");
-            if (!currentUserString) {
-                console.error("currentUser does not exist in localStorage");
-                return; // Exit early if currentUser is not set
-            }
-    
-            // Parse currentUser JSON
-            const currentUser = JSON.parse(currentUserString);
-            if (!currentUser || !currentUser.userID) {
-                console.error("Invalid currentUser object:", currentUser);
-                return; // Exit early if currentUser or userID is not set
-            }
-    
-            // Proceed with fetching user data
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            const userID = { userID: user.userID };
+            console.log(userID);
+
             try {
-                const userID = { userID: currentUser.userID };
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);
                 setFileList([
@@ -50,10 +38,8 @@ function UserProfile() {
                 console.error(error);
             }
         };
-        
         fetchUserByID();
     }, []);
-    
 
     const beforeUpload = (file) => {
         const isJpgOrPng =

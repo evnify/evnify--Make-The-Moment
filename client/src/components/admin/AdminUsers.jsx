@@ -21,7 +21,6 @@ import axios from "axios";
 import Loader from "./Loader";
 import { Icon } from "@iconify/react";
 
-
 var index = 0;
 
 // searcj user
@@ -41,22 +40,6 @@ function UserList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        async function fetchUserList() {
-            try {
-                setLoading(true);
-                const response = await axios.get("/api/users/getUser");
-                setData(response.data);
-                console.log("Data fetched:", response.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchUserList();
-    }, []);
-
     const [userList, setUserList] = useState([]);
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -66,6 +49,7 @@ function UserList() {
 
     const conformSuspend = () => {
         setIsConformModalOpen(true);
+        fetchUserList();
     };
 
     const conformActive = () => {
@@ -75,14 +59,10 @@ function UserList() {
     async function handleDelete(userID) {
         try {
             const res = await axios.post("/api/users/deleteUser", { userID });
-            console.log("Server response: ", res.data);
-            if (res.status === 200) {
-                console.log("User deleted successfully");
-                // You can handle success message here
-            }
+            message.success("User deleted successfully");
+            fetchUserList();
         } catch (error) {
             console.log("Error deleting user: ", error);
-            // You can handle error message here
         }
     }
 
@@ -118,9 +98,9 @@ function UserList() {
     const [status, setStatus] = useState("Active");
     const [profilePic, setprofilePic] = useState("");
 
-    //Edit employee model use states
+    //Edit user model use states
     const [editAddress, setEditAddress] = useState("");
-    const [editType, setEditType] = useState("sick leave");
+    const [editType, setEditType] = useState("sick Type");
     const [editFirstName, setEditFirstName] = useState("");
     const [editLastName, setEditLastName] = useState("");
     const [editEmail, setEditEmail] = useState("");
@@ -134,8 +114,23 @@ function UserList() {
         const response = await axios.get(
             `${process.env.PUBLIC_URL}/api/users/getUser`
         );
-        setUserList(response.data);
+        setData(response.data);
     }
+
+    useEffect(() => {
+        const fetchUserList = async () => {
+            try {
+                const response = await axios.get("/api/users/getUser");
+                setUserList(response.data);
+            } catch (error) {
+                console.log("Error fetching user list: ", error);
+            }
+        };
+    }, [fetchUserList]);
+
+    useEffect(() => {
+        fetchUserList();
+    }, []);
 
     const saveUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -178,6 +173,9 @@ function UserList() {
 
         try {
             await axios.post("/api/users/addUser", userData);
+            message.success("User added successfully");
+            setaddUserModelOpen(false);
+            fetchUserList();
         } catch (error) {
             console.log(error);
         }
@@ -397,7 +395,7 @@ function UserList() {
                 uid: "1",
                 name: "image.png",
                 status: "done",
-                url: record.profileImage,
+                url: record.profilePic,
             },
         ]);
     };
@@ -410,7 +408,6 @@ function UserList() {
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
     const [fileList, setFileList] = useState([]);
-   
 
     const beforeUpload = (file) => {
         const isJpgOrPng =
@@ -540,7 +537,6 @@ function UserList() {
     const [selectedType, setSelectedType] = useState("all");
     const [filteredUserList, setFilteredUserList] = useState([]);
 
-
     useEffect(() => {
         let tempList = data;
 
@@ -603,10 +599,10 @@ function UserList() {
                 footer={null}
                 width={550}
             >
-                <div className="request_leave_model_body_container">
-                    <div className="add_employee_top_container">
+                <div className="add_user_model_body_container">
+                    <div className="add_user_top_container">
                         <div className="avatar-container">
-                        <Upload
+                            <Upload
                                 customRequest={customRequestEdit}
                                 listType="picture-circle"
                                 fileList={fileListEdit}
@@ -650,7 +646,7 @@ function UserList() {
                                     marginBottom: "3px",
                                 }}
                             >
-                                Leave Type
+                                User Type
                             </span>
                             <Select
                                 style={{
@@ -686,8 +682,8 @@ function UserList() {
                         </div>
                     </div>
 
-                    <div className="add_employee_popup_details_container">
-                        <div className="add_employee_popup_details_container_left">
+                    <div className="add_user_popup_details_container">
+                        <div className="add_user_popup_details_container_left">
                             <div
                                 style={{
                                     marginTop: "8px",
@@ -759,7 +755,7 @@ function UserList() {
                                 />
                             </div>
                         </div>
-                        <div className="add_employee_popup_details_container_left">
+                        <div className="add_user_popup_details_container_left">
                             <div
                                 style={{
                                     marginTop: "8px",
@@ -816,7 +812,7 @@ function UserList() {
                         </div>
                     </div>
 
-                    <div className="add_emp_address_container">
+                    <div className="add_user_address_container">
                         <span>Address</span>
                         <TextArea
                             style={{
@@ -855,7 +851,7 @@ function UserList() {
                         </button>
                     )}
                 </div>
-                <div className="add_emp_popup_footer_container center">
+                <div className="add_user_popup_footer_container center">
                     <Button
                         onClick={() => setTableModelOpen(false)}
                         style={{
@@ -867,7 +863,7 @@ function UserList() {
                         Cancel
                     </Button>
                     <button
-                        className="add_emp_popup_footer_button"
+                        className="add_user_popup_footer_button"
                         onClick={saveEditUser}
                         style={{
                             width: "120px",
@@ -885,8 +881,8 @@ function UserList() {
                     },
                 }}
             >
-                <div className="admin_emp_list_container">
-                    <div className="admin_emp_list_top_menu">
+                <div className="admin_user_list_container">
+                    <div className="admin_user_list_top_menu">
                         <div
                             style={{
                                 marginRight: "auto",
@@ -927,7 +923,7 @@ function UserList() {
                                 </Radio.Button>
                             </Radio.Group>
                             <button
-                                className="admin_emp_list_top_menu_button"
+                                className="admin_user_list_top_menu_button"
                                 onClick={() => setaddUserModelOpen(true)}
                             >
                                 <svg
@@ -955,8 +951,8 @@ function UserList() {
                         footer={null}
                         width={550}
                     >
-                        <div className="request_leave_model_body_container">
-                            <div className="add_employee_top_container">
+                        <div className="_user_model_body_container">
+                            <div className="add_user_top_container">
                                 <div className="avatar-container">
                                     <Upload
                                         customRequest={customRequest}
@@ -1034,8 +1030,8 @@ function UserList() {
                                 </div>
                             </div>
 
-                            <div className="add_employee_popup_details_container">
-                                <div className="add_employee_popup_details_container_left">
+                            <div className="add_user_popup_details_container">
+                                <div className="add_user_popup_details_container_left">
                                     <div
                                         style={{
                                             marginTop: "8px",
@@ -1104,7 +1100,7 @@ function UserList() {
                                         />
                                     </div>
                                 </div>
-                                <div className="add_employee_popup_details_container_left">
+                                <div className="add_user_popup_details_container_left">
                                     <div
                                         style={{
                                             marginTop: "8px",
@@ -1159,7 +1155,7 @@ function UserList() {
                                 </div>
                             </div>
 
-                            <div className="add_emp_address_container">
+                            <div className="add_user_address_container">
                                 <span>Address</span>
                                 <TextArea
                                     style={{
@@ -1173,7 +1169,7 @@ function UserList() {
                                 />
                             </div>
                         </div>
-                        <div className="add_emp_popup_footer_container center">
+                        <div className="add_user_popup_footer_container center">
                             <Button
                                 onClick={() => setaddUserModelOpen(false)}
                                 style={{
@@ -1185,8 +1181,10 @@ function UserList() {
                                 Cancel
                             </Button>
                             <button
-                                className="add_emp_popup_footer_button"
-                                onClick={saveUser}
+                                className="add_user_popup_footer_button"
+                                onClick={() => {
+                                    saveUser();
+                                }}
                                 style={{
                                     width: "120px",
                                     height: "40px",
