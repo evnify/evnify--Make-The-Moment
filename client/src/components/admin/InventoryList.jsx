@@ -25,7 +25,6 @@ function InventoryList() {
     const [editOpen, setEditOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [form] = Form.useForm();
-    
 
     useEffect(() => {
         fetchData();
@@ -46,7 +45,6 @@ function InventoryList() {
         form.setFieldsValue(record);
     };
 
-   
     const handleUpdate = async (id, newData) => {
         try {
             await axios.put(`/api/inventories/putInventories/${id}`, newData);
@@ -55,7 +53,9 @@ function InventoryList() {
             setEditOpen(false); // Close the edit modal
         } catch (error) {
             console.error("Error updating inventory:", error);
-            message.error("Failed to update inventory. Please try again later.");
+            message.error(
+                "Failed to update inventory. Please try again later."
+            );
         }
     };
 
@@ -97,6 +97,10 @@ function InventoryList() {
         {
             title: "Item ID",
             dataIndex: "itemID",
+        },
+        {
+            title: "Category",
+            dataIndex: "category",
         },
         {
             title: "Item Name",
@@ -169,6 +173,7 @@ function InventoryList() {
             "Color",
             "Item Type",
             "Status",
+            "category",
         ];
 
         // Extract data for selected items
@@ -183,6 +188,7 @@ function InventoryList() {
                     color,
                     itemType,
                     status,
+                    category,
                 }) => [
                     itemID,
                     itemName,
@@ -191,6 +197,7 @@ function InventoryList() {
                     color,
                     itemType,
                     status,
+                    category,
                 ]
             );
 
@@ -225,7 +232,7 @@ function InventoryList() {
                     <div className="inventory_total_card2">
                         <div className="inventory_total_card2_txt">
                             <h3>Low Stock Items</h3>
-                            <h2>1</h2>
+                            <h2>13</h2>
                         </div>
                     </div>
                 </div>

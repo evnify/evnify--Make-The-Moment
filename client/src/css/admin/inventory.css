@@ -28,23 +28,21 @@
 }
 .inventory_total_card1_txt{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans";
 }
 .inventory_total_card1_txt h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular" ;
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
+    font-weight: 400;
 }
 .inventory_total_card1_txt h2{
     font-size: 36px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+    font-weight: 400;
 }
 
 /* card2 */
@@ -68,23 +66,21 @@
 }
 .inventory_total_card2{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans Display-Regular";
 }
 .inventory_total_card2 h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
+    font-weight: 400;
 }
 .inventory_total_card2 h2{
     font-size: 36px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+    font-weight: 400;
 }
 
 /* card3 */
@@ -108,23 +104,21 @@
 }
 .inventory_total_card3{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans Display-Regular";
 }
 .inventory_total_card3 h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
+    font-weight: 400;
 }
 .inventory_total_card3 h2{
     font-size: 36px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+    font-weight: 400;
 }
 
 /* card4 */
@@ -145,28 +139,24 @@
 .inventory_total_card4_txt{
     margin-top: 25px;
     margin-left: 5px;
-    font-style: "Product Sans Display-Regular";
-
 }
 .inventory_total_card4{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans Display-Regular";
 }
 .inventory_total_card4 h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
+    font-weight: 400;
 }
 .inventory_total_card4 h2{
     font-size: 36px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+    font-weight: 400;
 }
 
 /* card5 */
@@ -187,28 +177,24 @@
 .inventory_total_card5_txt{
     margin-top: 25px;
     margin-left: 5px;
-    font-style: "Product Sans Display-Regular";
-
 }
 .inventory_total_card5{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
-    font-style: "Product Sans Display-Regular";
 }
 .inventory_total_card5 h3{
     font-size: 18px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: 10px;
     padding-left: 10px;
+    font-weight: 400;
 }
 .inventory_total_card5 h2{
     font-size: 36px;
-    font-family: "Product Sans Display-Regular";
     font-weight: 100;
     padding-top: auto;
     padding-left: 10px;
+    font-weight: 400;
 }
 
 /*add item button*/

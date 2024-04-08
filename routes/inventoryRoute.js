@@ -1,10 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const Inventory = require("../models/inventory");
+const UserModel = require("../models/user");
+
+const generateUniqueID = async () => {
+    let userID = 'U' + Math.floor(10000000 + Math.random() * 90000000);
+    const userId = await UserModel.findOne({ userID: userID });
+    if (userId) {
+        return generateUniqueID(userID); // Pass the userID as an argument
+    }
+    return userID;
+};
 
 // Create a new inventory item
 router.post("/addInventory", async (req, res) => {
     try {
+        const itemID = await generateUniqueID();
+        req.body.itemID = itemID;
         const newItem = await Inventory.create(req.body);
         res.status(201).json(newItem);
     } catch (error) {
