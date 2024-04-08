@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Space, Table, Modal, Select, Input, Upload, Button, message } from "antd";
-import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Icon } from "@iconify/react";
 import axios from "axios";
 const { TextArea } = Input;
+const { Search } = Input;
 
+// Define getBase64 function
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -35,6 +37,9 @@ function Packages() {
   const [contentImages, setContentImages] = useState([]);
   const [editBaseImageFileList, setEditBaseImageFileList] = useState([]);
 
+  const [searchMessages, setFilteredMessages] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const [newPackageData, setNewPackageData] = useState({
     packageType: '',
     eventType: '',
@@ -46,11 +51,11 @@ function Packages() {
     contentImages: [],
   });
   useEffect(() => {
-    // Update newPackageData whenever extras change
+    const updatedContentImages = images.slice(1, 6);
     setNewPackageData(prevData => ({
       ...prevData,
       extras: extras,
-      contentImages: images[1],
+      contentImages: updatedContentImages,
       baseImage: images[0],
     }));
   }, [extras, images]);
@@ -72,33 +77,13 @@ function Packages() {
   const showModalAdd = () => {
     setIsAddModalOpen(true);
   };
-  const handleOkAdd = () => {
-    setIsAddModalOpen(false);
-  };
   const handleCancelAdd = () => {
     setIsAddModalOpen(false);
   };
 
   // Edit modal functions
-  const showModalEdit = () => {
-    setIsEditModalOpen(true);
-  };
-  const handleOkEdit = () => {
-    setIsEditModalOpen(false);
-  };
   const handleCancelEdit = () => {
     setIsEditModalOpen(false);
-  };
-  // const handleChange = (value) => {
-  //   console.log(`selected ${value}`);
-  // };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewPackageData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
   };
 
   //upload images
@@ -128,14 +113,14 @@ function Packages() {
     formData.append("image", file);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+        "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f", //  API key for image upload
         formData
       )
       .then((response) => {
         if (response.data.data) {
           onSuccess();
           message.success("Image uploaded successfully");
-          setImages([...images, response.data.data.url]);
+          setImages([...images, response.data.data.url]); // imgbb API returns image URL
           console.log(images);
 
           setLoading(false);
@@ -166,19 +151,31 @@ function Packages() {
     setNewPackageData(prevData => ({
       ...prevData,
       inventories: values.map(value => ({
-        itemType: value,
+        id: value,
         quantity: updatedQuantities[value] // Set quantity as per user input or default to 2
       }))
     }));
   };
+
   const handleAddNewInventory = (value) => {
-    const existingInventory = editPackageData.inventories.find(inventory => inventory.itemType === value);
-    if (!existingInventory) {
-      const newInventory = { itemType: value, quantity: 1 };
-      setEditPackageData(prevData => ({
-        ...prevData,
-        inventories: [...prevData.inventories, newInventory]
-      }));
+    const selectedInventory = inventories.find(inventory => inventory.itemID === value);
+    if (selectedInventory) {
+      const existingIndex = newPackageData.inventories.findIndex(item => item.itemID === value);
+      if (existingIndex === -1) {
+        // Add the inventory with quantity 1
+        setNewPackageData(prevData => ({
+          ...prevData,
+          inventories: [...prevData.inventories, { itemID: value, id: selectedInventory.id, quantity: 1 }]
+        }));
+      } else {
+        // If inventory already exists, update its quantity
+        const updatedInventories = [...newPackageData.inventories];
+        updatedInventories[existingIndex].quantity += 1;
+        setNewPackageData(prevData => ({
+          ...prevData,
+          inventories: updatedInventories
+        }));
+      }
     }
   };
 
@@ -260,10 +257,12 @@ function Packages() {
   // Create Inventories Dropdown Data
   const pkgData = inventories.map((inventory) => {
     return {
-      value: inventory.itemName,
+      value: inventory.itemID,
       label: inventory.itemName,
+
     };
   });
+
 
   // Delete an package
   const handleDeletePackage = async (packageId) => {
@@ -433,6 +432,32 @@ function Packages() {
     console.log(extras);
   }
 
+  //search Filter
+
+  const handleSearch = (value) => {
+    // Convert search input to lowercase
+    const searchValue = value.toLowerCase();
+
+    // Filter messages based on search input (case-insensitive)
+    const filtered = packageList.filter(pkg =>
+      pkg.packageList.toLowerCase().includes(searchValue)
+    );
+
+    // Map the filtered messages to the items array format
+    const searchResultItems = filtered.map((pkg, index) => ({
+      label: pkg.packageList,
+      key: index.toString(),
+      name: pkg.packageId,
+
+    }));
+
+    // Set the filtered messages state
+    setIsSearching(true);
+    setFilteredMessages(searchResultItems);
+    console.log(searchMessages)
+  };
+
+
   return (
     <div>
       <div className='booking-package-insight-div'>
@@ -442,8 +467,16 @@ function Packages() {
 
       <div className='booking-package-details-change'>
         <div className='booking-package-details-change-top'>
-          <div>Search</div>
-          <div>Filter</div>
+          <div><Search
+            placeholder="input search text"
+            allowClear
+            onSearch={handleSearch}
+            style={{
+              width: 300,
+              margin: "5px 0 20px 0"
+            }}
+          /></div>
+          <div></div>
           <div>
             <Modal
               title="Add New Package"
@@ -474,11 +507,11 @@ function Packages() {
                         onChange={(value) => setNewPackageData({ ...newPackageData, eventType: value })}
                         options={[
                           { value: 'Wedding', label: 'Wedding' },
-                          { value: 'Get-Together', label: 'Get-Together' },
+                          { value: 'GetToGether', label: 'Get-Together' },
                           { value: 'Birthday', label: 'Birthday' },
-                          { value: 'Bride To Be', label: 'Bride To Be' },
-                          { value: 'Farewell Party ', label: 'Farewell Party' },
-                          { value: 'Anniversary Party', label: 'Anniversary Party' },
+                          { value: 'brideToBe', label: 'Bride To Be' },
+                          { value: 'Farewell', label: 'Farewell Party' },
+                          { value: 'Anniversary', label: 'Anniversary Party' },
                         ]}
                       />
                     </div>
@@ -504,26 +537,37 @@ function Packages() {
                         options={pkgData}
                       />
                       {/* Display selected inventories and quantity inputs */}
-                      {Object.entries(inventoryQuantities).map(([inventory, quantity]) => (
-                        <div key={inventory} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
-                          <span style={{ marginLeft: "5px" }}>{inventory}</span>
-                          <span><Input
-                            style={{ width: 100, marginLeft: "10px" }}
-                            value={quantity}
-                            onChange={(e) => {
-                              const updatedQuantities = { ...inventoryQuantities, [inventory]: e.target.value };
-                              setInventoryQuantities(updatedQuantities);
-                              setNewPackageData(prevData => ({
-                                ...prevData,
-                                inventories: Object.keys(updatedQuantities).map(itemType => ({
-                                  itemType,
-                                  quantity: updatedQuantities[itemType]
-                                }))
-                              }));
-                            }}
-                          /></span>
-                        </div>
-                      ))}
+                      {Object.entries(inventoryQuantities).map(([inventoryId, quantity]) => {
+                        // Find the inventory object from the inventories array based on its ID
+                        const inventory = inventories.find(inv => inv.itemID === inventoryId);
+                        if (inventory) {
+                          return (
+                            <div key={inventoryId} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                              <span style={{ marginLeft: "5px" }}>{inventory.itemName}</span>
+                              <span>
+                                <Input
+                                  style={{ width: 100, marginLeft: "10px" }}
+                                  value={quantity}
+                                  onChange={(e) => {
+                                    const updatedQuantities = { ...inventoryQuantities, [inventoryId]: e.target.value };
+                                    setInventoryQuantities(updatedQuantities);
+                                    setNewPackageData(prevData => ({
+                                      ...prevData,
+                                      inventories: Object.keys(updatedQuantities).map(itemType => ({
+                                        itemType,
+                                        quantity: updatedQuantities[itemType]
+                                      }))
+                                    }));
+                                  }}
+                                />
+                              </span>
+                            </div>
+                          );
+                        } else {
+                          return null; // Handle case where inventory is not found
+                        }
+                      })}
+
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
@@ -564,6 +608,7 @@ function Packages() {
                 <div className='package-details-add-model-right'>
                   <p style={{ marginTop: "10px" }}>Package Image</p>
                   <div className='package-details-add-model-right-top'>
+                    {/* base img*/}
                     <Upload
                       customRequest={customRequest}
                       listType="picture-card"
@@ -579,6 +624,7 @@ function Packages() {
                   </div>
                   <p >Package Content</p>
                   <div className='package-details-add-model-right-down'>
+                    {/* content img */}
                     <Upload
                       customRequest={customRequest}
                       listType="picture-card"
