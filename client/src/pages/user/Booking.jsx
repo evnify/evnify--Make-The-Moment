@@ -175,6 +175,9 @@ function Booking() {
 
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cart));
+        if (cart.length == 0) {
+            setBookingModal(false);
+        }
     }, [cart]);
 
     const addToCart = (product) => {
@@ -201,6 +204,31 @@ function Booking() {
             setCart([...cart, newItem]);
         }
         message.success("Item added to cart");
+    };
+
+    const handleChangeQty = (e, itemId) => {
+        if (e.target.value < 1) {
+            return message.error("Quantity cannot be less than 1");
+        }
+        const updatedCart = cart.map((item) =>
+            item.itemID === itemId
+                ? { ...item, addedQty: parseInt(e.target.value, 10) }
+                : item
+        );
+        setCart(updatedCart);
+    };
+
+    const calculateTotal = () => {
+        return cart.reduce(
+            (total, item) => total + item.unitPrice * item.addedQty,
+            0
+        );
+    };
+
+    const handleRemoveItem = (itemId) => {
+        const updatedCart = cart.filter((item) => item.itemID !== itemId);
+        setCart(updatedCart);
+        message.success("Item removed from cart");
     };
 
     //Carousel Functions
@@ -457,6 +485,7 @@ function Booking() {
                                             event.target.style.transform =
                                                 "scale(1)";
                                         }, 300);
+                                        setPreviewOpen(false);
                                     }}
                                 >
                                     <ShoppingCartOutlined
@@ -536,9 +565,24 @@ function Booking() {
                                                 <p>{item.unitPrice} LKR</p>
                                             </div>
                                             <div className="booking_cart_item_qty">
+                                                <button
+                                                    onClick={() =>
+                                                        handleRemoveItem(
+                                                            item.itemID
+                                                        )
+                                                    }
+                                                >
+                                                    <Icon icon="material-symbols:delete-outline" />
+                                                </button>
                                                 <input
                                                     type="number"
                                                     value={item.addedQty}
+                                                    onChange={(e) =>
+                                                        handleChangeQty(
+                                                            e,
+                                                            item.itemID
+                                                        )
+                                                    }
                                                 />
                                             </div>
                                             <hr />
@@ -547,7 +591,7 @@ function Booking() {
                                 </div>
                                 <div className="booking_cart_item_footer">
                                     <p>Subtotal({cart.length} Items)</p>
-                                    <h6>LKR 69500</h6>
+                                    <h6>LKR {calculateTotal()}</h6>
                                 </div>
                                 <button
                                     className="createBookingBtn_72 "
@@ -750,6 +794,15 @@ function Booking() {
                                         margin: "0 60px",
                                     }}
                                     className="center booking_cart_button"
+                                    onClick={() => {
+                                        if (cart.length === 0) {
+                                            return message.error(
+                                                "Please add items to the cart"
+                                            );
+                                        } else {
+                                            setBookingModal(true);
+                                        }
+                                    }}
                                 >
                                     <ShoppingCartOutlined />
                                 </button>
@@ -862,7 +915,15 @@ function Booking() {
                                 >
                                     <button
                                         className="createBookingBtn_72 "
-                                        onClick={() => setBookingModal(true)}
+                                        onClick={() => {
+                                            if (cart.length === 0) {
+                                                return message.error(
+                                                    "Please add items to the cart"
+                                                );
+                                            } else {
+                                                setBookingModal(true);
+                                            }
+                                        }}
                                     >
                                         CONTINUE TO CHECKOUT
                                     </button>
