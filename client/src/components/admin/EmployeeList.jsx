@@ -335,7 +335,6 @@ function EmployeeList() {
             message.success("Employee added successfully");
             setAddEmployeeModelOpen(false);
             fetchEmployeeList();
-
             // Reset form fields
             setAddress("");
             setDob(null);
@@ -351,8 +350,6 @@ function EmployeeList() {
             console.log(error);
         }
     };
-
-    const onSearch = (value) => console.log(value);
 
     // Image upload
     const [loading, setLoading] = useState(false);

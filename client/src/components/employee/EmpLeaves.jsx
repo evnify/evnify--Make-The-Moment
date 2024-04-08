@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Table, Radio, Input, Space, Tag } from "antd";
+import {
+    Table,
+    Radio,
+    Input,
+    Space,
+    Tag,
+    Select,
+    Modal,
+    DatePicker,
+    Button,
+    ConfigProvider,
+    message,
+} from "antd";
 import { Icon } from "@iconify/react";
+import moment from "moment";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 
-const { Search } = Input;
+const { Search, TextArea } = Input;
+const { confirm } = Modal;
 
 function EmpLeaves() {
     const [searchKey, setSearchKey] = useState("");
@@ -18,6 +33,38 @@ function EmpLeaves() {
 
     const handleTableChange = (pagination, filters, sorter) => {
         setPagination(pagination);
+    };
+
+    const deleteLeave = async (id) => {
+        try {
+            await axios.post(`${process.env.PUBLIC_URL}/api/leaves/deleteLeaveRequestByID`, {
+                leaveID: id,
+            });
+            message.success("Leave request deleted successfully");
+            fetchLeaves();
+        } catch (error) {
+            message.error("Something went wrong");
+            console.log(error);
+        }
+    };
+
+    const showDeclineConfirm = (id) => {
+        confirm({
+            centered: true,
+            title: "Decline this Leave?",
+            icon: <ExclamationCircleFilled />,
+            content: "This action cannot be undone.",
+            okText: "Decline",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                deleteLeave(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
     };
 
     const columns = [
@@ -77,7 +124,7 @@ function EmpLeaves() {
             key: "action",
             render: (_, record) => (
                 <Space size="middle">
-                    {record.status === "Pending" ? (
+                    {record.status.toLowerCase() === "pending" ? (
                         <>
                             <button
                                 style={{
@@ -86,6 +133,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => editModelOpen(record)}
                             >
                                 <Icon icon="tabler:edit" />
                             </button>
@@ -96,6 +144,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => showDeclineConfirm(record.leaveID)}
                             >
                                 <Icon icon="material-symbols:delete-outline" />
                             </button>
@@ -106,6 +155,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                disabled
                             >
                                 <Icon icon="mdi:download" />
                             </button>
@@ -119,6 +169,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                disabled
                             >
                                 <Icon icon="tabler:edit" />
                             </button>
@@ -129,6 +180,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                disabled
                             >
                                 <Icon icon="material-symbols:delete-outline" />
                             </button>
@@ -180,8 +232,185 @@ function EmpLeaves() {
         setFilteredLeaves(tempList);
     }, [searchKey, selectedType, leavesList]);
 
+    // Edit Leave Request
+    const [leaveModelOpen, setLeaveModelOpen] = useState(false);
+    const [leaveType, setLeaveType] = useState("");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [reason, setReason] = useState("");
+    const [leaveID, setLeaveID] = useState("");
+
+    const editModelOpen = (record) => {
+        console.log(record);
+        setLeaveType(record.leaveType);
+        setStartDate(record.startDate);
+        setEndDate(record.endDate);
+        setReason(record.reason);
+        setLeaveID(record.leaveID);
+        setLeaveModelOpen(true);
+    };
+
+    const onChangeFromDate = (date, dateString) => {
+        setStartDate(dateString);
+    };
+
+    const onChangeToDate = (date, dateString) => {
+        setEndDate(dateString);
+    };
+
+    const editLeaveRequest = async () => {
+        if (!leaveType || !startDate || !endDate || !reason) {
+            return message.error("Please fill all the fields");
+        } else if (startDate > endDate) {
+            return message.error("Start date should be less than end date");
+        } else if (startDate < new Date().toISOString().split("T")[0]) {
+            return message.error("Start date should be greater than today");
+        }
+        try {
+            const leave = {
+                leaveID,
+                leaveType,
+                startDate,
+                endDate,
+                reason,
+            };
+            await axios.post("/api/leaves/editLeaveRequestByID", leave);
+            message.success("Leave request submitted successfully");
+            setLeaveModelOpen(false);
+            setEndDate(null);
+            setStartDate(null);
+            setLeaveType("");
+            setReason("");
+            fetchLeaves();
+        } catch (error) {
+            message.error("Something went wrong");
+            console.log(error);
+        }
+    };
+
     return (
         <div>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Menu: {
+                            iconSize: "20px",
+                            itemHeight: "40px",
+                            subMenuItemBg: "#ffffff",
+                        },
+                        Button: {
+                            colorPrimary: "#4f46e5",
+                            colorPrimaryHover: "#3d36b2",
+                        },
+                    },
+                }}
+            >
+                <Modal
+                    title="Request for leave"
+                    centered
+                    open={leaveModelOpen}
+                    onOk={() => setLeaveModelOpen(false)}
+                    onCancel={() => setLeaveModelOpen(false)}
+                    footer={null}
+                >
+                    <div className="request_leave_model_body_container">
+                        <div style={{ marginTop: "10px" }}>
+                            <span style={{ marginRight: "60px" }}>
+                                Leave Type
+                            </span>
+                            <Select
+                                value={leaveType}
+                                style={{
+                                    width: 320,
+                                    height: 40,
+                                }}
+                                onChange={(value) => setLeaveType(value)}
+                                options={[
+                                    {
+                                        value: "Sick Leave",
+                                        label: "Sick Leave",
+                                    },
+                                    {
+                                        value: "Half Leave",
+                                        label: "Half Leave",
+                                    },
+                                    {
+                                        value: "Casual Leave",
+                                        label: "Casual Leave",
+                                    },
+                                ]}
+                            />
+                        </div>
+                        <div style={{ marginTop: "25px" }}>
+                            <span style={{ marginRight: "66px" }}>
+                                Start Date
+                            </span>
+                            <DatePicker
+                                style={{
+                                    width: 320,
+                                    height: 40,
+                                }}
+                                onChange={onChangeFromDate}
+                                value={startDate ? moment(startDate) : null}
+                            />
+                        </div>
+                        <div style={{ marginTop: "25px" }}>
+                            <span style={{ marginRight: "72px" }}>
+                                End Date
+                            </span>
+                            <DatePicker
+                                style={{
+                                    width: 320,
+                                    height: 40,
+                                }}
+                                onChange={onChangeToDate}
+                                value={endDate ? moment(endDate) : null}
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "25px",
+                                display: "flex",
+                                alignItems: "flex-start",
+                            }}
+                        >
+                            <span style={{ marginRight: "84px" }}>Reason</span>
+                            <TextArea
+                                style={{
+                                    width: 320,
+                                }}
+                                rows={6}
+                                value={reason}
+                                placeholder="Enter Reason for leave"
+                                onChange={(e) => setReason(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="leave_request_popup_footer_container center">
+                        <Button
+                            onClick={() => setLeaveModelOpen(false)}
+                            style={{
+                                width: "120px",
+                                height: "40px",
+                            }}
+                            danger
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            key="submit"
+                            type="primary"
+                            onClick={editLeaveRequest}
+                            style={{
+                                width: "120px",
+                                height: "40px",
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </div>
+                </Modal>
+            </ConfigProvider>
             <div className="admin_leave_request_container">
                 <div className="admin_leave_request_top_menu">
                     <div
