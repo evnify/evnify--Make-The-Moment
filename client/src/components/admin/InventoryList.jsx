@@ -216,7 +216,7 @@ function InventoryList() {
 
     // Search
 
-    const { Search } = Input;
+    const { Search,Input } = Input;
 
     const [searchKey, setSearchKey] = useState("");
     const [filteredUserList, setFilteredUserList] = useState([]);
