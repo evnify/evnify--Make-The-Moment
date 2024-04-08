@@ -12,7 +12,10 @@ import {
     message,
     ConfigProvider,
     Steps,
+    Radio,
 } from "antd";
+import Stripe from "stripe";
+import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
 import { Loader } from "../../components/admin";
@@ -399,6 +402,23 @@ function Booking() {
     const [bookingData, setBookingData] = useState([]);
     const [current, setCurrent] = useState(0);
 
+    const [clientSecret, setClientSecret] = useState('');
+
+    const stripe = Stripe(
+        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
+    );
+
+    const appearance = {
+        theme: "flat",
+        variables: { colorPrimaryText: "#262626" },
+    };
+    const options = {
+        /* options */
+    };
+    const elements = stripe.elements({ clientSecret, appearance });
+    const paymentElement = elements.create("payment", options);
+    paymentElement.mount("#payment-element");
+
     return (
         <div style={{ backgroundColor: "#efefef" }}>
             {/* image view */}
@@ -510,43 +530,167 @@ function Booking() {
                                 },
                             ]}
                         />
-                        <div className="booking_cart_item_container">
-                            <div style={{ marginRight: "230px" }}>
-                                <h4>Your Package</h4>
+                        {current == 0 ? (
+                            <div className="booking_cart_item_container">
+                                <div
+                                    style={{
+                                        marginRight: "230px",
+                                        marginTop: "30px",
+                                    }}
+                                >
+                                    <h4>Your Package</h4>
+                                </div>
+                                <div className="booking_cart_item">
+                                    {cart.map((item) => (
+                                        <div
+                                            className="booking_cart_item_body"
+                                            key={item.itemId}
+                                        >
+                                            <div className="booking_cart_item_image">
+                                                <img src={item.itemImage} />
+                                            </div>
+                                            <div className="booking_cart_item_description">
+                                                <h5>{item.itemName}</h5>
+                                                <p>{item.unitPrice} LKR</p>
+                                            </div>
+                                            <div className="booking_cart_item_qty">
+                                                <input
+                                                    type="number"
+                                                    value={item.addedQty}
+                                                />
+                                            </div>
+                                            <hr />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="booking_cart_item_footer">
+                                    <p>Subtotal({cart.length} Items)</p>
+                                    <h6>LKR 69500</h6>
+                                </div>
+                                <button
+                                    className="createBookingBtn_72 "
+                                    onClick={() => setCurrent(1)}
+                                >
+                                    CONTINUE TO CHECKOUT
+                                </button>
+                                <p>Please, get it now before it sells out.</p>
                             </div>
-                            <div className="booking_cart_item">
-                                {cart.map((item) => (
-                                    <div
-                                        className="booking_cart_item_body"
-                                        key={item.itemId}
-                                    >
-                                        <div className="booking_cart_item_image">
-                                            <img src={item.itemImage} />
-                                        </div>
-                                        <div className="booking_cart_item_description">
-                                            <h5>{item.itemName}</h5>
-                                            <p>{item.unitPrice} LKR</p>
-                                        </div>
-                                        <div className="booking_cart_item_qty">
-                                            <input type="number" value={item.addedQty} />
-                                        </div>
-                                        <hr />
+                        ) : current == 1 ? (
+                            <div className="booking_cart_item_container">
+                                <div className="booking_cart_billing_address_main">
+                                    <div className="booking_cart_billing_address">
+                                        <h4>Billing Address</h4>
                                     </div>
-                                    
-                                ))}
+                                    <div>
+                                        <button
+                                            className="add_new_address_Btn_72 "
+                                            onClick={() =>
+                                                setBookingModal(true)
+                                            }
+                                        >
+                                            Add New Address
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr className="billing_address_hr_tag" />
+                                <div className="billing_address_radio_section">
+                                    <Radio.Group>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Radio
+                                                value={1}
+                                                className="billing_address_radio_btn1"
+                                            >
+                                                <div>
+                                                    <div>
+                                                        {" "}
+                                                        <div className="billing_address_radio_btn1_txt1">
+                                                            <h5>
+                                                                Default Billing
+                                                                Address
+                                                            </h5>
+                                                        </div>
+                                                        <div className="billing_address_radio_btn1_txt2">
+                                                            <h5>Colombo</h5>
+                                                        </div>
+                                                        <div className="billing_address_radio_btn1_txt3">
+                                                            <h5>
+                                                                1800, New Kandy
+                                                                Road ,Malabe, SL
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Radio>
+
+                                            <Radio value={2}>
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        flexDirection: "row",
+                                                        gap: "20px",
+                                                    }}
+                                                >
+                                                    <div>
+                                                        {" "}
+                                                        <div className="billing_address_radio_btn1_txt1">
+                                                            <h5>
+                                                                Secondary
+                                                                Billing Address
+                                                            </h5>
+                                                        </div>
+                                                        <div className="billing_address_radio_btn1_txt2">
+                                                            <h5>Colombo</h5>
+                                                        </div>
+                                                        <div className="billing_address_radio_btn1_txt3">
+                                                            <h5>
+                                                                1800, New Kandy
+                                                                Road ,Malabe, SL
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                    <div className="billing_address_radio_btn1_txt4">
+                                                        <div className="billing_address_radio_btn1_delete_btn">
+                                                            <button
+                                                                style={{
+                                                                    border: "none",
+                                                                }}
+                                                            >
+                                                                <Icon icon="material-symbols:delete-outline" />
+                                                            </button>
+                                                        </div>
+                                                        <div className="billing_address_radio_btn1_edit_btn">
+                                                            <button
+                                                                style={{
+                                                                    border: "none",
+                                                                }}
+                                                            >
+                                                                <Icon icon="tabler:edit" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Radio>
+                                        </div>
+                                    </Radio.Group>
+                                </div>
+                                <di></di>
+                                <button
+                                    className="createBookingBtn_72 "
+                                    onClick={() => setCurrent(2)}
+                                >
+                                    CONTINUE TO CHECKOUT
+                                </button>
                             </div>
-                            <div className="booking_cart_item_footer">
-                                <p>Subtotal({cart.length} Items)</p>
-                                <h6>LKR 69500</h6>
+                        ) : (
+                            <div className="booking_cart_item_container">
+                                <div id="payment-element"></div>
                             </div>
-                            <button
-                                className="createBookingBtn_72 "
-                                onClick={() => setBookingModal(true)}
-                            >
-                                CONTINUE TO CHECKOUT
-                            </button>
-                            <p>Please, get it now before it sells out.</p>
-                        </div>
+                        )}
                     </div>
                 </Modal>
             </ConfigProvider>

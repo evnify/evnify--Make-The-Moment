@@ -256,7 +256,7 @@
 .booking_cart_item_container {
     display: flex;
     background-color: white;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
     flex-direction: column;
     height: 500px;
@@ -332,7 +332,7 @@
     font-weight: 300;
     line-height: 11.939px;
     letter-spacing: 0.995px;
-    width: 130px;
+    width: 270px;
 }
 .booking_cart_item_qty {
     display: flex;
@@ -340,7 +340,7 @@
     align-items: space-between;
     flex-direction: row;
     gap: 10px;
-    width: 290px;
+    width: 5px;
 }
 
 .booking_cart_item_qty input {
@@ -350,4 +350,84 @@
     border: 1px solid #363636;
     padding: 5px;
     margin-bottom: 20px;
+}
+.booking_cart_billing_address_main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 700px;
+    margin-top: 20px;
+}
+.booking_cart_billing_address {
+    margin-top: 10px;
+}
+.billing_address_hr_tag {
+    display: flex;
+    width: 700px;
+    margin-bottom: 10px;
+}
+.booking_cart_billing_address h4 {
+    color: var(--Gray-900, #161c24);
+    font-size: 19.013px;
+    font-weight: 700;
+}
+.add_new_address_Btn_72 {
+    border-radius: 11px;
+    background: #533c56;
+    display: flex;
+    width: 180px;
+    height: 50px;
+    padding: 12px 0px;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+.add_new_address_Btn_72:hover {
+    background: #3f2d41;
+}
+.billing_address_radio_btn1 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    border: none;
+    margin-bottom: 20px;
+}
+.billing_address_radio_section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px; 
+    width: 500px;
+}
+.billing_address_radio_btn1_txt1 h5 {
+    color: var(--Gray-900, #161c24);
+    font-size: 19.013px;
+    font-weight: 700;
+}
+.billing_address_radio_btn1_txt2 h5 {
+    color: var(--Gray-900, #161c24);
+    font-size: 16.636px;
+    font-weight: 500;
+}
+.billing_address_radio_btn1_txt3 h5 {
+    color: var(--Gray-600, #637381);
+    width: 260.595px;
+    font-size: 17.825px;
+    font-weight: 400;
+    line-height: 28.519px;
+}
+.billing_address_radio_btn1_txt4 {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 250.595px;
+}
+.billing_address_radio_btn1_txt5 h5{
+    color: var(--Gray-600, #637381);
+    font-size: 14.26px;
+    font-weight: 500;
+    line-height: normal;
+    text-decoration-line: underline;
+    margin-left: 30px;
 }
