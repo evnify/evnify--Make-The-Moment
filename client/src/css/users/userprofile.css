@@ -63,7 +63,6 @@
 .bg-image {
     display: flex;
     flex: space-between;
-    
 }
 
 .profile-info {
@@ -96,7 +95,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  
+    margin-top: -40PX;
     margin-left: 20px;
 }
 

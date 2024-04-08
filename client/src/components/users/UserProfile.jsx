@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Input, Select, Divider, Space } from "antd";
+import { Link } from "react-router-dom";
 const { Search, TextArea } = Input;
 
 function UserProfile() {
@@ -158,7 +159,7 @@ function UserProfile() {
     const customCoverRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
         formData.append("image", file);
-    
+
         axios
             .post(
                 "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
@@ -180,7 +181,6 @@ function UserProfile() {
                 message.error("Error uploading cover photo: " + error.message);
             });
     };
-    
 
     return (
         <div className="container">
@@ -193,20 +193,28 @@ function UserProfile() {
                                     src={coverPhoto}
                                     alt="Cover"
                                     style={{
-                                        width: "960px",
-                                        height: "150px",
+                                        width: "963px",
+                                        height: "152px",
+                                        arginTop: "0.3px",
+                                        marginLeft: "0.3px",
                                         objectFit: "cover",
+                                        borderTopLeftRadius: "8px",
+                                        borderTopRightRadius: "8px",
                                     }}
                                 />
                             ) : (
                                 <div
                                     style={{
-                                        width: "960px",
-                                        height: "150px",
+                                        marginTop: "0.3px",
+                                        marginLeft: "0.3px",
+                                        width: "963px",
+                                        height: "152px",
                                         backgroundColor: "#ccc",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        borderTopLeftRadius: "8px",
+                                        borderTopRightRadius: "8px",
                                     }}
                                 >
                                     <span>No cover photo selected</span>
@@ -217,7 +225,6 @@ function UserProfile() {
                             type="file"
                             id="upload"
                             accept="image/*"
-                        
                             style={{ display: "none" }}
                             customRequest={customCoverRequest}
                             onPreview={handlePreview}
@@ -282,7 +289,11 @@ function UserProfile() {
                         </span>
                     </p>
                 </div>
-                <button className="btn btn-primary edit">Edit Profile</button>
+                <Link to="/usersettings">
+                    <button className="btn btn-primary edit" style={{}}>
+                        Edit Profile
+                    </button>
+                </Link>
             </div>
 
             <div
@@ -292,6 +303,7 @@ function UserProfile() {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: "5px",
+                    marginBottom: "40px",
                 }}
             >
                 {/* First Name and Last Name */}
@@ -387,6 +399,7 @@ function UserProfile() {
                                 size="large"
                                 style={{ width: "340px", marginRight: "40px" }}
                                 value={user.userID}
+                                disabled
                             />
                         </div>
                     </div>
