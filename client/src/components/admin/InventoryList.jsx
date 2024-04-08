@@ -8,6 +8,8 @@ import {
     Popconfirm,
     message,
     Image,
+    Input,
+    Space
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
@@ -216,7 +218,7 @@ function InventoryList() {
 
     // Search
 
-    const { Search,Input } = Input;
+    const { Search } = Input;
 
     const [searchKey, setSearchKey] = useState("");
     const [filteredUserList, setFilteredUserList] = useState([]);
