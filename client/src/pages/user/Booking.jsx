@@ -13,6 +13,7 @@ import {
     ConfigProvider,
     Steps,
     Radio,
+    Cascader,
 } from "antd";
 import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
@@ -30,7 +31,140 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
-
+// add billing address
+const options = [
+    {
+        value: "Colombo",
+        label: "Colombo",
+        price: 200,
+    },
+    {
+        value: "Gampaha",
+        label: "Gampaha",
+        price: 250,
+    },
+    {
+        value: "Kalutara",
+        label: "Kalutara",
+        price: 300,
+    },
+    {
+        value: "Kandy",
+        label: "Kandy",
+        price: 350,
+    },
+    {
+        value: "Matale",
+        label: "Matale",
+        price: 350,
+    },
+    {
+        value: "Nuwara Eliya",
+        label: "Nuwara Eliya",
+        price: 400,
+    },
+    {
+        value: "Galle",
+        label: "Galle",
+        price: 400,
+    },
+    {
+        value: "Matara",
+        label: "Matara",
+        price: 450,
+    },
+    {
+        value: "Hambantota",
+        label: "Hambantota",
+        price: 500,
+    },
+    {
+        value: "Jaffna",
+        label: "Jaffna",
+        price: 600,
+    },
+    {
+        value: "Kilinochchi",
+        label: "Kilinochchi",
+        price: 650,
+    },
+    {
+        value: "Mannar",
+        label: "Mannar",
+        price: 650,
+    },
+    {
+        value: "Mullaitivu",
+        label: "Mullaitivu",
+        price: 650,
+    },
+    {
+        value: "Vavuniya",
+        label: "Vavuniya",
+        price: 650,
+    },
+    {
+        value: "Trincomalee",
+        label: "Trincomalee",
+        price: 550,
+    },
+    {
+        value: "Batticaloa",
+        label: "Batticaloa",
+        price: 600,
+    },
+    {
+        value: "Ampara",
+        label: "Ampara",
+        price: 600,
+    },
+    {
+        value: "Badulla",
+        label: "Badulla",
+        price: 450,
+    },
+    {
+        value: "Monaragala",
+        label: "Monaragala",
+        price: 500,
+    },
+    {
+        value: "Ratnapura",
+        label: "Ratnapura",
+        price: 350,
+    },
+    {
+        value: "Kegalle",
+        label: "Kegalle",
+        price: 300,
+    },
+    {
+        value: "Anuradhapura",
+        label: "Anuradhapura",
+        price: 500,
+    },
+    {
+        value: "Polonnaruwa",
+        label: "Polonnaruwa",
+        price: 550,
+    },
+    {
+        value: "Puttalam",
+        label: "Puttalam",
+        price: 400,
+    },
+    {
+        value: "Kurunegala",
+        label: "Kurunegala",
+        price: 300,
+    },
+];
+const filter = (inputValue, path) => {
+    return path.some(
+        (option) =>
+            option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+    );
+};
 // Main Component
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 function Booking() {
@@ -55,7 +189,7 @@ function Booking() {
             <Menu.Item key="plates">
                 <Checkbox>Plates</Checkbox>
             </Menu.Item>,
-            <Menu.Item key="wineGlasses">
+            <Menu.Item key="wineglasses">
                 <Checkbox>Wine Glasses</Checkbox>
             </Menu.Item>,
             <Menu.Item key="other">
@@ -412,7 +546,7 @@ function Booking() {
                     setCakeHolders((itm) => [...(itm || []), item]);
                 } else if (item[0].category.toLowerCase() === "plates") {
                     setPlates((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "wine glasses") {
+                } else if (item[0].category.toLowerCase() === "wineglasses") {
                     setWineGlasses((itm) => [...(itm || []), item]);
                 } else if (item[0].category.toLowerCase() === "other") {
                     setOther((itm) => [...(itm || []), item]);
@@ -520,15 +654,6 @@ function Booking() {
                     centered
                 >
                     <div className="booking_model_main_container">
-                        <ConfigProvider
-                            theme={{
-                                components: {
-                                    Modal: {
-                                        colorSuccess: "#4CAF50",
-                                    },
-                                },
-                            }}
-                        >
                             <Steps
                                 current={current}
                                 onChange={(current) => setCurrent(current)}
@@ -550,7 +675,6 @@ function Booking() {
                                     },
                                 ]}
                             />
-                        </ConfigProvider>
                         {current == 0 ? (
                             <div className="booking_cart_item_container">
                                 <div
@@ -694,6 +818,8 @@ function Booking() {
                                                             <button
                                                                 style={{
                                                                     border: "none",
+                                                                    background:"none",
+                                                                    marginRight: "10px",
                                                                 }}
                                                             >
                                                                 <Icon icon="material-symbols:delete-outline" />
@@ -703,6 +829,7 @@ function Booking() {
                                                             <button
                                                                 style={{
                                                                     border: "none",
+                                                                    background:"none",
                                                                 }}
                                                             >
                                                                 <Icon icon="tabler:edit" />
@@ -895,7 +1022,7 @@ function Booking() {
                                             </Checkbox>
                                         </div>
                                         <div className="center">
-                                            <button className="cancel_Package_72">
+                                            <button className="payment_confirm_btn_72">
                                                 Pay
                                             </button>
                                         </div>
@@ -906,6 +1033,238 @@ function Booking() {
                     </div>
                 </Modal>
             </ConfigProvider>
+            
+            {/* add Billing address model */}
+
+            {/* <Modal
+                centered
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                    fontSize: 24,
+                                    fontWeight: 700,
+                                }}
+                            >
+                                Billing Address
+                            </span>
+                            <span>
+                                Please provide the billing address with the
+                                credit card you’ve provided.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                    fontWeight: 900,
+                                }}
+                            >
+                                Country
+                            </span>
+                            <Input
+                                placeholder="Sri Lanka"
+                                size="large"
+                                onChange={(e) =>
+                                    setAddressData({
+                                        ...addressData,
+                                        country: e.target.value,
+                                    })
+                                }
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                    fontWeight: 900,
+                                }}
+                            >
+                                Address Line1
+                            </span>
+                            <Input
+                                placeholder="New Kandy Road"
+                                size="large"
+                                onChange={(e) =>
+                                    setAddressData({
+                                        ...addressData,
+                                        addressLine1: e.target.value,
+                                    })
+                                }
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                    fontWeight: 900,
+                                }}
+                            >
+                                Address Line2
+                            </span>
+                            <Input
+                                placeholder="Address Line 2"
+                                size="large"
+                                onChange={(e) =>
+                                    setAddressData({
+                                        ...addressData,
+                                        addressLine2: e.target.value,
+                                    })
+                                }
+                            />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginBottom: "3px",
+                                    fontSize: "12px",
+                                    fontWeight: 900,
+                                }}
+                            >
+                                Disctrict
+                            </span>
+
+                            <Cascader
+                                options={options}
+                                onChange={(value) => {
+                                    setAddressData({
+                                        ...addressData,
+                                        district: value,
+                                    });
+                                    console.log(value);
+                                }}
+                                placeholder="Please select"
+                                showSearch={{ filter }}
+                                onSearch={(value) => console.log(value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="Add_Address_popup_container">
+                        <div className="add_employee_popup_details_container_right">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                        fontWeight: 900,
+                                    }}
+                                >
+                                    City
+                                    <Input
+                                        placeholder="Malabe"
+                                        size="large"
+                                        onChange={(e) =>
+                                            setAddressData({
+                                                ...addressData,
+                                                city: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </span>
+                            </div>
+                        </div>
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                        fontWeight: 900,
+                                    }}
+                                >
+                                    Postal Code
+                                </span>
+                                <Input
+                                    placeholder="000000"
+                                    type="number"
+                                    size="large"
+                                    onChange={(e) =>
+                                        setAddressData({
+                                            ...addressData,
+                                            postalCode: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span
+                            style={{
+                                marginTop: "3px",
+                            }}
+                        >
+                            <Checkbox>
+                                Make this as my default payment method
+                            </Checkbox>
+                        </span>
+                    </div>
+                </div>
+                <div className=" center">
+                    <button
+                        className="saveAddressBtn_72"
+                        onClick={saveAddressData}
+                    >
+                        Save Address
+                    </button>
+                </div>
+            </Modal> */}
 
             {loading ? (
                 <div className="center" style={{ height: "100vh" }}>
