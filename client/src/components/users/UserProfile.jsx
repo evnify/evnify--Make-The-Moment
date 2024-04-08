@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Upload, message, Modal } from "antd";
+import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Input, Select, Divider, Space } from "antd";
@@ -14,12 +15,10 @@ function UserProfile() {
     const [profileImage, setProfileImage] = useState();
     const [user, setUser] = useState({});
 
-
-
     useEffect(() => {
         const fetchUserByID = async () => {
             const user = JSON.parse(localStorage.getItem("currentUser"));
-            const userID = {	userID: user.userID	};
+            const userID = { userID: user.userID };
             console.log(userID);
 
             try {
@@ -143,10 +142,104 @@ function UserProfile() {
             });
     };
 
+    const [coverPhoto, setCoverPhoto] = useState(null);
+
+    const handleUpload = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCoverPhoto(reader.result);
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const customCoverRequest = ({ file, onSuccess, onError }) => {
+        const formData = new FormData();
+        formData.append("image", file);
+    
+        axios
+            .post(
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                formData
+            )
+            .then((response) => {
+                if (response.data.data) {
+                    onSuccess();
+                    message.success("Cover photo uploaded successfully");
+                    setCoverPhoto(response.data.data.url);
+                    console.log("Cover photo URL:", response.data.data.url);
+                } else {
+                    onError();
+                    message.error("Failed to upload cover photo");
+                }
+            })
+            .catch((error) => {
+                onError();
+                message.error("Error uploading cover photo: " + error.message);
+            });
+    };
+    
+
     return (
         <div className="container">
             <div className="bg-image ">
                 <div className="profile-card">
+                    <div style={{ position: "relative" }}>
+                        <label htmlFor="upload" style={{ cursor: "pointer" }}>
+                            {coverPhoto ? (
+                                <img
+                                    src={coverPhoto}
+                                    alt="Cover"
+                                    style={{
+                                        width: "960px",
+                                        height: "150px",
+                                        objectFit: "cover",
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    style={{
+                                        width: "960px",
+                                        height: "150px",
+                                        backgroundColor: "#ccc",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <span>No cover photo selected</span>
+                                </div>
+                            )}
+                        </label>
+                        <input
+                            type="file"
+                            id="upload"
+                            accept="image/*"
+                        
+                            style={{ display: "none" }}
+                            customRequest={customCoverRequest}
+                            onPreview={handlePreview}
+                        />
+                        <button
+                            style={{
+                                position: "absolute",
+                                bottom: "10px",
+                                right: "10px",
+                                padding: "8px 16px",
+                                backgroundColor: "#007bff",
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                onclick: "handleUpload",
+                            }}
+                        >
+                            <Icon icon="uil:trash-alt" />
+                        </button>
+                    </div>
+
                     <div className="avatarImg-container">
                         <Upload
                             customRequest={customRequest}
@@ -380,8 +473,6 @@ function UserProfile() {
                                 style={{
                                     marginBottom: "3px",
                                     fontSize: "12px",
-
-                                    
                                 }}
                             >
                                 City
@@ -483,7 +574,6 @@ function UserProfile() {
                             <Input
                                 size="large"
                                 style={{ width: "340px", marginRight: "40px" }}
-                                
                             />
                         </div>
                     </div>

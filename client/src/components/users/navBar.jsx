@@ -13,6 +13,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import Logo from "../../assets/Logo/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -20,8 +21,34 @@ const { useBreakpoint } = Grid;
 function NavBarUser() {
     const { token } = useToken();
     const screens = useBreakpoint();
+    const [user, setUser] = useState(null);
+    const [fileList, setFileList] = useState([]);
 
-    const user = JSON.parse(localStorage.getItem("currentUser"));
+    useEffect(() => {
+        const fetchUserByID = async () => {
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            const userID = { userID: user.userID };
+            console.log(userID);
+
+            try {
+                const res = await axios.post("/api/users/getUserById", userID);
+                setUser(res.data);
+                setFileList([
+                    {
+                        uid: "1",
+                        name: "image.png",
+                        status: "done",
+                        url: res.data.profilePic,
+                    },
+                ]);
+                console.log(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchUserByID();
+    }, []);
+
     function logout() {
         localStorage.removeItem("currentUser");
         window.location.href = "/login";

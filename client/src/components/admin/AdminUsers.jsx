@@ -128,10 +128,6 @@ function UserList() {
         setUserList(response.data);
     }
 
-    useEffect(() => {
-        fetchUserList();
-    }, []);
-
     // add user
     const saveUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -157,7 +153,6 @@ function UserList() {
             setprofilePic(
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
             );
-            console.log(profilePic);
         }
 
         const userData = {
@@ -175,8 +170,8 @@ function UserList() {
         try {
             await axios.post("/api/users/addUser", userData);
             message.success("User added successfully");
-            setaddUserModelOpen(false);
             fetchUserList();
+            setaddUserModelOpen(false);
         } catch (error) {
             console.log(error);
             message.error("Failed to add user");
@@ -206,7 +201,7 @@ function UserList() {
                         },
                     ]);
                     setEditProfilePic(response.data.data.url);
-                    console.log(profilePic);
+
                     setLoading(false);
                 } else {
                     onError();
@@ -223,7 +218,7 @@ function UserList() {
 
     const saveEditUser = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+    
         if (
             !editAddress ||
             !editType ||
@@ -239,7 +234,7 @@ function UserList() {
         } else if (!emailRegex.test(editEmail)) {
             return message.error("Please enter a valid email address");
         }
-
+    
         if (!editProfilePic || editProfilePic.trim() === "") {
             // Set default profile image
             setprofilePic(
@@ -248,10 +243,10 @@ function UserList() {
         } else {
             console.log("Profile image already set:", editProfilePic);
         }
-
+    
         const userData = {
             address1: editAddress,
-            type: editType,
+            userType: editType,
             firstName: editFirstName,
             lastName: editLastName,
             email: editEmail,
@@ -262,23 +257,21 @@ function UserList() {
             status: editStatus,
             _id: tableModelContent._id,
         };
-
-        console.log(userData);
-
+    
         try {
             await axios.post(
                 `${process.env.PUBLIC_URL}/api/users/editUser`,
                 userData
             );
-            fetchUserList();
-
+    
             message.success("User edit successfully");
             setTableModelOpen(false);
-            fetchUserList();
+            fetchUserList(); // Fetch updated user list
         } catch (error) {
             console.log(error);
         }
     };
+    
 
     //table colum
 
@@ -436,7 +429,7 @@ function UserList() {
             centered: true,
             title: "Are you sure?",
             icon: <ExclamationCircleFilled />,
-            content: "Please confirm that you want to delete this salary",
+            content: "Please confirm that you want to delete this user",
             okText: "Delete",
             okType: "danger",
             cancelText: "Cancel",
@@ -447,6 +440,7 @@ function UserList() {
                 console.log("Cancel");
             },
             width: 350,
+            
         });
     };
 
