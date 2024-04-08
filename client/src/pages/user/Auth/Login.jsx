@@ -43,6 +43,7 @@ const Login = () => {
                 setLoading(false);
 
                 const userData = response.data;
+                
 
                 if (userData.userType === "Admin") {
                     navigate("/admin/*");
