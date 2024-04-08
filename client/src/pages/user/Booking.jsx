@@ -8,6 +8,7 @@ import {
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { Tag, Carousel, Button } from "primereact";
+import { BookingSteps } from "../../components/users";
 const { Search } = Input;
 const onChange = (date, dateString) => {
   console.log(date, dateString);

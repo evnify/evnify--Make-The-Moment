@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Space ,ConfigProvider,Modal} from "antd";
+import { Table, Tag, Space, ConfigProvider, Modal } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
-
+import Stripe from "./Stripe";
+import AddBillingAddress from "./AddBillingAddress";
 
 function Booking() {
   const [bookingList, setBookingList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedBookingData, setSelectedBookingData] = useState(null)
+  const [selectedBookingData, setSelectedBookingData] = useState(null);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -20,7 +21,7 @@ function Booking() {
     };
     fetchBookings();
   }, []);
-  
+
   const handleCancel = () => {
     setIsModalOpen(false);
     setSelectedBookingData(null);
@@ -29,24 +30,15 @@ function Booking() {
     pageSize: 10,
     current: 1,
     position: ["bottomCenter"],
-});
-const handleTableChange = (pagination, filters, sorter) => {
-  setPagination(pagination);
-};
+  });
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPagination(pagination);
+  };
 
-const handleViewClick = async (record) => {
-  if (record && record.id) {
-    try {
-      const response = await axios.get(`/api/getBookingsById/${record.id}`);
-      setSelectedBookingData(response.data);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.log("Error fetching booking details:", error);
-    }
-  } else {
-    console.error("Invalid record:", record);
-  }
-};
+  const handleViewClick = async (record) => {
+    setSelectedBookingData(record);
+    setIsModalOpen(true);
+  };
 
   const columns = [
     {
@@ -109,8 +101,7 @@ const handleViewClick = async (record) => {
               fontWeight: 500,
               borderRadius: "5px",
             }}
-            onClick={() => record && handleViewClick(record)}
-
+            onClick={() => handleViewClick(record)}
           >
             View
           </button>
@@ -136,6 +127,8 @@ const handleViewClick = async (record) => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <Stripe />
+      <AddBillingAddress />
       <ConfigProvider
         theme={{
           components: {
@@ -148,256 +141,79 @@ const handleViewClick = async (record) => {
           onCancel={handleCancel}
           open={isModalOpen}
           // onOk={() => setBookingList(false)}
-        
+
           footer={null}
           width={715}
-          
         >
           {selectedBookingData && (
             <>
-          <span>Package Includes</span>
-          <hr />
-          <div className="Package_includes_view_72">
-            <div className="Add_Address_popup_container">
-              <div className="add_employee_popup_details_container_right">
-                <div className="right">
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      Event Type
-                    </span>
+              <span>Package Includes</span>
+              <hr />
+              <div className="Package_includes_main_section_72">
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div className="package_includes_left_container">
+                    <span>Event Type</span>
+                    <span>Package Type</span>
+                    <span>Event Date</span>
+                    <span>Trasaction Completed On</span>
                   </div>
-
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      Package Type
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      Event Date
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <span
-                      style={{
-                        marginBottom: "3px",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                      }}
-                    >
-                      Trasaction Completed On
-                    </span>
+                  <div className="package_includes_right_container">
+                    <span>{selectedBookingData.eventType}</span>
+                    <span>{selectedBookingData.packageType}</span>
+                    <span>{selectedBookingData.eventDate}</span>
+                    <span>{selectedBookingData.createdAt}</span>
                   </div>
                 </div>
-              </div>
-              <div className="add_employee_popup_details_container_left">
-                <div>
-                  
-                    <div>
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            marginBottom: "3px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                          }}
-                        >
-                         {selectedBookingData.eventType}
-                        </span>
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            marginBottom: "3px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                          }}
-                        >
-                          {selectedBookingData.packageType}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            marginBottom: "3px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                          }}
-                        >
-                          {selectedBookingData.eventDate}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          display: "flex",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <span
-                          style={{
-                            marginBottom: "3px",
-                            fontSize: "12px",
-                            fontWeight: 900,
-                          }}
-                        >
-                         {selectedBookingData.createdAt}
-                        </span>
-                      </div>
+                <hr style={{ borderWidth: "2px", borderColor: "#000" }} />
+                <span className="package_includes_txt_section">Package Includes</span>
+                <div className="Add_Address_popup_quntity_container">
+                  <div className="add_employee_popup_container_left">
+                    <span>Item Name</span>
+                    <span>
+                      I-RFAQK Melamine Cake Stand 9 I-Black-Versatile Cake
+                      Stand 
+                    </span>
+                    <span>
+                      I-RFAQK Melamine Cake Stand 9 I-Black-Versatile Cake
+                      Stand 
+                    </span>
+                    <span>
+                      I-RFAQK Melamine Cake Stand 9 I-Black-Versatile Cake
+                      Stand 
+                    </span>
+                  </div>
+                  <div className="add_employee_popup_container_right">
+                    <span>Quantity</span>
+                    <span>2</span>
+                    <span>2</span>
+                    <span>2</span>
+                  </div>
+                </div>
+                <hr style={{ borderWidth: "2px", borderColor: "#000" }} />
+                <div className="Add_Address_popup_container">
+                  <div className="add_employee_popup_details_container_right">
+                    <div className="add_quntity_price_section">
+                      <span>Total Amount</span>
+                      <span>LKR 25000</span>
                     </div>
-                  
+                    <div className="add_quntity_price_btn_section">
+                      <button className="cancel_Package_72 " >
+                        Cancel Booking
+                      </button>
+                      <button className="saveAddressBtn_72 ">
+                        Update Booking
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <hr />
-            <span>Package Includes</span>
-            <div className="Add_Address_popup_container">
-              <div className="add_employee_popup_details_container_right">
-                <div
-                  style={{
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span
-                    style={{
-                      marginBottom: "3px",
-                      fontSize: "12px",
-                      fontWeight: 900,
-                    }}
-                  >
-                    Item Name
-                  </span>
-                </div>
-              </div>
-              <div className="add_employee_popup_details_container_left">
-                <div
-                  style={{
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span
-                    style={{
-                      marginBottom: "3px",
-                      fontSize: "12px",
-                      fontWeight: 900,
-                    }}
-                  >
-                    Quantity
-                  </span>
-                </div>
-              </div>
-            </div>
-            <hr />
-            <div className="Add_Address_popup_container">
-              <div className="add_employee_popup_details_container_right">
-                <div
-                  style={{
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span
-                    style={{
-                      marginBottom: "3px",
-                      fontSize: "12px",
-                      fontWeight: 900,
-                    }}
-                  >
-                    Total Amount
-                  </span>
-                </div>
-                <button className="cancel_Package_72 ">Cancel Booking</button>
-              </div>
-
-              <div className="add_employee_popup_details_container_left">
-                <div
-                  style={{
-                    marginTop: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <span
-                    style={{
-                      marginBottom: "3px",
-                      fontSize: "12px",
-                      fontWeight: 900,
-                    }}
-                  >
-                    {/** Item price here */}hi
-                  </span>
-                  <button className="saveAddressBtn_72 ">Update Booking</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          </>
+            </>
           )}
         </Modal>
       </ConfigProvider>

@@ -6,8 +6,9 @@ import {
     Space,
     Button,
 } from "antd";
-import { ExclamationCircleFilled } from "@ant-design/icons";
 import { DeleteOutlined,ExclamationCircleOutlined  } from "@ant-design/icons";
+
+import BookingSteps from "../users/BookingSteps";
 
 import axios from "axios";
 
@@ -49,10 +50,12 @@ function Booking() {
     });
 
     const fetchBookings = async () => {
-        const bookingData = await axios.get(
-          "/api/bookings/getAllBookings"
-        );
-        setBookingList(bookingData.data);
+      try {
+        const response = await axios.get(`/api/bookings/getAllBookings`);
+        setBookingList(response.data);
+      } catch (error) {
+        console.log("Error fetching bookings:", error);
+      }
     };
 
     useEffect(() => {
@@ -84,11 +87,7 @@ function Booking() {
         dataIndex: "eventType",
         key: "eventType",
       },
-      {
-        title: "Event Location",
-        dataIndex: "eventLocation",
-        key: "eventLocation",
-      },
+      
       {
         title: "Event Date",
         dataIndex: "eventDate",
@@ -144,7 +143,6 @@ function Booking() {
               onClick={() => handleDeleteConfirmation(record._id)}
               icon={<DeleteOutlined />}
             >
-
             </Button>
           </Space>
         ),
@@ -160,6 +158,7 @@ function Booking() {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
+                      <BookingSteps/>
                         <Table
                             columns={columns}
                             dataSource={bookingList}
