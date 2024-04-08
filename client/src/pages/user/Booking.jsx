@@ -3,6 +3,7 @@ import { Input } from "antd";
 import { Navbar, Footer } from "../../components";
 import { useParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+import moment from "moment";
 import {
     Checkbox,
     Menu,
@@ -19,6 +20,7 @@ import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
 import { Loader } from "../../components/admin";
+import { set } from "mongoose";
 const { Search } = Input;
 
 // Side Menu
@@ -454,7 +456,6 @@ function Booking() {
                 console.error(error);
             }
         };
-
         fetchBookingDetails();
     }, [id]);
 
@@ -609,6 +610,75 @@ function Booking() {
             });
         }
     };
+
+    //Save booking
+    const [email, setEmail] = useState("");
+    const [cardNumber, setCardNumber] = useState("");
+    const [expDate, setExpDate] = useState("");
+    const [cvc, setCvc] = useState("");
+    const [nameOnCard, setNameOnCard] = useState("");
+    const [zip, setZip] = useState("");
+
+    const saveBooking = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (email === "" || cardNumber === "" || expDate === "" || cvc === "" || nameOnCard === "" || zip === "") {
+            message.error("Please fill all the fields");
+            return;
+        }else if (cart.length === 0) {
+            message.error("Please add items to the cart");
+            return;
+        } else if (date === null) {
+            message.error("Please select a date");
+            return;
+        }else if (!emailRegex.test(email)) {
+            message.error("Invalid email address");
+            return;
+        }
+
+        try {
+            axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/saveBooking`,
+                {
+                    customerID : userId,
+                    transactionID : "1234",
+                    eventType : selectedPackage[0].eventType,
+                    packageType : selectedPackage[0].packageType,
+                    eventLocation : [addressData],
+                    eventDate : date,
+                    amount : calculateTotal() + selectedPackage[0].price,
+                    status : "Pending",
+                    AssignedInventory : cart,
+                    AssignedEmployees : [],
+                }
+            );
+            axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/savePayment`,
+                {
+                    transactionID : "1234",
+                    customerID : userId,
+                    customerEmail : email,
+                    packageType : selectedPackage[0].packageType,
+                    amount : calculateTotal() + selectedPackage[0].price,
+                    paymentType : "Card",
+                    description : "Booking Payment",
+                }
+            )
+            message.success("Booking saved successfully");
+            setBookingModal(false);
+            setEmail("");
+            setCardNumber("");
+            setExpDate("");
+            setCvc("");
+            setNameOnCard("");
+            setZip("");
+            setCart([]);
+            setDate(null);
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving booking");
+        }
+    }
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -959,6 +1029,7 @@ function Booking() {
                                                 type="email"
                                                 placeholder="Email"
                                                 size="large"
+                                                onChange={(e) => setEmail(e.target.value)}
                                                 style={{
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
@@ -989,6 +1060,7 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
+                                                onChange={(e) => setCardNumber(e.target.value)}
                                             />
                                         </div>
                                         <div
@@ -1005,6 +1077,7 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
+                                                onChange={(e) => setExpDate(e.target.value)}
                                             />
 
                                             <Input
@@ -1015,6 +1088,7 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
+                                                onChange={(e) => setCvc(e.target.value)}
                                             />
                                         </div>
                                         <div
@@ -1040,6 +1114,7 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
+                                                onChange={(e) => setNameOnCard(e.target.value)}
                                             />
                                         </div>
                                         <div
@@ -1067,6 +1142,7 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
+                                                onChange={(e) => setZip(e.target.value)}
                                             />
                                         </div>
                                         <div
@@ -1082,7 +1158,8 @@ function Booking() {
                                             </Checkbox>
                                         </div>
                                         <div className="center">
-                                            <button className="payment_confirm_btn_72">
+                                            <button className="payment_confirm_btn_72"
+                                            onClick={saveBooking}>
                                                 Pay
                                             </button>
                                         </div>
@@ -1379,6 +1456,7 @@ function Booking() {
                                 onChange={(date, dateString) =>
                                     setDate(dateString)
                                 }
+                                defaultValue={date ? moment(date) : null}
                                 style={{
                                     width: 250,
                                     height: 40,

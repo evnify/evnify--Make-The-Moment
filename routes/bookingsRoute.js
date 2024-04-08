@@ -38,4 +38,26 @@ router.post("/addAddressToUser", async (req, res) => {
     }
 });
 
+router.post("/saveBooking", async (req, res) => {
+    const bookingData = req.body;
+    try {
+        const booking = new Booking(bookingData);
+        await booking.save();
+        res.send("Booking saved successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+router.post("/savePayment", async (req, res) => {
+    const paymentData = req.body;
+    try {
+        const payment = new Payment(paymentData);
+        await payment.save();
+        res.send("Payment saved successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
 module.exports = router;
