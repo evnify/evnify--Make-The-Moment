@@ -129,7 +129,7 @@ function Blog() {
                     <div className="blog_page_all_blog_main_section">
                         <div className="all_blog_main_component">
                             <div className="all_blog__section_blog4">
-                                <div className="blog_page_blog4_main"></div>
+                                <div className="blog_page_blog4_main" style={{backgroundImage: `url(${itemsForCurrentPage[0].images[0]})`}}></div>
                                 <div className="blog_page_blog4_date">
                                     <h2>• {itemsForCurrentPage[0].eventDate}</h2>
                                 </div>
@@ -143,7 +143,7 @@ function Blog() {
                                 </div>
                             </div>
                             <div className="all_blog__section_blog5">
-                                <div className="blog_page_blog5_main"></div>
+                            <div className="blog_page_blog5_main" style={{backgroundImage: `url(${itemsForCurrentPage[1].images[0]})`}}></div>
                                 <div className="blog_page_blog5_date">
                                     <h2>• {itemsForCurrentPage[1].eventDate}</h2>
                                 </div>
@@ -157,7 +157,7 @@ function Blog() {
                                 </div>
                             </div>
                             <div className="all_blog__section_blog6">
-                                <div className="blog_page_blog6_main"></div>
+                                <div className="blog_page_blog6_main" style={{backgroundImage: `url(${itemsForCurrentPage[2].images[0]})`}}></div>
                                 <div className="blog_page_blog6_date">
                                     <h2>• {itemsForCurrentPage[2].eventDate}</h2>
                                 </div>
@@ -173,7 +173,7 @@ function Blog() {
                         </div>
                         <div className="all_blog_main_component2">
                             <div className="all_blog__section_blog7">
-                                <div className="blog_page_blog7_main"></div>
+                                <div className="blog_page_blog7_main" style={{backgroundImage: `url(${itemsForCurrentPage[3].images[0]})`}}></div>
                                 <div className="blog_page_blog7_date">
                                     <h2>• {itemsForCurrentPage[3].eventDate}</h2>
                                 </div>
@@ -187,7 +187,7 @@ function Blog() {
                                 </div>
                             </div>
                             <div className="all_blog__section_blog8">
-                                <div className="blog_page_blog8_main"></div>
+                                <div className="blog_page_blog8_main" style={{backgroundImage: `url(${itemsForCurrentPage[4].images[0]})`}}></div>
                                 <div className="blog_page_blog8_date">
                                     <h2>• {itemsForCurrentPage[4].eventDate}</h2>
                                 </div>
@@ -201,7 +201,7 @@ function Blog() {
                                 </div>
                             </div>
                             <div className="all_blog__section_blog9">
-                                <div className="blog_page_blog9_main"></div>
+                                <div className="blog_page_blog9_main" style={{backgroundImage: `url(${itemsForCurrentPage[5].images[0]})`}}></div>
                                 <div className="blog_page_blog9_date">
                                     <h2>• {itemsForCurrentPage[5].eventDate}</h2>
                                 </div>
