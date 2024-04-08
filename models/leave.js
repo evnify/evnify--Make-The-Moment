@@ -5,6 +5,10 @@ const leaveSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    name : {
+        type: String,
+        required: true,
+    },
     empID : {
         type: String,
         required: true,

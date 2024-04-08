@@ -1,380 +1,642 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
-import Img from "../../assets/corosal04.svg";
-import AddPackage from "./AddPackage";
-import UpdatePackage from "./UpdatePackage";
-import Viewpackage from "./Viewpackage";
+import React, { useState, useEffect } from 'react';
+import { Space, Table, Modal, Select, Input, Upload, Button, message } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { Icon } from "@iconify/react";
+import axios from "axios";
+const { TextArea } = Input;
 
 function Packages() {
-  const [visibleModal1, setVisibleModal1] = useState(false);
-  const [visibleModal2, setVisibleModal2] = useState(false);
-  const [visibleModal3, setVisibleModal3] = useState(false);
-  const [visibleModal4, setVisibleModal4] = useState(false);
 
-  const showModal1 = () => {
-    setVisibleModal1(true);
-  };
+  const [packageList, setPackageList] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [inventories, setInventories] = useState([]);
+  const [extras, setExtras] = useState([]);
+  const [extrasData, setExtrasData] = useState("");
+  const [inventoryQuantities, setInventoryQuantities] = useState({});
+  const [newPackageData, setNewPackageData] = useState({
+    packageType: '',
+    eventType: '',
+    price: '',
+    description: '',
+    baseImage: 'https://s3-alpha-sig.figma.com/img/b6fa/f4a9/06e0655ca5fa95b62a51b0952…',
+    inventories: [],
+    extras: [],
+    contentImages: [],
+  });
+  useEffect(() => {
+    // Update newPackageData whenever extras change
+    setNewPackageData(prevData => ({
+      ...prevData,
+      extras: extras
+    }));
+  }, [extras]);
 
-  const showModal2 = () => {
-    setVisibleModal2(true);
-  };
-  const showModal3 = () => {
-    setVisibleModal3(true);
-  };
-  const showModal4 = () => {
-    setVisibleModal4(true);
-  };
+  const [editPackageData, setEditPackageData] = useState({
+    packageId: '',
+    packageType: '',
+    eventType: '',
+    price: '',
+    description: '',
+    baseImage: '',
+    inventories: [],
+    extras: [],
+    contentImages: [],
+  });
 
-  const handleOk1 = (e) => {
-    console.log(e);
-    setVisibleModal1(false);
-  };
 
-  const handleOk2 = (e) => {
-    console.log(e);
-    setVisibleModal2(false);
+  // Add modal functions
+  const showModalAdd = () => {
+    setIsAddModalOpen(true);
   };
-  const handleOk3 = (e) => {
-    console.log(e);
-    setVisibleModal3(false);
+  const handleOkAdd = () => {
+    setIsAddModalOpen(false);
   };
-
-  const handleOk4 = (e) => {
-    console.log(e);
-    setVisibleModal4(false);
-  };
-
-  const handleCancel1 = (e) => {
-    console.log(e);
-    setVisibleModal1(false);
-  };
-
-  const handleCancel2 = (e) => {
-    console.log(e);
-    setVisibleModal2(false);
-  };
-  const handleCancel3 = (e) => {
-    console.log(e);
-    setVisibleModal3(false);
+  const handleCancelAdd = () => {
+    setIsAddModalOpen(false);
   };
 
-  const handleCancel4 = (e) => {
-    console.log(e);
-    setVisibleModal4(false);
+  // Edit modal functions
+  const showModalEdit = () => {
+    setIsEditModalOpen(true);
   };
+  const handleOkEdit = () => {
+    setIsEditModalOpen(false);
+  };
+  const handleCancelEdit = () => {
+    setIsEditModalOpen(false);
+  };
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPackageData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  // Update handleInventory function to include quantity input
+  const handleInventory = (values) => {
+    const updatedQuantities = {};
+    values.forEach(value => {
+      // If the inventory is already selected, keep its quantity as it is
+      if (inventoryQuantities[value]) {
+        updatedQuantities[value] = inventoryQuantities[value];
+      } else {
+        // Otherwise, initialize the quantity as 2
+        updatedQuantities[value] = 1;
+      }
+    });
+    setInventoryQuantities(updatedQuantities);
+    setNewPackageData(prevData => ({
+      ...prevData,
+      inventories: values.map(value => ({
+        itemType: value,
+        quantity: updatedQuantities[value] // Set quantity as per user input or default to 2
+      }))
+    }));
+  };
+  const handleAddNewInventory = (value) => {
+    const existingInventory = editPackageData.inventories.find(inventory => inventory.itemType === value);
+    if (!existingInventory) {
+      const newInventory = { itemType: value, quantity: 1 };
+      setEditPackageData(prevData => ({
+        ...prevData,
+        inventories: [...prevData.inventories, newInventory]
+      }));
+    }
+  };
+
+  const handleEditInventoryQuantity = (index, newQuantity) => {
+    const updatedInventories = [...editPackageData.inventories];
+    updatedInventories[index].quantity = newQuantity;
+    setEditPackageData({ ...editPackageData, inventories: updatedInventories });
+  };
+
+
+
+  // Create a new package
+  const handleAddPackage = async () => {
+    try {
+      console.log('New Package Data:', newPackageData); // Logging new package data
+      const response = await axios.post('/api/packages/addPackage', newPackageData);
+      console.log('New package added:', response.data);
+      // Optionally, you can fetch all packages again to update the package list
+      fetchAllPackages();
+      message.success('New package added successfully');
+      setIsAddModalOpen(false);
+    } catch (error) {
+      console.error('Error adding new package:', error);
+      message.error('Failed to add new package');
+    }
+  };
+
+  //fetch all packages
+  const fetchAllPackages = async () => {
+    try {
+      const response = await axios.get(`/api/packages/allPackages`);
+      setPackageList(response.data);
+      console.log('All Packages:', response.data); // Logging all packages
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchAllPackages();
+  }, []); // Run only once on component mount
+
+  // fetch all inventories
+  const fetchAllInventories = async () => {
+    try {
+      const response = await axios.get(`/api/packages/allInventory`);
+      setInventories(response.data);
+      console.log('All Inventories:', response.data); // Logging all inventories
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchAllInventories();
+  }, []); // Run only once on component mount
+
+  // Create Inventories Dropdown Data
+  const pkgData = inventories.map((inventory) => {
+    return {
+      value: inventory.itemName,
+      label: inventory.itemName,
+    };
+  });
+
+  // Delete an inventory
+  const handleDeleteInventory = async (packageId) => {
+    try {
+      // Make an HTTP request to delete the inventory by its ID
+      await axios.delete(`/api/packages/deletePackage/${packageId}`);
+      message.success('Inventory deleted successfully');
+      fetchAllPackages();
+    } catch (error) {
+      console.error('Error deleting inventory:', error);
+      message.error('Failed to delete inventory');
+    }
+  };
+
+  //update package
+
+  // Function to fetch package details by ID
+  const fetchPackageById = async (packageId) => {
+    try {
+      const response = await axios.get(`/api/packages/getPackage/${packageId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching package details:', error);
+      throw new Error('Failed to fetch package details');
+    }
+  };
+  // Function to handle editing package
+  const handleEditPackage = async (packageId) => {
+    try {
+      const packageData = await fetchPackageById(packageId);
+      // Set editPackageData with fetched package details
+      setEditPackageData(packageData);
+      setIsEditModalOpen(true); // Open the Edit Package Modal
+      console.log('Edit Package Data:', packageData); // Logging edit package data
+
+    } catch (error) {
+      console.error('Error handling edit package:', error);
+      message.error('Failed to fetch package details');
+    }
+  };
+
+  const handleUpdatePackage = async () => {
+    try {
+      // Send a PUT request to update the package
+      const response = await axios.put(`/api/packages/updatePackage/${editPackageData._id}`, editPackageData);
+      console.log('Package updated:', response.data);
+      // Optionally, you can fetch all packages again to update the package list
+      fetchAllPackages();
+      message.success('Package updated successfully');
+      setIsEditModalOpen(false); // Close the Edit Package Modal
+    } catch (error) {
+      console.error('Error updating package:', error);
+      message.error('Failed to update package');
+    }
+  };
+
+
+  // Package table columns
+  const columns = [
+    {
+      title: "Package ID",
+      dataIndex: "packageId",
+      key: "packageId",
+    },
+    {
+      title: "Package Type",
+      dataIndex: "packageType",
+      key: "packageType",
+    },
+    {
+      title: "Event Type",
+      dataIndex: "eventType",
+      key: "eventType",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Space size="middle">
+          <button
+            style={{
+              fontSize: "20px",
+              color: "#757171",
+              border: "none",
+              background: "transparent",
+            }}
+          >
+            <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeleteInventory(record._id)} />
+            <Icon icon="mdi:pencil" style={{ margin: "0 5px 0 5px" }} onClick={() => handleEditPackage(record._id)} />
+            <Icon icon="mdi:download" style={{ margin: "0 0 0 10px " }} />
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
+  //upload images
+  const props = {
+    name: 'file',
+    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
+  // Function to remove an extra item from the edit package data
+  const handleRemoveEditExtra = (index) => {
+    const updatedExtras = [...editPackageData.extras];
+    updatedExtras.splice(index, 1);
+    setEditPackageData({ ...editPackageData, extras: updatedExtras });
+  };
+
+  // Function to handle editing an extra item in the edit package data
+  const handleEditExtra = (index, newValue) => {
+    const updatedExtras = [...editPackageData.extras];
+    updatedExtras[index] = newValue;
+    setEditPackageData({ ...editPackageData, extras: updatedExtras });
+  };
+  // Function to add a new extra item to the edit package data
+  const handleAddNewExtra = () => {
+    if (extrasData.trim() !== '') {
+      const updatedExtras = [...editPackageData.extras];
+      updatedExtras.push(extrasData);
+      setEditPackageData({ ...editPackageData, extras: updatedExtras });
+      setExtrasData('');
+    }
+  };
+
+  const handleRemoveInventory = (index) => {
+    const updatedInventories = [...editPackageData.inventories];
+    updatedInventories.splice(index, 1); // Remove the inventory at the specified index
+    setEditPackageData({ ...editPackageData, inventories: updatedInventories });
+  };
+
+
+  const handelAddExtra = () => {
+    setExtras([...extras, extrasData]);
+    setExtrasData("");
+    console.log(extras);
+  }
 
   return (
-    <>
-      {/* Charts */}
-      <div class="container">
-        <div class="row">
-          <div class="col"></div>
-          <div class="col"></div>
+    <div>
+      <div className='booking-package-insight-div'>
+        <div className='booking-package-div-insight-left'></div>
+        <div className='booking-package-div-insight-right'></div>
+      </div>
+
+      <div className='booking-package-details-change'>
+        <div className='booking-package-details-change-top'>
+          <div>Search</div>
+          <div>Filter</div>
+          <div>
+            <Modal
+              title="Add New Package"
+              visible={isAddModalOpen}
+              onOk={handleAddPackage}
+              onCancel={handleCancelAdd}
+              width={1100}
+            >
+              <div className='package-details-add-model'>
+                <div className='package-details-add-model-left'>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    Package Type
+                    <Select
+                      defaultValue=""
+                      style={{ width: 250 }}
+                      onChange={(value) => setNewPackageData({ ...newPackageData, packageType: value })}
+                      options={[
+                        { value: 'Basic', label: 'Basic' },
+                        { value: 'Standard', label: 'Standard' },
+                        { value: 'Premium', label: 'Premium' },
+                      ]}
+                    />
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
+                      <Select
+                        defaultValue=""
+                        style={{ width: 250 }}
+                        onChange={(value) => setNewPackageData({ ...newPackageData, eventType: value })}
+                        options={[
+                          { value: 'Wedding', label: 'Wedding' },
+                          { value: 'Get-Together', label: 'Get-Together' },
+                          { value: 'Birthday', label: 'Birthday' },
+                          { value: 'Bride To Be', label: 'Bride To Be' },
+                          { value: 'Farewell Party ', label: 'Farewell Party' },
+                          { value: 'Anniversary Party', label: 'Anniversary Party' },
+                        ]}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
+                      <Input
+                        placeholder="Enter price"
+                        style={{ width: "250px" }}
+                        onChange={(e) => setNewPackageData({ ...newPackageData, price: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
+                      <Select
+                        showSearch
+                        mode="multiple" // Enable multiple selection
+                        style={{ width: 250 }}
+                        placeholder="Search Inventories"
+                        optionFilterProp="children"
+                        filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                        filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                        onChange={handleInventory} // Use handleInventory function
+                        options={pkgData}
+                      />
+                      {/* Display selected inventories and quantity inputs */}
+                      {Object.entries(inventoryQuantities).map(([inventory, quantity]) => (
+                        <div key={inventory} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                          <span style={{ marginLeft: "5px" }}>{inventory}</span>
+                          <span><Input
+                            style={{ width: 100, marginLeft: "10px" }}
+                            value={quantity}
+                            onChange={(e) => {
+                              const updatedQuantities = { ...inventoryQuantities, [inventory]: e.target.value };
+                              setInventoryQuantities(updatedQuantities);
+                              setNewPackageData(prevData => ({
+                                ...prevData,
+                                inventories: Object.keys(updatedQuantities).map(itemType => ({
+                                  itemType,
+                                  quantity: updatedQuantities[itemType]
+                                }))
+                              }));
+                            }}
+                          /></span>
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
+                      <TextArea
+                        rows={4}
+                        style={{ width: "250px" }}
+                        onChange={(e) => setNewPackageData({ ...newPackageData, description: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
+                      <Input
+                        placeholder="Enter extras"
+                        style={{ width: "250px" }}
+                        onChange={(e) => setExtrasData(e.target.value)}
+                      />
+                      <button onClick={handelAddExtra} style={{
+                        width: "50px", height: "30px",
+                        border: "none", borderRadius: "5px",
+                        marginTop: "5px", background: "#533c56", color: "white", cursor: "pointer",
+                        marginLeft: "10px"
+                      }}>
+                        add
+                      </button>
+                      {extras.map((extra, index) => (
+                        <Input
+                          key={index}
+                          style={{ width: "250px", border: "none", marginTop: "2px" }}
+                          value={extra}
+                          disabled
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                  </div>
+                </div>
+                <div className='package-details-add-model-right'>
+                  <p style={{ marginTop: "10px" }}>Package Image</p>
+                  <div className='package-details-add-model-right-top'>
+                    <Upload {...props}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
+                  <p >Package Content</p>
+                  <div className='package-details-add-model-right-down'>
+                    <Upload {...props}>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+
+            <button onClick={showModalAdd} style={{
+              width: "100px", height: "40px", border: "none",
+              borderRadius: "5px", background: "#533c56", color: "white", cursor: "pointer",
+              fontSize: "16px", marginLeft: "20px",
+            }}>
+              Create New
+            </button>
+          </div>
         </div>
-        <div className="bg-white p-5">
-          <h2>Packages</h2>
-        </div>
-        {/* Package Table */}
-        <div>
-          <div className="d-flex justify-content-between">
-            <form>
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search by ID"
-                aria-label="Search"
-              />
-            </form>
-            <div>
-              <button className="btn btn-outline-secondary me-3" type="submit">
-                Filter
-              </button>
-              <Button type="primary" onClick={showModal1}>
-                +Create New
-              </Button>
+        <div><Table columns={columns} dataSource={packageList} /></div>
+        <Modal
+          title="Edit Package"
+          visible={isEditModalOpen}
+          onOk={handleUpdatePackage}
+          onCancel={handleCancelEdit}
+          width={1100}
+        >
+          <div className='package-details-add-model'>
+            <div className='package-details-add-model-left'>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                Package Type
+                <Select
+                  defaultValue={editPackageData.packageType}
+                  style={{ width: 250 }}
+                  onChange={(value) => setEditPackageData({ ...editPackageData, packageType: value })}
+                  options={[
+                    { value: 'Basic', label: 'Basic' },
+                    { value: 'Standard', label: 'Standard' },
+                    { value: 'Premium', label: 'Premium' },
+                  ]}
+                />
+
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
+                  <Select
+                    defaultValue={editPackageData.eventType}
+                    style={{ width: 250 }}
+                    onChange={(value) => setEditPackageData({ ...editPackageData, eventType: value })}
+                    options={[
+                      { value: 'Wedding', label: 'Wedding' },
+                      { value: 'Get-Together', label: 'Get-Together' },
+                      { value: 'Birthday', label: 'Birthday' },
+                      { value: 'Bride To Be', label: 'Bride To Be' },
+                      { value: 'Farewell Party ', label: 'Farewell Party' },
+                      { value: 'Anniversary Party', label: 'Anniversary Party' },
+                    ]}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
+                  <Input
+                    placeholder="Enter price"
+                    style={{ width: "250px" }}
+                    value={editPackageData.price}
+                    onChange={(e) => setEditPackageData({ ...editPackageData, price: e.target.value })}
+                  />
+                </div>
+                {/* Display existing inventories and quantity inputs */}
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
+                  <Select
+                    showSearch
+                    
+                    style={{ width: 250 }}
+                    placeholder="Search Inventories"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                    filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
+                    onChange={handleAddNewInventory} // Use handleAddNewInventory function to add new inventories
+                    options={pkgData}
+                  />
+                  {/* Display selected inventories and quantity inputs */}
+                  {editPackageData.inventories.map((inventory, index) => (
+                    <div key={index} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                      <span style={{ marginLeft: "5px" }}>{inventory.itemType}</span>
+                      <span>
+                        <Input
+                          style={{ width: 100, marginLeft: "10px" }}
+                          value={inventory.quantity}
+                          onChange={(e) => handleEditInventoryQuantity(index, e.target.value)}
+                        />
+                        <button
+                          style={{ marginLeft: "10px", background: "transparent", border: "none", color: "#f00", cursor: "pointer" }}
+                          onClick={() => handleRemoveInventory(index)} // Call handleRemoveInventory function when the remove button is clicked
+                        >
+                          Remove
+                        </button>
+                      </span>
+                    </div>
+                  ))}
+
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
+                  <TextArea
+                    rows={4}
+                    style={{ width: "250px" }}
+                    value={editPackageData.description}
+                    onChange={(e) => setEditPackageData({ ...editPackageData, description: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
+                  <Input
+                    placeholder="Enter extras"
+                    style={{ width: "250px" }}
+                    value={extrasData} // Display the value from state
+                    onChange={(e) => setExtrasData(e.target.value)}
+                  />
+                  <button onClick={handleAddNewExtra} style={{
+                    width: "50px", height: "30px",
+                    border: "none", borderRadius: "5px",
+                    marginTop: "5px", background: "#533c56", color: "white", cursor: "pointer",
+                    marginLeft: "10px"
+                  }}>
+                    add
+                  </button>
+                  {editPackageData.extras.map((extra, index) => (
+                    <div key={index} style={{ display: "flex", alignItems: "center" }}>
+                      <Input
+                        style={{ width: "250px", border: "none", marginTop: "5px" }}
+                        value={extra}
+                        onChange={(e) => handleEditExtra(index, e.target.value)}
+                      />
+                      <button
+                        style={{
+                          marginLeft: "10px",
+                          background: "transparent",
+                          border: "none",
+                          color: "#f00",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => handleRemoveEditExtra(index)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                </div>
+
+              </div>
+              <div>
+              </div>
+            </div>
+            <div className='package-details-add-model-right'>
+              <p style={{ marginTop: "10px" }}>Package Image</p>
+              <div className='package-details-add-model-right-top'>
+                <Upload {...props}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </div>
+              <p >Package Content</p>
+              <div className='package-details-add-model-right-down'>
+                <Upload {...props}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </div>
             </div>
           </div>
-
-          <div className="mt-3">
-            <table className="table ">
-              <thead>
-                <tr className="table-secondary">
-                  <th scope="col">PackageID</th>
-                  <th scope="col">PackageType</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">p1</th>
-                  <td>Standard</td>
-                  <td>Wedding</td>
-                  <td>Rs.300000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p2</th>
-                  <td>Premium</td>
-                  <td>Wedding</td>
-                  <td>Rs.400000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p3</th>
-                  <td>Basic</td>
-                  <td>Birthday</td>
-                  <td>Rs.200000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">p4</th>
-                  <td>Premium</td>
-                  <td>Anniversary</td>
-                  <td>Rs.150000</td>
-                  <td>
-                    <Button type="light" onClick={showModal2}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-                        />
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal3}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 24 24"
-                      >
-                        <g
-                          fill="none"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        >
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
-                    </Button>
-                    <Button type="light" onClick={showModal4}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="1em"
-                        height="1em"
-                        viewBox="0 0 1024 1024"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M512 160c320 0 512 352 512 352S832 864 512 864S0 512 0 512s192-352 512-352m0 64c-225.28 0-384.128 208.064-436.8 288c52.608 79.872 211.456 288 436.8 288c225.28 0 384.128-208.064 436.8-288c-52.608-79.872-211.456-288-436.8-288m0 64a224 224 0 1 1 0 448a224 224 0 0 1 0-448m0 64a160.19 160.19 0 0 0-160 160c0 88.192 71.744 160 160 160s160-71.808 160-160s-71.744-160-160-160"
-                        />
-                      </svg>
-                    </Button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      {/* Modals */}
-      <div>
-        {/* Add Package Moda; */}
-        <Modal
-          title="Add Package"
-          visible={visibleModal1}
-          onOk={handleOk1}
-          onCancel={handleCancel1}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={1000}
-        >
-          <AddPackage />
         </Modal>
 
-        <Modal
-          title="Delete"
-          visible={visibleModal2}
-          onOk={handleOk2}
-          onCancel={handleCancel2}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={400}
-        >
-          <p>Delete</p>
-        </Modal>
-        <Modal
-          title="Update form"
-          visible={visibleModal3}
-          onOk={handleOk3}
-          onCancel={handleCancel3}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={900}
-        >
-          <UpdatePackage />
-        </Modal>
-        <Modal
-          title="View form"
-          visible={visibleModal4}
-          onOk={handleOk4}
-          onCancel={handleCancel4}
-          okButtonProps={{ disabled: true }}
-          cancelButtonProps={{ disabled: true }}
-          width={900}
-        >
-          <Viewpackage />
-        </Modal>
       </div>
-    </>
-  );
+    </div>
+  )
 }
 
 export default Packages;
