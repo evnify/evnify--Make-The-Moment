@@ -166,7 +166,6 @@ const filter = (inputValue, path) => {
     );
 };
 // Main Component
-const onSearch = (value, _e, info) => console.log(info?.source, value);
 function Booking() {
     const [navbarSticky, setNavbarSticky] = useState(true);
     const { category, id } = useParams();
@@ -563,6 +562,25 @@ function Booking() {
     const [bookingData, setBookingData] = useState([]);
     const [current, setCurrent] = useState(0);
 
+    //Add Billing Address
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [addressData, setAddressData] = useState({
+        country: "",
+        addressLine1: "",
+        addressLine2: "",
+        district: "",
+        city: "",
+        postalCode: "",
+    });
+
+    const saveAddressData = () => {
+        console.log(addressData);
+        
+        setIsModalOpen(false);
+
+        message.success("Address saved successfully");
+    };
+
     return (
         <div style={{ backgroundColor: "#efefef" }}>
             {/* image view */}
@@ -654,27 +672,27 @@ function Booking() {
                     centered
                 >
                     <div className="booking_model_main_container">
-                            <Steps
-                                current={current}
-                                onChange={(current) => setCurrent(current)}
-                                style={{
-                                    marginBottom: 24,
-                                    marginTop: 10,
-                                    textAlign: "center",
-                                    width: 400,
-                                }}
-                                items={[
-                                    {
-                                        title: "Step 1",
-                                    },
-                                    {
-                                        title: "Step 2",
-                                    },
-                                    {
-                                        title: "Step 3",
-                                    },
-                                ]}
-                            />
+                        <Steps
+                            current={current}
+                            onChange={(current) => setCurrent(current)}
+                            style={{
+                                marginBottom: 24,
+                                marginTop: 10,
+                                textAlign: "center",
+                                width: 400,
+                            }}
+                            items={[
+                                {
+                                    title: "Step 1",
+                                },
+                                {
+                                    title: "Step 2",
+                                },
+                                {
+                                    title: "Step 3",
+                                },
+                            ]}
+                        />
                         {current == 0 ? (
                             <div className="booking_cart_item_container">
                                 <div
@@ -745,7 +763,7 @@ function Booking() {
                                         <button
                                             className="add_new_address_Btn_72 "
                                             onClick={() =>
-                                                setBookingModal(true)
+                                                setIsModalOpen(true)
                                             }
                                         >
                                             Add New Address
@@ -818,8 +836,10 @@ function Booking() {
                                                             <button
                                                                 style={{
                                                                     border: "none",
-                                                                    background:"none",
-                                                                    marginRight: "10px",
+                                                                    background:
+                                                                        "none",
+                                                                    marginRight:
+                                                                        "10px",
                                                                 }}
                                                             >
                                                                 <Icon icon="material-symbols:delete-outline" />
@@ -829,7 +849,8 @@ function Booking() {
                                                             <button
                                                                 style={{
                                                                     border: "none",
-                                                                    background:"none",
+                                                                    background:
+                                                                        "none",
                                                                 }}
                                                             >
                                                                 <Icon icon="tabler:edit" />
@@ -1033,13 +1054,12 @@ function Booking() {
                     </div>
                 </Modal>
             </ConfigProvider>
-            
-            {/* add Billing address model */}
 
-            {/* <Modal
+            {/* add Billing address model */}
+            <Modal
                 centered
                 open={isModalOpen}
-                onCancel={handleCancel}
+                onCancel={() => setIsModalOpen(false)}
                 footer={null}
                 width={550}
             >
@@ -1081,7 +1101,7 @@ function Booking() {
                                 style={{
                                     marginBottom: "3px",
                                     fontSize: "12px",
-                                    fontWeight: 900,
+                                    fontWeight: 500,
                                 }}
                             >
                                 Country
@@ -1089,12 +1109,14 @@ function Booking() {
                             <Input
                                 placeholder="Sri Lanka"
                                 size="large"
+                                value={"Sri Lanka"}
                                 onChange={(e) =>
                                     setAddressData({
                                         ...addressData,
-                                        country: e.target.value,
+                                        country: "sri lanka",
                                     })
                                 }
+                                disabled
                             />
                         </div>
                         <div
@@ -1108,10 +1130,10 @@ function Booking() {
                                 style={{
                                     marginBottom: "3px",
                                     fontSize: "12px",
-                                    fontWeight: 900,
+                                    fontWeight: 500,
                                 }}
                             >
-                                Address Line1
+                                Address Line 1
                             </span>
                             <Input
                                 placeholder="New Kandy Road"
@@ -1135,13 +1157,13 @@ function Booking() {
                                 style={{
                                     marginBottom: "3px",
                                     fontSize: "12px",
-                                    fontWeight: 900,
+                                    fontWeight: 500,
                                 }}
                             >
-                                Address Line2
+                                Address Line 2
                             </span>
                             <Input
-                                placeholder="Address Line 2"
+                                placeholder="Pittugala"
                                 size="large"
                                 onChange={(e) =>
                                     setAddressData({
@@ -1162,10 +1184,10 @@ function Booking() {
                                 style={{
                                     marginBottom: "3px",
                                     fontSize: "12px",
-                                    fontWeight: 900,
+                                    fontWeight: 500,
                                 }}
                             >
-                                Disctrict
+                                District
                             </span>
 
                             <Cascader
@@ -1196,7 +1218,7 @@ function Booking() {
                                     style={{
                                         marginBottom: "3px",
                                         fontSize: "12px",
-                                        fontWeight: 900,
+                                        fontWeight: 500,
                                     }}
                                 >
                                     City
@@ -1225,13 +1247,13 @@ function Booking() {
                                     style={{
                                         marginBottom: "3px",
                                         fontSize: "12px",
-                                        fontWeight: 900,
+                                        fontWeight: 500,
                                     }}
                                 >
                                     Postal Code
                                 </span>
                                 <Input
-                                    placeholder="000000"
+                                    placeholder="10115"
                                     type="number"
                                     size="large"
                                     onChange={(e) =>
@@ -1264,7 +1286,7 @@ function Booking() {
                         Save Address
                     </button>
                 </div>
-            </Modal> */}
+            </Modal>
 
             {loading ? (
                 <div className="center" style={{ height: "100vh" }}>
