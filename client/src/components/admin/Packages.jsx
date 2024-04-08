@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Space, Table, Modal, Select, Input, Upload, Button, message } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { Icon } from "@iconify/react";
 import axios from "axios";
 const { TextArea } = Input;
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 function Packages() {
 
@@ -14,12 +22,25 @@ function Packages() {
   const [extras, setExtras] = useState([]);
   const [extrasData, setExtrasData] = useState("");
   const [inventoryQuantities, setInventoryQuantities] = useState({});
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editImages, setEditImages] = useState([]);
+  const [editFileList, setEditFileList] = useState([]);
+  const [baseImage, setBaseImage] = useState('');
+  const [contentImages, setContentImages] = useState([]);
+  const [editBaseImageFileList, setEditBaseImageFileList] = useState([]);
+
   const [newPackageData, setNewPackageData] = useState({
     packageType: '',
     eventType: '',
     price: '',
     description: '',
-    baseImage: 'https://s3-alpha-sig.figma.com/img/b6fa/f4a9/06e0655ca5fa95b62a51b0952…',
+    baseImage: '',
     inventories: [],
     extras: [],
     contentImages: [],
@@ -28,9 +49,11 @@ function Packages() {
     // Update newPackageData whenever extras change
     setNewPackageData(prevData => ({
       ...prevData,
-      extras: extras
+      extras: extras,
+      contentImages: images[1],
+      baseImage: images[0],
     }));
-  }, [extras]);
+  }, [extras, images]);
 
   const [editPackageData, setEditPackageData] = useState({
     packageId: '',
@@ -66,9 +89,9 @@ function Packages() {
   const handleCancelEdit = () => {
     setIsEditModalOpen(false);
   };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+  // const handleChange = (value) => {
+  //   console.log(`selected ${value}`);
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -76,6 +99,55 @@ function Packages() {
       ...prevData,
       [name]: value
     }));
+  };
+
+  //upload images
+  const handleCancel = () => setPreviewOpen(false);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const handleChange = ({ fileList: newFileList }) =>
+    setFileList(newFileList ?? []);
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  const customRequest = ({ file, onSuccess, onError }) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    axios
+      .post(
+        "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+        formData
+      )
+      .then((response) => {
+        if (response.data.data) {
+          onSuccess();
+          message.success("Image uploaded successfully");
+          setImages([...images, response.data.data.url]);
+          console.log(images);
+
+          setLoading(false);
+        } else {
+          onError();
+          message.error("Failed to upload image");
+        }
+      })
+      .catch((error) => {
+        onError();
+        message.error("Error uploading image: " + error.message);
+      });
   };
 
   // Update handleInventory function to include quantity input
@@ -114,6 +186,29 @@ function Packages() {
     const updatedInventories = [...editPackageData.inventories];
     updatedInventories[index].quantity = newQuantity;
     setEditPackageData({ ...editPackageData, inventories: updatedInventories });
+  };
+
+  // Function to handle adding base image
+  const handleAddBaseImage = (file) => {
+    setBaseImage(file.url || file.preview);
+  };
+
+  // Function to handle adding content images
+  const handleAddContentImages = (newFileList) => {
+    const newContentImages = newFileList.map(file => file.url || file.preview);
+    setContentImages(newContentImages);
+  };
+
+  // Function to handle editing base image
+  const handleEditBaseImage = (fileList) => {
+    setEditBaseImageFileList(fileList);
+  };
+
+  // Function to handle editing content images
+  const handleEditContentImages = (fileList) => {
+    const newContentImages = fileList.map(file => file.url || file.preview);
+    setEditFileList(fileList);
+    setEditImages(newContentImages);
   };
 
 
@@ -201,9 +296,21 @@ function Packages() {
       const packageData = await fetchPackageById(packageId);
       // Set editPackageData with fetched package details
       setEditPackageData(packageData);
+      // Populate editImages and editFileList with images from packageData
+      setEditImages(packageData.contentImages.map((url, index) => ({
+        uid: index,
+        name: "image.png",
+        status: "done",
+        url: url,
+      })));
+      setEditFileList(packageData.contentImages.map((url, index) => ({
+        uid: index,
+        name: "image.png",
+        status: "done",
+        url: url,
+      })));
       setIsEditModalOpen(true); // Open the Edit Package Modal
       console.log('Edit Package Data:', packageData); // Logging edit package data
-
     } catch (error) {
       console.error('Error handling edit package:', error);
       message.error('Failed to fetch package details');
@@ -457,15 +564,44 @@ function Packages() {
                 <div className='package-details-add-model-right'>
                   <p style={{ marginTop: "10px" }}>Package Image</p>
                   <div className='package-details-add-model-right-top'>
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    <Upload
+                      customRequest={customRequest}
+                      listType="picture-card"
+                      fileList={editBaseImageFileList}
+                      onPreview={handlePreview}
+                      onChange={(info) => {
+                        handleChange(info);
+                        handleEditBaseImage(info.fileList);
+                      }}
+                    >
+                      {editBaseImageFileList.length >= 1 ? null : uploadButton}
                     </Upload>
                   </div>
                   <p >Package Content</p>
                   <div className='package-details-add-model-right-down'>
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    <Upload
+                      customRequest={customRequest}
+                      listType="picture-card"
+                      fileList={editFileList}
+                      onPreview={handlePreview}
+                      onChange={(info) => {
+                        handleChange(info);
+                        handleEditContentImages(info.fileList);
+                      }}
+                    >
+                      {editFileList.length >= 4 ? null : uploadButton}
                     </Upload>
+                    <Modal
+                      visible={previewOpen}
+                      footer={null}
+                      onCancel={handleCancel}
+                    >
+                      <img
+                        alt="example"
+                        style={{ width: "100%" }}
+                        src={previewImage}
+                      />
+                    </Modal>
                   </div>
                 </div>
               </div>
@@ -533,7 +669,7 @@ function Packages() {
                   <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
                   <Select
                     showSearch
-                    
+
                     style={{ width: 250 }}
                     placeholder="Search Inventories"
                     optionFilterProp="children"
@@ -620,14 +756,29 @@ function Packages() {
             <div className='package-details-add-model-right'>
               <p style={{ marginTop: "10px" }}>Package Image</p>
               <div className='package-details-add-model-right-top'>
-                <Upload {...props}>
-                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                <Upload
+                  customRequest={customRequest}
+                  listType="picture-card"
+                  fileList={editBaseImageFileList} // Use editBaseImageFileList to populate the file list
+                  onPreview={handlePreview}
+                  onChange={(info) => {
+                    handleChange(info);
+                    handleEditBaseImage(info.fileList);
+                  }}
+                >
+                  {editBaseImageFileList.length >= 1 ? null : uploadButton}
                 </Upload>
               </div>
               <p >Package Content</p>
               <div className='package-details-add-model-right-down'>
-                <Upload {...props}>
-                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                <Upload
+                  customRequest={customRequest}
+                  listType="picture-card"
+                  fileList={editFileList} // Use editFileList to populate the file list
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                >
+                  {editFileList.length >= 4 ? null : uploadButton}
                 </Upload>
               </div>
             </div>
