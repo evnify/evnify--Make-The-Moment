@@ -1,7 +1,7 @@
 import UserSideMenu from "./UserSideMenu";
 import Navbar from "./navBar";
 import Booking from "./Booking";
-import Profile from "./UserProfile";
+import UserProfile from "./UserProfile";
 import UserSettings from "./UserSettings";
 import ContactUS from "./ContactUS";
 import AddBillingAddress from "./AddBillingAddress";
@@ -9,11 +9,13 @@ import BigImageView from "./BigImageView";
 import SideMenuItems from "./SideMenuItems";
 import BookingSteps from "./BookingSteps";
 import Footer from "./Footer";
+import UserBasicInfo from "./UserBasicInfo";
+import ChangePw from "./ChangePw";
 
 export {
   UserSideMenu,
   Booking,
-  Profile,
+  UserProfile,
   Navbar,
   UserSettings,
   ContactUS,
@@ -22,4 +24,6 @@ export {
   SideMenuItems,
   BookingSteps,
   Footer,
+  UserBasicInfo,
+  ChangePw,
 };

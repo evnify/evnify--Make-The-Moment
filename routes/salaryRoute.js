@@ -67,4 +67,14 @@ router.post("/updatePayroll", async (req, res) => {
     }
 });
 
+router.post("/getPayrollByEmpID", async (req, res) => {
+    const empID = req.body.empID;
+    try {
+        const payRoll = await salaryModel.find({ empID: empID });
+        res.status(200).send(payRoll);
+    } catch (err) {
+        return res.status(400).json({ message: "something went wrong" });
+    }
+});
+
 module.exports = router;
