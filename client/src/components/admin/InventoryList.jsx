@@ -302,8 +302,8 @@ function InventoryList() {
                 }}
             >
                 <Row justify={"space-between"}>
-                    <h1>Inventory List</h1>
-                    <Search
+                    <h3>Inventory List</h3>
+                    <Search className="inventory_list_search button"
                         placeholder="Search by Name"
                         size="large"
                         onSearch={(value) => setSearchKey(value)}
