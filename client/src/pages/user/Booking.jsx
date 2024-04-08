@@ -299,7 +299,7 @@ function Booking() {
     useEffect(() => {
         const fetchUserByID = async () => {
             const user = JSON.parse(localStorage.getItem("currentUser"));
-            const userID = user.userID ;
+            const userID = user.userID;
             setUserId(userID);
         };
 
@@ -589,8 +589,10 @@ function Booking() {
     const saveAddressData = () => {
         console.log(addressData);
         try {
-            axios.post(`${process.env.PUBLIC_URL}/api/bookings/addAddressToUser`, 
-                { userID : userId, address: addressData });
+            axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/addAddressToUser`,
+                { userID: userId, address: addressData }
+            );
             message.success("Address saved successfully");
             setIsModalOpen(false);
         } catch (error) {
@@ -770,7 +772,11 @@ function Booking() {
                                 </div>
                                 <div className="booking_cart_item_footer">
                                     <p>Subtotal({cart.length} Items)</p>
-                                    <h6>LKR {calculateTotal()}</h6>
+                                    <h6>
+                                        LKR{" "}
+                                        {(calculateTotal() ?? 0) +
+                                            (selectedPackage[0]?.price ?? 0)}
+                                    </h6>
                                 </div>
                                 <button
                                     className="createBookingBtn_72 "
@@ -789,9 +795,7 @@ function Booking() {
                                     <div>
                                         <button
                                             className="add_new_address_Btn_72 "
-                                            onClick={() =>
-                                                setIsModalOpen(true)
-                                            }
+                                            onClick={() => setIsModalOpen(true)}
                                         >
                                             Add New Address
                                         </button>
@@ -918,6 +922,14 @@ function Booking() {
                                             </div>
                                         ))}
                                     </div>
+                                    <div className="total_calculate_section">
+                                        <h3>
+                                            Total : {" "}
+                                            {(calculateTotal() ?? 0) +
+                                                (selectedPackage[0]?.price ??
+                                                    0)}{" "} LKR
+                                        </h3>
+                                    </div>
                                 </div>
                                 <div id="payment-element" style={{ flex: 1 }}>
                                     <div
@@ -938,7 +950,7 @@ function Booking() {
                                                 style={{
                                                     marginBottom: "3px",
                                                     fontSize: "12px",
-                                                    fontWeight: 900,
+                                                    fontWeight: 600,
                                                 }}
                                             >
                                                 Email
@@ -964,7 +976,7 @@ function Booking() {
                                                 style={{
                                                     marginBottom: "3px",
                                                     fontSize: "12px",
-                                                    fontWeight: 900,
+                                                    fontWeight: 600,
                                                 }}
                                             >
                                                 Card Information
@@ -1016,7 +1028,7 @@ function Booking() {
                                                 style={{
                                                     marginBottom: "3px",
                                                     fontSize: "12px",
-                                                    fontWeight: 900,
+                                                    fontWeight: 600,
                                                 }}
                                             >
                                                 Name On card
@@ -1041,7 +1053,7 @@ function Booking() {
                                                 style={{
                                                     marginBottom: "3px",
                                                     fontSize: "12px",
-                                                    fontWeight: 900,
+                                                    fontWeight: 600,
                                                 }}
                                             >
                                                 Country Or region
@@ -1511,13 +1523,13 @@ function Booking() {
                                     <button
                                         className="createBookingBtn_72 "
                                         onClick={() => {
-                                            //     if (cart.length === 0) {
-                                            //         return message.error(
-                                            //             "Please add items to the cart"
-                                            //         );
-                                            //     } else {
-                                            setBookingModal(true);
-                                            // }
+                                            if (cart.length === 0) {
+                                                return message.error(
+                                                    "Please add items to the cart"
+                                                );
+                                            } else {
+                                                setBookingModal(true);
+                                            }
                                         }}
                                     >
                                         CONTINUE TO CHECKOUT

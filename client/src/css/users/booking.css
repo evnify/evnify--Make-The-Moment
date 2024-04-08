@@ -477,3 +477,17 @@
     align-items: center;
     color: #fff;
 }
+
+.total_calculate_section{
+    margin-left: 30px;
+    margin-top: 150px;
+}
+
+.total_calculate_section h3 {
+    color: #000;
+    font-family: "Product Sans";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
