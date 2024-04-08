@@ -275,7 +275,7 @@
 .admin_existing_blog_table__view_back{
     background-color: #ffffff;
     height: 800px;
-    width: 1140px;
+    width: 1220px;
     display: flex;
     margin-left: 16px;
     border-radius: 12px;
@@ -283,7 +283,6 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-
 }
 .admin_existing_blog_section_manage_blogs{
     color: var(--Gray-900, #101828);
@@ -310,3 +309,6 @@
     background: none;
     border: none;
 }
+
+
+
