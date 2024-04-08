@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { Navbar } from "../../components";
+import { Navbar, Footer } from "../../components";
 import axios from "axios";
 import { Button, Input, Radio } from "antd";
 import { useParams } from "react-router-dom";
@@ -266,6 +266,7 @@ function Article() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

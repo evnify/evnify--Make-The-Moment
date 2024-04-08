@@ -1,16 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { topImage } from "../../assets";
 import { Navbar } from "../../components";
 import { Card,Pagination } from "antd";
+import axios from "axios";
 import{Footer} from "../../components"
-import {
-    EditOutlined,
-    EllipsisOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
 
 function Blog() {
     const { Meta } = Card;
+    const [blogs, setBlogs] = useState([]);
+
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                const response = await axios.get("/api/blogs/getBlogs");
+                setBlogs(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        } 
+        fetchBlogs();
+        
+    } , []);
+
 
     return (
         <div className="blog_hero_section_container">

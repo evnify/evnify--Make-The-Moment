@@ -210,9 +210,15 @@ function ExistingBlogs() {
             ),
         },
         {
-            title: "Description",
+            title: "Title Description",
             dataIndex: "blogTitleDescription",
             key: "description",
+            render: (text) => (
+                <p style={{ width: "250px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {text.length > 25 ? `${text.substring(0, 25)}...` : text}
+                </p>
+            )
+            
         },
         {
             title: "",
@@ -327,7 +333,7 @@ function ExistingBlogs() {
             </div>
             <div className="admin_existing_blog_table__view_back">
                 <div className="admin_existing_blog_section_manage_blogs">
-                    <div className="admin_emp_list_top_menu">
+                    <div className="admin_existing_blog_top_menu">
                         <div
                             style={{
                                 marginRight: "auto",
