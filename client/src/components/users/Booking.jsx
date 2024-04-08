@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Table, Tag, Space, ConfigProvider, Modal } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
-import Stripe from "./Stripe";
 import AddBillingAddress from "./AddBillingAddress";
 
 function Booking() {
@@ -127,8 +126,7 @@ function Booking() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Stripe />
-      <AddBillingAddress />
+     
       <ConfigProvider
         theme={{
           components: {
