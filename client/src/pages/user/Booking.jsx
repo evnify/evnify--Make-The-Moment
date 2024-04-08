@@ -293,6 +293,19 @@ function Booking() {
         };
     }, []);
 
+    // fetch user id
+    const [userId, setUserId] = useState({});
+
+    useEffect(() => {
+        const fetchUserByID = async () => {
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            const userID = user.userID ;
+            setUserId(userID);
+        };
+
+        fetchUserByID();
+    }, []);
+
     const [date, setDate] = useState(null);
     const [searchKey, setSearchKey] = useState("");
 
@@ -565,7 +578,7 @@ function Booking() {
     //Add Billing Address
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addressData, setAddressData] = useState({
-        country: "",
+        country: "Sri Lanka",
         addressLine1: "",
         addressLine2: "",
         district: "",
@@ -575,10 +588,24 @@ function Booking() {
 
     const saveAddressData = () => {
         console.log(addressData);
-        
-        setIsModalOpen(false);
-
-        message.success("Address saved successfully");
+        try {
+            axios.post(`${process.env.PUBLIC_URL}/api/bookings/addAddressToUser`, 
+                { userID : userId, address: addressData });
+            message.success("Address saved successfully");
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving address");
+            //clear form
+            setAddressData({
+                country: "Sri Lanka",
+                addressLine1: "",
+                addressLine2: "",
+                district: "",
+                city: "",
+                postalCode: "",
+            });
+        }
     };
 
     return (
@@ -1113,7 +1140,7 @@ function Booking() {
                                 onChange={(e) =>
                                     setAddressData({
                                         ...addressData,
-                                        country: "sri lanka",
+                                        country: e.target.value,
                                     })
                                 }
                                 disabled
@@ -1195,9 +1222,8 @@ function Booking() {
                                 onChange={(value) => {
                                     setAddressData({
                                         ...addressData,
-                                        district: value,
+                                        district: value[0],
                                     });
-                                    console.log(value);
                                 }}
                                 placeholder="Please select"
                                 showSearch={{ filter }}
@@ -1231,6 +1257,7 @@ function Booking() {
                                                 city: e.target.value,
                                             })
                                         }
+                                        value={addressData.city}
                                     />
                                 </span>
                             </div>
@@ -1262,6 +1289,7 @@ function Booking() {
                                             postalCode: e.target.value,
                                         })
                                     }
+                                    value={addressData.postalCode}
                                 />
                             </div>
                         </div>
