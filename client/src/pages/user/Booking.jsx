@@ -14,7 +14,6 @@ import {
     Steps,
     Radio,
 } from "antd";
-import Stripe from "stripe";
 import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
@@ -401,23 +400,6 @@ function Booking() {
     const [bookingModal, setBookingModal] = useState(false);
     const [bookingData, setBookingData] = useState([]);
     const [current, setCurrent] = useState(0);
-
-    const [clientSecret, setClientSecret] = useState('');
-
-    const stripe = Stripe(
-        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
-    );
-
-    const appearance = {
-        theme: "flat",
-        variables: { colorPrimaryText: "#262626" },
-    };
-    const options = {
-        /* options */
-    };
-    const elements = stripe.elements({ clientSecret, appearance });
-    const paymentElement = elements.create("payment", options);
-    paymentElement.mount("#payment-element");
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
