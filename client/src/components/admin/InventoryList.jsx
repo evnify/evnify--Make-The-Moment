@@ -37,6 +37,8 @@ function InventoryList() {
         }
     };
 
+    
+
     const handleEdit = (record) => {
         setEditData(record);
         setEditOpen(true);
@@ -212,6 +214,31 @@ function InventoryList() {
         doc.save("selected_inventory.pdf");
     };
 
+    // Search
+
+    const { Search } = Input;
+
+    const [searchKey, setSearchKey] = useState("");
+    const [filteredUserList, setFilteredUserList] = useState([]);
+
+    useEffect(() => {
+        let tempList = inventories;
+        if (searchKey && searchKey !== "") {
+            tempList = tempList.filter(
+                (item) =>
+                    item.itemName
+                        .toLowerCase()
+                        .includes(searchKey.toLowerCase())
+            );
+        }
+    
+        setFilteredUserList(tempList);
+    
+        console.log("userList", inventories);
+        console.log("searchKey", searchKey);
+    }, [searchKey, filteredUserList, inventories]);
+    
+
     return (
         <div className="admin_inventory_list_counts_container">
             <div className="inventory_list_main_container">
@@ -274,6 +301,15 @@ function InventoryList() {
             >
                 <Row justify={"space-between"}>
                     <h1>Inventory List</h1>
+                    <Search
+                        placeholder="Search by Name"
+                        size="large"
+                        onSearch={(value) => setSearchKey(value)}
+                        style={{
+                            width: 265,
+                            height: 40,
+                        }}
+                    />
                     <Button
                         className="add_inventory_button"
                         onClick={() => {
@@ -283,15 +319,9 @@ function InventoryList() {
                     >
                         Add Inventory
                     </Button>
-                    <Button
-                        className="inventory_generate_pdf_button"
-                        onClick={handleExportPDF}
-                    >
-                        Generate PDF
-                    </Button>
                 </Row>
                 <Table
-                    dataSource={inventories}
+                    dataSource={filteredUserList}
                     columns={columns}
                     rowSelection={{
                         selectedRowKeys,
