@@ -433,29 +433,32 @@ function Packages() {
   }
 
   //search Filter
-
   const handleSearch = (value) => {
     // Convert search input to lowercase
     const searchValue = value.toLowerCase();
 
-    // Filter messages based on search input (case-insensitive)
-    const filtered = packageList.filter(pkg =>
-      pkg.packageList.toLowerCase().includes(searchValue)
+    // Filter packages based on search input (case-insensitive)
+    const filtered = (packageList ?? []).filter(pkg =>
+      (pkg.packageId && pkg.packageId.toLowerCase().includes(searchValue)) || // Check if packageId is defined
+      (pkg.eventType && pkg.eventType.toLowerCase().includes(searchValue))  // Check if packageType is defined
     );
 
-    // Map the filtered messages to the items array format
+    // Map the filtered packages to the items array format
     const searchResultItems = filtered.map((pkg, index) => ({
-      label: pkg.packageList,
-      key: index.toString(),
-      name: pkg.packageId,
-
+      key: index,
+      packageId: pkg.packageId,
+      packageType: pkg.packageType,
+      eventType: pkg.eventType,
+      price: pkg.price,
+      description: pkg.description,
     }));
 
-    // Set the filtered messages state
+    // Set the filtered packages state
     setIsSearching(true);
     setFilteredMessages(searchResultItems);
-    console.log(searchMessages)
+    console.log(searchResultItems);
   };
+
 
 
   return (
@@ -662,7 +665,8 @@ function Packages() {
             </button>
           </div>
         </div>
-        <div><Table columns={columns} dataSource={packageList} /></div>
+        <Table columns={columns} dataSource={isSearching ? searchMessages : packageList} />
+
         <Modal
           title="Edit Package"
           visible={isEditModalOpen}
