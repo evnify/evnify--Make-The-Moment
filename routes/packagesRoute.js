@@ -67,17 +67,6 @@ router.patch('/updateUser/:id', async (req, res) => {
 });
 
 
-//Generate unique id for leave
-const generateUniqueID = async () => {
-    let id = 'PKG' + Math.floor(100000 + Math.random() * 900000);
-    const existingPackage = await packageModel.findOne({ packageId: id });
-    if (existingPackage) {
-        return generateUniqueID();
-    }
-    return id;
-};
-
-
 // Delete a user
 router.delete('/deleteUser/:id', (req, res) => {
     const id = req.params.id;
@@ -87,6 +76,15 @@ router.delete('/deleteUser/:id', (req, res) => {
 })
 
 
+//Generate unique id for leave
+const generateUniqueID = async () => {
+    let id = 'PKG' + Math.floor(100000 + Math.random() * 900000);
+    const existingPackage = await packageModel.findOne({ packageId: id });
+    if (existingPackage) {
+        return generateUniqueID();
+    }
+    return id;
+};
 
 //get all packages
 router.get('/allPackages', async (req, res) => {

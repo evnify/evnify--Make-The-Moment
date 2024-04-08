@@ -148,7 +148,7 @@ function Packages() {
     fetchAllPackages();
   }, []); // Run only once on component mount
 
-  // fetch all inventories
+  // fetch all inventories//drop down list
   const fetchAllInventories = async () => {
     try {
       const response = await axios.get(`/api/packages/allInventory`);
@@ -170,8 +170,8 @@ function Packages() {
     };
   });
 
-  // Delete an inventory
-  const handleDeleteInventory = async (packageId) => {
+  // Delete an package
+  const handleDeletePackage = async (packageId) => {
     try {
       // Make an HTTP request to delete the inventory by its ID
       await axios.delete(`/api/packages/deletePackage/${packageId}`);
@@ -212,7 +212,7 @@ function Packages() {
 
   const handleUpdatePackage = async () => {
     try {
-      // Send a PUT request to update the package
+      // Send a PUT request to update the package to database
       const response = await axios.put(`/api/packages/updatePackage/${editPackageData._id}`, editPackageData);
       console.log('Package updated:', response.data);
       // Optionally, you can fetch all packages again to update the package list
@@ -262,7 +262,7 @@ function Packages() {
               background: "transparent",
             }}
           >
-            <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeleteInventory(record._id)} />
+            <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeletePackage(record._id)} />
             <Icon icon="mdi:pencil" style={{ margin: "0 5px 0 5px" }} onClick={() => handleEditPackage(record._id)} />
             <Icon icon="mdi:download" style={{ margin: "0 0 0 10px " }} />
           </button>
