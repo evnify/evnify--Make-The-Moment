@@ -264,6 +264,7 @@
     border-radius: 11px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     margin: 15px;
+
 }
 
 .booking_model_main_container {
@@ -437,4 +438,28 @@
     height: fit-content;
     background: transparent;
     border: none;
+}
+.booking_cart_item_container_3{
+    display: flex;
+    background-color: white;
+    
+    align-items: center;
+    flex-direction: row;
+    height: 500px;
+    width: 795px;
+    border-radius: 11px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin: 15px;
+}
+.booking_cart_item_2 {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+    height: 240px;
+    width: 350px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }

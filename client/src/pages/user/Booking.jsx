@@ -520,27 +520,37 @@ function Booking() {
                     centered
                 >
                     <div className="booking_model_main_container">
-                        <Steps
-                            current={current}
-                            onChange={(current) => setCurrent(current)}
-                            style={{
-                                marginBottom: 24,
-                                marginTop: 10,
-                                textAlign: "center",
-                                width: 400,
+                        <ConfigProvider
+                            theme={{
+                                components: {
+                                    Modal: {
+                                        colorSuccess: "#4CAF50",
+                                    },
+                                },
                             }}
-                            items={[
-                                {
-                                    title: "Step 1",
-                                },
-                                {
-                                    title: "Step 2",
-                                },
-                                {
-                                    title: "Step 3",
-                                },
-                            ]}
-                        />
+                        >
+                            <Steps
+                                current={current}
+                                onChange={(current) => setCurrent(current)}
+                                style={{
+                                    marginBottom: 24,
+                                    marginTop: 10,
+                                    textAlign: "center",
+                                    width: 400,
+                                }}
+                                items={[
+                                    {
+                                        title: "Step 1",
+                                    },
+                                    {
+                                        title: "Step 2",
+                                    },
+                                    {
+                                        title: "Step 3",
+                                    },
+                                ]}
+                            />
+                        </ConfigProvider>
                         {current == 0 ? (
                             <div className="booking_cart_item_container">
                                 <div
@@ -713,8 +723,184 @@ function Booking() {
                                 </button>
                             </div>
                         ) : (
-                            <div className="booking_cart_item_container">
-                                <div id="payment-element"></div>
+                            <div className="booking_cart_item_container_3">
+                                <div id="" style={{ flex: 1 }}>
+                                    <div className="booking_cart_item_2">
+                                        {cart.map((item) => (
+                                            <div
+                                                className="booking_cart_item_body"
+                                                key={item.itemId}
+                                            >
+                                                <div className="booking_cart_item_image">
+                                                    <img src={item.itemImage} />
+                                                </div>
+                                                <div className="booking_cart_item_description">
+                                                    <h5>{item.itemName}</h5>
+                                                    <p>{item.unitPrice} LKR</p>
+                                                </div>
+
+                                                <hr />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div id="payment-element" style={{ flex: 1 }}>
+                                    <div
+                                        style={{
+                                            width: 420,
+                                            padding: "0 50px",
+                                        }}
+                                    >
+                                        <hr />
+                                        <div
+                                            style={{
+                                                marginTop: "8px",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    marginBottom: "3px",
+                                                    fontSize: "12px",
+                                                    fontWeight: 900,
+                                                }}
+                                            >
+                                                Email
+                                            </span>
+                                            <Input
+                                                type="email"
+                                                placeholder="Email"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                marginTop: "8px",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    marginBottom: "3px",
+                                                    fontSize: "12px",
+                                                    fontWeight: 900,
+                                                }}
+                                            >
+                                                Card Information
+                                            </span>
+                                            <Input
+                                                type="number"
+                                                placeholder="1234 1234 1234 1234"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "row",
+                                            }}
+                                        >
+                                            <Input
+                                                type="number"
+                                                placeholder="MM/YY"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+
+                                            <Input
+                                                type="number"
+                                                placeholder="CVC"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                marginTop: "8px",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    marginBottom: "3px",
+                                                    fontSize: "12px",
+                                                    fontWeight: 900,
+                                                }}
+                                            >
+                                                Name On card
+                                            </span>
+                                            <Input
+                                                placeholder="Full name on card"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                marginTop: "8px",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    marginBottom: "3px",
+                                                    fontSize: "12px",
+                                                    fontWeight: 900,
+                                                }}
+                                            >
+                                                Country Or region
+                                            </span>
+
+                                            <Input
+                                                type="number"
+                                                placeholder="ZIP"
+                                                size="large"
+                                                style={{
+                                                    boxShadow:
+                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            style={{
+                                                marginTop: "8px",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}
+                                        >
+                                            <Checkbox>
+                                                Agree to the terms and
+                                                conditions
+                                            </Checkbox>
+                                        </div>
+                                        <div className="center">
+                                            <button className="cancel_Package_72">
+                                                Pay
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -916,13 +1102,13 @@ function Booking() {
                                     <button
                                         className="createBookingBtn_72 "
                                         onClick={() => {
-                                            if (cart.length === 0) {
-                                                return message.error(
-                                                    "Please add items to the cart"
-                                                );
-                                            } else {
-                                                setBookingModal(true);
-                                            }
+                                            //     if (cart.length === 0) {
+                                            //         return message.error(
+                                            //             "Please add items to the cart"
+                                            //         );
+                                            //     } else {
+                                            setBookingModal(true);
+                                            // }
                                         }}
                                     >
                                         CONTINUE TO CHECKOUT
