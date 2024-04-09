@@ -132,7 +132,6 @@
 }
 .admin_existing_blog_total_card1{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans";
 }
@@ -172,7 +171,6 @@
 }
 .admin_existing_blog_total_card2{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans";
 }
@@ -212,7 +210,6 @@
 }
 .admin_existing_blog_total_card3{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans";
 }
@@ -252,7 +249,6 @@
 }
 .admin_existing_blog_total_card4{
     color: #161E54;
-    font-family: Poppins;
     font-size: 18px;
     font-style: "Product Sans";
 }
@@ -272,10 +268,27 @@
 }
 
 /* table css */
+.admin_existing_blog_top_menu{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 1116px;
+    height: 80px;
+    padding: 0 15px;
+    border-radius: 11px 11px 0 0;
+    background-color: #f5f5f5;
+}
+.admin_existing_blog_top_menu h5{
+color: #464646;
+    font-family: "Product Sans";
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 30px 0 22px;
+}
 .admin_existing_blog_table__view_back{
     background-color: #ffffff;
     height: 800px;
-    width: 1220px;
+    width: 1135px;
     display: flex;
     margin-left: 16px;
     border-radius: 12px;

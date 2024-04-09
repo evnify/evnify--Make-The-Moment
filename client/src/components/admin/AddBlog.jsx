@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
-import { Input, Select, DatePicker, Space, Modal, Upload, Button, message } from "antd";
+import {
+    Input,
+    Select,
+    DatePicker,
+    Space,
+    Modal,
+    Upload,
+    Button,
+    message,
+} from "antd";
 const { TextArea } = Input;
-
-
 
 // Define getBase64 function
 const getBase64 = (file) =>
@@ -20,16 +27,15 @@ const options = [
     { value: "bridetobe", label: "bride to be" },
     { value: "gettogether", label: "get together" },
     { value: "anniversary", label: "anniversary" },
-    {value: "wedding", label: "wedding"},
-    {value : "birthday", label: "birthday"},
-    
+    { value: "wedding", label: "wedding" },
+    { value: "birthday", label: "birthday" },
 ];
 
 function AddBlog() {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [previewTitle, setPreviewTitle] = useState("");
-    const [fileList, setFileList] = useState([ ]);
+    const [fileList, setFileList] = useState([]);
 
     const [blogTitle, setTitle] = useState("");
     const [blogTitleDescription, setTitleDescription] = useState("");
@@ -53,16 +59,22 @@ function AddBlog() {
             images,
         };
         console.log(blogData);
-            if (!blogTitle || !blogTitleDescription || !category || !eventDate || !tags || !description) {
-                return message.error("Please fill all the fields");
-            }
-        try{
+        if (
+            !blogTitle ||
+            !blogTitleDescription ||
+            !category ||
+            !eventDate ||
+            !tags ||
+            !description
+        ) {
+            return message.error("Please fill all the fields");
+        }
+        try {
             await axios.post("/api/blogs/addBlogs", blogData);
             message.success("Blog added successfully");
-        }catch(error){
+        } catch (error) {
             console.log(error);
         }
-        
     };
     const handleCancel = () => setPreviewOpen(false);
     const handlePreview = async (file) => {
@@ -148,10 +160,12 @@ function AddBlog() {
                         <h3 className="admin_add_blog_section_add_blog_title_name">
                             Date
                         </h3>
-                        <DatePicker style={{ width: 350, height: 40 }}
-                        onChange={(date, dateString) => {
-                            setDate(dateString);
-                        }} />
+                        <DatePicker
+                            style={{ width: 350, height: 40 }}
+                            onChange={(date, dateString) => {
+                                setDate(dateString);
+                            }}
+                        />
                         <h3 className="admin_add_blog_section_add_blog_title_name">
                             Tags
                         </h3>
@@ -179,10 +193,10 @@ function AddBlog() {
                             <Upload
                                 customRequest={customRequest}
                                 listType="picture-card"
-                                fileList={fileList}v
+                                fileList={fileList}
+                                v
                                 onPreview={handlePreview}
                                 onChange={handleChange}
-                                
                             >
                                 {fileList.length >= 7 ? null : uploadButton}
                             </Upload>
