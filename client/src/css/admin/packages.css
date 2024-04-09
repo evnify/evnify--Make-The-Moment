@@ -1,0 +1,101 @@
+.booking-package-insight-div {
+    display: flex;
+    flex-direction: row;
+    height: 357px;
+    justify-content: space-between;
+    margin: 0 15px 0 15px;
+}
+
+.booking-package-div-insight-left {
+    display: flex;
+    flex-direction: column;
+    width: 572px;
+    height: 355px;
+    padding: 10px;
+    border-radius: 11px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.booking-package-div-insight-right {
+    display: flex;
+    flex-direction: column;
+    width: 572px;
+    height: 355px;
+    padding: 10px;
+    border-radius: 11px;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.booking-package-details-change {
+    margin: 20px 15px 0px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-package-details-change-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: white;
+    height: 60px;
+    border-radius: 11px;
+    margin-bottom: 20px;
+    padding: 8px 15px 0 15px;
+}
+
+.package-details-add-model {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #9e9b9b;
+    border-radius: 11px;
+    height: fit-content;
+    width: 1050px;
+}
+
+.package-details-add-model-left {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: fit-content;
+    padding: 10px;
+}
+
+.package-details-add-model-right {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 650px;
+    height: fit-content;
+    justify-content: space-between;
+}
+
+.package-details-add-model-right-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: white;
+    height: 200px;
+    border-radius: 11px;
+    margin-bottom: 20px;
+    padding: 8px 15px 0 15px;
+    border: 1px solid #9e9b9b;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.package-details-add-model-right-down {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: white;
+    height: 200px;
+    border-radius: 11px;
+    margin-bottom: 30px;
+    padding: 8px 15px 0 15px;
+    border: 1px solid #9e9b9b;
+    align-items: center;
+    justify-content: center;
+}
