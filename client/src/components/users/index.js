@@ -5,7 +5,6 @@ import UserProfile from "./UserProfile";
 import UserSettings from "./UserSettings";
 import ContactUS from "./ContactUS";
 import AddBillingAddress from "./AddBillingAddress";
-import BigImageView from "./BigImageView";
 import SideMenuItems from "./SideMenuItems";
 import BookingSteps from "./BookingSteps";
 import Footer from "./Footer";
@@ -20,10 +19,10 @@ export {
   UserSettings,
   ContactUS,
   AddBillingAddress,
-  BigImageView,
   SideMenuItems,
   BookingSteps,
   Footer,
   UserBasicInfo,
   ChangePw,
 };
+

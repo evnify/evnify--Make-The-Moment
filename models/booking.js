@@ -17,7 +17,10 @@ const bookingSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    eventLocation : [],
+    eventLocation : {
+        type: Array,
+        required: true,
+    },
     eventDate : {
         type: String,
         required: true,
@@ -28,7 +31,7 @@ const bookingSchema = new mongoose.Schema({
     },
     status : {
         type: String,
-        default: true,
+        default: "Pending",
     },
     AssignedInventory : [],
     AssignedEmployees : [],
