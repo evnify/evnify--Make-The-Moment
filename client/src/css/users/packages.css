@@ -335,7 +335,7 @@
   font-weight: 400;
   line-height: 24px;
 }
-.add_employee_popup_container_right{
+.add_booking_popup_container_right{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -343,15 +343,6 @@
     gap: 20px;
     margin-right: 40px;
     margin-top: 10px;
-    border-radius: 11px;
-    background: #533c56;
-    display: flex;
-    width: 244px;
-    height: 45px;
-    padding: 12px 0px;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
 }
 
 .createPackageBtn_72:hover {
@@ -381,7 +372,7 @@
     margin-left: 160px;
     margin-top: -180px;
 }
-.add_employee_popup_container_left{
+.add_booking_popup_container_left{
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -397,13 +388,13 @@
    
    
 }
-.add_employee_popup_container_left span{
+.add_booking_popup_container_left span{
     color: var(--Core-black, #000);
     font-size: 14px;
     font-weight: 600;
     line-height: 22px;
 }
-.add_employee_popup_container_right span{
+.add_booking_popup_container_right span{
     color: var(--Core-black, #000);
     width: 60px;
     height: 22px;
