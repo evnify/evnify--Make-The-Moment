@@ -49,7 +49,6 @@
 .profile-card {
     width: 963px;
     height: 152px;
-    flex-shrink: 0;
     background: #c4c4c4;
     border-radius: 8px 8px 0px 0px;
 }
@@ -74,10 +73,9 @@
     font-size: 10px;
 }
 
-.edit {
-    margin-left: auto; /* Push the button to the right */
-    margin-top: -90px;
-    margin-right: 20px;
+.edit{
+    margin-top: -60px;
+    margin-left: 800px
 }
 
 .profile-details {
@@ -95,7 +93,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 110px;
+    margin-top: -40PX;
     margin-left: 20px;
 }
 
@@ -146,4 +144,45 @@
     margin: auto;
     margin-top: 18px;
     
+}
+
+
+
+.coverImg-container {
+    position: relative;
+    width: 100%;
+    /* Adjust height as needed */
+    overflow: hidden;
+    border: 1px solid #d9d9d9; /* Optional: Border style */
+}
+
+.coverImg-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.coverImg-container img:hover {
+    transform: scale(1.1); /* Optional: Add zoom effect on hover */
+}
+
+.coverImg-container .ant-upload {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+.coverImg-container .ant-modal-content {
+    max-width: 800px; /* Optional: Adjust modal width */
+}
+
+.coverImg-container .ant-modal-content img {
+    width: 100%;
+    height: auto;
+}
+
+.coverImg-container .ant-modal-title {
+    font-size: 18px; /* Optional: Adjust modal title font size */
 }
