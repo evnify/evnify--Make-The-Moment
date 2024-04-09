@@ -6,25 +6,23 @@ import UserSettings from "./UserSettings";
 import ContactUS from "./ContactUS";
 import AddBillingAddress from "./AddBillingAddress";
 import SideMenuItems from "./SideMenuItems";
-import PackageIncludesView from "./PackageIncludesView";
 import BookingSteps from "./BookingSteps";
 import Footer from "./Footer";
-import ChangePw from './ChangePw';
-import UserBasicInfo from './UserBasicInfo';
+import UserBasicInfo from "./UserBasicInfo";
+import ChangePw from "./ChangePw";
 
 export {
-    UserSideMenu,
-    Booking,
-    UserProfile,
-    Navbar,
-    UserSettings,
-    ContactUS,
-    AddBillingAddress,
-    SideMenuItems,
-    PackageIncludesView,
-    BookingSteps,
-    Footer,
-    UserBasicInfo,
-    ChangePw,
+  UserSideMenu,
+  Booking,
+  UserProfile,
+  Navbar,
+  UserSettings,
+  ContactUS,
+  AddBillingAddress,
+  SideMenuItems,
+  BookingSteps,
+  Footer,
+  UserBasicInfo,
+  ChangePw,
 };
 

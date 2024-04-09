@@ -4,13 +4,41 @@ import { Modal, Checkbox, Input, Button, message, Cascader } from "antd";
 
 function AddBillingAddress() {
   const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
-  const [addressLine1, setAddresLine1] = useState("");
-  const [addressLine2, setAddresLine2] = useState("");
-  const [district, setDistrict] = useState("");
-  const [country, setCounty] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
- 
+  const [addressData, setAddressData] = useState({
+    country: "",
+    addressLine1: "",
+    addressLine2: "",
+    district: "",
+    city: "",
+    postalCode: "",
+  });
+  const saveAddressData = async () => {
+    try {
+      const requiredFields = [
+        "country",
+        "addressLine1",
+        "district",
+        "city",
+        "postalCode",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !addressData[field]
+      );
+      if (missingFields.length > 0) {
+        message.error("Please fill all the required fields");
+        return;
+      }
+
+      await axios.post("/api/bookings/saveAddress", addressData);
+
+      setIsModalOpen(false);
+
+      message.success("Address saved successfully");
+    } catch (error) {
+      console.error("Error saving address:", error);
+      message.error("Failed to save address. Please try again later.");
+    }
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,12 +53,10 @@ function AddBillingAddress() {
     {
       value: "zhejiang",
       label: "Zhejiang",
-      
     },
     {
       value: "jiangsu",
       label: "Jiangsu",
-      
     },
   ];
   const onChange = (value, selectedOptions) => {
@@ -42,32 +68,6 @@ function AddBillingAddress() {
         option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
 
-   const saveAddressData = () => {
-   if(!country||
-    !addressLine1||
-    !addressLine2||
-    !district||
-    !city||
-    !postalCode
-    ){
-      message.error("Please fill all the fields");
-      return;
-    }
-    
-    }
-
-
-    const addressData = {
-      country,
-      addressLine1,
-      addressLine2,
-      district,
-      city,
-      postalCode
-    };
-
-  
-  
   return (
     <div>
       <Button type="primary" onClick={showModal}>
@@ -76,7 +76,6 @@ function AddBillingAddress() {
       <Modal
         centered
         open={isModalOpen}
-        onOk={() => setAddEmployeeModelOpen(false)}
         onCancel={handleCancel}
         footer={null}
         width={550}
@@ -127,7 +126,9 @@ function AddBillingAddress() {
               <Input
                 placeholder="Sri Lanka"
                 size="large"
-                onChange={(e) => setCounty(e.target.value)}
+                onChange={(e) =>
+                  setAddressData({ ...addressData, country: e.target.value })
+                }
               />
             </div>
             <div
@@ -149,7 +150,12 @@ function AddBillingAddress() {
               <Input
                 placeholder="New Kandy Road"
                 size="large"
-                onChange={(e) => setAddresLine1(e.target.value)}
+                onChange={(e) =>
+                  setAddressData({
+                    ...addressData,
+                    addressLine1: e.target.value,
+                  })
+                }
               />
             </div>
             <div
@@ -171,7 +177,12 @@ function AddBillingAddress() {
               <Input
                 placeholder="Address Line 2"
                 size="large"
-                onChange={(e) => setAddresLine2(e.target.value)}
+                onChange={(e) =>
+                  setAddressData({
+                    ...addressData,
+                    addressLine2: e.target.value,
+                  })
+                }
               />
             </div>
             <div
@@ -193,7 +204,9 @@ function AddBillingAddress() {
 
               <Cascader
                 options={options}
-                onChange={onChange}
+                onChange={(value) =>
+                  setAddressData({ ...addressData, district: value })
+                }
                 placeholder="Please select"
                 showSearch={{
                   filter,
@@ -222,7 +235,9 @@ function AddBillingAddress() {
                   <Input
                     placeholder="Malabe"
                     size="large"
-                    onChange={(e) => setCity(e.target.value)}
+                    onChange={(e) =>
+                      setAddressData({ ...addressData, city: e.target.value })
+                    }
                   />
                 </span>
               </div>
@@ -248,7 +263,12 @@ function AddBillingAddress() {
                   placeholder="000000"
                   type="number"
                   size="large"
-                  onChange={(e) => setPostalCode(e.target.value)}
+                  onChange={(e) =>
+                    setAddressData({
+                      ...addressData,
+                      postalCode: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -265,12 +285,13 @@ function AddBillingAddress() {
           </div>
         </div>
         <div className=" center">
-          <button className="saveAddressBtn_72">Save Address</button>
+          <button className="saveAddressBtn_72" onClick={saveAddressData}>
+            Save Address
+          </button>
         </div>
       </Modal>
     </div>
   );
 }
-          
 
 export default AddBillingAddress;
