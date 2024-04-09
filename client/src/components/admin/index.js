@@ -21,7 +21,6 @@ import Charts from "./PackageCharts.jsx";
 import AddPackage from "./AddPackage";
 import UpdatePackage from "./UpdatePackage";
 import UserTab from "./UserTab";
-import UserTable from "./UserTable";
 import Loader from "./Loader";
 
 export {
@@ -45,6 +44,5 @@ export {
     UserEmails,
     NavBar,
     UserTab,
-    UserTable,
     Loader
 };
