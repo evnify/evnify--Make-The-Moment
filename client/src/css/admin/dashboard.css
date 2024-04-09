@@ -1,0 +1,41 @@
+.admin_dashboard_card_main_section {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.admin_dashboard_card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 204px;
+    height: 136px;
+    padding: 16px 12px 12px 30px;
+    margin-bottom: 12px;
+    border-radius: 11px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+.admin_dashboard_card h1 {
+    font-family: "";
+    font-size: 20px;
+    font-family: "Product Sans";
+    font-weight: 500;
+}
+.admin_dashboard_card h2 {
+    font-family: "Product Sans";
+    font-size: 38px;
+    font-weight: 500;
+}
+.admin_dashboard_card h3{
+    font-family: "Product Sans";
+    font-size: 16px;
+    font-weight: 500;
+}
+.card1 {
+    background-color: #e8f0fb;
+}
+.card2 {
+    background-color: #e4ffe1;
+}
+.card3 {
+    background-color: #FFEFE7;
+}
