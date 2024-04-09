@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const packageSchema = new mongoose.Schema({
+    packageId : {
+        type: String,
+        required: true,
+    },
     packageType : {
         type: String,
         required: true,
