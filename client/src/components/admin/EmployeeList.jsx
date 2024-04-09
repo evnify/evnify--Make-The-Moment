@@ -328,7 +328,7 @@ function EmployeeList() {
         console.log(empData);
 
         try {
-            await axios.post(
+            const res = await axios.post(
                 `${process.env.PUBLIC_URL}/api/employees/addEmployee`,
                 empData
             );
@@ -348,6 +348,7 @@ function EmployeeList() {
             setFileList([]);
         } catch (error) {
             console.log(error);
+            message.error("Employee Already Exists");
         }
     };
 
