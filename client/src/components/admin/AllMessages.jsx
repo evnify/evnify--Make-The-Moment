@@ -300,45 +300,45 @@ function AllMessages() {
                                     ))}
                                 </>
                             ) :
-                            (Object.keys(filteredMessages).map((customerID) => {
-                                // Find the user with the matching userID
-                                const user = users.find(user => user.userID === customerID);
-                                // Check if the user is found
-                                if (!user) {
-                                    console.log(`User not found for userID: ${customerID}`);
-                                    return null; // Skip rendering if user not found
-                                }
-                                return (
-                                    <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
-                                        onClick={() => handlePreviewClick(customerID)}>
-                                        <div className="all-message-profile-pic">
-                                            <img src={user.profilePic || messageDp} alt="DP" />
+                                (Object.keys(filteredMessages).map((customerID) => {
+                                    // Find the user with the matching userID
+                                    const user = users.find(user => user.userID === customerID);
+                                    // Check if the user is found
+                                    if (!user) {
+                                        console.log(`User not found for userID: ${customerID}`);
+                                        return null; // Skip rendering if user not found
+                                    }
+                                    return (
+                                        <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                            onClick={() => handlePreviewClick(customerID)}>
+                                            <div className="all-message-profile-pic">
+                                                <img src={user.profilePic || messageDp} alt="DP" />
+                                            </div>
+                                            <div className="all-message-name">
+                                                <div className="all-message-timeandname">
+                                                    <div className="all-message-name-tag">
+                                                        <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
+                                                    </div>
+                                                    <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                        {groupedMessages[customerID][0].sendTime}
+                                                    </div>
+                                                </div>
+                                                <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
+                                                    <div style={{ width: "250px" }}>
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
+                                                    </div>
+                                                    {/* Render BellFilled icon conditionally */}
+                                                    {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
+                                                </div>
+                                                <div>
+                                                    <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="all-message-name">
-                                            <div className="all-message-timeandname">
-                                                <div className="all-message-name-tag">
-                                                    <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
-                                                </div>
-                                                <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                    {groupedMessages[customerID][0].sendTime}
-                                                </div>
-                                            </div>
-                                            <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
-                                                <div style={{ width: "250px" }}>
-                                                    {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
-                                                </div>
-                                                {/* Render BellFilled icon conditionally */}
-                                                {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
-                                            </div>
-                                            <div>
-                                                <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            }))
-                            
-                                }
+                                    );
+                                }))
+
+                            }
                         </div>
 
                     </div>
@@ -499,11 +499,12 @@ function AllMessages() {
                                             variant="borderless"
                                             style={{ width: 690 }}
                                         />
-                                        <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                                            <SendOutlined style={{ color: "black", fontSize: "22px" }} />
+                                        <button type="submit" disabled={!message} style={{ background: "none", border: "none", cursor: "pointer" }}>
+                                            <SendOutlined style={{ color: message ? "black" : "#d3d3d3", fontSize: "22px" }} />
                                         </button>
                                     </form>
-                                )}
+                                )
+                                }
                             </div>
                         </div>
 
