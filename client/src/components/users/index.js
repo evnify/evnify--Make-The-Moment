@@ -1,22 +1,30 @@
-import UserSideMenu  from './UserSideMenu';
-import Navbar from './navBar';
-import Booking from './Booking';
-import UserProfile from './UserProfile';
-import UserSettings from './UserSettings';
-import ContactUS from './ContactUS';
-import UserBasicInfo from './UserBasicInfo';
+import UserSideMenu from "./UserSideMenu";
+import Navbar from "./navBar";
+import Booking from "./Booking";
+import UserProfile from "./UserProfile";
+import UserSettings from "./UserSettings";
+import ContactUS from "./ContactUS";
+import AddBillingAddress from "./AddBillingAddress";
+import SideMenuItems from "./SideMenuItems";
+import PackageIncludesView from "./PackageIncludesView";
+import BookingSteps from "./BookingSteps";
+import Footer from "./Footer";
 import ChangePw from './ChangePw';
-import Footer from './Footer';
+import UserBasicInfo from './UserBasicInfo';
 
 export {
-    UserSideMenu,   
+    UserSideMenu,
     Booking,
     UserProfile,
     Navbar,
     UserSettings,
     ContactUS,
+    AddBillingAddress,
+    SideMenuItems,
+    PackageIncludesView,
+    BookingSteps,
+    Footer,
     UserBasicInfo,
     ChangePw,
-    Footer
+};
 
-}
