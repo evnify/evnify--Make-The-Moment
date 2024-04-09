@@ -108,7 +108,7 @@ const Login = () => {
                                 prefix={
                                     <UserOutlined className="site-form-item-icon" />
                                 }
-                                placeholder="Username"
+                                placeholder="Email"
                                 style={{ borderRadius: "5px" }}
                                 size="large"
                                 onChange={(e) => setemail(e.target.value)}
