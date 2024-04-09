@@ -167,6 +167,8 @@ function UserList() {
             if (response.status === 200) {
                 message.success("User added successfully");
                 setaddUserModelOpen(false);
+                fetchUserList();
+                
 
                 // Reset form fields after successful submission
                 setaddress1("");
@@ -1023,6 +1025,7 @@ function UserList() {
                                         User Type
                                     </span>
                                     <Select
+                                        value={userType}
                                         style={{
                                             width: 220,
                                             height: 35,
@@ -1074,6 +1077,7 @@ function UserList() {
                                         </span>
                                         <Input
                                             size="large"
+                                            value={firstName}
                                             onChange={(e) =>
                                                 setFirstName(e.target.value)
                                             }
@@ -1097,6 +1101,7 @@ function UserList() {
                                         <Input
                                             type="email"
                                             size="large"
+                                            value={email}
                                             onChange={(e) =>
                                                 setEmail(e.target.value)
                                             }
@@ -1118,6 +1123,7 @@ function UserList() {
                                             Phone Number
                                         </span>
                                         <Input
+                                            value={phoneNumber}
                                             size="large"
                                             onChange={(e) =>
                                                 setPhoneNumber(e.target.value)
@@ -1142,6 +1148,7 @@ function UserList() {
                                             Last Name
                                         </span>
                                         <Input
+                                            value={lastName}
                                             size="large"
                                             onChange={(e) =>
                                                 setLastName(e.target.value)
@@ -1164,6 +1171,7 @@ function UserList() {
                                             Username
                                         </span>
                                         <Input
+                                            value={username}
                                             size="large"
                                             onChange={(e) =>
                                                 setUsername(e.target.value)
@@ -1186,6 +1194,7 @@ function UserList() {
                                     style={{
                                         width: 520,
                                     }}
+                                    value={address1}
                                     rows={4}
                                     onChange={(e) => {
                                         setaddress1(e.target.value);
@@ -1194,6 +1203,7 @@ function UserList() {
                                 />
                             </div>
                         </div>
+
                         <div className="add_user_popup_footer_container center">
                             <Button
                                 onClick={() => setaddUserModelOpen(false)}
@@ -1205,6 +1215,17 @@ function UserList() {
                             >
                                 Cancel
                             </Button>
+
+                            <button
+                                className="add_user_popup_footer_button"
+                                onClick={saveUser}
+                                style={{
+                                    width: "120px",
+                                    height: "40px",
+                                }}
+                            >
+                                Save Changes
+                            </button>
                         </div>
                     </Modal>
 
