@@ -19,6 +19,7 @@ dotenv.config();
     }
 });
 
+//Generate unique id for the message
 const generateUniqueID = async () => {
     let id = 'TM' + Math.floor(100000 + Math.random() * 900000);
     const existingMessage = await messageModel.findOne({ messageId: id });
