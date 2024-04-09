@@ -49,7 +49,6 @@
 .profile-card {
     width: 963px;
     height: 152px;
-    flex-shrink: 0;
     background: #c4c4c4;
     border-radius: 8px 8px 0px 0px;
 }
@@ -74,11 +73,12 @@
     font-size: 10px;
 }
 
-.edit {
-    margin-left: auto; /* Push the button to the right */
-    margin-top: -90px;
-    margin-right: 20px;
+.edit{
+    
 }
+
+ 
+
 
 .profile-details {
     width: 966px;

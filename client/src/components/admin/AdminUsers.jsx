@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import {
     ConfigProvider,
@@ -28,14 +29,7 @@ const { Search, TextArea } = Input;
 
 function UserList() {
     const [searchkey, setsearchkey] = useState("");
-
-    const filterBySearch = (data) => {
-        return data.filter(
-            (item) =>
-                item.username.toLowerCase().includes(searchkey.toLowerCase()) ||
-                item.email.toLowerCase().includes(searchkey.toLowerCase())
-        );
-    };
+    const { confirm } = Modal;
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -54,6 +48,7 @@ function UserList() {
 
     const conformActive = () => {
         setIsActiveModalOpen(true);
+        fetchUserList();
     };
 
     async function handleDelete(userID) {
@@ -77,14 +72,6 @@ function UserList() {
     const inputRef = useRef(null);
     const onNameChange = (event) => {
         setName(event.target.value);
-    };
-    const addItem = (e) => {
-        e.preventDefault();
-        setItems([...items, name || `New item ${index++}`]);
-        setName("");
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
     };
 
     // Add user model use states
@@ -172,12 +159,32 @@ function UserList() {
         };
 
         try {
-            await axios.post("/api/users/addUser", userData);
-            message.success("User added successfully");
-            setaddUserModelOpen(false);
-            fetchUserList();
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/addUser`,
+                userData
+            );
+
+            if (response.status === 200) {
+                message.success("User added successfully");
+                setaddUserModelOpen(false);
+
+                // Reset form fields after successful submission
+                setaddress1("");
+                setuserType("");
+                setFirstName("");
+                setLastName("");
+                setEmail("");
+                setPhoneNumber("");
+                setUsername("");
+                setprofilePic("");
+                setStatus("");
+                setFileList([]);
+            } else {
+                message.error("Failed to add user");
+            }
         } catch (error) {
             console.log(error);
+            message.error("An error occurred while adding user");
         }
     };
 
@@ -246,7 +253,7 @@ function UserList() {
 
         const userData = {
             address1: editAddress,
-            type: editType,
+            userType: editType,
             firstName: editFirstName,
             lastName: editLastName,
             email: editEmail,
@@ -335,7 +342,7 @@ function UserList() {
             render: (_, record) => (
                 <Space size="middle">
                     <button
-                        onClick={() => handleDelete(record.userID)}
+                        onClick={() => showDeleteConform(record.userID)}
                         style={{
                             fontSize: "20px",
                             color: "#9D9D9D",
@@ -543,10 +550,10 @@ function UserList() {
         if (searchKey && searchKey !== "") {
             tempList = tempList.filter(
                 (item) =>
-                    item.firstName
+                    item.username
                         .toLowerCase()
                         .includes(searchKey.toLowerCase()) ||
-                    item.email.toLowerCase().includes(searchKey.toLowerCase())
+                    item.userID.toLowerCase().includes(searchKey.toLowerCase())
             );
         }
 
@@ -564,6 +571,25 @@ function UserList() {
         console.log("searchKey", searchKey);
         console.log("selectedType", selectedType);
     }, [searchKey, selectedType, data]);
+
+    const showDeleteConform = (id) => {
+        confirm({
+            centered: true,
+            title: "Are you sure?",
+            icon: <ExclamationCircleFilled />,
+            content: "Please confirm that you want to delete this salary",
+            okText: "Delete",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                handleDelete(id);
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+            width: 350,
+        });
+    };
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -701,10 +727,10 @@ function UserList() {
                                 </span>
                                 <Input
                                     size="large"
+                                    value={editFirstName}
                                     onChange={(e) =>
                                         setEditFirstName(e.target.value)
                                     }
-                                    value={editFirstName}
                                 />
                             </div>
                             <div
@@ -725,10 +751,10 @@ function UserList() {
                                 <Input
                                     type="email"
                                     size="large"
+                                    value={editEmail}
                                     onChange={(e) =>
                                         setEditEmail(e.target.value)
                                     }
-                                    value={editEmail}
                                 />
                             </div>
                             <div
@@ -748,10 +774,10 @@ function UserList() {
                                 </span>
                                 <Input
                                     size="large"
+                                    value={editPhoneNumber}
                                     onChange={(e) =>
                                         setEditPhoneNumber(e.target.value)
                                     }
-                                    value={editPhoneNumber}
                                 />
                             </div>
                         </div>
@@ -773,10 +799,10 @@ function UserList() {
                                 </span>
                                 <Input
                                     size="large"
+                                    value={editLastName}
                                     onChange={(e) =>
                                         setEditLastName(e.target.value)
                                     }
-                                    value={editLastName}
                                 />
                             </div>
                             <div
@@ -796,10 +822,10 @@ function UserList() {
                                 </span>
                                 <Input
                                     size="large"
+                                    value={editUsername}
                                     onChange={(e) =>
                                         setEditUsername(e.target.value)
                                     }
-                                    value={editUsername}
                                 />
                             </div>
                             <div
@@ -944,11 +970,10 @@ function UserList() {
                     </div>
 
                     <Modal
-                        centered
-                        open={addUserModelOpen}
-                        onOk={() => setaddUserModelOpen(false)}
-                        onCancel={() => setaddUserModelOpen(false)}
                         footer={null}
+                        open={addUserModelOpen}
+                        onCancel={() => setaddUserModelOpen(false)}
+                        centered
                         width={550}
                     >
                         <div className="_user_model_body_container">
@@ -1180,18 +1205,6 @@ function UserList() {
                             >
                                 Cancel
                             </Button>
-                            <button
-                                className="add_user_popup_footer_button"
-                                onClick={() => {
-                                    saveUser();
-                                }}
-                                style={{
-                                    width: "120px",
-                                    height: "40px",
-                                }}
-                            >
-                                Add User
-                            </button>
                         </div>
                     </Modal>
 

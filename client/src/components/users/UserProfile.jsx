@@ -20,7 +20,6 @@ function UserProfile() {
         const fetchUserByID = async () => {
             const user = JSON.parse(localStorage.getItem("currentUser"));
             const userID = { userID: user.userID };
-            console.log(userID);
 
             try {
                 const res = await axios.post("/api/users/getUserById", userID);
@@ -273,7 +272,14 @@ function UserProfile() {
                                 src={previewImage}
                             />
                         </Modal>
+                        <button
+                        className="btn btn-primary edit"
+                    
+                    >
+                        Edit Profile
+                    </button>
                     </div>
+                    
                 </div>
 
                 <div className="profile-info">
@@ -288,12 +294,11 @@ function UserProfile() {
                             </a>
                         </span>
                     </p>
+                    
                 </div>
-                <Link to="/usersettings">
-                    <button className="btn btn-primary edit" style={{}}>
-                        Edit Profile
-                    </button>
-                </Link>
+                
+                    
+                
             </div>
 
             <div
