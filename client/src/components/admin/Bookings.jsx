@@ -1,39 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Space, Modal, Button } from "antd";
+import { Table, Modal, Tag, Space, Button } from "antd";
+import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+
+import BookingSteps from "../users/BookingSteps";
+
 import axios from "axios";
-import { DeleteOutlined,ExclamationCircleOutlined  } from "@ant-design/icons";
 
+const { confirm } = Modal;
 
-function Bookings() {
+function Booking() {
   const [bookingList, setBookingList] = useState([]);
 
-  // my code start
-  const [pagination, setPagination] = useState({
-    pageSize: 10,
-    current: 1,
-    position: ["bottomCenter"],
-  });
-  const { confirm } = Modal;
-useEffect(() => {
-    fetchBookings();
-  }, [pagination.current, pagination.pageSize]);
-
-  const fetchBookings = async () => {
-    try {
-      const response = await axios.get(
-        `/api/bookings/getbookings?page=${pagination.current}&limit=${pagination.pageSize}`
-      );
-      setBookingList(response.data);
-    } catch (error) {
-      console.log("Error fetching bookings:", error);
-    }
-  };
-
-  const handleTableChange = (pagination, filters, sorter) => {
-    setPagination(pagination);
-  };
-
-  const handleDeleteConfirmation = (bookingId) => {
+  const handleDeleteConfirmation = (id) => {
     confirm({
       title: "Are you sure you want to delete this booking?",
       icon: <ExclamationCircleOutlined />,
@@ -41,7 +19,7 @@ useEffect(() => {
       okType: "danger",
       cancelText: "No",
       onOk() {
-        handleDeleteBooking(bookingId);
+        handleDeleteBooking(id);
       },
       onCancel() {
         console.log("Delete operation cancelled");
@@ -49,14 +27,36 @@ useEffect(() => {
     });
   };
 
-  const handleDeleteBooking = async (bookingId) => {
+  const handleDeleteBooking = async (id) => {
     try {
-      await axios.delete(`/api/bookings/deleteBooking/${bookingId}`);
-      // If the deletion is successful, fetch the updated list of bookings
+      await axios.delete(`/api/bookings/deleteBooking/${id}`);
       fetchBookings();
     } catch (error) {
       console.error("Error deleting booking:", error);
     }
+  };
+
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    current: 1,
+    position: ["bottomCenter"],
+  });
+
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(`/api/bookings/getAllBookings`);
+      setBookingList(response.data);
+    } catch (error) {
+      console.log("Error fetching bookings:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPagination(pagination);
   };
 
   const columns = [
@@ -80,15 +80,18 @@ useEffect(() => {
       dataIndex: "eventType",
       key: "eventType",
     },
-    {
-      title: "Event Location",
-      dataIndex: "eventLocation",
-      key: "eventLocation",
-    },
+
     {
       title: "Event Date",
       dataIndex: "eventDate",
       key: "eventDate",
+      render: (eventDate) => {
+        const date = new Date(eventDate);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      },
     },
     {
       title: "Booking Status",
@@ -113,6 +116,13 @@ useEffect(() => {
       title: "Booked Date",
       dataIndex: "createdAt",
       key: "bookedDate",
+      render: (createdAt) => {
+        const date = new Date(createdAt);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      },
     },
     {
       title: "Actions",
@@ -124,28 +134,16 @@ useEffect(() => {
             danger
             onClick={() => handleDeleteConfirmation(record._id)}
             icon={<DeleteOutlined />}
-          >
-            Delete
-          </Button>
+          ></Button>
         </Space>
       ),
     },
   ];
-  
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div className="admin_leave_request_container">
-        <div className="admin_leave_request_top_menu">
-        <div className="admin_leave_request_container">
-          <div
-            style={{
-              marginRight: "auto",
-              display: "flex",
-              alignItems: "center",
-            }}
-          ></div>
-        </div>
+        <div className="admin_leave_request_top_menu"></div>
         <div style={{ width: "100%" }}>
           <div>
             <Table
@@ -157,8 +155,8 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      </div>
     </div>
   );
 }
-export default Bookings;
+
+export default Booking;
