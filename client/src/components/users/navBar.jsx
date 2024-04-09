@@ -13,6 +13,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import Logo from "../../assets/Logo/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -20,8 +21,53 @@ const { useBreakpoint } = Grid;
 function NavBarUser() {
     const { token } = useToken();
     const screens = useBreakpoint();
+    const [user, setUser] = useState(null);
+    const [fileList, setFileList] = useState([]);
 
-    const user = JSON.parse(localStorage.getItem("currentUser"));
+    useEffect(() => {
+        const fetchUserByID = async () => {
+            // Retrieve user from localStorage
+            const userJSON = localStorage.getItem("currentUser");
+    
+            // Check if user exists in localStorage
+            if (!userJSON) {
+                console.error("User not found in localStorage.");
+                return;
+            }
+    
+            // Parse user JSON
+            const user = JSON.parse(userJSON);
+    
+            // Check if user has a valid userID
+            if (!user || !user.userID) {
+                console.error("Invalid user object or userID not found.");
+                return;
+            }
+    
+            const userID = { userID: user.userID };
+    
+            try {
+                // Fetch user data by ID
+                const res = await axios.post("/api/users/getUserById", userID);
+                setUser(res.data);
+                setFileList([
+                    {
+                        uid: "1",
+                        name: "image.png",
+                        status: "done",
+                        url: res.data.profilePic,
+                    },
+                ]);
+                console.log(res.data);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+    
+        fetchUserByID();
+    }, []);
+    
+
     function logout() {
         localStorage.removeItem("currentUser");
         window.location.href = "/login";
@@ -101,6 +147,8 @@ function NavBarUser() {
             navigate("/packages/BrightToBe");
         } else if (e.key === "aniversary") {
             navigate("/packages/Aniversary");
+        } else if (e.key === "ContactUs") {
+            navigate("/ContactUs");
         }
     };
 
