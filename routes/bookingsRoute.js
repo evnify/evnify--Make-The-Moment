@@ -60,4 +60,18 @@ router.post("/savePayment", async (req, res) => {
     }
 });
 
+router.post("/getAddress", async (req, res) => {
+    const { userID } = req.body;
+    try {
+        const user = await UserModel.findOne({
+            userID,
+        });
+        res.send(user.addressArr);
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+
+
 module.exports = router;

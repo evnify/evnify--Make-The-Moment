@@ -680,6 +680,26 @@ function Booking() {
         }
     }
 
+    //Retrieve Address
+    const [addressList, setAddressList] = useState([]);
+    useEffect(() => {
+        const fetchAddress = async () => {
+            try {
+                const response = await axios.post(
+                    `${process.env.PUBLIC_URL}/api/bookings/getAddress`,
+                    { userID: userId }
+                );
+                console.log(response.data);
+                setAddressList(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchAddress();
+        
+    }, [userId]);
+
     return (
         <div style={{ backgroundColor: "#efefef" }}>
             {/* image view */}
@@ -724,7 +744,7 @@ function Booking() {
                                         margin: "10px 0 10px 40px",
                                     }}
                                 >
-                                    Price: 1000 LKR
+                                    Price: {previewProduct.unitPrice} LKR
                                 </h5>
                                 <button
                                     className="center booking_cart_button"
@@ -905,8 +925,14 @@ function Booking() {
                                                     </div>
                                                 </div>
                                             </Radio>
-
-                                            <Radio value={2}>
+                                            <div className="billing_address_radio_btn1_txt1">
+                                                            <h5>
+                                                                Secondary
+                                                                Billing Address
+                                                            </h5>
+                                                        </div>
+                                            {addressList.map((address) => (
+                                                <Radio value={2}>
                                                 <div
                                                     style={{
                                                         display: "flex",
@@ -916,19 +942,12 @@ function Booking() {
                                                 >
                                                     <div>
                                                         {" "}
-                                                        <div className="billing_address_radio_btn1_txt1">
-                                                            <h5>
-                                                                Secondary
-                                                                Billing Address
-                                                            </h5>
-                                                        </div>
                                                         <div className="billing_address_radio_btn1_txt2">
-                                                            <h5>Colombo</h5>
+                                                            <h5>{address.city}</h5>
                                                         </div>
                                                         <div className="billing_address_radio_btn1_txt3">
                                                             <h5>
-                                                                1800, New Kandy
-                                                                Road ,Malabe, SL
+                                                                {address.postalCode}, {address.addressLine1} ,{address.district}, {address.country}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -960,6 +979,7 @@ function Booking() {
                                                     </div>
                                                 </div>
                                             </Radio>
+                                                ))}
                                         </div>
                                     </Radio.Group>
                                 </div>
