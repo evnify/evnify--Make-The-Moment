@@ -147,6 +147,8 @@ function NavBarUser() {
             navigate("/packages/BrightToBe");
         } else if (e.key === "aniversary") {
             navigate("/packages/Aniversary");
+        } else if (e.key === "ContactUs") {
+            navigate("/ContactUs");
         }
     };
 
