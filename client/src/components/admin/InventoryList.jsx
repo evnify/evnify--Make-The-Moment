@@ -40,55 +40,21 @@ function InventoryList() {
     };
 
     
-
+//update inventory
     const handleEdit = (record) => {
         setEditData(record);
         setEditOpen(true);
         form.setFieldsValue(record);
     };
 
-    const handleUpdate = async (id, newData) => {
-        try {
-            await axios.put(`/api/inventories/putInventories/${id}`, newData);
-            message.success("Inventory updated successfully");
-            fetchData(); // Refresh the data after update
-            setEditOpen(false); // Close the edit modal
-        } catch (error) {
-            console.error("Error updating inventory:", error);
-            message.error(
-                "Failed to update inventory. Please try again later."
-            );
-        }
-    };
-
-    const handleDelete = (id) => {
-        deleteInventory(id)
-            .then(() => {
-                message.success("Inventory deleted successfully");
-                fetchData();
-            })
-            .catch((err) => {
-                console.error("Error deleting inventory:", err);
-                message.error(
-                    "Failed to delete inventory. Please try again later."
-                );
-            });
-    };
-    const getAllInventories = async () => {
-        try {
-            const response = await axios.get(baseURL);
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching all inventories:", error);
-            throw error;
-        }
-    };
-
+//delete inventory    
     const deleteInventory = async (id) => {
         try {
             await axios.delete(`/api/inventories/deleteInventories/${id}`);
+            fetchData();
+            message.success("Inventory deleted successfully");
             return true; // Success
-            console.log("Inventory deleted successfully");
+            
         } catch (error) {
             console.error("Error deleting inventory:", error);
             throw error;
@@ -146,7 +112,7 @@ function InventoryList() {
                     </Button>
                     <Popconfirm
                         title="Are you sure to delete this item?"
-                        onConfirm={() => handleDelete(record._id)}
+                        onConfirm={() => deleteInventory(record._id)}
                         okText="Yes"
                         cancelText="No"
                     >
@@ -221,7 +187,7 @@ function InventoryList() {
     const { Search } = Input;
 
     const [searchKey, setSearchKey] = useState("");
-    const [filteredUserList, setFilteredUserList] = useState([]);
+    const [FilteredInventoryList, setFilteredInventoryList] = useState([]);
 
     useEffect(() => {
         let tempList = inventories;
@@ -234,11 +200,11 @@ function InventoryList() {
             );
         }
     
-        setFilteredUserList(tempList);
+        setFilteredInventoryList(tempList);
     
-        console.log("userList", inventories);
+        console.log("InventoryList", inventories);
         console.log("searchKey", searchKey);
-    }, [searchKey, filteredUserList, inventories]);
+    }, [searchKey,FilteredInventoryList, inventories]);
     
 
     return (
@@ -323,7 +289,7 @@ function InventoryList() {
                     </Button>
                 </Row>
                 <Table
-                    dataSource={filteredUserList}
+                    dataSource={FilteredInventoryList}
                     columns={columns}
                     rowSelection={{
                         selectedRowKeys,

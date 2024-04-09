@@ -28,6 +28,8 @@ const uploadFile = async (file, path) => {
 
 const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
     const [loading, setLoading] = useState(false);
+
+
     const createInventory = async (newInventory) => {
         try {
             const response = await axios.post(
@@ -130,7 +132,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 name="category"
                 label="Category"
                 rules={[
-                    { required: true, message: "Please select the colour" },
+                    { required: true, message: "Please select the category" },
                 ]}
             >
                 <Select placeholder="Category">
@@ -139,6 +141,8 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                     <Select.Option value="cakeholders">Cake Holders</Select.Option>
                     <Select.Option value="plates">Plates</Select.Option>
                     <Select.Option value="wineglasses">Wine Glasses</Select.Option>
+                    <Select.Option value="trays">Trays</Select.Option>
+                    <Select.Option value="decorations">Decorations</Select.Option>
                     <Select.Option value="other">Other</Select.Option>
                 </Select>
             </Form.Item>

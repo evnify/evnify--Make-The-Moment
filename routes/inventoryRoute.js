@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const Inventory = require("../models/inventory");
-const UserModel = require("../models/user");
+
 
 const generateUniqueID = async () => {
-    let userID = 'U' + Math.floor(10000000 + Math.random() * 90000000);
-    const userId = await UserModel.findOne({ userID: userID });
-    if (userId) {
-        return generateUniqueID(userID); // Pass the userID as an argument
+    let itemID = 'I' + Math.floor(10000000 + Math.random() * 90000000);
+    const itemId = await Inventory.findOne({ itemID: itemID });
+    if (itemId) {
+        return generateUniqueID(itemID); // Pass the itemID as an argument
     }
-    return userID;
+    return itemID;
 };
 
 // Create a new inventory item
