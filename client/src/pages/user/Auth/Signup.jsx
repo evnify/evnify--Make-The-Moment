@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form, Input, Checkbox, Button, Row, Col, Space } from "antd";
+import { Form, Input, Checkbox, Button, Row, Col, Space,message } from "antd";
 import { UserAddOutlined, LockOutlined } from "@ant-design/icons";
 import { Divider, Grid, Typography } from "@mui/material";
 import FirebaseSocial from "./FirebaseSocial";
 import Navbar from "../../../components/users/navBar";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
     const [firstName, setFirstName] = useState("");
@@ -21,6 +22,7 @@ const Signup = () => {
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
+        message.success("Registration Successful");
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -81,11 +83,15 @@ const Signup = () => {
 
         try {
             const response = await axios.post("/api/users/register", user);
+            message.success("Registration Successful");
+            window.location.href = "/login";
         } catch (error) {
             if (error.response) {
                 console.log("Error1:", error.response.data); // Log the error message from the server
+                message.error("Registration Failed");
             } else {
                 console.log("Error2:", error.message); // Log the general error message
+                message.error("Registration Failed");
             }
         }
     }
@@ -385,6 +391,7 @@ const Signup = () => {
                     </Form.Item>
 
                     <Form.Item>
+                       
                         <Button
                             type="primary"
                             htmlType="submit"
@@ -405,7 +412,7 @@ const Signup = () => {
                         </Button>
                         <div className="mt-3 ml-2 text-center">
                             Already have an Account{" "}
-                            <a href="./signin">Log in!</a>
+                            <a href="/login">Log in!</a>
                         </div>
                     </Form.Item>
                 </Form>

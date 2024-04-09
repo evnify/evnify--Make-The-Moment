@@ -18,7 +18,6 @@ import AllMessages from "./AllMessages";
 import UserEmails from "./UserEmails";
 import NavBar from "./NavBar";
 import UserTab from "./UserTab";
-import UserTable from "./UserTable";
 import Loader from "./Loader";
 
 
@@ -43,6 +42,5 @@ export {
     UserEmails,
     NavBar,
     UserTab,
-    UserTable,
     Loader
 };

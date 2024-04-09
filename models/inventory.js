@@ -27,6 +27,14 @@ const inventorySchema = new mongoose.Schema({
     },
     itemImage : {
         type: String,
+        required: false,
+    },
+    category : {
+        type: String,
+        required: true,
+    },
+    category : {
+        type: String,
         required: true,
     },
     status : {

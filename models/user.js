@@ -43,12 +43,15 @@ const userSchema = new mongoose.Schema({
         type: Array,
         required: false,
     },
-
     address1: {
         type: Array,
         required: false,
     },
-
+    addressArr: {
+        type: Array,
+        default: [],
+        required: false
+    },
     zipcode: {
         type: Number,
         default: null,
@@ -56,9 +59,7 @@ const userSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "Active",
-
     },
-
     profilePic: {
         type: String,
         required: false,
