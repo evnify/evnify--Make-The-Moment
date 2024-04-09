@@ -47,6 +47,9 @@
 
 
 /*contact us page*/
+.contact-us-main-container{
+  width: 100%;
+}
 
 .contact-us-bg-color {
   background-color: #E6E6E6;

@@ -22,7 +22,7 @@ const Signup = () => {
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
-        message.success("Registration Successful");
+       
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -80,22 +80,28 @@ const Signup = () => {
             password: password,
             username: username,
         };
-
+    
         try {
-            const response = await axios.post("/api/users/register", user);
-            message.success("Registration Successful");
-            window.location.href = "/login";
-        } catch (error) {
-            if (error.response) {
-                console.log("Error1:", error.response.data); // Log the error message from the server
-                message.error("Registration Failed");
+            // Check if the user with the provided email already exists
+            const checkExistingUserResponse = await axios.post("/api/users/check-existing", { email });
+    
+            if (checkExistingUserResponse.data.exists) {
+                // User with this email already exists, show error message
+                message.error("User with this email already exists. Please use a different email.");
             } else {
-                console.log("Error2:", error.message); // Log the general error message
-                message.error("Registration Failed");
+                // Proceed with user registration
+                const registrationResponse = await axios.post("/api/users/register", user);
+                message.success("Registration Successful");
+                window.location.href = "/login";
             }
+        } catch (error) {
+            console.error("Error during registration:", error);
+            message.error("Registration Failed");
+        } finally {
+            setIsLoading(false);
         }
     }
-
+    
     return (
         <>
             <Navbar />

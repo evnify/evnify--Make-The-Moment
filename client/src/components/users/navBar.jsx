@@ -119,7 +119,7 @@ function NavBarUser() {
         },
         {
             label: "Contac Us",
-            key: "contact us",
+            key: "contactus",
         },
     ];
 
@@ -132,7 +132,7 @@ function NavBarUser() {
         } else if (e.key === "about") {
             navigate("/contactus");
         } else if (e.key === "pricing") {
-            navigate("/contactus/#about-us-section");
+            
         } else if (e.key === "blog") {
             navigate("/blog");
         } else if (e.key === "wedings") {
@@ -147,6 +147,8 @@ function NavBarUser() {
             navigate("/packages/BrightToBe");
         } else if (e.key === "aniversary") {
             navigate("/packages/Aniversary");
+        } else if (e.key === "contactus") {
+            navigate("/contactus");
         }
     };
 

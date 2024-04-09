@@ -72,6 +72,60 @@ router.post("/getAddress", async (req, res) => {
     }
 });
 
+router.get("/getAllBookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find();
+        res.send(bookings);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
+router.delete("/deleteBooking/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const booking = await Booking.findByIdAndDelete(id);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.send(booking);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post("/saveAddress", async (req, res) => {
+    try {
+        const addressData = req.body;
+
+        const booking = await Booking.findOneAndUpdate(
+            { _id: req.body.bookingId },
+            { $push: { eventLocation: addressData } },
+            { new: true }
+        );
+
+        // Return success response
+        return res
+            .status(200)
+            .json({ message: "Address saved successfully", booking });
+    } catch (error) {
+        console.error("Error saving address:", error);
+        return res
+            .status(500)
+            .json({ error: "Failed to save address. Please try again later." });
+    }
+});
+
+router.post("/editBookingById", async (req, res) => {
+    try {
+        const { _id, cart } = req.body;
+        const booking = await Booking.findByIdAndUpdate({ _id }, { AssignedInventory: cart }, { new: true });
+        res.send(booking);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
 module.exports = router;
