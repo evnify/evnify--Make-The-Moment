@@ -22,6 +22,15 @@ router.post('/addEmployee', async (req, res) => {
     const empID = await generateUniqueID();
     const password = await generateUniquePwd();
 
+    try {
+        const existingEmployee = await employeeModel.findOne({ email: employeeData.email });
+        if (existingEmployee) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+    } catch (error) {
+        return res.status(500).json({ message: "Database error", error: error });
+    }
+
     employeeData.empID = empID;
 
     const newEmployee = new employeeModel(employeeData);
@@ -31,8 +40,6 @@ router.post('/addEmployee', async (req, res) => {
     } catch (error) {
         return res.status(400).json({ message: error });
     }
-    
-
 });
 
 router.get('/getAllEmployees', async (req, res) => {
