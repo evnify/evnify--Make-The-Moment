@@ -3,7 +3,6 @@ const router = express.Router();
 const Package = require("../models/package");
 const Inventory = require("../models/inventory");
 
-const Package = require('../models/package');
 const inventories = require('../models/inventory');
 const packageModel = require('../models/package');
 

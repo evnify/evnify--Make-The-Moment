@@ -484,7 +484,7 @@ function Packages() {
             <Modal
               title="Add New Package"
               visible={isAddModalOpen}
-              onOk={handleAddPackage}
+              onOk={handleAddPackage} // Call handleAddPackage function to add a new package
               onCancel={handleCancelAdd}
               width={1100}
             >
@@ -501,7 +501,10 @@ function Packages() {
                         { value: 'Standard', label: 'Standard' },
                         { value: 'Premium', label: 'Premium' },
                       ]}
+                      required // Mark this field as required
                     />
+                    {/* Add validation message for the package type */}
+                    {!newPackageData.packageType && <span style={{ color: 'red' }}>Package Type is required</span>}
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Event Type</div>
                       <Select
@@ -516,7 +519,10 @@ function Packages() {
                           { value: 'Farewell', label: 'Farewell Party' },
                           { value: 'Anniversary', label: 'Anniversary Party' },
                         ]}
+                        required // Mark this field as required
                       />
+                      {/* Add validation message for the event type */}
+                      {!newPackageData.eventType && <span style={{ color: 'red' }}>Event Type is required</span>}
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Price</div>
@@ -524,7 +530,10 @@ function Packages() {
                         placeholder="Enter price"
                         style={{ width: "250px" }}
                         onChange={(e) => setNewPackageData({ ...newPackageData, price: e.target.value })}
+                        required // Mark this field as required
                       />
+                      {/* Add validation message for the price */}
+                      {!newPackageData.price && <span style={{ color: 'red' }}>Price is required</span>}
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
@@ -538,39 +547,41 @@ function Packages() {
                         filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
                         onChange={handleInventory} // Use handleInventory function
                         options={pkgData}
+                        required // Mark this field as required
                       />
-                      {/* Display selected inventories and quantity inputs */}
+                      {/* Add validation message for the inventories */}
                       {Object.entries(inventoryQuantities).map(([inventoryId, quantity]) => {
                         // Find the inventory object from the inventories array based on its ID
                         const inventory = inventories.find(inv => inv.itemID === inventoryId);
-                        if (inventory) {
-                          return (
-                            <div key={inventoryId} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
-                              <span style={{ marginLeft: "5px" }}>{inventory.itemName}</span>
-                              <span>
-                                <Input
-                                  style={{ width: 100, marginLeft: "10px" }}
-                                  value={quantity}
-                                  onChange={(e) => {
-                                    const updatedQuantities = { ...inventoryQuantities, [inventoryId]: e.target.value };
-                                    setInventoryQuantities(updatedQuantities);
-                                    setNewPackageData(prevData => ({
-                                      ...prevData,
-                                      inventories: Object.keys(updatedQuantities).map(itemType => ({
-                                        itemType,
-                                        quantity: updatedQuantities[itemType]
-                                      }))
-                                    }));
-                                  }}
-                                />
-                              </span>
-                            </div>
-                          );
-                        } else {
-                          return null; // Handle case where inventory is not found
+                        if (!inventory) {
+                          return null; // Skip if inventory not found
                         }
+                        return (
+                          <div key={inventoryId} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
+                            <span style={{ marginLeft: "5px" }}>{inventory.itemName}</span>
+                            <span>
+                              <Input
+                                style={{ width: 100, marginLeft: "10px" }}
+                                value={quantity}
+                                onChange={(e) => {
+                                  const updatedQuantities = { ...inventoryQuantities, [inventoryId]: e.target.value };
+                                  setInventoryQuantities(updatedQuantities);
+                                  setNewPackageData(prevData => ({
+                                    ...prevData,
+                                    inventories: Object.keys(updatedQuantities).map(itemType => ({
+                                      itemType,
+                                      quantity: updatedQuantities[itemType]
+                                    }))
+                                  }));
+                                }}
+                                required // Mark this field as required
+                              />
+                              {/* Add validation message for the quantity */}
+                              {!quantity && <span style={{ color: 'red', marginLeft: '10px' }}>Quantity is required</span>}
+                            </span>
+                          </div>
+                        );
                       })}
-
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
@@ -578,7 +589,10 @@ function Packages() {
                         rows={4}
                         style={{ width: "250px" }}
                         onChange={(e) => setNewPackageData({ ...newPackageData, description: e.target.value })}
+                        required // Mark this field as required
                       />
+                      {/* Add validation message for the description */}
+                      {!newPackageData.description && <span style={{ color: 'red' }}>Description is required</span>}
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Extras</div>
@@ -621,9 +635,12 @@ function Packages() {
                         handleChange(info);
                         handleEditBaseImage(info.fileList);
                       }}
+                      required // Mark this field as required
                     >
                       {editBaseImageFileList.length >= 1 ? null : uploadButton}
                     </Upload>
+                    {/* Add validation message for the package image */}
+                    {!editBaseImageFileList.length && <span style={{ color: 'red' }}>Package Image is required</span>}
                   </div>
                   <p >Package Content</p>
                   <div className='package-details-add-model-right-down'>
@@ -637,9 +654,12 @@ function Packages() {
                         handleChange(info);
                         handleEditContentImages(info.fileList);
                       }}
+                      required // Mark this field as required
                     >
                       {editFileList.length >= 4 ? null : uploadButton}
                     </Upload>
+                    {/* Add validation message for the package content */}
+                    {!editFileList.length && <span style={{ color: 'red' }}>Package Content is required</span>}
                     <Modal
                       visible={previewOpen}
                       footer={null}
@@ -655,6 +675,7 @@ function Packages() {
                 </div>
               </div>
             </Modal>
+
 
             <button onClick={showModalAdd} style={{
               width: "100px", height: "40px", border: "none",
