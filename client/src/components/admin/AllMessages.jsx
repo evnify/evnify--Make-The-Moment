@@ -23,7 +23,7 @@ function AllMessages() {
     const [open, setOpen] = useState(false);
     const [searchMessages, setFilteredMessages] = useState([]);
     const [groupedMessages, setGroupedMessages] = useState({});
-    const [selectedUserID, setSelectedUserID] = useState("U58411366");
+    const [selectedUserID, setSelectedUserID] = useState("");
     const [isSearching, setIsSearching] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);

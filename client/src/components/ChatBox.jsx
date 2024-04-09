@@ -17,7 +17,7 @@ function ChatBox() {
 
     const sendMessage = async (e) => {
         try {
-            const customerID = "U71200743";
+            const customerID = "U56200311";
             const messages = {
                 customerID,
                 message,
@@ -49,7 +49,7 @@ function ChatBox() {
 
     useEffect(() => {
         fetchMessages(); // Fetch messages when the component mounts
-        setCustomerID("U71200743");
+        setCustomerID("U56200311");
 
         // Polling to fetch new messages 
         const interval = setInterval(() => {
