@@ -328,14 +328,13 @@ function EmployeeList() {
         console.log(empData);
 
         try {
-            await axios.post(
+            const res = await axios.post(
                 `${process.env.PUBLIC_URL}/api/employees/addEmployee`,
                 empData
             );
             message.success("Employee added successfully");
             setAddEmployeeModelOpen(false);
             fetchEmployeeList();
-
             // Reset form fields
             setAddress("");
             setDob(null);
@@ -349,10 +348,9 @@ function EmployeeList() {
             setFileList([]);
         } catch (error) {
             console.log(error);
+            message.error("Employee Already Exists");
         }
     };
-
-    const onSearch = (value) => console.log(value);
 
     // Image upload
     const [loading, setLoading] = useState(false);

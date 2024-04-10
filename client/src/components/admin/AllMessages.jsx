@@ -23,8 +23,37 @@ function AllMessages() {
     const [open, setOpen] = useState(false);
     const [searchMessages, setFilteredMessages] = useState([]);
     const [groupedMessages, setGroupedMessages] = useState({});
-    const [selectedUserID, setSelectedUserID] = useState(null);
+    const [selectedUserID, setSelectedUserID] = useState("");
     const [isSearching, setIsSearching] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    //fetch all users
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get('/api/messages/allUsers');
+            setUsers(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }
+        , []);
+
+    useEffect(() => {
+        // Find the user with the selectedUserID
+        const user = users.find(user => user.userID === selectedUserID);
+
+        // Update the selectedUser state with the found user details
+        setSelectedUser(user);
+
+        // Log the user details (optional)
+        console.log(user);
+    }, [selectedUserID, users]);
 
 
     // Function to handle opening dropdown menu for a specific message
@@ -84,7 +113,7 @@ function AllMessages() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
-       
+
     };
 
 
@@ -271,36 +300,45 @@ function AllMessages() {
                                     ))}
                                 </>
                             ) :
-                                (Object.keys(filteredMessages).map((customerID) => (
-                                    <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
-                                        onClick={() => handlePreviewClick(customerID)}>
-                                        <div className="all-message-profile-pic">
-                                            <img src={messageDp} alt="DP" />
-                                        </div>
-                                        <div className="all-message-name">
-                                            <div className="all-message-timeandname">
-                                                <div className="all-message-name-tag">
-                                                    <b>{customerID}</b>
+                                (Object.keys(filteredMessages).map((customerID) => {
+                                    // Find the user with the matching userID
+                                    const user = users.find(user => user.userID === customerID);
+                                    // Check if the user is found
+                                    if (!user) {
+                                        console.log(`User not found for userID: ${customerID}`);
+                                        return null; // Skip rendering if user not found
+                                    }
+                                    return (
+                                        <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                            onClick={() => handlePreviewClick(customerID)}>
+                                            <div className="all-message-profile-pic">
+                                                <img src={user.profilePic || messageDp} alt="DP" />
+                                            </div>
+                                            <div className="all-message-name">
+                                                <div className="all-message-timeandname">
+                                                    <div className="all-message-name-tag">
+                                                        <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
+                                                    </div>
+                                                    <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                        {groupedMessages[customerID][0].sendTime}
+                                                    </div>
                                                 </div>
-                                                <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                    {groupedMessages[customerID][0].sendTime}
+                                                <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
+                                                    <div style={{ width: "250px" }}>
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
+                                                    </div>
+                                                    {/* Render BellFilled icon conditionally */}
+                                                    {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
+                                                </div>
+                                                <div>
+                                                    <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
                                                 </div>
                                             </div>
-                                            <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
-                                                <div style={{ width: "250px"}}>
-                                                    {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
-                                                </div>
+                                        </div>
+                                    );
+                                }))
 
-                                                {/* Render BellFilled icon conditionally */}
-                                                {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
-                                            </div>
-                                            <div>
-                                                <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                                )}
+                            }
                         </div>
 
                     </div>
@@ -310,18 +348,22 @@ function AllMessages() {
                 <div className="message-reply-admin">
                     <div className="message-all-users-bar-top-right">
                         <div>
-                            <img src={messageDp} alt="dp" style={{
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "50%",
-                                margin: "15px 0 0 300px"
-                            }} />
-                        </div>
-                        <div style={{ margin: "25px 0 0 20px" }}>
-                            <b
+                            <img
+                                src={selectedUser && selectedUser.profilePic ? selectedUser.profilePic : messageDp}
+                                alt="Profile"
                                 style={{
-                                    fontSize: "20px",
-                                }}>{selectedUserID}</b>
+                                    width: "50px",
+                                    height: "50px",
+                                    borderRadius: "50%",
+                                    margin: "15px 0 0 300px"
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ margin: "25px 0 0 20px" }}>
+                            <b style={{ fontSize: "20px" }}>
+                                {selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : ''}
+                            </b>
                         </div>
                     </div>
                     <div>
@@ -333,9 +375,9 @@ function AllMessages() {
                                         {msg.sender === 'customer' ? (
                                             <div className="message-receved-admin">
                                                 <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px",minWidth:"150px", maxWidth: "400px", color: "black", display:"flex", flexDirection:"column"}}>
+                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
                                                     <div><p>{msg.message}</p></div>
-                                                    <div style={{fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
                                                 </div>
                                                 <div style={{ margin: "10px 0 0 5px" }}>
                                                     <div
@@ -417,9 +459,9 @@ function AllMessages() {
                                                         <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
                                                     </Menu>
                                                 </div>
-                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px",minWidth:"150px", maxWidth: "400px", color: "#ffffff",display:"flex", flexDirection:"column" }}>
-                                                <div><p>{msg.message}</p></div>
-                                                    <div style={{fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
+                                                    <div><p>{msg.message}</p></div>
+                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
                                                 </div>
                                                 <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
                                             </div>
@@ -457,11 +499,12 @@ function AllMessages() {
                                             variant="borderless"
                                             style={{ width: 690 }}
                                         />
-                                        <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                                            <SendOutlined style={{ color: "black", fontSize: "22px" }} />
+                                        <button type="submit" disabled={!message} style={{ background: "none", border: "none", cursor: "pointer" }}>
+                                            <SendOutlined style={{ color: message ? "black" : "#d3d3d3", fontSize: "22px" }} />
                                         </button>
                                     </form>
-                                )}
+                                )
+                                }
                             </div>
                         </div>
 

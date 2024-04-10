@@ -92,7 +92,6 @@ function SideMenu() {
                     selectedKeys={[selectedKeys]}
                     onOpenChange={onOpenChange}
                     onClick={(item) => {
-                        // Navigate to the clicked item's key
                         navigate(item.key);
                     }}
                     style={{

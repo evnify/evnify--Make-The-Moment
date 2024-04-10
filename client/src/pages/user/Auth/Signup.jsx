@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Form, Input, Checkbox, Button, Row, Col, Space } from "antd";
+import { Form, Input, Checkbox, Button, Row, Col, Space,message } from "antd";
 import { UserAddOutlined, LockOutlined } from "@ant-design/icons";
 import { Divider, Grid, Typography } from "@mui/material";
 import FirebaseSocial from "./FirebaseSocial";
 import Navbar from "../../../components/users/navBar";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
     const [firstName, setFirstName] = useState("");
@@ -21,6 +22,7 @@ const Signup = () => {
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
+       
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -78,18 +80,28 @@ const Signup = () => {
             password: password,
             username: username,
         };
-
+    
         try {
-            const response = await axios.post("/api/users/register", user);
-        } catch (error) {
-            if (error.response) {
-                console.log("Error1:", error.response.data); // Log the error message from the server
+            // Check if the user with the provided email already exists
+            const checkExistingUserResponse = await axios.post("/api/users/check-existing", { email });
+    
+            if (checkExistingUserResponse.data.exists) {
+                // User with this email already exists, show error message
+                message.error("User with this email already exists. Please use a different email.");
             } else {
-                console.log("Error2:", error.message); // Log the general error message
+                // Proceed with user registration
+                const registrationResponse = await axios.post("/api/users/register", user);
+                message.success("Registration Successful");
+                window.location.href = "/login";
             }
+        } catch (error) {
+            console.error("Error during registration:", error);
+            message.error("Registration Failed");
+        } finally {
+            setIsLoading(false);
         }
     }
-
+    
     return (
         <>
             <Navbar />
@@ -385,6 +397,7 @@ const Signup = () => {
                     </Form.Item>
 
                     <Form.Item>
+                       
                         <Button
                             type="primary"
                             htmlType="submit"
@@ -405,7 +418,7 @@ const Signup = () => {
                         </Button>
                         <div className="mt-3 ml-2 text-center">
                             Already have an Account{" "}
-                            <a href="./signin">Log in!</a>
+                            <a href="/login">Log in!</a>
                         </div>
                     </Form.Item>
                 </Form>

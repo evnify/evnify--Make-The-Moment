@@ -156,7 +156,6 @@ router.post("/register", async (req, res) => {
         return res.send('User Registered Successfully');
     } catch (error) {
         console.log("error in route")
-        console.log(newuser)
         return res.status(400).json({ error });
     }
 
@@ -192,6 +191,23 @@ router.post("/updateUserProfile", async (req, res) => {
     }
 }
 );
+
+
+router.post('/check-existing', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        // Check if a user with the provided email exists in the database
+        const existingUser = await UserModel.findOne({ email });
+
+        // If a user with the provided email exists, return true
+        // Otherwise, return false
+        return res.json({ exists: !!existingUser });
+    } catch (error) {
+        console.error("Error checking existing user:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+});
 
 
 module.exports = router;
