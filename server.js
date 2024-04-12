@@ -4,11 +4,9 @@ const path = require("path");
 const app = express();
 const passport = require("passport");
 const cors = require("cors");
-const cookiesSession = require("cookie-session");
-const pasportSetup = require("./passport")
 const authRoute = require("./routes/usersRoute");
-
 const dbConfig = require("./db");
+
 
 const usersRoute = require("./routes/usersRoute");
 const bookingsRoute = require("./routes/bookingsRoute");
@@ -37,26 +35,9 @@ app.use("/api/salary", salaryRoute);
 app.use("/auth", authRoute);
 app.use("/api/emails", emailRoute);
 
-app.use(
-    cookiesSession({
-        name: "session",
-        keys: ["cyberwolve"],
-
-        maxAge: 24 * 60 * 60 * 100,
-    })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(
-    cors({
-        origin: "http://localhost:3000",
-
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    })
-);
+app.use(cors());
+app.use(express.json());
+app.options('*', cors());
 
 const port = process.env.PORT || 5000;
 

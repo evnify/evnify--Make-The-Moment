@@ -146,7 +146,7 @@ const Login = () => {
 
                             <a
                                 className="login-form-forgot"
-                                href="#forgot-password"
+                                href="/ForgetPassword"
                             >
                                 Forgot password
                             </a>
