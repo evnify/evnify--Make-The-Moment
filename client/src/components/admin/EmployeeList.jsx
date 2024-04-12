@@ -160,11 +160,24 @@ function EmployeeList() {
                 `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
                 empData
             );
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/editUser`,
+                {
+                    userID: tableModelContent.userID,
+                    username: editUsername,
+                    profilePic: editProfileImage,
+                    firstName: editFirstName,
+                    lastName: editLastName,
+                    email: editEmail,
+                    phoneNumber: editPhoneNumber,
+                    address1: editAddress
+                }
+            );
             message.success("Employee edit successfully");
             setTableModelOpen(false);
             fetchEmployeeList();
         } catch (error) {
-            console.log(error);
+            message.error(error.response.data.message);
         }
     };
 
@@ -321,7 +334,8 @@ function EmployeeList() {
             username,
             profilePic : profileImage,
             userType: "Employee",
-            status : "Active"
+            status : "Active",
+            address1 : address,
         };
 
         try {
@@ -490,6 +504,10 @@ function EmployeeList() {
                 `${process.env.PUBLIC_URL}/api/employees/suspendEmployee`,
                 { empID: tableModelContent.empID }
             );
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/suspendUser`,
+                { userID: tableModelContent.userID }
+            );
             message.success("Employee suspended successfully");
             setTableModelOpen(false);
             setIsConformModalOpen(false);
@@ -504,6 +522,10 @@ function EmployeeList() {
             await axios.post(
                 `${process.env.PUBLIC_URL}/api/employees/activeEmployee`,
                 { empID: tableModelContent.empID }
+            );
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/activeUser`,
+                { userID: tableModelContent.userID }
             );
             message.success("Employee activated successfully");
             setTableModelOpen(false);
