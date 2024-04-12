@@ -14,6 +14,7 @@ import {
 import { PrinterOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import axios from "axios";
+import jsPDF from 'jspdf'
 
 function Booking() {
     const [bookingList, setBookingList] = useState([]);
@@ -51,6 +52,16 @@ function Booking() {
         setSelectedBookingData(record);
         setIsModalOpen(true);
         setCart(record.AssignedInventory);
+    };
+
+    const handelConformationDownload = async (record) => {
+        var imgData = 'https://i.ibb.co/DfXKTkC/Evnify-Reservation-Conformation.png';
+
+        const doc = new jsPDF();
+        doc.addImage(imgData, 'PNG', 0, 0, 215, 300);
+
+        doc.save(`Invoice_${record._id}.pdf`);
+
     };
 
     const columns = [
@@ -108,8 +119,7 @@ function Booking() {
                             fontSize: "14px",
                             border: "solid 1px #C4CDD5",
                             backgroundColor: "#ffff",
-                            width: "90px",
-                            height: "35px",
+                            padding: "8px 16px",
                             color: "#000868E96",
                             fontWeight: 500,
                             borderRadius: "5px",
@@ -121,31 +131,16 @@ function Booking() {
                     <button
                         style={{
                             fontSize: "14px",
-                            border: "solid 1px #C4CDD5",
-                            backgroundColor: "#ffff",
-                            width: "90px",
-                            height: "35px",
-                            color: "#000868E96",
-                            fontWeight: 500,
-                            borderRadius: "5px",
-                        }}
-                        onClick={() => handleEdit(record)}
-                    >
-                        Edit
-                    </button>
-                    <button
-                        style={{
-                            fontSize: "14px",
                             border: "none",
                             backgroundColor: "#4094F7",
-                            width: "100px",
-                            height: "35px",
+                            padding: "8px 16px",
                             color: "#fff",
                             borderRadius: "5px",
                         }}
-                        // onClick={() => showDeclineConfirm(record.leaveID)}
+                        onClick={() => handelConformationDownload(record)}
                     >
                         <PrinterOutlined style={{ gap: "10" }} />
+                        &nbsp;
                         Export pdf
                     </button>
                 </Space>
@@ -784,7 +779,8 @@ function Booking() {
                                             <button className="cancel_Package_72 ">
                                                 Cancel Booking
                                             </button>
-                                            <button className="saveAddressBtn_72 ">
+                                            <button className="saveAddressBtn_72 "
+                                            onClick={() => handleEdit(selectedBookingData)}>
                                                 Update Booking
                                             </button>
                                         </div>
