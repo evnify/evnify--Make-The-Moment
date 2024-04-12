@@ -313,21 +313,36 @@ function EmployeeList() {
             console.log("Profile image already set:", profileImage);
         }
 
-        const empData = {
-            address,
-            dob,
-            type,
+        const userData = {
             firstName,
             lastName,
             email,
             phoneNumber,
             username,
-            profileImage,
+            profilePic : profileImage,
+            userType: "Employee",
+            status : "Active"
         };
 
-        console.log(empData);
-
         try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/users/addUser`,
+                userData
+            );
+
+            const empData = {
+                address,
+                dob,
+                type,
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                username,
+                profileImage,
+                userID : response.data.userID,
+            };
+
             const res = await axios.post(
                 `${process.env.PUBLIC_URL}/api/employees/addEmployee`,
                 empData
@@ -347,8 +362,7 @@ function EmployeeList() {
             setProfileImage("");
             setFileList([]);
         } catch (error) {
-            console.log(error);
-            message.error("Employee Already Exists");
+            message.error(error.response.data.message);
         }
     };
 
