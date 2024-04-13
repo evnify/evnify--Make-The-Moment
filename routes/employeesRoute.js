@@ -20,12 +20,15 @@ const generateUniqueID = async () => {
 router.post('/addEmployee', async (req, res) => {
     const employeeData = req.body;
     const empID = await generateUniqueID();
-    const password = await generateUniquePwd();
 
     try {
-        const existingEmployee = await employeeModel.findOne({ email: employeeData.email });
-        if (existingEmployee) {
+        const existingEmail = await employeeModel.findOne({ email: employeeData.email });
+        if (existingEmail) {
             return res.status(400).json({ message: "Email already exists" });
+        }
+        const existingUsername = await employeeModel.findOne({ username: employeeData.username });
+        if (existingUsername) {
+            return res.status(400).json({ message: "Username already exists" });
         }
     } catch (error) {
         return res.status(500).json({ message: "Database error", error: error });
@@ -54,6 +57,28 @@ router.get('/getAllEmployees', async (req, res) => {
 router.post('/editEmployee', async (req, res) => {
     const employeeData = req.body;
     const empID = employeeData.empID;
+    try {
+
+        const existingEmail = await
+            employeeModel.findOne({
+                email: employeeData.email,
+                empID: { $ne: empID }
+            });
+        if (existingEmail) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+        const existingUsername = await
+            employeeModel.findOne({
+                username: employeeData.username,
+                empID: { $ne: empID }
+            });
+        if (existingUsername) {
+            return res.status(400).json({ message: "Username already exists" });
+        }
+    } catch (error) {
+        return res.status(500).json({ message: "Database error", error: error });
+    }
+
     try {
         await employeeModel.findOneAndUpdate({ empID: empID }, employeeData);
         res.send("Employee updated successfully");
@@ -84,5 +109,16 @@ router.post('/activeEmployee', async (req, res) => {
     }
 });
 
+router.post('/getEmployeeByUserID' , async (req, res) => {
+    const employeeData = req.body;
+    const userID = employeeData.userID;
+    try {
+        const employee = await employeeModel.findOne({ userID: userID });
+        res.send(employee);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
 
 module.exports = router;

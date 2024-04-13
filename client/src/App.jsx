@@ -12,6 +12,8 @@ import {
     Blog,
     EmpDashboard,
     ForgetPassword,
+    AccessDenied,
+    PageNotFound,
 } from "./pages";
 import { BrowserRouter, Route, Routes ,Navigate } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
@@ -38,6 +40,8 @@ function App() {
                     />
                     <Route path="/reset" element={<Reset />} />
                     <Route path="/verify" element={<Verify />} />
+                    <Route path="/accessdenied" element={<AccessDenied />} />
+                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </div>
