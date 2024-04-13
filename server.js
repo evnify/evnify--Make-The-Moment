@@ -19,6 +19,7 @@ const messagesRoute = require("./routes/messagesRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const salaryRoute = require("./routes/salaryRoute");
 const emailRoute = require("./routes/emailRoute");
+const cookieSession = require("cookie-session");
 
 app.use(express.json());
 
@@ -36,7 +37,26 @@ app.use("/auth", authRoute);
 app.use("/api/emails", emailRoute);
 
 app.use(cors());
-app.use(express.json());
+app.use(
+    cookieSession({
+        name: "session",
+        keys: ["cyberwolve" ],
+        maxAge: 24 * 60 * 60 * 100,
+    })
+);  
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
+);
+
+
 app.options('*', cors());
 
 const port = process.env.PORT || 5000;

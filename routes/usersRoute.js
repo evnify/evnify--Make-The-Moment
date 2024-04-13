@@ -10,8 +10,6 @@ app.use(express.urlencoded({ extended: false }));
 
 const bcrypt = require("bcryptjs");
 
-
-
 const JWT_SECRET =
     "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
@@ -35,15 +33,19 @@ router.post("/addUser", async (req, res) => {
     UserUserData.password = password;
     UserUserData.userID = userID;
 
-    const existingEmail = await UserModel.findOne({ email: UserUserData.email });
-        if (existingEmail) {
-            return res.status(400).json({ message: "Email already exists" });
-        }
+    const existingEmail = await UserModel.findOne({
+        email: UserUserData.email,
+    });
+    if (existingEmail) {
+        return res.status(400).json({ message: "Email already exists" });
+    }
 
-        const existingUsername = await UserModel.findOne({ username: UserUserData.username });
-        if (existingUsername) {
-            return res.status(400).json({ message: "Username already exists" });
-        }
+    const existingUsername = await UserModel.findOne({
+        username: UserUserData.username,
+    });
+    if (existingUsername) {
+        return res.status(400).json({ message: "Username already exists" });
+    }
 
     const newUser = new UserModel(UserUserData);
 
@@ -214,8 +216,14 @@ router.post("/check-existing", async (req, res) => {
     }
 });
 
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+router.get("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    console.log("reset pwd");
+    res.send("Reset password page");
+});
 
 router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -234,11 +242,8 @@ router.post("/forgot-password", async (req, res) => {
         );
 
         // Construct reset link without including token
-        const resetLink = `http://localhost:5000/reset-password/${oldUser.userID}/${token}`;
+        const resetLink = `http://localhost:5000/api/users/reset-password/${oldUser.userID}/${token}`;
         console.log(resetLink);
-
-        // Send the reset link and token to the user via email
-        sendResetLinkByEmail(oldUser.email, resetLink, token);
 
         res.json({ status: "Email sent with reset instructions" });
     } catch (error) {
@@ -252,9 +257,8 @@ function sendResetLinkByEmail(email, resetLink, token) {
     var transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: "adarsh438tcsckandivali@gmail.com",
-            pass: "rmdklolcsmswvyfw",
-            
+            user: process.env.GMAIL_EMAIL,
+            pass: process.env.GMAIL_PASSWORD,
         },
     });
 
@@ -274,24 +278,5 @@ function sendResetLinkByEmail(email, resetLink, token) {
         }
     });
 }
-
-
-router.get("/reset-password/:id/:token", async (req, res) => {
-    const { id, token } = req.params;
-    try {
-        // Verify the token
-        const secret = JWT_SECRET + (await UserModel.findOne({ userID: id })).password;
-        const decoded = jwt.verify(token, secret);
-        // Redirect to the reset password page passing along the user ID
-        res.redirect(`http://localhost:3000/reset-password?id=${decoded.id}`);
-    } catch (error) {
-        console.error(error);
-        // Handle invalid or expired token
-        res.status(400).send('Invalid or expired token');
-    }
-});
-
-
-
 
 module.exports = router;

@@ -3,16 +3,23 @@ import { useMediaQuery, Button, Stack } from "@mui/material";
 import Google from "../../../assets/icons/google.svg";
 import Facebook from "../../../assets/icons/facebook.svg";
 
+
 const FirebaseSocial = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
 
     const googleHandler = () => {
-        window.open(`${process.env.REACT_APP_API_URL}/auth/google/callback`, "_self");
+        window.open(
+            `${process.env.REACT_APP_API_URL}/auth/google/callback`,
+            "_self"
+        );
     };
 
     const facebookHandler = async () => {
-        // login || singup
+        window.open(
+            `${process.env.REACT_APP_API_URL}/auth/facebook/callback`,
+            "_self"
+        );
     };
 
     return (
