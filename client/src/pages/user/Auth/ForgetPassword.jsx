@@ -5,6 +5,8 @@ import FirebaseSocial from "./FirebaseSocial";
 import Navbar from "../../../components/users/navBar";
 import axios from "axios";
 
+
+
 const ForgetPassword = () => {
     const [email, setEmail] = useState("");
     
@@ -18,20 +20,19 @@ const ForgetPassword = () => {
             email,
         };
         try {
-            const response = await axios.post(
-                "/api/users/forgetPassword",
-                user
-            );
+            const response = await axios.post("/api/users/forgot-password", user);
             const data = response.data;
-            if (data.message === "User not found") {
+            if (data.status === "User Not Exists!!") {
                 message.error("User not found");
             } else {
                 message.success("Email sent successfully");
+                
             }
         } catch (error) {
             console.error(error);
         }
     };
+    
 
     return (
         <>

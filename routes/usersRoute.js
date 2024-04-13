@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: false }));
 
 const bcrypt = require("bcryptjs");
 
-const jwt = require("jsonwebtoken");
+
 
 const JWT_SECRET =
     "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
@@ -207,40 +207,84 @@ router.post("/check-existing", async (req, res) => {
     }
 });
 
-router.post("/forgetPassword", async (req, res) => {
-    const { email } = req.body;
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
+router.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
     try {
         const oldUser = await UserModel.findOne({ email });
-
         if (!oldUser) {
-            return res.json({ message: "User not found" });
+            return res.json({ status: "User Not Exists!!" });
         }
 
+        // Generate token
         const secret = JWT_SECRET + oldUser.password;
         const token = jwt.sign(
             { email: oldUser.email, id: oldUser.userID },
             secret,
-            {
-                expiresIn: "5m",
-            }
+            { expiresIn: "5m" }
         );
 
-        // Send reset link to user's email
-        const link = `http://localhost:5000/reset-password/${oldUser.userID}/${token}`;
-        console.log(link);
+        // Construct reset link without including token
+        const resetLink = `http://localhost:5000/reset-password/${oldUser.userID}/${token}`;
+        console.log(resetLink);
+
+        // Send the reset link and token to the user via email
+        sendResetLinkByEmail(oldUser.email, resetLink, token);
+
+        res.json({ status: "Email sent with reset instructions" });
     } catch (error) {
-        console.error("Error sending password reset email:", error);
-        return res.status(500).json({ message: "Internal server error." });
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// Function to send reset link to user's email
+function sendResetLinkByEmail(email, resetLink, token) {
+    var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "adarsh438tcsckandivali@gmail.com",
+            pass: "rmdklolcsmswvyfw",
+            
+        },
+    });
+
+    var mailOptions = {
+        from: "evnify6@gmail.com",
+        to: email,
+        subject: "Password Reset",
+        // Include reset link in the email body
+        text: `To reset your password, click on the following link: ${resetLink}\n\nToken: ${token}`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.error("Error sending email:", error);
+        } else {
+            console.log("Email sent: " + info.response);
+        }
+    });
+}
+
+
+router.get("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    try {
+        // Verify the token
+        const secret = JWT_SECRET + (await UserModel.findOne({ userID: id })).password;
+        const decoded = jwt.verify(token, secret);
+        // Redirect to the reset password page passing along the user ID
+        res.redirect(`http://localhost:3000/reset-password?id=${decoded.id}`);
+    } catch (error) {
+        console.error(error);
+        // Handle invalid or expired token
+        res.status(400).send('Invalid or expired token');
     }
 });
 
 
 
-router.post("/reset-password/:userID/:token", async (req, res) => {
-    const { userID, token } = req.params;
-    console.log(req.params);
-});
-    
 
 module.exports = router;
