@@ -109,5 +109,16 @@ router.post('/activeEmployee', async (req, res) => {
     }
 });
 
+router.post('/getEmployeeByUserID' , async (req, res) => {
+    const employeeData = req.body;
+    const userID = employeeData.userID;
+    try {
+        const employee = await employeeModel.findOne({ userID: userID });
+        res.send(employee);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+}
+);
 
 module.exports = router;

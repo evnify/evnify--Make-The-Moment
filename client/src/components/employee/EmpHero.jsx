@@ -1,7 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Avatar } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+    Avatar,
+    DatePicker,
+    message,
+    Input,
+    Select,
+    Divider,
+    Modal,
+    Upload,
+    Button,
+} from "antd";
+import axios from "axios";
+import moment from "moment";
 
 function EmpHero() {
+    let index = 0;
+
+    const { TextArea } = Input;
+
     const [currentTime, setCurrentTime] = useState(new Date());
     const [isDaytime, setIsDaytime] = useState(true);
     const [editEmployeeModel, setEditEmployeeModel] = useState(false);
@@ -31,23 +48,486 @@ function EmpHero() {
         second: "2-digit",
     });
 
+    // Fetch Employee Data
+    const [loggedInUserID, setLoggedInUserID] = useState();
+    const [employee, setEmployee] = useState();
+
+    const [editAddress, setEditAddress] = useState("");
+    const [editDob, setEditDob] = useState("");
+    const [editType, setEditType] = useState("sick leave");
+    const [editFirstName, setEditFirstName] = useState("");
+    const [editLastName, setEditLastName] = useState("");
+    const [editEmail, setEditEmail] = useState("");
+    const [editPhoneNumber, setEditPhoneNumber] = useState("");
+    const [editUsername, setEditUsername] = useState("");
+    const [editProfileImage, setEditProfileImage] = useState("");
+    const [editEmpID, setEditEmpID] = useState("");
+    const [fileListEdit, setFileListEdit] = useState([]);
+
+    const [profileImage, setProfileImage] = useState("");
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewOpen, setPreviewOpen] = useState(false);
+
+    const inputRef = useRef(null);
+    const [loading, setLoading] = useState(false);
+
+    const FetchEmployeeByUserID = async (userID) => {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/getEmployeeByUserID`,
+                {
+                    userID: userID,
+                }
+            );
+            setEmployee(response.data);
+            setEditAddress(response.data.address);
+            setEditDob(response.data.dob);
+            setEditType(response.data.type);
+            setEditFirstName(response.data.firstName);
+            setEditLastName(response.data.lastName);
+            setEditEmail(response.data.email);
+            setEditPhoneNumber(response.data.phoneNumber);
+            setEditUsername(response.data.username);
+            setEditProfileImage(response.data.profileImage);
+            setEditEmpID(response.data.empID);
+            setFileListEdit([
+                {
+                    uid: "1",
+                    name: "image.png",
+                    status: "done",
+                    url: response.data.profileImage,
+                },
+            ]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        const emp = JSON.parse(localStorage.getItem("currentUser"));
+        setLoggedInUserID(emp.userID);
+        FetchEmployeeByUserID(emp.userID);
+    }, []);
+
+    const customRequestEdit = ({ file, onSuccess, onError }) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        axios
+            .post(
+                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
+                formData
+            )
+            .then((response) => {
+                if (response.data.data) {
+                    onSuccess();
+                    message.success("Image uploaded successfully");
+                    setFileListEdit([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: response.data.data.url,
+                        },
+                    ]);
+                    setEditProfileImage(response.data.data.url);
+                    console.log(profileImage);
+                    setLoading(false);
+                } else {
+                    onError();
+                    message.error("Failed to upload image");
+                }
+            })
+            .catch((error) => {
+                onError();
+                message.error("Error uploading image: " + error.message);
+            });
+    };
+
+    const getBase64 = (img, callback) => {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => callback(reader.result));
+        reader.readAsDataURL(img);
+    };
+
+    const handlePreview = async (file) => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewImage(file.url || file.preview);
+        setPreviewOpen(true);
+    };
+
+    const beforeUpload = (file) => {
+        const isJpgOrPng =
+            file.type === "image/jpeg" || file.type === "image/png";
+        if (!isJpgOrPng) {
+            message.error("You can only upload JPG/PNG file!");
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error("Image must smaller than 2MB!");
+        }
+        return isJpgOrPng && isLt2M;
+    };
+
+    const handleCancel = () => setPreviewOpen(false);
+    const uploadButton = (
+        <button
+            style={{
+                border: 0,
+                background: "none",
+            }}
+            type="button"
+        >
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div
+                style={{
+                    marginTop: 8,
+                }}
+            >
+                Upload
+            </div>
+        </button>
+    );
+
+    const handleChange = (info) => {
+        if (info.file.status === "uploading") {
+            setLoading(true);
+            return;
+        }
+    };
+
+    const saveEditEmployee = async () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            !editAddress ||
+            !editDob ||
+            !editType ||
+            !editFirstName ||
+            !editLastName ||
+            !editEmail ||
+            !editPhoneNumber ||
+            !editPhoneNumber
+        ) {
+            return message.error("Please fill all the fields");
+        } else if (!emailRegex.test(editEmail)) {
+            return message.error("Please enter a valid email address");
+        }
+
+        if (!editProfileImage || editProfileImage.trim() === "") {
+            // Set default profile image
+            setProfileImage(
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+            );
+        }
+        const empData = {
+            address: editAddress,
+            dob: editDob,
+            type: editType,
+            firstName: editFirstName,
+            lastName: editLastName,
+            email: editEmail,
+            phoneNumber: editPhoneNumber,
+            username: editUsername,
+            profileImage: editProfileImage,
+            empID: employee.empID,
+            _id: employee._id,
+        };
+
+        console.log(empData);
+
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
+                empData
+            );
+            await axios.post(`${process.env.PUBLIC_URL}/api/users/editUser`, {
+                userID: employee.userID,
+                username: editUsername,
+                profilePic: editProfileImage,
+                firstName: editFirstName,
+                lastName: editLastName,
+                email: editEmail,
+                phoneNumber: editPhoneNumber,
+                address1: editAddress,
+            });
+            message.success("Your changes is successfully saved");
+            setEditEmployeeModel(false);
+            FetchEmployeeByUserID(loggedInUserID);
+        } catch (error) {
+            message.error(error.response.data.message);
+        }
+    };
+
     return (
         <div className="employee_dashboard_hero">
+            {/* Edit employee model */}
+            <Modal
+                centered
+                open={editEmployeeModel}
+                onOk={() => setEditEmployeeModel(false)}
+                onCancel={() => setEditEmployeeModel(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div className="add_employee_top_container">
+                        <div className="avatar-container">
+                            <Upload
+                                customRequest={customRequestEdit}
+                                listType="picture-circle"
+                                fileList={fileListEdit}
+                                onPreview={handlePreview}
+                                onChange={handleChange}
+                                beforeUpload={beforeUpload}
+                                onRemove={() => {
+                                    setFileListEdit([]);
+                                    setEditProfileImage(
+                                        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png"
+                                    );
+                                }}
+                            >
+                                {fileListEdit.length >= 1 ? null : uploadButton}
+                            </Upload>
+                            <Modal
+                                open={previewOpen}
+                                footer={null}
+                                onCancel={handleCancel}
+                                title={"Preview: "}
+                            >
+                                <img
+                                    alt="example"
+                                    style={{
+                                        width: "100%",
+                                    }}
+                                    src={previewImage}
+                                />
+                            </Modal>
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                }}
+                            >
+                                Employee Type : {editType}
+                            </span>
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                }}
+                            >
+                                Employee ID : {editEmpID}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="add_employee_popup_details_container">
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    First Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditFirstName(e.target.value)
+                                    }
+                                    value={editFirstName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Email
+                                </span>
+                                <Input
+                                    type="email"
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditEmail(e.target.value)
+                                    }
+                                    value={editEmail}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Phone Number
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditPhoneNumber(e.target.value)
+                                    }
+                                    value={editPhoneNumber}
+                                />
+                            </div>
+                        </div>
+                        <div className="add_employee_popup_details_container_left">
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Last Name
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditLastName(e.target.value)
+                                    }
+                                    value={editLastName}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Username
+                                </span>
+                                <Input
+                                    size="large"
+                                    onChange={(e) =>
+                                        setEditUsername(e.target.value)
+                                    }
+                                    value={editUsername}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        marginBottom: "3px",
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Date of Birth
+                                </span>
+                                <DatePicker
+                                    style={{
+                                        width: 205,
+                                        height: 40,
+                                    }}
+                                    defaultValue={moment(editDob)}
+                                    onChange={(date, dateString) => {
+                                        setEditDob(dateString);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="add_emp_address_container">
+                        <span>Address</span>
+                        <TextArea
+                            style={{
+                                width: 520,
+                            }}
+                            rows={4}
+                            value={editAddress}
+                            onChange={(e) => setEditAddress(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="add_emp_popup_footer_container center">
+                    <Button
+                        onClick={() => setEditEmployeeModel(false)}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                        danger
+                    >
+                        Cancel
+                    </Button>
+                    <button
+                        className="add_emp_popup_footer_button"
+                        onClick={saveEditEmployee}
+                        style={{
+                            width: "120px",
+                            height: "40px",
+                        }}
+                    >
+                        Save Changes
+                    </button>
+                </div>
+            </Modal>
             <div className="emp_hero_container_main">
                 <Avatar
                     className="emp_hero_dp"
                     size={168}
-                    src={
-                        <img
-                            src="https://media.istockphoto.com/id/1300512215/photo/headshot-portrait-of-smiling-ethnic-businessman-in-office.webp?b=1&s=170667a&w=0&k=20&c=TXCiY7rYEvIBd6ibj2bE-VbJu0rRGy3MlHwxt2LHt9w="
-                            alt="avatar"
-                        />
-                    }
+                    src={<img src={editProfileImage} alt="avatar" />}
                 />
                 <div className="emp_hero_name_container">
                     <h1>Hello,</h1>
-                    <h2>Esther Howard</h2>
-                    <h4>Photographer</h4>
+                    <h2>
+                        {editFirstName} {editLastName}
+                    </h2>
+                    <h4>{editType}</h4>
                 </div>
                 <div className="emp_hero_edit_btn_container">
                     <button
@@ -118,12 +598,7 @@ function EmpHero() {
 
                     <Avatar
                         size={40}
-                        src={
-                            <img
-                                src="https://media.istockphoto.com/id/1300512215/photo/headshot-portrait-of-smiling-ethnic-businessman-in-office.webp?b=1&s=170667a&w=0&k=20&c=TXCiY7rYEvIBd6ibj2bE-VbJu0rRGy3MlHwxt2LHt9w="
-                                alt="avatar"
-                            />
-                        }
+                        src={<img src={editProfileImage} alt="avatar" />}
                     />
                 </div>
                 <div className="emp_hero_realtime_insights_container center">
