@@ -65,6 +65,7 @@ function EmpHero() {
     const [fileListEdit, setFileListEdit] = useState([]);
 
     const [profileImage, setProfileImage] = useState("");
+    const [userImg, setUserImg] = useState("");
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -89,6 +90,7 @@ function EmpHero() {
             setEditPhoneNumber(response.data.phoneNumber);
             setEditUsername(response.data.username);
             setEditProfileImage(response.data.profileImage);
+            setUserImg(response.data.profileImage);
             setEditEmpID(response.data.empID);
             setFileListEdit([
                 {
@@ -520,7 +522,7 @@ function EmpHero() {
                 <Avatar
                     className="emp_hero_dp"
                     size={168}
-                    src={<img src={editProfileImage} alt="avatar" />}
+                    src={<img src={userImg} alt="avatar" />}
                 />
                 <div className="emp_hero_name_container">
                     <h1>Hello,</h1>
@@ -598,7 +600,7 @@ function EmpHero() {
 
                     <Avatar
                         size={40}
-                        src={<img src={editProfileImage} alt="avatar" />}
+                        src={<img src={userImg} alt="avatar" />}
                     />
                 </div>
                 <div className="emp_hero_realtime_insights_container center">

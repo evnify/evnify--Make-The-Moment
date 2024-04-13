@@ -5,7 +5,7 @@ import { Loader } from "../../components/admin";
 
 function EmpDashboard() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
         if (!user) {
@@ -13,12 +13,12 @@ function EmpDashboard() {
         } else if (user.userType !== "Employee") {
             navigate("/accessdenied");
         } else {
-            setLoading(false);
+            setIsLoading(false);
         }
     }, []);
     return (
         <>
-            {loading ? (
+            {isLoading ? (
                 <div className="center" style={{ height: "100vh" }}>
                     <Loader />
                 </div>
