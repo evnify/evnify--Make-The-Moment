@@ -16,7 +16,11 @@ function getItem(label, key, icon, children, type) {
 const items = [
     getItem("Profile", "/userprofile", <Icon icon="iconamoon:profile" />),
     getItem("Booking", "/userprofile/booking", <Icon icon="prime:book" />),
-    getItem("Settings", "/userprofile/UserSettings", <Icon icon="uil:setting" />),
+    getItem(
+        "Settings",
+        "/userprofile/UserSettings",
+        <Icon icon="uil:setting" />
+    ),
     getItem(
         "Contact Us",
         "/userprofile/contactus",
@@ -32,6 +36,11 @@ function UserSideMenu() {
     const navigate = useNavigate();
     const [openKeys, setOpenKeys] = useState(["/userprofile"]);
     const [selectedKeys, setSelectedKeys] = useState("/userprofile");
+
+    function logout() {
+        localStorage.removeItem("currentUser");
+        navigate("/login");
+    }
 
     useEffect(() => {
         const pathName = location.pathname;
@@ -49,9 +58,8 @@ function UserSideMenu() {
     return (
         <>
             <div className="User_SideMenu">
-                
-            <h3>Setting</h3>
-                    
+                <h3>Setting</h3>
+
                 <ConfigProvider
                     theme={{
                         components: {
@@ -81,7 +89,7 @@ function UserSideMenu() {
                 </ConfigProvider>
 
                 <div className="logout_btn_Container">
-                    <button className="user_logout_btn">
+                    <button className="user_logout_btn" onClick={logout}>
                         <Icon
                             icon="ic:baseline-logout"
                             style={{ marginRight: "10px" }}
