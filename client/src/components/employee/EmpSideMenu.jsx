@@ -271,7 +271,14 @@ function EmpSideMenu() {
             </ConfigProvider>
 
             <div className="emp_logout_btn_Container center">
-                <button className="emp_logout_btn">
+                <button className="emp_logout_btn"
+                onClick={
+                    () => {
+                        localStorage.removeItem("currentUser");
+                        navigate("/login");
+                    }
+                
+                }>
                     <Icon
                         icon="ic:baseline-logout"
                         style={{ marginRight: "10px" }}
