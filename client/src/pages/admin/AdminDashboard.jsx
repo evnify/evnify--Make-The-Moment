@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SideMenu, AdminRoutes, NavBar } from "../../components";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/admin";
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -20,7 +21,9 @@ function AdminDashboard() {
     return (
         <>
             {loading ? (
-                <div>Loading...</div>
+                <div className="center" style={{ height: "100vh" }}>
+                    <Loader />
+                </div>
             ) : (
                 <div className="Admin_DashboardContainer">
                     <div className="Admin_SideMenuAndPageContent">
