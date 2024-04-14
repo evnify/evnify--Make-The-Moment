@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const UserModel = require("../models/user");
 const cors = require("cors");
-
+require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-
+app.set("view engine", "ejs");
 const bcrypt = require("bcryptjs");
+app.use(express.urlencoded({ extended: false }));
 
 const JWT_SECRET =
     "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
@@ -127,7 +128,7 @@ router.post("/login", async (req, res) => {
         const user = await UserModel.findOne({
             email: email,
             password: password,
-        });
+        }); 
         if (user) {
             const temp = {
                 userID: user.userID,
@@ -219,11 +220,6 @@ router.post("/check-existing", async (req, res) => {
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
-router.get("/reset-password/:id/:token", async (req, res) => {
-    const { id, token } = req.params;
-    console.log("reset pwd");
-    res.send("Reset password page");
-});
 
 router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -235,15 +231,13 @@ router.post("/forgot-password", async (req, res) => {
 
         // Generate token
         const secret = JWT_SECRET + oldUser.password;
-        const token = jwt.sign(
-            { email: oldUser.email, id: oldUser.userID },
-            secret,
-            { expiresIn: "5m" }
-        );
+        const token = jwt.sign({ email }, secret, { expiresIn: "15m" });
 
         // Construct reset link without including token
-        const resetLink = `http://localhost:5000/api/users/reset-password/${oldUser.userID}/${token}`;
+        const resetLink = `http://localhost:5000/api/users/generate-reset-link/${oldUser.userID}/${token}`;
         console.log(resetLink);
+
+        sendResetLinkByEmail(email, resetLink, token);
 
         res.json({ status: "Email sent with reset instructions" });
     } catch (error) {
@@ -252,25 +246,30 @@ router.post("/forgot-password", async (req, res) => {
     }
 });
 
-// Function to send reset link to user's email
-function sendResetLinkByEmail(email, resetLink, token) {
-    var transporter = nodemailer.createTransport({
+function sendResetLinkByEmail(email, resetLink) {
+    const transporter = nodemailer.createTransport({
         service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.GMAIL_EMAIL,
             pass: process.env.GMAIL_PASSWORD,
         },
     });
 
-    var mailOptions = {
-        from: "evnify6@gmail.com",
+    const mailOptions = {
+        from: {
+
+            name: "Evnify",
+            address: process.env.GMAIL_EMAIL
+        },
         to: email,
         subject: "Password Reset",
-        // Include reset link in the email body
-        text: `To reset your password, click on the following link: ${resetLink}\n\nToken: ${token}`,
+        html: `Click this link to reset your password: <a href="${resetLink}">${resetLink}</a>`,
     };
 
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error("Error sending email:", error);
         } else {
@@ -278,5 +277,65 @@ function sendResetLinkByEmail(email, resetLink, token) {
         }
     });
 }
+
+router.get("/generate-reset-link/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+
+    try {
+        const oldUser = await UserModel.findOne({ userID: id });
+        if (!oldUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const secret = JWT_SECRET + oldUser.password;
+        try {
+            const verify = jwt.verify(token, secret);
+            if (!verify) {
+                return res.status(401).json({ message: "Token has expired" });
+            }
+            res.redirect(`http://localhost:3000/reset-password/${id}/${token}`);
+        } catch (error) {
+            console.error(error);
+            return res.status(401).json({ message: "Token has expired" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const oldUser = await UserModel.findOne({ userID: id });
+        if (!oldUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const secret = JWT_SECRET + oldUser.password;
+        try {
+            const verify = jwt.verify(token, secret);
+            if (!verify) {
+                return res.status(401).json({ message: "Token has expired" });
+            }
+
+            // No need to hash the password, use it directly
+            await UserModel.findOneAndUpdate(
+                { userID: id },
+                { password: password } // Just set the password directly
+            );
+            return res.status(200).json({ message: "Password updated successfully" });
+        } catch (error) {
+            console.error(error);
+            return res.status(401).json({ message: "Token has expired" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 module.exports = router;

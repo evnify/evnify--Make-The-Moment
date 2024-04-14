@@ -63,7 +63,7 @@ function App() {
                         path="/forgetpassword"
                         element={<ForgetPassword />}
                     />
-                    <Route path="/reset" element={<Reset />} />
+                    <Route path="/reset-password/:id/:token" element={<Reset />} />
                     <Route path="/verify" element={<Verify />} />
                     <Route path="/accessdenied" element={<AccessDenied />} />
                     <Route path="*" element={<PageNotFound />} />
