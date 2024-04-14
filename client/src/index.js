@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.min.js'
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

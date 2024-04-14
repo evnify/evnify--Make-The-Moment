@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+
+
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
     Button,
@@ -12,7 +14,6 @@ import {
 } from "antd";
 import { Divider, Grid, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import FirebaseSocial from "./FirebaseSocial";
 import Navbar from "../../../components/users/navBar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -43,7 +44,6 @@ const Login = () => {
                 setLoading(false);
 
                 const userData = response.data;
-                
 
                 if (userData.userType === "Admin") {
                     navigate("/admin/*");
@@ -183,7 +183,9 @@ const Login = () => {
                     </div>
 
                     <Grid item xs={12} className="mt-3 ml-2 text-center">
-                        <FirebaseSocial />
+                        
+
+                       
                     </Grid>
                 </ConfigProvider>
             </div>
