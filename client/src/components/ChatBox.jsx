@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Flex, Modal } from 'antd';
+import { Button, Flex, Modal, Select } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
 import moment from 'moment';
 import { chatIcon } from "../assets";
+
+const { Option } = Select;
 
 function ChatBox() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,20 +16,19 @@ function ChatBox() {
     const [customerID, setCustomerID] = useState(null);
     const [sentMessages, setSentMessages] = useState([]);
     const [receivedMessages, setReceivedMessages] = useState([]);
-
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const sendMessage = async (e) => {
         try {
-            const customerID = "U56200311";
+            const customerID = "U56200311"; // Assuming you have a default customer ID
             const messages = {
                 customerID,
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
-                category: "newe new",
+                category: selectedCategory,
                 sender: "customer",
                 status: "unread",
                 reciverId: customerID,
-
             };
             console.log(messages);
             await axios.post('/api/messages/newMessage', messages);
@@ -42,36 +43,43 @@ function ChatBox() {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
             groupMessages(response.data);
+            console.log(groupedMessages)
         } catch (error) {
             console.log(error);
         }
     };
 
+    // Fetch stored selected category from localStorage on component mount
     useEffect(() => {
-        fetchMessages(); // Fetch messages when the component mounts
+        const storedCategory = localStorage.getItem('selectedCategory');
+        if (storedCategory) {
+            setSelectedCategory(storedCategory);
+        }
+        fetchMessages();
         setCustomerID("U56200311");
 
-        // Polling to fetch new messages 
         const interval = setInterval(() => {
             fetchMessages();
-        }, 3000); // Adjust the interval time as needed
+        }, 3000);
 
         return () => clearInterval(interval);
     }, []);
 
-
     const groupMessages = (messages) => {
         const grouped = {};
         messages.forEach((msg) => {
-            if (!grouped[msg.customerID]) {
-                grouped[msg.customerID] = [];
+            const { customerID, category } = msg;
+            if (!grouped[customerID]) {
+                grouped[customerID] = {};
             }
-            grouped[msg.customerID].push(msg);
+            if (!grouped[customerID][category]) {
+                grouped[customerID][category] = [];
+            }
+            grouped[customerID][category].push(msg);
         });
         setGroupedMessages(grouped);
     };
-
-
+    
     const handleOpenModal = () => {
         setIsModalOpen(true);
         console.log("open")
@@ -86,26 +94,43 @@ function ChatBox() {
         console.log("cancel")
     };
 
+    const handleCategorySelect = (category) => {
+        setSelectedCategory(category);
+        setIsModalOpen(true); // Open the chat box
+        localStorage.setItem('selectedCategory', category);
+    };
+
     const handleFormSubmit = (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
+        e.preventDefault();
         if (message.trim() !== "") {
-            sendMessage(); // Call sendMessage function
-            setMessage(""); // Clear the input field after sending the message
+            sendMessage();
+            setMessage("");
         }
     };
 
-
-    // Filter sent and received messages
     useEffect(() => {
         setSentMessages(messages.filter(msg => msg.sender === 'admin'));
         setReceivedMessages(messages.filter(msg => msg.sender === 'customer'));
+
     }, [messages]);
 
-
     const modalHeader = (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '1px' }}>
-            <h3>Chat Box</h3>
-            <Button type="text" icon={<CloseOutlined />} onClick={handleCancel} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '20px' }}>
+            {selectedCategory ? (
+                <>
+                    <Icon
+                        onClick={() => {
+                            setSelectedCategory(null);
+                            localStorage.removeItem('selectedCategory');
+                        }}
+                        icon="ep:back"
+                        width="24"
+                        height="24"
+                        style={{ margin: "0 0 20px 0", height: "25px", fontSize: "10px" }}
+                    />
+                    <h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize:"14px"}}>Ask Your Question About {selectedCategory}</h6>
+                </>
+            ) : null}
         </div>
     );
 
@@ -116,23 +141,11 @@ function ChatBox() {
                 <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
             </form>
         </div>
-
     );
 
     return (
         <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
-            {isModalOpen ? (
-
-                <img src={chatIcon} alt="chatIco" onClick={handleCancel} style={{ width: "65px", height: "65px" }} />
-                // <Button type="primary" onClick={handleCancel}>
-                //     Close Modal
-                // </Button>
-            ) : (
-                <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{ width: "65px", height: "65px" }} />
-                // <Button type="primary" onClick={handleOpenModal}>
-                //     Open Modal
-                // </Button>
-            )}
+            <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{ width: "65px", height: "65px" }} />
 
             <Modal
                 title={null}
@@ -148,15 +161,17 @@ function ChatBox() {
                 style={{
                     position: 'absolute',
                     right: '50px',
-                    top: '170px',
+                    top: '160px',
                     overflow: 'auto',
                     border: '1px solid #e8e8e8',
                     borderRadius: '8px',
                     boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
-                    {customerID && (groupedMessages[customerID] || []).map((msg, index) => (
+                {modalHeader}
+                {selectedCategory ? (
+                    <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
+                    {customerID && groupedMessages[customerID]?.[selectedCategory]?.map((msg, index) => (
                         msg.sender === 'customer' ? (
                             <div key={index} style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <div className="sent-message-chatbox">
@@ -169,7 +184,7 @@ function ChatBox() {
                         ) : (
                             <div key={index} style={{ display: "flex", float: "left" }}>
                                 <div className="received-message-chatbox">
-                                <div style={{fontWeight:"bold",color:"#533c56"}}>Evnify</div>
+                                    <div style={{ fontWeight: "bold", color: "#533c56" }}>Evnify</div>
                                     <div>{msg.message}</div>
                                     <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
                                         {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
@@ -179,11 +194,52 @@ function ChatBox() {
                         )
                     ))}
                 </div>
-
-
-                <div style={{ borderTop: '1px solid #e8e8e8', padding: '8px 0' }}>
-                    {modalFooter}
-                </div>
+                
+                ) : (
+                    <div>
+                        <div className="message-category">
+                            <div className='category-box-container'>
+                                <div className='message-category-name-box'>
+                                    <div style={{ fontWeight: "bold", fontSize: "23.5px" }}>Hi! Sasindu Nadeeshan</div>
+                                    <div style={{ textAlign: "justify", width: "250px" }}> Ask us anything you've been pondering, and let's unlock the answers together.</div>
+                                </div>
+                                <div>Select Your Category And Start</div>
+                                <div>Conversation</div>
+                                <div style={{ margin: "20px 0 0 0" }}>
+                                    <div className='category-boxes' onClick={() => handleCategorySelect('Price')}>
+                                        <div style={{ width: "240px", fontSize: "14px", lineHeight: "1.3" }}>
+                                            Product/Service Information and Pricing Inquiries
+                                        </div>
+                                        <div><Icon icon="material-symbols:send" width="24" height="24" /></div>
+                                    </div>
+                                    <div className='category-boxes' onClick={() => handleCategorySelect('Quantity')}>
+                                        <div style={{ width: "240px", fontSize: "14px", lineHeight: "1.3" }}>
+                                            Product/Service Minimum and Maximum Order Quantity Inquiries
+                                        </div>
+                                        <div><Icon icon="material-symbols:send" width="24" height="24" /></div>
+                                    </div>
+                                    <div className='category-boxes' onClick={() => handleCategorySelect('Restocking')}>
+                                        <div style={{ width: "240px", fontSize: "14px", lineHeight: "1.3" }}>
+                                            Product/Service Availability and Restocking Inquiries
+                                        </div>
+                                        <div><Icon icon="material-symbols:send" width="24" height="24" /></div>
+                                    </div>
+                                    <div className='category-boxes' onClick={() => handleCategorySelect('Customization')}>
+                                        <div style={{ width: "240px", fontSize: "14px", lineHeight: "1.3" }}>
+                                            Product/Service Customization and Personalization Inquiries
+                                        </div>
+                                        <div><Icon icon="material-symbols:send" width="24" height="24" /></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {selectedCategory ? (
+                    <div style={{ borderTop: '1px solid #e8e8e8', padding: '8px 0' }}>
+                        {modalFooter}
+                    </div>
+                ) : null}
             </Modal>
         </div>
     );

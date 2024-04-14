@@ -78,16 +78,25 @@ function AllMessages() {
         e.preventDefault();
         try {
             const customerID = selectedUserID;
+            let category = null;
+
+            // If there are messages for the selected user
+            if (groupedMessages[customerID] && groupedMessages[customerID].length > 0) {
+                // Get the category of the last message sent to this customer
+                category = groupedMessages[customerID][groupedMessages[customerID].length - 1].category;
+            }
+
             const newMessage = {
                 customerID,
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
-                category: "Price",
+                category: category, // Assign the category of the previous message
                 sender: "admin",
                 status: "read",
                 reciverId: customerID
             };
+
             if (selectedMessageId) {
                 // Update existing message
                 await axios.put(`/api/messages/updateMessage/${selectedMessageId}`, newMessage);
@@ -95,6 +104,7 @@ function AllMessages() {
                 // Send new message
                 await axios.post('/api/messages/newMessage', newMessage);
             }
+
             // Clear input field and reset selectedMessageId after sending/editing
             setMessage("");
             setSelectedMessageId(null);
@@ -113,9 +123,7 @@ function AllMessages() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
-
     };
-
 
     const fetchMessages = async () => {
         try {
@@ -320,18 +328,17 @@ function AllMessages() {
                                                         <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
                                                     </div>
                                                     <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                        {groupedMessages[customerID][0].sendTime}
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].sendTime}
                                                     </div>
                                                 </div>
                                                 <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
                                                     <div style={{ width: "250px" }}>
-                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 34)}
                                                     </div>
-                                                    {/* Render BellFilled icon conditionally */}
                                                     {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
                                                 </div>
                                                 <div>
-                                                    <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
+                                                    <Tag color="purple">{groupedMessages[customerID][groupedMessages[customerID].length - 1].category}</Tag>
                                                 </div>
                                             </div>
                                         </div>
@@ -369,106 +376,126 @@ function AllMessages() {
                     <div>
                         <div className="message-reply-admin-box">
                             <div className="message-reply-admin-box-top">
-                                {/* Render received and sent messages sorted by sendTime */}
-                                {selectedUserID && (groupedMessages[selectedUserID] || []).map((msg, index) => (
-                                    <React.Fragment key={msg._id}>
-                                        {msg.sender === 'customer' ? (
-                                            <div className="message-receved-admin">
-                                                <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
-                                                    <div><p>{msg.message}</p></div>
-                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
-                                                </div>
-                                                <div style={{ margin: "10px 0 0 5px" }}>
-                                                    <div
-                                                        id={`fade-button-${msg._id}`}
-                                                        aria-controls={open ? 'fade-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={(e) => handleClick(e, msg._id)}
-                                                    >
-                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
-                                                    </div>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': `fade-button-${msg._id}`,
-                                                        }}
-                                                        anchorEl={anchorEls[msg._id]}
-                                                        open={Boolean(anchorEls[msg._id])}
-                                                        onClose={() => handleClose(msg._id)}
-                                                        TransitionComponent={Fade}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        PaperProps={{
-                                                            style: {
-                                                                backgroundColor: 'white',
-                                                                borderRadius: '8px',
-                                                                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
-                                                    </Menu>
-                                                </div>
+                                {selectedUserID && (groupedMessages[selectedUserID] || []).map((msg, index) => {
+                                    // Check if this is the first message or if the category has changed
+                                    const isFirstMessage = index === 0;
+                                    const categoryChanged = !isFirstMessage && msg.category !== groupedMessages[selectedUserID][index - 1].category && msg.sender !== 'admin';
+
+                                    // If the category changed, insert a <hr> element
+                                    const categoryChangeElement = categoryChanged ? (
+                                        <div key={`category-divider-${msg._id}`} style={{ display: "flex", flexDirection: "row", margin:"10px 0 0 0", width:"790px"}}>
+                                            <div style={{ width: "380px" }}><hr/></div>
+                                            <div style={{margin:"0 5px 0 5px"}}>
+                                            <Tag color="default">{msg.category}</Tag>
                                             </div>
-                                        ) : (
-                                            <div className="message-send-admin">
-                                                <div style={{ margin: "10px 0 0 10px" }}>
-                                                    <div
-                                                        id={`fade-button-${msg._id}`}
-                                                        aria-controls={open ? 'fade-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={(e) => handleClick(e, msg._id)}
-                                                    >
-                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
+                                            <div style={{ width: "380px", }}><hr/></div>
+                                        </div>
+                                    ) : null;
+
+                                    return (
+                                        <React.Fragment key={msg._id}>
+                                            {/* Insert the <hr> element if the category changed */}
+                                            {categoryChangeElement}
+
+                                            {msg.sender === 'customer' ? (
+                                                <div className="message-receved-admin">
+                                                    <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                                    <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
+                                                        <div><p>{msg.message}</p></div>
+                                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
                                                     </div>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': `fade-button-${msg._id}`,
-                                                        }}
-                                                        anchorEl={anchorEls[msg._id]}
-                                                        open={Boolean(anchorEls[msg._id])}
-                                                        onClose={() => handleClose(msg._id)}
-                                                        TransitionComponent={Fade}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        PaperProps={{
-                                                            style: {
-                                                                backgroundColor: 'white',
-                                                                borderRadius: '8px',
-                                                                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
-                                                        <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
-                                                    </Menu>
+                                                    <div style={{ margin: "10px 0 0 5px" }}>
+                                                        <div
+                                                            id={`fade-button-${msg._id}`}
+                                                            aria-controls={open ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={open ? 'true' : undefined}
+                                                            onClick={(e) => handleClick(e, msg._id)}
+                                                        >
+                                                            <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
+                                                        </div>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': `fade-button-${msg._id}`,
+                                                            }}
+                                                            anchorEl={anchorEls[msg._id]}
+                                                            open={Boolean(anchorEls[msg._id])}
+                                                            onClose={() => handleClose(msg._id)}
+                                                            TransitionComponent={Fade}
+                                                            anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            PaperProps={{
+                                                                style: {
+                                                                    backgroundColor: 'white',
+                                                                    borderRadius: '8px',
+                                                                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
+                                                        </Menu>
+                                                    </div>
                                                 </div>
-                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
-                                                    <div><p>{msg.message}</p></div>
-                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                            ) : (
+                                                <div className="message-send-admin">
+                                                    <div style={{ margin: "10px 0 0 10px" }}>
+                                                        <div
+                                                            id={`fade-button-${msg._id}`}
+                                                            aria-controls={open ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={open ? 'true' : undefined}
+                                                            onClick={(e) => handleClick(e, msg._id)}
+                                                        >
+                                                            <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
+                                                        </div>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': `fade-button-${msg._id}`,
+                                                            }}
+                                                            anchorEl={anchorEls[msg._id]}
+                                                            open={Boolean(anchorEls[msg._id])}
+                                                            onClose={() => handleClose(msg._id)}
+                                                            TransitionComponent={Fade}
+                                                            anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            PaperProps={{
+                                                                style: {
+                                                                    backgroundColor: 'white',
+                                                                    borderRadius: '8px',
+                                                                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
+                                                        </Menu>
+                                                    </div>
+                                                    <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
+                                                        <div><p>{msg.message}</p></div>
+                                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                                    </div>
+                                                    <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
                                                 </div>
-                                                <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                            </div>
-                                        )}
-                                    </React.Fragment>
-                                ))}
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
                             </div>
+
                             {/* Render input field conditionally when a message is selected for editing */}
                             <div className="message-Send-bar">
                                 {selectedMessageId ? (
