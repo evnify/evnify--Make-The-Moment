@@ -43,7 +43,7 @@ function ChatBox() {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
             groupMessages(response.data);
-            console.log(groupedMessages)
+            console.log("group" , groupedMessages)
         } catch (error) {
             console.log(error);
         }

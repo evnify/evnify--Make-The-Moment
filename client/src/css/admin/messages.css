@@ -146,6 +146,13 @@
     max-height: 80px;
 
 }
+.message-received-preview-search {
+    display: flex;
+    flex-direction: row;
+    margin: 20px 30px 0 0;
+    max-height: 250px;
+
+}
 
 .all-message-profile-pic img {
     width: 50px;
@@ -177,7 +184,7 @@
 }
 
 .all-message-name-tag {
-    width: 220px;
+    width: 300px;
     text-align: left;
 
 }
