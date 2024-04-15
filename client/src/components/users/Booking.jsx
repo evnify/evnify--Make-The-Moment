@@ -90,7 +90,7 @@ function Booking() {
                 if (status === "rejected") {
                     color = "red";
                     return <Tag color={color}> {"Cancelled"}</Tag>;
-                } else if (status === "pending") {
+                } else if (status === "Pending") {
                     color = "orange";
                     return <Tag color={color}> {"Pending"}</Tag>;
                 }

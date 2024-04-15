@@ -25,12 +25,21 @@ router.post("/addUser", async (req, res) => {
     UserUserData.password = password;
     UserUserData.userID = userID;
 
+    const existingEmail = await UserModel.findOne({ email: UserUserData.email });
+        if (existingEmail) {
+            return res.status(400).json({ message: "Email already exists" });
+        }
+
+        const existingUsername = await UserModel.findOne({ username: UserUserData.username });
+        if (existingUsername) {
+            return res.status(400).json({ message: "Username already exists" });
+        }
+
     const newUser = new UserModel(UserUserData);
 
     try {
-        await newUser.save();
-        res.send("User added successfully");
-        console.log("User added successfully");
+        const response = await newUser.save();
+        res.send(response);
     } catch (error) {
         return res.status(400).json({ message: error });
     }
@@ -40,7 +49,6 @@ router.get("/getUser", async (req, res) => {
     try {
         const users = await UserModel.find();
         res.send(users);
-        console.log(users);
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal Server Error");
@@ -55,7 +63,6 @@ router.post("/deleteUser", async (req, res) => {
         if (!deletedUser) {
             return res.status(404).send("User not found");
         }
-        console.log("Deleted user:", deletedUser);
         res.send("User deleted successfully");
     } catch (err) {
         console.error(err);
