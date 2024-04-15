@@ -413,9 +413,10 @@ function AllMessages() {
                             </b>
                         </div>
                         <div style={{ display: "flex", width: "240px", justifyContent: "flex-end" }}>
-                            <div style={{ margin: "25px 0 0 20px" }} onClick={handleDownloadCSV}>
+                            {selectedUser ? (<div style={{ margin: "25px 0 0 20px" }} onClick={handleDownloadCSV}>
                                 <Icon icon="material-symbols:download" width="32" height="32" />
-                            </div>
+                            </div>): null}
+                            
                         </div>
 
                     </div>
