@@ -110,7 +110,11 @@ function UsersInsights() {
 
     return (
         <>
-            <div className="admin_user_welcome"></div>
+            <div className="admin_user_welcome">
+                <img className= "admin_profile"src="https://img.icons8.com/ios/452 alter.png" alt="admin" />
+
+                <h1>Welcome Admin</h1>
+            </div>
             <div className="UsersInsights">
                 <UserTab />
             </div>
@@ -121,7 +125,10 @@ function UsersInsights() {
             </div>
 
             <div className="admin_user_bar">
+                <h3>Recent Users</h3>
+                <div className="admin_user_bar1"></div>
                 
+                <button type="button" class="btn btn-secondary">View All</button>
             </div>
             <div className="admin_user_list">
                 <div style={{ width: "100%" }}>
