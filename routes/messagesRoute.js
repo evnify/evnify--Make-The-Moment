@@ -51,8 +51,6 @@ router.post('/newMessage', async (req, res) => {
     }
 });
 
-
-
 router.get('/allMessages', async (req, res) => {
     try {
         const messages = await messageModel.find();
@@ -106,7 +104,5 @@ router.put('/markMessagesAsRead/:userID', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-
 
 module.exports = router;

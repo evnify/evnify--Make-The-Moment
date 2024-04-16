@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Flex, Modal, Select } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { Button, Flex, Modal, Select, message } from 'antd';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
 import moment from 'moment';
@@ -10,19 +9,20 @@ const { Option } = Select;
 
 function ChatBox() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [message, setMessage] = useState("");
+    const [userMessage, setUserMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [groupedMessages, setGroupedMessages] = useState({});
-    const [customerID, setCustomerID] = useState(null);
+    const [customerID, setCustomerID] = useState("");
     const [sentMessages, setSentMessages] = useState([]);
     const [receivedMessages, setReceivedMessages] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
+
+
     const sendMessage = async (e) => {
         try {
-            const customerID = "U56200311"; // Assuming you have a default customer ID
             const messages = {
                 customerID,
-                message,
+                message: userMessage,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
                 category: selectedCategory,
@@ -34,7 +34,11 @@ function ChatBox() {
             await axios.post('/api/messages/newMessage', messages);
             fetchMessages();
         } catch (error) {
-            console.log(error)
+            if (error.response && error.response.status === 400 && error.response.data.message === "Message contains prohibited content") {
+                message.error("Message contains prohibited content");
+            } else {
+                console.log(error);
+            }
         }
     };
 
@@ -43,7 +47,7 @@ function ChatBox() {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
             groupMessages(response.data);
-            console.log("group" , groupedMessages)
+            console.log("group", groupedMessages)
         } catch (error) {
             console.log(error);
         }
@@ -51,17 +55,16 @@ function ChatBox() {
 
     // Fetch stored selected category from localStorage on component mount
     useEffect(() => {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         const storedCategory = localStorage.getItem('selectedCategory');
         if (storedCategory) {
             setSelectedCategory(storedCategory);
         }
         fetchMessages();
-        setCustomerID("U56200311");
-
+        setCustomerID(currentUser.userID);
         const interval = setInterval(() => {
             fetchMessages();
         }, 3000);
-
         return () => clearInterval(interval);
     }, []);
 
@@ -79,7 +82,7 @@ function ChatBox() {
         });
         setGroupedMessages(grouped);
     };
-    
+
     const handleOpenModal = () => {
         setIsModalOpen(true);
         console.log("open")
@@ -102,9 +105,9 @@ function ChatBox() {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        if (message.trim() !== "") {
+        if (userMessage.trim() !== "") {
             sendMessage();
-            setMessage("");
+            setUserMessage("");
         }
     };
 
@@ -128,7 +131,7 @@ function ChatBox() {
                         height="24"
                         style={{ margin: "0 0 20px 0", height: "25px", fontSize: "10px" }}
                     />
-                    <h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize:"14px"}}>Ask Your Question About {selectedCategory}</h6>
+                    <h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize: "14px" }}>Ask Your Question About {selectedCategory}</h6>
                 </>
             ) : null}
         </div>
@@ -137,7 +140,7 @@ function ChatBox() {
     const modalFooter = (
         <div>
             <form onSubmit={handleFormSubmit}>
-                <input type="text" placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
+                <input type="text" placeholder="Type a message" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
                 <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
             </form>
         </div>
@@ -171,30 +174,30 @@ function ChatBox() {
                 {modalHeader}
                 {selectedCategory ? (
                     <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
-                    {customerID && groupedMessages[customerID]?.[selectedCategory]?.map((msg, index) => (
-                        msg.sender === 'customer' ? (
-                            <div key={index} style={{ display: "flex", justifyContent: "flex-end" }}>
-                                <div className="sent-message-chatbox">
-                                    <div>{msg.message}</div>
-                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
-                                        {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                        {customerID && groupedMessages[customerID]?.[selectedCategory]?.map((msg, index) => (
+                            msg.sender === 'customer' ? (
+                                <div key={index} style={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <div className="sent-message-chatbox">
+                                        <div>{msg.message}</div>
+                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
+                                            {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <div key={index} style={{ display: "flex", float: "left" }}>
-                                <div className="received-message-chatbox">
-                                    <div style={{ fontWeight: "bold", color: "#533c56" }}>Evnify</div>
-                                    <div>{msg.message}</div>
-                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
-                                        {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                            ) : (
+                                <div key={index} style={{ display: "flex", float: "left" }}>
+                                    <div className="received-message-chatbox">
+                                        <div style={{ fontWeight: "bold", color: "#533c56" }}>Evnify</div>
+                                        <div>{msg.message}</div>
+                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>
+                                            {moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    ))}
-                </div>
-                
+                            )
+                        ))}
+                    </div>
+
                 ) : (
                     <div>
                         <div className="message-category">
