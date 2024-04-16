@@ -3,6 +3,8 @@ import { Space, Table, Modal, Select, Input, Upload, Button, message } from "ant
 import { PlusOutlined } from '@ant-design/icons';
 import { Icon } from "@iconify/react";
 import axios from "axios";
+import { CSVLink } from 'react-csv';
+
 const { TextArea } = Input;
 const { Search } = Input;
 
@@ -208,6 +210,20 @@ function Packages() {
     setEditImages(newContentImages);
   };
 
+  // Function to convert package data to a format compatible with react-csv
+  const convertToCSVData = (data) => {
+    const csvData = data.map(packaged => ({
+      'Package ID': packaged.packageId,
+      'Package Type': packaged.packageType,
+      'Event Type': packaged.eventType,
+      'Price': packaged.price,
+      'Description': packaged.description,
+      'Inventories': packaged.inventories.map(inv => `${inv.itemType}(${inv.quantity})`).join(';'), // Combine inventory items with quantities
+      'Extras': packaged.extras.join(';') // Combine extras with semicolon separator
+    }));
+    return csvData;
+  };
+
 
 
   // Create a new package
@@ -370,7 +386,6 @@ function Packages() {
           >
             <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeletePackage(record._id)} />
             <Icon icon="mdi:pencil" style={{ margin: "0 5px 0 5px" }} onClick={() => handleEditPackage(record._id)} />
-            <Icon icon="mdi:download" style={{ margin: "0 0 0 10px " }} />
           </button>
         </Space>
       ),
@@ -675,7 +690,15 @@ function Packages() {
                 </div>
               </div>
             </Modal>
-
+            <CSVLink data={convertToCSVData(packageList)} filename={'package_details.csv'}>
+            <button style={{
+              width: "100px", height: "40px", border: "none",
+              borderRadius: "5px", background: "red", color: "white", cursor: "pointer",
+              fontSize: "14px", marginLeft: "20px",
+            }}>
+              Download CSV
+            </button>
+            </CSVLink>
 
             <button onClick={showModalAdd} style={{
               width: "100px", height: "40px", border: "none",
