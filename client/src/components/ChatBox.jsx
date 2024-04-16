@@ -17,6 +17,7 @@ function ChatBox() {
     const [receivedMessages, setReceivedMessages] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     const sendMessage = async (e) => {
         try {
@@ -55,7 +56,7 @@ function ChatBox() {
 
     // Fetch stored selected category from localStorage on component mount
     useEffect(() => {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
         const storedCategory = localStorage.getItem('selectedCategory');
         if (storedCategory) {
             setSelectedCategory(storedCategory);
@@ -203,7 +204,7 @@ function ChatBox() {
                         <div className="message-category">
                             <div className='category-box-container'>
                                 <div className='message-category-name-box'>
-                                    <div style={{ fontWeight: "bold", fontSize: "23.5px" }}>Hi! Sasindu Nadeeshan</div>
+                                    <div style={{ fontWeight: "bold", fontSize: "23.5px" }}>Hi! {currentUser.firstName} {currentUser.lastName}</div>
                                     <div style={{ textAlign: "justify", width: "250px" }}> Ask us anything you've been pondering, and let's unlock the answers together.</div>
                                 </div>
                                 <div>Select Your Category And Start</div>
