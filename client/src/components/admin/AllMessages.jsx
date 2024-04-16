@@ -446,7 +446,7 @@ function AllMessages() {
 
                                             {msg.sender === 'customer' ? (
                                                 <div className="message-receved-admin">
-                                                    <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                                    <img src={selectedUser.profilePic} alt="dp" style={{ width: "40px", height: "40px" }} />
                                                     <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
                                                         <div><p>{msg.message}</p></div>
                                                         <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>

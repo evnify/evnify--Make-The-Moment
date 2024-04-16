@@ -142,7 +142,7 @@ function ChatBox() {
         <div>
             <form onSubmit={handleFormSubmit}>
                 <input type="text" placeholder="Type a message" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
-                <Icon icon="material-symbols:send" width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer' }} onClick={handleFormSubmit} />
+                <Icon icon="material-symbols:send" disable={!userMessage} width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer', color: userMessage ? "black" : "#d3d3d3"}} onClick={handleFormSubmit} />
             </form>
         </div>
     );
