@@ -55,6 +55,7 @@ function EmpSideMenu() {
     const [openKeys, setOpenKeys] = useState(["/employee"]);
     const [selectedKeys, setSelectedKeys] = useState("/employee");
     const [leaveModelOpen, setLeaveModelOpen] = useState(false);
+    const [employee, setEmployee] = useState({});
 
     // Leave Request model use states
     const [leaveType, setLeaveType] = useState("sick leave");
@@ -84,6 +85,25 @@ function EmpSideMenu() {
         setEndDate(dateString);
     };
 
+    const FetchEmployeeByUserID = async (userID) => {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/getEmployeeByUserID`,
+                {
+                    userID: userID,
+                }
+            );
+            setEmployee(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        const emp = JSON.parse(localStorage.getItem("currentUser"));
+        FetchEmployeeByUserID(emp.userID);
+    }, []);
+
     const submitLeaveRequest = async () => {
         if (!leaveType || !startDate || !endDate || !reason) {
             return message.error("Please fill all the fields");
@@ -94,12 +114,12 @@ function EmpSideMenu() {
         }
         try {
             const leave = {
-                empID: "emp001",
+                empID: employee.empID,
                 leaveType,
                 startDate,
                 endDate,
                 reason,
-                name: "John Doe",
+                name: employee.firstName + " " + employee.lastName,
             };
             await axios.post("/api/leaves/newLeave", leave);
             message.success("Leave request submitted successfully");
@@ -127,7 +147,6 @@ function EmpSideMenu() {
                             colorPrimary: "#4f46e5",
                             colorPrimaryHover: "#3d36b2",
                         },
-                        
                     },
                 }}
             >
@@ -271,14 +290,13 @@ function EmpSideMenu() {
             </ConfigProvider>
 
             <div className="emp_logout_btn_Container center">
-                <button className="emp_logout_btn"
-                onClick={
-                    () => {
+                <button
+                    className="emp_logout_btn"
+                    onClick={() => {
                         localStorage.removeItem("currentUser");
                         navigate("/login");
-                    }
-                
-                }>
+                    }}
+                >
                     <Icon
                         icon="ic:baseline-logout"
                         style={{ marginRight: "10px" }}
