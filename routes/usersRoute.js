@@ -87,11 +87,23 @@ router.post("/editUser", async (req, res) => {
     const userID = userData.userID;
     try {
         await UserModel.findOneAndUpdate({ userID: userID }, userData);
-        res.send("Employee updated successfully");
+        res.send("User updated successfully");
     } catch (error) {
         return res.status(400).json({ message: error });
     }
 });
+
+router.post("/updateUser/:id", async (req, res) => {
+    const { id } = req.params;
+    const userData = req.body;
+    try {
+        await UserModel.findOneAndUpdate ({ userID: id }, userData);
+        res.send("User updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
 
 router.post("/suspendUser", async (req, res) => {
     const userData = req.body;
@@ -187,6 +199,7 @@ router.post("/getUserById", async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 router.post("/updateUserProfile", async (req, res) => {
     const { userID, profilePic, username } = req.body;

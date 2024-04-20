@@ -545,7 +545,7 @@ function UserProfile() {
                             <Input
                                 size="large"
                                 style={{ width: "340px", marginRight: "40px" }}
-                                value={user.address}
+                                value={user.address1}
                             />
                         </div>
                     </div>
@@ -592,6 +592,7 @@ function UserProfile() {
                             <Input
                                 size="large"
                                 style={{ width: "340px", marginRight: "40px" }}
+                                value={user.phoneNumber}
                             />
                         </div>
                     </div>
