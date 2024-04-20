@@ -113,7 +113,7 @@ function UsersInsights() {
             <div className="admin_user_welcome">
                 <img className= "admin_profile"src="https://img.icons8.com/ios/452 alter.png" alt="admin" />
 
-                <h1>Welcome Admin</h1>
+                <h3>Welcome Admin</h3>
             </div>
             <div className="UsersInsights">
                 <UserTab />
