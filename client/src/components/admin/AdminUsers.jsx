@@ -168,7 +168,6 @@ function UserList() {
                 message.success("User added successfully");
                 setaddUserModelOpen(false);
                 fetchUserList();
-                
 
                 // Reset form fields after successful submission
                 setaddress1("");
@@ -593,6 +592,40 @@ function UserList() {
         });
     };
 
+
+    const handleExport = () => {
+        const csvData = [];
+        const headers = ["User ID", "First Name", "Last Name", "Email", "Phone Number", "Username", "User Type", "Status", "Address"];
+        csvData.push(headers);
+        filteredUserList.forEach((item) => {
+            const row = [
+                item.userID,
+                item.firstName,
+                item.lastName,
+                item.email,
+                item.phoneNumber,
+                item.username,
+                item.userType,
+                item.status,
+                item.address1
+            ];
+            csvData.push(row);
+        });
+
+        const csvRows = [];
+        for (const row of csvData) {
+            csvRows.push(row.join(","));
+        }
+        const csvString = csvRows.join("\n");
+        const a = document.createElement("a");
+        a.href = "data:attachment/csv," + encodeURIComponent(csvString);
+        a.target = "_blank";
+        a.download = "users.csv";
+        document.body.appendChild(a);
+        a.click();
+
+    };
+
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             {/* Active conformation model */}
@@ -968,6 +1001,13 @@ function UserList() {
                                 </svg>{" "}
                                 &nbsp; Create New{" "}
                             </button>
+
+                            <button
+                                className="admin_user_list_top_menu_button"
+                                onClick={handleExport}
+                            >
+                                Export
+                            </button>
                         </div>
                     </div>
 
@@ -1198,7 +1238,6 @@ function UserList() {
                                     rows={4}
                                     onChange={(e) => {
                                         setaddress1(e.target.value);
-                                        console.log(e.target.value);
                                     }}
                                 />
                             </div>
