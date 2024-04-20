@@ -1003,8 +1003,9 @@ function UserList() {
                             </button>
 
                             <button
-                                className="admin_user_list_top_menu_button"
+                                className="admin_user_list_top_menu_button "
                                 onClick={handleExport}
+                                style={{ marginLeft: "10px" }}
                             >
                                 Export
                             </button>

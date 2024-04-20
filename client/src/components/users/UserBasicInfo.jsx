@@ -228,7 +228,9 @@ const UserProfileForm = () => {
                     />
                 </Space>
             </Space>
-            <button className="btn btn-primary" onClick={saveChanges}>
+
+            <button className="btn btn-primary" onClick={saveChanges}
+            style={{margin : "80px", marginLeft : "210px" }}>
                 Save Changes
             </button>
         </>
