@@ -105,6 +105,33 @@ router.post("/updateUser/:id", async (req, res) => {
 });
 
 
+router.post("/change-password", async (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    try {
+        const user = await UserModel.findOne({ userID: userId });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Compare passwords in plaintext
+        if (user.password !== currentPassword) {
+            return res.status(401).json({ message: "Incorrect password" });
+        }
+
+        await UserModel.findOneAndUpdate(
+            { userID: userId },
+            { password: newPassword }
+        );
+        res.send("Password changed successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+
 router.post("/suspendUser", async (req, res) => {
     const userData = req.body;
     const userID = userData.userID;

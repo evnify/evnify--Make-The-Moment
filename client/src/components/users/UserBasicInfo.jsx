@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { Input, Space } from "antd";
+import { Input, Space, message } from "antd";
 
 const UserProfileForm = () => {
     const [user, setUser] = useState({});
@@ -73,10 +73,11 @@ const UserProfileForm = () => {
         try {
             const res = await axios.post(`/api/users/updateUser/${userId}`, updatedUser);
             console.log("User details updated successfully:", res.data);
-            // Optionally, you can show a success message or redirect the user
+            message.success("User details updated successfully");
+            
         } catch (error) {
             console.error("Error updating user details:", error);
-            // Optionally, you can show an error message to the user
+            message.error("Error updating user details");
         }
     };
 

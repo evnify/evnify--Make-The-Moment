@@ -104,9 +104,7 @@ function UserSettings() {
                     </ul>
                 </div>
 
-                <div className="save-btn">
-                    <button>Save changes</button>
-                </div>
+                
                 <div className="setting-header">
                     <h4>Deactivate Account</h4>
 
