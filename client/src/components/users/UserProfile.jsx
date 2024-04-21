@@ -95,7 +95,8 @@ function UserProfile() {
     };
 
     const updateUserProfile = async (profilePic) => {
-        const userID = localStorage.getItem("userID");
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
         try {
             await axios.post("/api/users/updateUserProfile", {
                 userID: userID,

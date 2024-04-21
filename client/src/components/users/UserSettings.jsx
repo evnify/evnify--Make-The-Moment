@@ -65,6 +65,22 @@ function UserSettings() {
         },
     };
 
+    const handleDeleteAccount = async () => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+
+        try {
+            const response = await axios.post("/api/users/delete-account", { userId: userID });
+            console.log(response.data);
+            message.success("Account deleted successfully");
+            localStorage.removeItem("currentUser");
+            window.location.href = "/login";
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            message.error("Error deleting account");
+        }
+    };
+
     return (
         <div className="container">
             <div className="genral-setting">
@@ -104,7 +120,6 @@ function UserSettings() {
                     </ul>
                 </div>
 
-                
                 <div className="setting-header">
                     <h4>Deactivate Account</h4>
 
@@ -114,7 +129,12 @@ function UserSettings() {
                         deleted.
                     </p>
                 </div>
-                <button className="deactivate-acc">Deactivate Account</button>
+                <button
+                    className="deactivate-acc"
+                    onClick={handleDeleteAccount}
+                >
+                    Deactivate Account
+                </button>
             </div>
         </div>
     );

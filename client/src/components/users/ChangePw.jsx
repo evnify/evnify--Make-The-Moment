@@ -20,6 +20,18 @@ const ChangePw = () => {
             setError("Passwords do not match");
             return;
         }
+
+        if (newPassword.length < 6) {
+            setError("Password must be at least 6 characters");
+            return;
+        }
+
+        if (newPassword === currentPassword) {
+            setError("New password must be different from current password");
+            return;
+        }
+
+
     
         const user = JSON.parse(localStorage.getItem("currentUser"));
         const userID = user.userID;
@@ -39,7 +51,7 @@ const ChangePw = () => {
             setError("");
         } catch (error) {
             console.error("Error changing password:", error);
-            setError("Error changing password");
+            
         }
     };
     

@@ -117,6 +117,7 @@ router.post("/change-password", async (req, res) => {
         // Compare passwords in plaintext
         if (user.password !== currentPassword) {
             return res.status(401).json({ message: "Incorrect password" });
+            
         }
 
         await UserModel.findOneAndUpdate(
@@ -124,6 +125,21 @@ router.post("/change-password", async (req, res) => {
             { password: newPassword }
         );
         res.send("Password changed successfully");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/delete-account", async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        const deletedUser = await UserModel.findOneAndDelete({ userID: userId });
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.send("User deleted successfully");
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
