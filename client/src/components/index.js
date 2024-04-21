@@ -1,4 +1,4 @@
-import { SideMenu, NavBar } from "./admin";
+import { SideMenu, NavBar, Loader } from "./admin";
 import AdminRoutes from "./AdminRoutes";
 import EmpRoutes from "./EmpRoutes";
 import ChatBox from "./ChatBox";
@@ -28,4 +28,5 @@ export {
     BookingSteps,
     Navbar,
     Footer,
+    Loader,
 };
