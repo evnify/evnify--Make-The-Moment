@@ -32,7 +32,6 @@ function EmpSalary() {
                 }
             );
             setEmpID(employee.data.empID);
-            console.log(employee.data)
             var id = employee.data.empID;
         } catch (error) {
             console.error(error);

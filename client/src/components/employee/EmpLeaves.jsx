@@ -17,7 +17,6 @@ import moment from "moment";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 import { Loader } from "../admin";
-import { set } from "mongoose";
 
 const { Search, TextArea } = Input;
 const { confirm } = Modal;
@@ -228,14 +227,27 @@ function EmpLeaves() {
     ];
 
     const fetchLeaves = async () => {
-        const leaveData = await axios.post(
-            `${process.env.PUBLIC_URL}/api/leaves/getLeaveByEmpID`,
-            {
-                empID: "emp001",
-            }
-        );
-        setLeavesList(leaveData.data);
-        setIsLoading(false);
+        const emp = JSON.parse(localStorage.getItem("currentUser"));
+        try {
+            const employee = await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/getEmployeeByUserID`,
+                {
+                    userID: emp.userID,
+                }
+            );
+            var id = employee.data.empID;
+            const leaveData = await axios.post(
+                `${process.env.PUBLIC_URL}/api/leaves/getLeaveByEmpID`,
+                {
+                    empID: id,
+                }
+            );
+            setLeavesList(leaveData.data);
+            setIsLoading(false);
+        } catch (error) {
+            message.error("Something went wrong");
+            console.log(error);
+        }
     };
 
     useEffect(() => {

@@ -87,7 +87,6 @@
     background-color: #f5f5f5;
 }
 
-
 .admin_emp_list_top_menu_button {
     color: #fff;
     font-family: "Product Sans";
@@ -164,12 +163,11 @@
     gap: 20px;
 }
 
-.add_employee_top_container p{
+.add_employee_top_container p {
     font-family: "Product Sans";
     font-size: 22px;
     font-weight: 600;
     color: #464646;
-
 }
 
 .avatar-container {
@@ -183,7 +181,6 @@
     display: flex;
     flex-direction: column;
 }
-
 
 /* Leave Requests */
 
@@ -219,3 +216,120 @@
     margin: 0 30px 0 22px;
 }
 
+/* Dashboard section */
+
+.emp_dashboard_main_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 840px;
+    height: 813px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    border: 2px solid #fff;
+    background: #fff;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+.emp_dashboard_pending_laves_container {
+    border-radius: 11px;
+    background: #fff;
+    width: 365px;
+    height: 287px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin: 0 0 0 15px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    gap: 40px;
+}
+
+.emp_dashboard_pending_laves_container h1 {
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: "Product Sans";
+    padding: 15px 20px 10px 20px;
+}
+
+.emp_dashboard_pending_lave_rows {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px 7px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.emp_dashboard_pending_lave_rows h5 {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    font-family: "Product Sans";
+    padding: 0;
+}
+
+.emp_dashboard_leave_balance_container {
+    border-radius: 11px;
+    background: #fff;
+    width: 365px;
+    height: 160px;
+    flex-shrink: 0;
+
+    margin: 15px 0 0 15px;
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    gap: 40px;
+    padding: 10px 30px 10px 20px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+}
+
+.emp_dashboard_pending_laves_container p {
+    color: #4f46e5;
+    text-align: center;
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.emp_dashboard_leave_balance_container span {
+    color: #699bf7;
+    font-family: "Product Sans";
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 600;
+}
+
+.emp_dashboard_leave_balance_container_right {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+
+.emp_dashboard_leave_balance_container_right h4 {
+    color: #4f46e5;
+    font-family: "Product Sans";
+    font-size: 20.871px;
+    font-style: normal;
+    font-weight: 400;
+    padding-bottom: 10px;
+}
+
+
+
+.emp_dashboard_leave_balance_container_right h5 {
+    color: #3e3e3e;
+    font-family: "Product Sans";
+    font-size: 12.649px;
+    font-style: normal;
+    font-weight: 400;
+    padding: 3px;
+}
