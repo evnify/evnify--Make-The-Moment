@@ -8,9 +8,8 @@ const { Search } = Input;
 
 function EmpSalary() {
     const [salaryList, setSalaryList] = useState([]);
-    const [filteredSalaryList, setFilteredSalaryList] = useState([]);
-    const [selectedType, setSelectedType] = useState("all");
     const [empID, setEmpID] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -23,9 +22,25 @@ function EmpSalary() {
     };
 
     const fetchSalary = async () => {
+        const emp = JSON.parse(localStorage.getItem("currentUser"));
+
+        try {
+            const employee = await axios.post(
+                `${process.env.PUBLIC_URL}/api/employees/getEmployeeByUserID`,
+                {
+                    userID: emp.userID,
+                }
+            );
+            setEmpID(employee.data.empID);
+            console.log(employee.data)
+            var id = employee.data.empID;
+        } catch (error) {
+            console.error(error);
+        }
+
         try {
             const response = await axios.post(`/api/salary/getPayrollByEmpID`, {
-                empID: "E40332924",
+                empID: id,
             });
             const filteredList = response.data.filter(
                 (salary) => salary.status.toLowerCase() === "paid"
@@ -34,40 +49,12 @@ function EmpSalary() {
         } catch (err) {
             console.error(err);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
         fetchSalary();
     }, []);
-
-    const FetchEmployeeByUserID = async (userID) => {
-        try {
-            const response = await axios.post(
-                `${process.env.PUBLIC_URL}/api/employees/getEmployeeByUserID`,
-                {
-                    userID: userID,
-                }
-            );
-            setEmpID(response.data.employeeID);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    useEffect(() => {
-        const emp = JSON.parse(localStorage.getItem("currentUser"));
-        FetchEmployeeByUserID(emp.userID);
-    }, []);
-
-    useEffect(() => {
-        let tempList = salaryList;
-
-        if (selectedType !== "all") {
-            tempList = tempList.filter((item) => item.status === selectedType);
-        }
-
-        setFilteredSalaryList(tempList);
-    }, [selectedType, salaryList]);
 
     const columns = [
         {
@@ -122,10 +109,9 @@ function EmpSalary() {
                 <Space size="middle">
                     <>
                         <button
-                            disabled
                             style={{
                                 fontSize: "20px",
-                                color: "#9D9D9D",
+                                color: "#757171",
                                 border: "none",
                                 background: "transparent",
                             }}
@@ -151,29 +137,13 @@ function EmpSalary() {
                     >
                         <h5>Recent Salaries</h5>
                     </div>
-                    <div style={{ marginLeft: "auto", alignItems: "center" }}>
-                        <Radio.Group
-                            value={selectedType}
-                            onChange={(e) => {
-                                setSelectedType(e.target.value);
-                            }}
-                            size="large"
-                            style={{
-                                width: 250,
-                            }}
-                        >
-                            <Radio.Button value="all">All</Radio.Button>
-                            <Radio.Button value="Paid">Paid</Radio.Button>
-                            <Radio.Button value="Pending">Pending</Radio.Button>
-                        </Radio.Group>
-                    </div>
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
-                        {salaryList.length !== 0 ? (
+                        {!isLoading ? (
                             <Table
                                 columns={columns}
-                                dataSource={filteredSalaryList}
+                                dataSource={salaryList}
                                 pagination={pagination}
                                 onChange={handleTableChange}
                             />

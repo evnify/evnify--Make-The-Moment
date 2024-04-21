@@ -16,6 +16,8 @@ import { Icon } from "@iconify/react";
 import moment from "moment";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
+import { Loader } from "../admin";
+import { set } from "mongoose";
 
 const { Search, TextArea } = Input;
 const { confirm } = Modal;
@@ -30,6 +32,7 @@ function EmpLeaves() {
     });
     const [leavesList, setLeavesList] = useState([]);
     const [filteredLeaves, setFilteredLeaves] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setPagination(pagination);
@@ -37,9 +40,12 @@ function EmpLeaves() {
 
     const deleteLeave = async (id) => {
         try {
-            await axios.post(`${process.env.PUBLIC_URL}/api/leaves/deleteLeaveRequestByID`, {
-                leaveID: id,
-            });
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/leaves/deleteLeaveRequestByID`,
+                {
+                    leaveID: id,
+                }
+            );
             message.success("Leave request deleted successfully");
             fetchLeaves();
         } catch (error) {
@@ -84,7 +90,6 @@ function EmpLeaves() {
             width: 350,
         });
     };
-
 
     const columns = [
         {
@@ -163,7 +168,9 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
-                                onClick={() => showDeclineConfirm(record.leaveID)}
+                                onClick={() =>
+                                    showDeclineConfirm(record.leaveID)
+                                }
                             >
                                 <Icon icon="material-symbols:delete-outline" />
                             </button>
@@ -228,6 +235,7 @@ function EmpLeaves() {
             }
         );
         setLeavesList(leaveData.data);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -473,14 +481,24 @@ function EmpLeaves() {
                     </div>
                 </div>
                 <div style={{ width: "100%" }}>
-                    <div>
-                        <Table
-                            columns={columns}
-                            dataSource={filteredLeaves}
-                            pagination={pagination}
-                            onChange={handleTableChange}
-                        />
-                    </div>
+                    {isLoading ? (
+                        <div
+                            style={{
+                                marginTop: "150px",
+                            }}
+                        >
+                            <Loader />
+                        </div>
+                    ) : (
+                        <div>
+                            <Table
+                                columns={columns}
+                                dataSource={filteredLeaves}
+                                pagination={pagination}
+                                onChange={handleTableChange}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
