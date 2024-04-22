@@ -145,15 +145,8 @@ function UserProfile() {
 
     const [coverPhoto, setCoverPhoto] = useState(null);
 
-    const handleUpload = (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setCoverPhoto(reader.result);
-        };
-        if (file) {
-            reader.readAsDataURL(file);
-        }
+    const handleUpload = () => {
+        setCoverPhoto(null);
     };
 
     const customCoverRequest = ({ file, onSuccess, onError }) => {
@@ -168,17 +161,14 @@ function UserProfile() {
             .then((response) => {
                 if (response.data.data) {
                     onSuccess();
-                    message.success("Cover photo uploaded successfully");
+                    message.success("Image uploaded successfully");
                     setCoverPhoto(response.data.data.url);
-                    console.log("Cover photo URL:", response.data.data.url);
+                    console.log(coverPhoto);
+                    setLoading(false);
                 } else {
                     onError();
-                    message.error("Failed to upload cover photo");
+                    message.error("Failed to upload image");
                 }
-            })
-            .catch((error) => {
-                onError();
-                message.error("Error uploading cover photo: " + error.message);
             });
     };
 
@@ -273,14 +263,10 @@ function UserProfile() {
                                 src={previewImage}
                             />
                         </Modal>
-                        <button
-                        className="btn btn-primary edit"
-                    
-                    >
-                        Edit Profile
-                    </button>
+                        <button className="btn btn-primary edit">
+                            Edit Profile
+                        </button>
                     </div>
-                    
                 </div>
 
                 <div className="profile-info">
@@ -295,11 +281,7 @@ function UserProfile() {
                             </a>
                         </span>
                     </p>
-                    
                 </div>
-                
-                    
-                
             </div>
 
             <div
