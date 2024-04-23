@@ -64,6 +64,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+
+    coverPic: {
+        type: String,
+        required: false,
+    },
 });
 
 const User = mongoose.model("user", userSchema);
