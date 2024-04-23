@@ -257,6 +257,21 @@ router.post("/updateUserProfile", async (req, res) => {
     }
 });
 
+
+router.post("/updateUserCover", async (req, res) => {
+    const { userID, coverPic } = req.body;
+    try {
+        await
+        UserModel.findOneAndUpdate(
+            { userID: userID },
+            { coverPic: coverPic }
+        );
+        res.send("Cover updated successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
 router.post("/check-existing", async (req, res) => {
     const { email } = req.body;
 
