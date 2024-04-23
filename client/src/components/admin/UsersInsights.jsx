@@ -145,6 +145,8 @@ function UsersInsights() {
                                 columns={columns}
                                 pagination={{
                                     pageSize: 7,
+                                    hideOnSinglePage: true,
+                                    
                                 }}
                                 footer={() => (
                                     <div className="footer-number">{`Total ${data.length} items`}</div>
