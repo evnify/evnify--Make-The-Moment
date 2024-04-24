@@ -39,6 +39,7 @@ function UserSideMenu() {
 
     function logout() {
         localStorage.removeItem("currentUser");
+        localStorage.removeItem('selectedCategory');
         navigate("/login");
     }
 
