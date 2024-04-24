@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 
 import UserTab from "./UserTab";
@@ -15,154 +15,107 @@ import {
     Space,
     message,
     Upload,
+    Table,
+    columns,
+    Tag,
+    Avatar,
 } from "antd";
 
 import axios from "axios";
+import Loader from "./Loader";
+import Link from "antd/es/typography/Link";
 
 let index = 0;
 
 const { Search, TextArea } = Input;
 
 function UsersInsights() {
-    const [selectedType, setSelectedType] = useState("all");
-    const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
-
-    // Type Selector
-    const [items, setItems] = useState([
-        "Photographer",
-        "Event Manager",
-        "Manager",
-        "Designer",
-    ]);
-    const [name, setName] = useState("");
-    const inputRef = useRef(null);
-    const onNameChange = (event) => {
-        setName(event.target.value);
-    };
-    const addItem = (e) => {
-        e.preventDefault();
-        setItems([...items, name || `New item ${index++}`]);
-        setName("");
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
-    };
-
-    // Add user model use states
-    const [address, setAddress] = useState("");
-    const [dob, setDob] = useState("");
-    const [type, setType] = useState("sick leave");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [username, setUsername] = useState("");
-    const [profileImage, setProfileImage] = useState("");
-
-    const onSearch = (value) => console.log(value);
-
-    // Image upload
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewImage, setPreviewImage] = useState("");
-    const [previewTitle, setPreviewTitle] = useState("");
-    const [fileList, setFileList] = useState([]);
 
-    const beforeUpload = (file) => {
-        const isJpgOrPng =
-            file.type === "image/jpeg" || file.type === "image/png";
-        if (!isJpgOrPng) {
-            message.error("You can only upload JPG/PNG file!");
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error("Image must smaller than 2MB!");
-        }
-        return isJpgOrPng && isLt2M;
-    };
-
-    const handleCancel = () => setPreviewOpen(false);
-    const uploadButton = (
-        <button
-            style={{
-                border: 0,
-                background: "none",
-            }}
-            type="button"
-        >
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div
-                style={{
-                    marginTop: 8,
-                }}
-            >
-                Upload
-            </div>
-        </button>
-    );
-
-    const handleChange = (info) => {
-        if (info.file.status === "uploading") {
-            setLoading(true);
-            return;
+    const fetchUserList = async () => {
+        try {
+            const response = await axios.get("/api/users/getUser");
+            setData(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error(error);
         }
     };
 
-    const getBase64 = (img, callback) => {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => callback(reader.result));
-        reader.readAsDataURL(img);
-    };
+    useEffect(() => {
+        fetchUserList();
+    }, []);
 
-    const handlePreview = async (file) => {
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setPreviewImage(file.url || file.preview);
-        setPreviewOpen(true);
-        setPreviewTitle(
-            file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-        );
-    };
-
-    const customRequest = ({ file, onSuccess, onError }) => {
-        const formData = new FormData();
-        formData.append("image", file);
-
-        axios
-            .post(
-                "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
-                formData
-            )
-            .then((response) => {
-                if (response.data.data) {
-                    onSuccess();
-                    message.success("Image uploaded successfully");
-                    setFileList([
-                        {
-                            uid: "1",
-                            name: "image.png",
-                            status: "done",
-                            url: response.data.data.url,
-                        },
-                    ]);
-                    setProfileImage(response.data.data.url);
-                    console.log(profileImage);
-                    setLoading(false);
-                } else {
-                    onError();
-                    message.error("Failed to upload image");
+    const columns = [
+        {
+            title: "user_ID",
+            dataIndex: "userID",
+            key: "userID",
+        },
+        {
+            title: "",
+            dataIndex: "profilePic",
+            key: "profilePic",
+            render: (_, record) => (
+                <Avatar size={35} src={record.profilePic} alt="avatar" />
+            ),
+        },
+        {
+            title: "username",
+            dataIndex: "username",
+            key: "username",
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: "Phone Number",
+            dataIndex: "phoneNumber",
+            key: "phoneNumber",
+        },
+        {
+            title: "Email Address",
+            dataIndex: "email",
+            key: "email",
+        },
+        {
+            title: "Type",
+            dataIndex: "userType",
+            key: "userType",
+        },
+        {
+            title: "Status",
+            key: "status",
+            dataIndex: "status",
+            render: (status) => {
+                let color = "green";
+                if (status === "Suspended") {
+                    color = "red";
                 }
-            })
-            .catch((error) => {
-                onError();
-                message.error("Error uploading image: " + error.message);
-            });
-    };
+                return (
+                    <Tag color={color}>
+                        {status ? status.toUpperCase() : ""}
+                    </Tag>
+                );
+            },
+        },
+        {
+            title: "Address",
+            dataIndex: "address1",
+            key: "address1",
+        },
+    ];
 
     return (
         <>
-            <div className="admin_user_welcome"></div>
+            <div className="admin_user_welcome">
+                <img
+                    className="admin_profile"
+                    src="https://img.icons8.com/ios/452 alter.png"
+                    alt="admin"
+                />
+
+                <h3>Welcome Admin</h3>
+            </div>
             <div className="UsersInsights">
                 <UserTab />
             </div>
@@ -171,17 +124,35 @@ function UsersInsights() {
 
                 <div className="admin_user_chart2"></div>
             </div>
-            <div className="admin_user_list"></div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <ConfigProvider
-                    theme={{
-                        components: {
-                            Modal: {},
-                        },
-                    }}
-                >
+
+            <div className="admin_user_bar">
+                <h3>Recent Users</h3>
+                <div className="admin_user_bar1" 
+                ></div>
+                <Link href="/admin/users" className="admin_user_bar2 " style={{ padding: "10px" }}>
+                    View All
+                </Link>
+
                 
-                </ConfigProvider>
+            </div>
+            <div className="admin_user_list">
+                <div style={{ width: "100%" }}>
+                    <div className="row">
+                        {loading && <Loader />}
+                        <div className="col-md-12">
+                            <Table
+                                dataSource={data}
+                                columns={columns}
+                                pagination={{
+                                    pageSize: 7,
+                                }}
+                                footer={() => (
+                                    <div className="footer-number">{`Total ${data.length} items`}</div>
+                                )}
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     );
