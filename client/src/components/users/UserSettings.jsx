@@ -3,7 +3,7 @@ import axios from "axios";
 import { InboxOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, message, Upload } from "antd";
 import UserBasicInfo from "./UserBasicInfo";
-import  ChangePw  from "./ChangePw";
+import ChangePw from "./ChangePw";
 
 const { Dragger } = Upload;
 
@@ -65,11 +65,25 @@ function UserSettings() {
         },
     };
 
+    const handleDeleteAccount = async () => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+
+        try {
+            const response = await axios.post("/api/users/delete-account", { userId: userID });
+            console.log(response.data);
+            message.success("Account deleted successfully");
+            localStorage.removeItem("currentUser");
+            window.location.href = "/login";
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            message.error("Error deleting account");
+        }
+    };
+
     return (
         <div className="container">
             <div className="genral-setting">
-                
-
                 <div className="Basic-info">
                     <div className="setting-header">
                         <h4>Basic information</h4>
@@ -77,9 +91,8 @@ function UserSettings() {
                             Update some personal information. Your address will
                             never be publicly available..
                         </p>
-                        <UserBasicInfo/>
+                        <UserBasicInfo />
                     </div>
-                    
                 </div>
             </div>
 
@@ -92,35 +105,36 @@ function UserSettings() {
                     </p>
                 </div>
                 <div className="change-password-form">
-                
-                <ChangePw/>
-                </div>  
+                    <ChangePw />
+                </div>
 
                 <div className="pw-requirement">
                     <h4>Password requirements</h4>
                     <ul>
-                        <li>Minimum 8 characters long - the more, the better</li>
+                        <li>
+                            Minimum 8 characters long - the more, the better
+                        </li>
                         <li>At least one lowercase character</li>
                         <li>At least one uppercase character</li>
                         <li>At least one number</li>
                     </ul>
                 </div>
-                
-                <div className="save-btn">
-                    <button>Save changes</button>
-                </div>
+
                 <div className="setting-header">
-                <h4>Deactivate Account</h4>
-                
-               
-                <p>
-                    If you deactivate your account, you will lose access to your
-                    profile and all your data will be permanently deleted.  
-                </p>
+                    <h4>Deactivate Account</h4>
+
+                    <p>
+                        If you deactivate your account, you will lose access to
+                        your profile and all your data will be permanently
+                        deleted.
+                    </p>
                 </div>
-                <button className="deactivate-acc">Deactivate Account</button>
-
-
+                <button
+                    className="deactivate-acc"
+                    onClick={handleDeleteAccount}
+                >
+                    Deactivate Account
+                </button>
             </div>
         </div>
     );
