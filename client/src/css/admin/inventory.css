@@ -218,7 +218,7 @@
 
 .inventory-insight-top {
     width: 1220px;
-    height: 410px;
+    height: 500px;
     flex-shrink: 0;
     border-radius: 11px;
     background: #fff;
@@ -253,11 +253,27 @@
     margin-right: 15px;
 }
 
+.inventory-insight-card {
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .inventory-insight-card p {
     color: #777;
     font-family: Inter;
-    font-size: 28.69px;
+    font-size: 18px;
     font-style: normal;
     font-weight: 500;
-    line-height: 25.103px; /* 87.5% */
+    line-height: 25.103px;
+    padding: 0px;
+}
+
+.chart_inventory {
+    width: 1145px;
+    height: 316.223px;
+    flex-shrink: 0;
+    margin: auto;
+    margin-top: 20px;
 }
