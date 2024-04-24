@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { Doughnut, Bar } from "react-chartjs-2"; // Added Bar import
+
 
 import UserTab from "./UserTab";
 
@@ -105,9 +107,55 @@ function UsersInsights() {
         },
     ];
 
+    const chartData = {
+        labels: ["Red", "Blue", "Yellow"],
+        datasets: [
+            {
+                label: "My First Dataset",
+                data: [300, 50, 100],
+                backgroundColor: [
+                    "rgb(255, 99, 132)",
+                    "rgb(54, 162, 235)",
+                    "rgb(255, 205, 86)",
+                ],
+                hoverOffset: 4,
+            },
+        ],
+    };
+
+    const labels = ["January", "February", "March", "April", "May", "June", "July"];
+    const dataBar = {
+        labels: labels,
+        datasets: [
+            {
+                label: "My First Dataset",
+                data: [65, 59, 80, 81, 56, 55, 40], // Changed dataBar to data
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(255, 159, 64, 0.2)",
+                    "rgba(255, 205, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(201, 203, 207, 0.2)",
+                ],
+                borderColor: [
+                    "rgb(255, 99, 132)",
+                    "rgb(255, 159, 64)",
+                    "rgb(255, 205, 86)",
+                    "rgb(75, 192, 192)",
+                    "rgb(54, 162, 235)",
+                    "rgb(153, 102, 255)",
+                    "rgb(201, 203, 207)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     return (
         <>
-            <div className="admin_user_welcome">
+            {/* <div className="admin_user_welcome">
                 <img
                     className="admin_profile"
                     src="https://img.icons8.com/ios/452 alter.png"
@@ -115,25 +163,30 @@ function UsersInsights() {
                 />
 
                 <h3>Welcome Admin</h3>
-            </div>
+            </div> */}
             <div className="UsersInsights">
                 <UserTab />
             </div>
             <div className="chart_container">
-                <div className="admin_user_chart1"></div>
+                <div className="admin_user_chart1">
+                    <Bar data={dataBar} /> {/* Removed options prop */}
+                </div>
 
-                <div className="admin_user_chart2"></div>
+                <div className="admin_user_chart2">
+                    <Doughnut data={chartData} />
+                </div>
             </div>
 
             <div className="admin_user_bar">
                 <h3>Recent Users</h3>
-                <div className="admin_user_bar1" 
-                ></div>
-                <Link href="/admin/users" className="admin_user_bar2 " style={{ padding: "10px" }}>
+                <div className="admin_user_bar1"></div>
+                <Link
+                    href="/admin/users"
+                    className="admin_user_bar2 "
+                    style={{ padding: "10px" }}
+                >
                     View All
                 </Link>
-
-                
             </div>
             <div className="admin_user_list">
                 <div style={{ width: "100%" }}>
@@ -146,7 +199,6 @@ function UsersInsights() {
                                 pagination={{
                                     pageSize: 7,
                                     hideOnSinglePage: true,
-                                    
                                 }}
                                 footer={() => (
                                     <div className="footer-number">{`Total ${data.length} items`}</div>
