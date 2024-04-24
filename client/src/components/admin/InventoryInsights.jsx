@@ -2,6 +2,7 @@ import { Column } from "@ant-design/plots";
 import React from "react";
 import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
+import { Doughnut } from "react-chartjs-2";
 
 function InventoryInsights() {
     const data = [
@@ -13,7 +14,7 @@ function InventoryInsights() {
         { type: "6", value: 0.05 },
         { type: "7", value: 0.01 },
         { type: "8", value: 0.015 },
-        { type: "9", value: 0.005},
+        { type: "9", value: 0.005 },
         { type: "10", value: 0.125 },
         { type: "11", value: 0.125 },
     ];
@@ -41,6 +42,22 @@ function InventoryInsights() {
             offset: 15,
         },
         legend: false,
+    };
+
+    const chartData = {
+        labels: ["Red", "Blue", "Yellow"],
+        datasets: [
+            {
+                label: "My First Dataset",
+                data: [300, 50, 100],
+                backgroundColor: [
+                    "rgb(255, 99, 132)",
+                    "rgb(54, 162, 235)",
+                    "rgb(255, 205, 86)",
+                ],
+                hoverOffset: 4,
+            },
+        ],
     };
 
     return (
@@ -75,7 +92,17 @@ function InventoryInsights() {
             </div>
 
             <div className="inventory-insight-bottom">
-                <div className="inventroy-catagory"></div>
+                <div className="inventroy-catagory">
+                    <div className="inventory_left">
+                        <h3>Item Categories</h3>
+                        <p className="p_text">
+                            Mostly Used Categories in Month
+                        </p>
+                    </div>
+                    <div div className = "chart_inventory" >
+                        <Doughnut data={chartData} />
+                    </div>
+                </div>
                 <div className="inventories"></div>
             </div>
         </div>
