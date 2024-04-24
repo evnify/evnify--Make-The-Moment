@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 const messageModel = require("../models/message");
 const userModel = require("../models/user");
 dotenv.config();
 
 //fetch all users
-router.get('/allUsers', async (req, res) => {
+router.get("/allUsers", async (req, res) => {
     try {
         const user = await userModel.find();
         res.json(user);
@@ -17,7 +17,7 @@ router.get('/allUsers', async (req, res) => {
 
 //Generate unique id for the message
 const generateUniqueID = async () => {
-    let id = 'TM' + Math.floor(100000 + Math.random() * 900000);
+    let id = "TM" + Math.floor(100000 + Math.random() * 900000);
     const existingMessage = await messageModel.findOne({ messageId: id });
     if (existingMessage) {
         return generateUniqueID();
@@ -25,23 +25,145 @@ const generateUniqueID = async () => {
     return id;
 };
 
-const hateWords = ['hate', 'racist', 'discrimination', 'offensive']; // List of hate words to check against
+const hateWords = [
+    "racism",
+    "sexist",
+    "homophobic",
+    "bigot",
+    "prejudice",
+    "supremacist",
+    "xenophobic",
+    "misogyny",
+    "anti-Semitic",
+    "Islamophobic",
+    "transphobic",
+    "chauvinist",
+    "hate-monger",
+    "intolerant",
+    "slurs",
+    "dehumanizing",
+    "derogatory",
+    "offensive",
+    "hate-filled",
+    "hostile",
+    "inflammatory",
+    "hurtful",
+    "bullying",
+    "abusive",
+    "violent",
+    "threatening",
+    "harassing",
+    "taunting",
+    "belittling",
+    "demeaning",
+    "offensive",
+    "derogatory",
+    "disrespectful",
+    "degrading",
+    "revolting",
+    "repulsive",
+    "vile",
+    "loathsome",
+    "abhorrent",
+    "detestable",
+    "despicable",
+    "disgusting",
+    "abominable",
+    "monstrous",
+    "appalling",
+    "reprehensible",
+    "odious",
+    "execrable",
+    "contemptible",
+    "hateful",
+    "vile",
+    "nasty",
+    "mean",
+    "ugly",
+    "rotten",
+    "wicked",
+    "evil",
+    "despicable",
+    "nefarious",
+    "vicious",
+    "malicious",
+    "spiteful",
+    "venomous",
+    "malevolent",
+    "malignant",
+    "fuck",
+    "pernicious",
+    "noxious",
+    "toxic",
+    "harmful",
+    "hurtful",
+    "damaging",
+    "injurious",
+    "detrimental",
+    "deleterious",
+    "destructive",
+    "dangerous",
+    "poisonous",
+    "virulent",
+    "lethal",
+    "murderous",
+    "violent",
+    "ferocious",
+    "brutal",
+    "savage",
+    "barbaric",
+    "cruel",
+    "ruthless",
+    "merciless",
+    "sadistic",
+    "psychopathic",
+    "sociopathic",
+    "monstrous",
+    "inhumane",
+    "heartless",
+    "cold-blooded",
+    "callous",
+    "unfeeling",
+];
+// List of hate words to check against
 
 // Add a new message
-router.post('/newMessage', async (req, res) => {
+router.post("/newMessage", async (req, res) => {
     const { message } = req.body;
 
     // Check if the message contains any hate words
-    const containsHateWords = hateWords.some(word => message.toLowerCase().includes(word));
+    const containsHateWords = hateWords.some((word) =>
+        message.toLowerCase().includes(word)
+    );
 
     if (containsHateWords) {
-        return res.status(400).json({ message: "Message contains prohibited content" });
+        return res
+            .status(400)
+            .json({ message: "Message contains prohibited content" });
     }
 
-    const { customerID, sendDate, sendTime, category, status, sender, reciverId } = req.body;
+    const {
+        customerID,
+        sendDate,
+        sendTime,
+        category,
+        status,
+        sender,
+        reciverId,
+    } = req.body;
     const messageId = await generateUniqueID();
 
-    const newMessage = new messageModel({ messageId, customerID, message, sendDate, sendTime, category, status, sender, reciverId });
+    const newMessage = new messageModel({
+        messageId,
+        customerID,
+        message,
+        sendDate,
+        sendTime,
+        category,
+        status,
+        sender,
+        reciverId,
+    });
 
     try {
         await newMessage.save();
@@ -51,7 +173,7 @@ router.post('/newMessage', async (req, res) => {
     }
 });
 
-router.get('/allMessages', async (req, res) => {
+router.get("/allMessages", async (req, res) => {
     try {
         const messages = await messageModel.find();
         res.json(messages);
@@ -60,8 +182,7 @@ router.get('/allMessages', async (req, res) => {
     }
 });
 
-
-router.delete('/deleteMessage/:id', async (req, res) => {
+router.delete("/deleteMessage/:id", async (req, res) => {
     const messageId = req.params.id;
     try {
         const deletedMessage = await messageModel.findByIdAndDelete(messageId);
@@ -74,7 +195,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     }
 });
 
-router.put('/updateMessage/:id', async (req, res) => {
+router.put("/updateMessage/:id", async (req, res) => {
     const messageId = req.params.id;
     const { message, sendDate, sendTime, category, status, sender } = req.body;
 
@@ -94,14 +215,19 @@ router.put('/updateMessage/:id', async (req, res) => {
 });
 
 // Route to mark messages as read for a specific user ID
-router.put('/markMessagesAsRead/:userID', async (req, res) => {
+router.put("/markMessagesAsRead/:userID", async (req, res) => {
     try {
         const userID = req.params.userID;
-        await messageModel.updateMany({ customerID: userID, status: 'unread' }, { status: 'read' });
-        res.status(200).json({ message: 'Messages marked as read successfully' });
+        await messageModel.updateMany(
+            { customerID: userID, status: "unread" },
+            { status: "read" }
+        );
+        res.status(200).json({
+            message: "Messages marked as read successfully",
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
