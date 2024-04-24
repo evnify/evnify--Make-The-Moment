@@ -181,7 +181,7 @@ function UserProfile() {
             if (response.data.data && response.data.data.url) {
                 const imageUrl = response.data.data.url;
                 updateUserCover(imageUrl);
-                message.success("Image uploaded successfully");
+                message.success("Image uploaded successfully,It will be display soon");
                 fetchCoverPicUrl();
                 
             } else {
