@@ -5,23 +5,17 @@ import { PrinterOutlined } from "@ant-design/icons";
 
 function InventoryInsights() {
     const data = [
-        { type: "1-3秒", value: 0.16 },
-        { type: "4-10秒", value: 0.125 },
-        { type: "11-30秒", value: 0.24 },
-        { type: "31-60秒", value: 0.19 },
-        { type: "1-3分", value: 0.22 },
-        { type: "3-10分", value: 0.05 },
-        { type: "10-30分", value: 0.01 },
-        { type: "30+分", value: 0.015 },
-        { type: "未知", value: 0.005},
-        { type: "4-10秒", value: 0.125 },
-        { type: "11-30秒", value: 0.24 },
-        { type: "31-60秒", value: 0.19 },
-        { type: "1-3分", value: 0.22 },
-        { type: "3-10分", value: 0.05 },
-        { type: "10-30分", value: 0.01 },
-        { type: "30+分", value: 0.015 },
-        { type: "未知", value: 0.005},
+        { type: "1", value: 0.16 },
+        { type: "2", value: 0.125 },
+        { type: "3", value: 0.24 },
+        { type: "4", value: 0.19 },
+        { type: "5", value: 0.22 },
+        { type: "6", value: 0.05 },
+        { type: "7", value: 0.01 },
+        { type: "8", value: 0.015 },
+        { type: "9", value: 0.005},
+        { type: "10", value: 0.125 },
+        { type: "11", value: 0.125 },
     ];
 
     const config = {
@@ -44,7 +38,7 @@ function InventoryInsights() {
                 }
                 return "";
             },
-            offset: 10,
+            offset: 15,
         },
         legend: false,
     };
