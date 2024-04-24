@@ -3,11 +3,53 @@
 
 /* Modal.css */
 .message-box-chatbox {
-  height: 350px; /* Set a fixed height */
+  height: 350px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 
+}
+.message-category {
+  height: 392px; 
+  display: flex;
+  flex-direction: column;
+
+}
+
+.category-box-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+.message-category-name-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  width: 290px;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 11px;
+  color: #000000;
+  margin: 0 0 10px 0;
+}
+
+.category-boxes{
+  display: flex;
+  flex-direction: row;
+  background-color: #533c56;
+  color: white;
+  padding: 5px 10px;
+  margin-bottom: 8px;
+  border-radius: 20px;
+  height: 42px;
+  width: 290px;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px 5px 20px;
 }
 
 .sent-message-chatbox  {

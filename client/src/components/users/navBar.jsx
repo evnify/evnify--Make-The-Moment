@@ -71,6 +71,7 @@ function NavBarUser() {
 
     function logout() {
         localStorage.removeItem("currentUser");
+        localStorage.removeItem('selectedCategory');
         window.location.href = "/login";
     }
     const navigate = useNavigate();
