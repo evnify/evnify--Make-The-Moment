@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Checkbox, Button, Row, Col, Space,message } from "antd";
+import { Form, Input, Checkbox, Button, Row, Col, Space, message } from "antd";
 import { UserAddOutlined, LockOutlined } from "@ant-design/icons";
 import { Divider, Grid, Typography } from "@mui/material";
 import FirebaseSocial from "./FirebaseSocial";
@@ -22,7 +22,6 @@ const Signup = () => {
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
-       
     };
 
     const onFinishFailed = (errorInfo) => {
@@ -80,17 +79,25 @@ const Signup = () => {
             password: password,
             username: username,
         };
-    
+
         try {
             // Check if the user with the provided email already exists
-            const checkExistingUserResponse = await axios.post("/api/users/check-existing", { email });
-    
+            const checkExistingUserResponse = await axios.post(
+                "/api/users/check-existing",
+                { email }
+            );
+
             if (checkExistingUserResponse.data.exists) {
                 // User with this email already exists, show error message
-                message.error("User with this email already exists. Please use a different email.");
+                message.error(
+                    "User with this email already exists. Please use a different email."
+                );
             } else {
                 // Proceed with user registration
-                const registrationResponse = await axios.post("/api/users/register", user);
+                const registrationResponse = await axios.post(
+                    "/api/users/register",
+                    user
+                );
                 message.success("Registration Successful");
                 window.location.href = "/login";
             }
@@ -101,7 +108,7 @@ const Signup = () => {
             setIsLoading(false);
         }
     }
-    
+
     return (
         <>
             <Navbar />
@@ -202,7 +209,7 @@ const Signup = () => {
                     </Row>
 
                     <Form.Item
-                        name="username" 
+                        name="username"
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
                         hasFeedback
@@ -213,23 +220,23 @@ const Signup = () => {
                             },
                             {
                                 min: 4,
-                                message: "Your username must be at least 4 characters.",
+                                message:
+                                    "Your username must be at least 4 characters.",
                             },
                             {
                                 pattern: /^[A-Za-z0-9]+$/,
-                                message: "Your username can only contain letters and numbers.",
+                                message:
+                                    "Your username can only contain letters and numbers.",
                             },
                         ]}
                     >
                         <Input
-
                             placeholder="Username"
                             size="large"
                             style={{ borderRadius: "5px" }}
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </Form.Item>
-
 
                     <Form.Item
                         name="email"
@@ -397,7 +404,6 @@ const Signup = () => {
                     </Form.Item>
 
                     <Form.Item>
-                       
                         <Button
                             type="primary"
                             htmlType="submit"
@@ -412,13 +418,11 @@ const Signup = () => {
                                     .length // If there are any fields with errors, disable the button
                             }
                             onClick={register}
-                            
                         >
                             Sign Up
                         </Button>
                         <div className="mt-3 ml-2 text-center">
-                            Already have an Account{" "}
-                            <a href="/login">Log in!</a>
+                            Already have an Account <a href="/login">Log in!</a>
                         </div>
                     </Form.Item>
                 </Form>
