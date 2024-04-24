@@ -8,6 +8,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import { SendOutlined, CaretDownOutlined, BellFilled } from '@ant-design/icons';
+import { CSVLink } from 'react-csv';
 
 const { Search } = Input
 
@@ -27,13 +28,13 @@ function AllMessages() {
     const [isSearching, setIsSearching] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedChatData, setSelectedChatData] = useState(null);
 
     //fetch all users
     const fetchUsers = async () => {
         try {
             const response = await axios.get('/api/messages/allUsers');
             setUsers(response.data);
-            console.log(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -45,28 +46,19 @@ function AllMessages() {
         , []);
 
     useEffect(() => {
-        // Find the user with the selectedUserID
         const user = users.find(user => user.userID === selectedUserID);
-
-        // Update the selectedUser state with the found user details
         setSelectedUser(user);
-
-        // Log the user details (optional)
-        console.log(user);
+        console.log(selectedUser)
     }, [selectedUserID, users]);
 
-
-    // Function to handle opening dropdown menu for a specific message
     const handleClick = (event, messageId) => {
         setAnchorEls({ ...anchorEls, [messageId]: event.currentTarget });
     };
 
-    // Function to handle closing dropdown menu for a specific message
     const handleClose = (messageId) => {
         setAnchorEls({ ...anchorEls, [messageId]: null });
     };
 
-    // Function to handle editing a message
     const editMessage = (messageId) => {
         setSelectedMessageId(messageId);
         const selectedMessage = messages.find(msg => msg._id === messageId);
@@ -78,16 +70,25 @@ function AllMessages() {
         e.preventDefault();
         try {
             const customerID = selectedUserID;
+            let category = null;
+
+            // If there are messages for the selected user
+            if (groupedMessages[customerID] && groupedMessages[customerID].length > 0) {
+                // Get the category of the last message sent to this customer
+                category = groupedMessages[customerID][groupedMessages[customerID].length - 1].category;
+            }
+
             const newMessage = {
                 customerID,
                 message,
                 sendDate: moment().format("YYYY-MM-DD"),
                 sendTime: moment().format("HH:mm:ss"),
-                category: "Price",
+                category: category, // Assign the category of the previous message
                 sender: "admin",
                 status: "read",
                 reciverId: customerID
             };
+
             if (selectedMessageId) {
                 // Update existing message
                 await axios.put(`/api/messages/updateMessage/${selectedMessageId}`, newMessage);
@@ -95,6 +96,7 @@ function AllMessages() {
                 // Send new message
                 await axios.post('/api/messages/newMessage', newMessage);
             }
+
             // Clear input field and reset selectedMessageId after sending/editing
             setMessage("");
             setSelectedMessageId(null);
@@ -113,15 +115,14 @@ function AllMessages() {
             grouped[msg.customerID].push(msg);
         });
         setGroupedMessages(grouped);
-
     };
-
 
     const fetchMessages = async () => {
         try {
             const response = await axios.get('/api/messages/allMessages');
             setMessages(response.data);
             groupMessages(response.data);
+            setSelectedChatData(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -232,9 +233,12 @@ function AllMessages() {
 
         // Map the filtered messages to the items array format
         const searchResultItems = filtered.map((msg, index) => ({
-            label: msg.message, // Use the message content as the label
-            key: index.toString(), // Use the index as the key
-            name: msg.customerID, // Use the customer ID as the name
+            message: msg.message, // Use the message content as the label
+            key: index.toString(),
+            name: msg.customerID,
+            category: msg.category,
+            date: msg.sendDate,
+            time: msg.sendTime
 
         }));
 
@@ -249,6 +253,44 @@ function AllMessages() {
     const handleReturnToPreview = () => {
         setFilteredMessages([]);
         setIsSearching(false);
+    };
+
+    // Function to generate CSV content from chat data
+    const generateCSVData = () => {
+        if (!selectedChatData) return '';
+
+        // Define CSV headers
+        const headers = ['Date', 'Time', 'Sender', 'Message'];
+
+        // Map chat messages to CSV rows
+        const rows = selectedChatData.map(msg => [
+            moment(msg.sendDate).format('YYYY-MM-DD'),
+            moment(msg.sendTime, 'HH:mm:ss').format('HH:mm A'),
+            msg.sender,
+            msg.message
+        ]);
+
+        // Combine headers and rows
+        const csvData = [headers, ...rows];
+
+        // Convert to CSV string
+        const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+        return csvContent;
+    };
+
+    // Function to handle downloading CSV file
+    const handleDownloadCSV = () => {
+        const csvContent = generateCSVData();
+        if (csvContent) {
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chat_history.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
     };
 
 
@@ -282,22 +324,28 @@ function AllMessages() {
                             {isSearching ? (
                                 <>
                                     <Button onClick={handleReturnToPreview} style={{ margin: "0 15px 0 0", width: "350px" }}>Back to Message Preview</Button>
-                                    {searchMessages.map((msg, index) => (
-                                        <div key={index} className="message-received-preview" style={{ border: "1px solid #ffffff" }}>
-                                            <div className="all-message-name">
-                                                <div className="all-message-timeandname">
-                                                    <div className="all-message-name-tag">
-                                                        <b>{msg.name}</b>
-
+                                    {searchMessages.map((msg, index) => {
+                                        const user = users.find(user => user.userID === msg.name);
+                                        return (
+                                            <div key={index} className="message-received-preview-search" style={{ borderBottom: "1px solid #000000", }}>
+                                                <div className="all-message-name">
+                                                    <div className="all-message-timeandname">
+                                                        <div className="all-message-name-tag" style={{ display: "flex", flexDirection: "row" }}>
+                                                            <div style={{ width: "170px" }}><b>{user.firstName} {user.lastName}</b></div>
+                                                            <div style={{ fontSize: "12px", width: "80px", marginTop: "5px" }}> <p>{msg.date}</p></div>
+                                                            <div style={{ fontSize: "12px", width: "50px", marginTop: "5px" }}><p>{msg.time}</p></div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <p>{msg.message}</p>
+                                                    </div>
+                                                    <div style={{ marginBottom: "10px" }}>
+                                                        <Tag color="purple">{msg.category}</Tag>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <p>{msg.label}</p>
-                                                    <Tag color="purple">price</Tag>
-                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </>
                             ) :
                                 (Object.keys(filteredMessages).map((customerID) => {
@@ -320,18 +368,17 @@ function AllMessages() {
                                                         <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
                                                     </div>
                                                     <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                        {groupedMessages[customerID][0].sendTime}
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].sendTime}
                                                     </div>
                                                 </div>
                                                 <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
                                                     <div style={{ width: "250px" }}>
-                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 37)}
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 34)}
                                                     </div>
-                                                    {/* Render BellFilled icon conditionally */}
                                                     {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
                                                 </div>
                                                 <div>
-                                                    <Tag color="purple">{groupedMessages[customerID][0].category}</Tag>
+                                                    <Tag color="purple">{groupedMessages[customerID][groupedMessages[customerID].length - 1].category}</Tag>
                                                 </div>
                                             </div>
                                         </div>
@@ -348,16 +395,17 @@ function AllMessages() {
                 <div className="message-reply-admin">
                     <div className="message-all-users-bar-top-right">
                         <div>
-                            <img
-                                src={selectedUser && selectedUser.profilePic ? selectedUser.profilePic : messageDp}
-                                alt="Profile"
-                                style={{
-                                    width: "50px",
-                                    height: "50px",
-                                    borderRadius: "50%",
-                                    margin: "15px 0 0 300px"
-                                }}
-                            />
+                            {selectedUser ? (
+                                <img
+                                    src={selectedUser && selectedUser.profilePic}
+                                    alt="Profile"
+                                    style={{
+                                        width: "50px",
+                                        height: "50px",
+                                        borderRadius: "50%",
+                                        margin: "15px 0 0 300px"
+                                    }}
+                                />) : null}
                         </div>
 
                         <div style={{ margin: "25px 0 0 20px" }}>
@@ -365,129 +413,139 @@ function AllMessages() {
                                 {selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : ''}
                             </b>
                         </div>
+                        <div style={{ display: "flex", width: "240px", justifyContent: "flex-end" }}>
+                            {selectedUser ? (<div style={{ margin: "25px 0 0 20px" }} onClick={handleDownloadCSV}>
+                                <Icon icon="material-symbols:download" width="32" height="32" />
+                            </div>): null}
+                            
+                        </div>
+
                     </div>
                     <div>
                         <div className="message-reply-admin-box">
                             <div className="message-reply-admin-box-top">
-                                {/* Render received and sent messages sorted by sendTime */}
-                                {selectedUserID && (groupedMessages[selectedUserID] || []).map((msg, index) => (
-                                    <React.Fragment key={msg._id}>
-                                        {msg.sender === 'customer' ? (
-                                            <div className="message-receved-admin">
-                                                <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                                <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
-                                                    <div><p>{msg.message}</p></div>
-                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
-                                                </div>
-                                                <div style={{ margin: "10px 0 0 5px" }}>
-                                                    <div
-                                                        id={`fade-button-${msg._id}`}
-                                                        aria-controls={open ? 'fade-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={(e) => handleClick(e, msg._id)}
-                                                    >
-                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
-                                                    </div>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': `fade-button-${msg._id}`,
-                                                        }}
-                                                        anchorEl={anchorEls[msg._id]}
-                                                        open={Boolean(anchorEls[msg._id])}
-                                                        onClose={() => handleClose(msg._id)}
-                                                        TransitionComponent={Fade}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        PaperProps={{
-                                                            style: {
-                                                                backgroundColor: 'white',
-                                                                borderRadius: '8px',
-                                                                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
-                                                    </Menu>
-                                                </div>
+                                {selectedUserID && (groupedMessages[selectedUserID] || []).map((msg, index) => {
+                                    // Check if this is the first message or if the category has changed
+                                    const isFirstMessage = index === 0;
+                                    const categoryChanged = !isFirstMessage && msg.category !== groupedMessages[selectedUserID][index - 1].category && msg.sender !== 'admin';
+
+                                    // If the category changed, insert a <hr> element
+                                    const categoryChangeElement = categoryChanged ? (
+                                        <div key={`category-divider-${msg._id}`} style={{ display: "flex", flexDirection: "row", margin: "10px 0 0 0", width: "790px" }}>
+                                            <div style={{ width: "380px" }}><hr /></div>
+                                            <div style={{ margin: "0 5px 0 5px" }}>
+                                                <Tag color="default">{msg.category}</Tag>
                                             </div>
-                                        ) : (
-                                            <div className="message-send-admin">
-                                                <div style={{ margin: "10px 0 0 10px" }}>
-                                                    <div
-                                                        id={`fade-button-${msg._id}`}
-                                                        aria-controls={open ? 'fade-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={(e) => handleClick(e, msg._id)}
-                                                    >
-                                                        <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
-                                                    </div>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': `fade-button-${msg._id}`,
-                                                        }}
-                                                        anchorEl={anchorEls[msg._id]}
-                                                        open={Boolean(anchorEls[msg._id])}
-                                                        onClose={() => handleClose(msg._id)}
-                                                        TransitionComponent={Fade}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'right',
-                                                        }}
-                                                        PaperProps={{
-                                                            style: {
-                                                                backgroundColor: 'white',
-                                                                borderRadius: '8px',
-                                                                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
-                                                        <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
-                                                    </Menu>
-                                                </div>
-                                                <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
-                                                    <div><p>{msg.message}</p></div>
-                                                    <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
-                                                </div>
-                                                <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
-                                            </div>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </div>
-                            {/* Render input field conditionally when a message is selected for editing */}
-                            <div className="message-Send-bar">
-                                {selectedMessageId ? (
-                                    <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
-                                        <div style={{ margin: "0px 10px 2px 20px" }}>
-                                            <Icon icon="mingcute:emoji-line" width="24" height="24" />
+                                            <div style={{ width: "380px", }}><hr /></div>
                                         </div>
-                                        <Input
-                                            value={message}
-                                            onChange={(e) => setMessage(e.target.value)}
-                                            placeholder="Edit Message"
-                                            variant="borderless"
-                                            style={{ width: 690 }}
-                                        />
-                                        <button type="submit" style={{ background: "none", border: "none", cursor: "pointer" }}>
-                                            <SendOutlined style={{ color: "black", fontSize: "22px" }} />
-                                        </button>
-                                    </form>
-                                ) : (
+                                    ) : null;
+
+                                    return (
+                                        <React.Fragment key={msg._id}>
+                                            {/* Insert the <hr> element if the category changed */}
+                                            {categoryChangeElement}
+
+                                            {msg.sender === 'customer' ? (
+                                                <div className="message-receved-admin">
+                                                    <img src={selectedUser && selectedUser.profilePic} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                                    <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
+                                                        <div><p>{msg.message}</p></div>
+                                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                                    </div>
+                                                    <div style={{ margin: "10px 0 0 5px" }}>
+                                                        <div
+                                                            id={`fade-button-${msg._id}`}
+                                                            aria-controls={open ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={open ? 'true' : undefined}
+                                                            onClick={(e) => handleClick(e, msg._id)}
+                                                        >
+                                                            <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
+                                                        </div>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': `fade-button-${msg._id}`,
+                                                            }}
+                                                            anchorEl={anchorEls[msg._id]}
+                                                            open={Boolean(anchorEls[msg._id])}
+                                                            onClose={() => handleClose(msg._id)}
+                                                            TransitionComponent={Fade}
+                                                            anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            PaperProps={{
+                                                                style: {
+                                                                    backgroundColor: 'white',
+                                                                    borderRadius: '8px',
+                                                                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
+                                                        </Menu>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="message-send-admin">
+                                                    <div style={{ margin: "10px 0 0 10px" }}>
+                                                        <div
+                                                            id={`fade-button-${msg._id}`}
+                                                            aria-controls={open ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={open ? 'true' : undefined}
+                                                            onClick={(e) => handleClick(e, msg._id)}
+                                                        >
+                                                            <Icon icon="mage:dots" width="16" height="16" style={{ cursor: "pointer" }} />
+                                                        </div>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': `fade-button-${msg._id}`,
+                                                            }}
+                                                            anchorEl={anchorEls[msg._id]}
+                                                            open={Boolean(anchorEls[msg._id])}
+                                                            onClose={() => handleClose(msg._id)}
+                                                            TransitionComponent={Fade}
+                                                            anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            PaperProps={{
+                                                                style: {
+                                                                    backgroundColor: 'white',
+                                                                    borderRadius: '8px',
+                                                                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
+                                                        </Menu>
+                                                    </div>
+                                                    <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
+                                                        <div><p>{msg.message}</p></div>
+                                                        <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
+                                                    </div>
+                                                    <img src={messageDp} alt="dp" style={{ width: "40px", height: "40px" }} />
+                                                </div>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </div>
+
+                            {selectedUser ? (
+                                <div className="message-Send-bar">
                                     <form onSubmit={sendMessage} style={{ display: "flex", alignItems: "center" }}>
                                         <div style={{ margin: "0px 10px 2px 20px" }}>
                                             <Icon icon="mingcute:emoji-line" width="24" height="24" />
@@ -503,9 +561,8 @@ function AllMessages() {
                                             <SendOutlined style={{ color: message ? "black" : "#d3d3d3", fontSize: "22px" }} />
                                         </button>
                                     </form>
-                                )
-                                }
-                            </div>
+                                </div>) : null
+                            }
                         </div>
 
 
