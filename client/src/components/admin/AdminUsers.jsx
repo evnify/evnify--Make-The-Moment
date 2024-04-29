@@ -1013,7 +1013,7 @@ function UserList() {
                             borderRadius: "5px",
                             marginLeft: "10px",
                         }}
-                        // onClick={() => showDeclineConfirm(record.leaveID)}
+                        onClick={handleExport}
                     >
                         <PrinterOutlined style={{ gap:"20" }} />
                         Export 
