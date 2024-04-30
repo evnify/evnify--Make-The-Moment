@@ -109,4 +109,13 @@ router.post("/deleteLeaveRequestByID", async (req, res) => {
     }
 });
 
+router.get("/getPendingLeaves", async (req, res) => {
+    try {
+        const pendingLeaves = await leaveModel.find({ status: "Pending" });
+        res.send(pendingLeaves);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
 module.exports = router;
