@@ -137,27 +137,28 @@ function Packages() {
       });
   };
 
-  // Update handleInventory function to include quantity input
   const handleInventory = (values) => {
     const updatedQuantities = {};
     values.forEach(value => {
-      // If the inventory is already selected, keep its quantity as it is
-      if (inventoryQuantities[value]) {
-        updatedQuantities[value] = inventoryQuantities[value];
-      } else {
-        // Otherwise, initialize the quantity as 2
-        updatedQuantities[value] = 1;
+      const selectedInventory = inventories.find(inventory => inventory.category === value);
+      if (selectedInventory) {
+        if (inventoryQuantities[selectedInventory.itemID]) {
+          updatedQuantities[selectedInventory.itemID] = inventoryQuantities[selectedInventory.itemID];
+        } else {
+          updatedQuantities[selectedInventory.itemID] = 1; // Set default quantity to 1
+        }
       }
     });
     setInventoryQuantities(updatedQuantities);
     setNewPackageData(prevData => ({
       ...prevData,
       inventories: values.map(value => ({
-        id: value,
-        quantity: updatedQuantities[value] // Set quantity as per user input or default to 2
+        category: value,
+        quantity: updatedQuantities[value] ?? 1 // Set default quantity to 1 if not found
       }))
     }));
   };
+
 
   const handleAddNewInventory = (value) => {
     const selectedInventory = inventories.find(inventory => inventory.itemID === value);
@@ -167,7 +168,7 @@ function Packages() {
         // Add the inventory with quantity 1
         setNewPackageData(prevData => ({
           ...prevData,
-          inventories: [...prevData.inventories, { itemID: value, id: selectedInventory.id, quantity: 1 }]
+          inventories: [...prevData.inventories, { category: value, id: selectedInventory.id, quantity: 1 }]
         }));
       } else {
         // If inventory already exists, update its quantity
@@ -180,6 +181,13 @@ function Packages() {
       }
     }
   };
+
+  // Create Inventories Dropdown Data
+  const uniqueCategories = [...new Set(inventories.map(inventory => inventory.category))];
+  const pkgData = uniqueCategories.map(category => ({
+    value: category,
+    label: category,
+  }));
 
   const handleEditInventoryQuantity = (index, newQuantity) => {
     const updatedInventories = [...editPackageData.inventories];
@@ -270,14 +278,8 @@ function Packages() {
     fetchAllInventories();
   }, []); // Run only once on component mount
 
-  // Create Inventories Dropdown Data
-  const pkgData = inventories.map((inventory) => {
-    return {
-      value: inventory.itemID,
-      label: inventory.itemName,
 
-    };
-  });
+
 
 
   // Delete an package
@@ -370,6 +372,16 @@ function Packages() {
       dataIndex: "price",
       key: "price",
     },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => (
+        <span title={text}>{text.length > 20 ? `${text.substring(0, 35)}...` : text}</span>
+      ),
+    },
+    
+
 
     {
       title: "Action",
@@ -384,8 +396,14 @@ function Packages() {
               background: "transparent",
             }}
           >
-            <Icon icon="mdi:delete" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeletePackage(record._id)} />
-            <Icon icon="mdi:pencil" style={{ margin: "0 5px 0 5px" }} onClick={() => handleEditPackage(record._id)} />
+           
+            <Button style={{ margin: "0 10px 0 0" }} onClick={() => handleEditPackage(record._id)}>
+              Edit
+            </Button>
+            <Button danger type="primary" style={{ margin: "0 10px 0 0" }} onClick={() => handleDeletePackage(record._id)}>
+              Delete
+            </Button>
+
           </button>
         </Space>
       ),
@@ -554,7 +572,7 @@ function Packages() {
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Inventories</div>
                       <Select
                         showSearch
-                        mode="multiple" // Enable multiple selection
+                        mode="multiple"
                         style={{ width: 250 }}
                         placeholder="Search Inventories"
                         optionFilterProp="children"
@@ -564,7 +582,7 @@ function Packages() {
                         options={pkgData}
                         required // Mark this field as required
                       />
-                      {/* Add validation message for the inventories */}
+
                       {Object.entries(inventoryQuantities).map(([inventoryId, quantity]) => {
                         // Find the inventory object from the inventories array based on its ID
                         const inventory = inventories.find(inv => inv.itemID === inventoryId);
@@ -573,7 +591,7 @@ function Packages() {
                         }
                         return (
                           <div key={inventoryId} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
-                            <span style={{ marginLeft: "5px" }}>{inventory.itemName}</span>
+                            <span style={{ marginLeft: "5px" }}>{inventory.category}</span>
                             <span>
                               <Input
                                 style={{ width: 100, marginLeft: "10px" }}
@@ -583,13 +601,13 @@ function Packages() {
                                   setInventoryQuantities(updatedQuantities);
                                   setNewPackageData(prevData => ({
                                     ...prevData,
-                                    inventories: Object.keys(updatedQuantities).map(itemType => ({
-                                      itemType,
-                                      quantity: updatedQuantities[itemType]
+                                    inventories: Object.entries(updatedQuantities).map(([categoryId, qty]) => ({
+                                      category: inventories.find(inv => inv.itemID === categoryId)?.category ?? "",
+                                      quantity: qty
                                     }))
                                   }));
                                 }}
-                                required // Mark this field as required
+                                required
                               />
                               {/* Add validation message for the quantity */}
                               {!quantity && <span style={{ color: 'red', marginLeft: '10px' }}>Quantity is required</span>}
@@ -597,6 +615,7 @@ function Packages() {
                           </div>
                         );
                       })}
+
                     </div>
                     <div>
                       <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>Description</div>
@@ -691,13 +710,13 @@ function Packages() {
               </div>
             </Modal>
             <CSVLink data={convertToCSVData(packageList)} filename={'package_details.csv'}>
-            <button style={{
-              width: "100px", height: "40px", border: "none",
-              borderRadius: "5px", background: "red", color: "white", cursor: "pointer",
-              fontSize: "14px", marginLeft: "20px",
-            }}>
-              Download CSV
-            </button>
+              <button style={{
+                width: "100px", height: "40px", border: "none",
+                borderRadius: "5px", background: "red", color: "white", cursor: "pointer",
+                fontSize: "14px", marginLeft: "20px",
+              }}>
+                Download CSV
+              </button>
             </CSVLink>
 
             <button onClick={showModalAdd} style={{
