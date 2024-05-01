@@ -7,6 +7,10 @@ const userLoginSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    userType: {
+        type: String,
+        required: true,
+    },
     timestamp: {
         type: Date,
         default: Date.now,

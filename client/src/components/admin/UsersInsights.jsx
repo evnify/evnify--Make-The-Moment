@@ -35,6 +35,8 @@ function UsersInsights() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loginData, setLoginData] = useState([]);
+    const [loginType, setLoginType] = useState([]);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,16 +51,16 @@ function UsersInsights() {
         fetchData();
     }, []);
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchLoginTypeData = async () => {
             try {
-                const response = await axios.post("api/users/login-data");
-                setLoginData(response.data);
+                const response = await axios.post("/api/users/login-type");
+                setLoginType(response.data);
             } catch (error) {
-                console.error("Error fetching login data:", error);
+                console.error("Error fetching login type data:", error);
             }
         };
 
-        fetchData();
+        fetchLoginTypeData();
     }, []);
 
     const fetchUserList = async () => {
@@ -134,20 +136,22 @@ function UsersInsights() {
     ];
 
     const chartData = {
-        labels: ["Red", "Blue", "Yellow"],
+        labels: loginType.map(entry => entry._id),
         datasets: [
             {
-                label: "My First Dataset",
-                data: [300, 50, 100],
+                data: loginType.map(entry => entry.count),
                 backgroundColor: [
                     "rgb(255, 99, 132)",
                     "rgb(54, 162, 235)",
                     "rgb(255, 205, 86)",
+                    "rgb(75, 192, 192)",
+                    
                 ],
                 hoverOffset: 4,
             },
         ],
     };
+
 
     const options = {
         plugins: {

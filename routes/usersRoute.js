@@ -3,7 +3,7 @@ const router = express.Router();
 const UserModel = require("../models/user");
 const UserLogin = require("../models/userLogin");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -98,13 +98,12 @@ router.post("/updateUser/:id", async (req, res) => {
     const { id } = req.params;
     const userData = req.body;
     try {
-        await UserModel.findOneAndUpdate ({ userID: id }, userData);
+        await UserModel.findOneAndUpdate({ userID: id }, userData);
         res.send("User updated successfully");
     } catch (error) {
         return res.status(400).json({ message: error });
     }
 });
-
 
 router.post("/change-password", async (req, res) => {
     const { userId, currentPassword, newPassword } = req.body;
@@ -118,7 +117,6 @@ router.post("/change-password", async (req, res) => {
         // Compare passwords in plaintext
         if (user.password !== currentPassword) {
             return res.status(401).json({ message: "Incorrect password" });
-            
         }
 
         await UserModel.findOneAndUpdate(
@@ -136,7 +134,9 @@ router.post("/delete-account", async (req, res) => {
     const { userId } = req.body;
 
     try {
-        const deletedUser = await UserModel.findOneAndDelete({ userID: userId });
+        const deletedUser = await UserModel.findOneAndDelete({
+            userID: userId,
+        });
         if (!deletedUser) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -146,8 +146,6 @@ router.post("/delete-account", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-
 
 router.post("/suspendUser", async (req, res) => {
     const userData = req.body;
@@ -184,7 +182,7 @@ router.post("/login", async (req, res) => {
         const user = await UserModel.findOne({
             email: email,
             password: password,
-        }); 
+        });
         if (user) {
             const temp = {
                 userID: user.userID,
@@ -199,12 +197,11 @@ router.post("/login", async (req, res) => {
             res.send(temp);
 
             const userLogin = new UserLogin({
-
                 userId: user._id,
+                userType: user.userType,
                 ipAddress: req.ip,
             });
             await userLogin.save();
-    
         } else {
             return res.status(400).json({ message: "Login Failed" });
         }
@@ -213,29 +210,58 @@ router.post("/login", async (req, res) => {
     }
 });
 
-
-
-// Define a route to fetch data from MongoDB
 router.post("/login-data", async (req, res) => {
     try {
-        // Aggregate login data by day
         const loginData = await UserLogin.aggregate([
             {
                 $group: {
-                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    count: { $sum: 1 }
-                }
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$timestamp",
+                        },
+                    },
+
+
+                    count: { $sum: 1 },
+                },
             },
-            { $sort: { _id: 1 } }
+            { $sort: { _id: 1 } },
         ]);
 
-        // Send the aggregated login data as JSON response
         res.json(loginData);
     } catch (error) {
         console.error("Error fetching login data:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
+router.post("/login-type", async (req, res) => {
+    try {
+        const loginData = await UserLogin.aggregate([
+            {
+                $match: { // Filter by userType
+                    userType: { $in: ["Customer", "Hr-Manager", "Employee", "Admin"] }
+                }
+            },
+            {
+                $group: {
+                    _id: "$userType", // Group by userType
+                    count: { $sum: 1 }, // Count the logins for each userType
+                },
+            },
+        ]);
+
+        res.json(loginData);
+    } catch (error) {
+        console.error("Error fetching login data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+
 
 
 
@@ -278,7 +304,6 @@ router.post("/getUserById", async (req, res) => {
     }
 });
 
-
 router.post("/updateUserProfile", async (req, res) => {
     const { userID, profilePic, username } = req.body;
     try {
@@ -292,12 +317,10 @@ router.post("/updateUserProfile", async (req, res) => {
     }
 });
 
-
 router.post("/updateUserCover", async (req, res) => {
     const { userID, coverPic } = req.body;
     try {
-        await
-        UserModel.findOneAndUpdate(
+        await UserModel.findOneAndUpdate(
             { userID: userID },
             { coverPic: coverPic }
         );
@@ -325,7 +348,6 @@ router.post("/check-existing", async (req, res) => {
 
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-
 
 router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -366,9 +388,8 @@ function sendResetLinkByEmail(email, resetLink) {
 
     const mailOptions = {
         from: {
-
             name: "Evnify",
-            address: process.env.GMAIL_EMAIL
+            address: process.env.GMAIL_EMAIL,
         },
         to: email,
         subject: "Password Reset",
@@ -432,7 +453,9 @@ router.post("/reset-password/:id/:token", async (req, res) => {
                 { userID: id },
                 { password: password } // Just set the password directly
             );
-            return res.status(200).json({ message: "Password updated successfully" });
+            return res
+                .status(200)
+                .json({ message: "Password updated successfully" });
         } catch (error) {
             console.error(error);
             return res.status(401).json({ message: "Token has expired" });
@@ -442,6 +465,5 @@ router.post("/reset-password/:id/:token", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 
 module.exports = router;
