@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
 import { Doughnut } from "react-chartjs-2";
+import jsPDF from "jspdf";
 
 function InventoryInsights() {
     const data = [
@@ -60,6 +61,14 @@ function InventoryInsights() {
         ],
     };
 
+    const exportToPdf = () => {
+        const pdf = new jsPDF();
+        const canvas = document.querySelector(".chart_inventory canvas");
+        const dataURL = canvas.toDataURL();
+        pdf.addImage(dataURL, "PNG", 10, 10, 200, 75);
+        pdf.save("inventory_chart.pdf");
+    };
+
     return (
         <div className="inventory-insight">
             <div className="inventory-insight-top">
@@ -80,7 +89,7 @@ function InventoryInsights() {
                             color: "#fff",
                             borderRadius: "5px",
                         }}
-                        // onClick={() => showDeclineConfirm(record.leaveID)}
+                        onClick={exportToPdf}
                     >
                         <PrinterOutlined style={{ gap: "10" }} />
                         Export pdf
@@ -99,7 +108,7 @@ function InventoryInsights() {
                             Mostly Used Categories in Month
                         </p>
                     </div>
-                    <div div className = "chart_inventory" >
+                    <div div className="chart_inventory">
                         <Doughnut data={chartData} />
                     </div>
                 </div>

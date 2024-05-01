@@ -13,7 +13,6 @@ import {
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
  
 import axios from "axios";
 const baseURL = "http://localhost:5000/api/inventories";
@@ -25,6 +24,40 @@ function InventoryList() {
     const [editOpen, setEditOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [form] = Form.useForm();
+    const [lowStockCount, setLowStockCount] = useState(0);
+    const [outOfStockCount, setOutOfStockCount] = useState(0);
+    const [consumableCount, setConsumableCount] = useState(0);
+    const [nonConsumableCount, setNonConsumableCount] = useState(0);
+
+    useEffect(() => {
+        const calculateCounts = () => {
+            let lowStock = 0;
+            let outOfStock = 0;
+            let consumable = 0;
+            let nonConsumable = 0;
+
+            inventories.forEach(item => {
+                if (item.quantity <= 10) {
+                    lowStock++;
+                }
+                if (item.quantity === 0) {
+                    outOfStock++;
+                }
+                if (item.itemType === "consumable") {
+                    consumable++;
+                } else {
+                    nonConsumable++;
+                }
+            });
+
+            setLowStockCount(lowStock);
+            setOutOfStockCount(outOfStock);
+            setConsumableCount(consumable);
+            setNonConsumableCount(nonConsumable);
+        };
+
+        calculateCounts();
+    }, [inventories]);
 
     useEffect(() => {
         fetchData();
@@ -225,7 +258,7 @@ function InventoryList() {
                     <div className="inventory_total_card2">
                         <div className="inventory_total_card2_txt">
                             <h3>Low Stock Items</h3>
-                            <h2>13</h2>
+                            <h2>{lowStockCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -235,7 +268,7 @@ function InventoryList() {
                     <div className="inventory_total_card3">
                         <div className="inventory_total_card3_txt">
                             <h3>Out of Stock Items</h3>
-                            <h2>1</h2>
+                            <h2>{outOfStockCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -245,7 +278,7 @@ function InventoryList() {
                     <div className="inventory_total_card4">
                         <div className="inventory_total_card4_txt">
                             <h3>Consumable Items</h3>
-                            <h2>130</h2>
+                            <h2>{consumableCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -255,7 +288,7 @@ function InventoryList() {
                     <div className="inventory_total_card5">
                         <div className="inventory_total_card5_txt">
                             <h3>Nonconsumable Items</h3>
-                            <h2>458</h2>
+                            <h2>{nonConsumableCount}</h2>
                         </div>
                     </div>
                 </div>
