@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const UserModel = require("../models/user");
+const UserLogin = require("../models/userLogin");
 const cors = require("cors");
 require('dotenv').config();
 const app = express();
@@ -196,6 +197,14 @@ router.post("/login", async (req, res) => {
                 profilePic: user.profilePic,
             };
             res.send(temp);
+
+            const userLogin = new UserLogin({
+
+                userId: user._id,
+                ipAddress: req.ip,
+            });
+            await userLogin.save();
+    
         } else {
             return res.status(400).json({ message: "Login Failed" });
         }
@@ -203,6 +212,32 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({ error });
     }
 });
+
+
+
+// Define a route to fetch data from MongoDB
+router.post("/login-data", async (req, res) => {
+    try {
+        // Aggregate login data by day
+        const loginData = await UserLogin.aggregate([
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // Send the aggregated login data as JSON response
+        res.json(loginData);
+    } catch (error) {
+        console.error("Error fetching login data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
 
 router.post("/register", async (req, res) => {
     const userID = await generateUniqueID();

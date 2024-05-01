@@ -34,6 +34,32 @@ const { Search, TextArea } = Input;
 function UsersInsights() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loginData, setLoginData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.post("/api/users/login-data");
+                setLoginData(response.data);
+            } catch (error) {
+                console.error("Error fetching login data:", error);
+            }
+        };
+    
+        fetchData();
+    }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.post("api/users/login-data");
+                setLoginData(response.data);
+            } catch (error) {
+                console.error("Error fetching login data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const fetchUserList = async () => {
         try {
@@ -132,26 +158,28 @@ function UsersInsights() {
     };
 
     const config = {
-        data: {
-            type: "fetch",
-            value: "https://render.alipay.com/p/yuyan/180020010001215413/antd-charts/column-column.json",
-        },
-        xField: "letter",
-        yField: "frequency",
+        data: loginData,
+        xField: "_id", // Date field
+        yField: "count", // Count of logins
         label: {
-            text: (d) => `${(d.frequency * 100).toFixed(1)}%`,
-            textBaseline: "bottom",
-        },
-        axis: {
-            y: {
-                labelFormatter: ".0%",
+            formatter: (d) => `${d.count}`, // Display count on the bar
+            style: {
+                fill: '#fff', // Label text color
             },
         },
-        style: {
-            radiusTopLeft: 10,
-            radiusTopRight: 10,
+        xAxis: {
+            title: {
+                text: "Date",
+            },
+        },
+        yAxis: {
+            title: {
+                text: "Number of Logins",
+            },
         },
     };
+    
+
 
     return (
         <>
