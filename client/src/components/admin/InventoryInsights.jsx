@@ -1,49 +1,72 @@
 import { Column } from "@ant-design/plots";
-import React from "react";
+import React,{useState,useEffect} from "react";
 import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
 import { Doughnut } from "react-chartjs-2";
 import jsPDF from "jspdf";
+import axios from "axios";
 
 function InventoryInsights() {
-    const data = [
-        { type: "1", value: 0.16 },
-        { type: "2", value: 0.125 },
-        { type: "3", value: 0.24 },
-        { type: "4", value: 0.19 },
-        { type: "5", value: 0.22 },
-        { type: "6", value: 0.05 },
-        { type: "7", value: 0.01 },
-        { type: "8", value: 0.015 },
-        { type: "9", value: 0.005 },
-        { type: "10", value: 0.125 },
-        { type: "11", value: 0.125 },
-    ];
+
+    const [inventories, setInventories] = useState([]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get("/api/inventories/getInventories");
+            setInventories(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCategoryData = () => {
+        const categoryMap = new Map();
+        inventories.forEach(item => {
+            const { category, quantity } = item;
+            if (categoryMap.has(category)) {
+                categoryMap.set(category, categoryMap.get(category) + quantity);
+            } else {
+                categoryMap.set(category, quantity);
+            }
+        });
+        return Array.from(categoryMap.entries()).map(([category, quantity]) => ({ category, quantity }));
+    };
+
+    const [categoryData, setCategoryData] = useState([]);
+
+    useEffect(() => {
+        const data = getCategoryData();
+        setCategoryData(data);
+    }, [inventories]);
 
     const config = {
-        data,
-        xField: "type",
-        yField: "value",
-        style: {
-            fill: ({ type }) => {
-                if (type === "10-30分" || type === "30+分") {
-                    return "#22CBCC";
-                }
-                return "#2989FF";
-            },
-        },
+        data: categoryData,
+        xField: "category",
+        yField: "quantity",
         label: {
-            text: (originData) => {
-                const val = parseFloat(originData.value);
-                if (val < 0.05) {
-                    return (val * 100).toFixed(1) + "%";
-                }
-                return "";
+            position: "top", // Adjusted position to show labels at the top of each bar
+            style: {
+                fill: "#FFFFFF",
+                opacity: 0.6,
             },
-            offset: 15,
         },
-        legend: false,
+        xAxis: {
+            label: {
+                autoHide: true,
+                autoRotate: false,
+            },
+        },
+        meta: {
+            quantity: {
+                alias: "Quantity",
+            },
+        },
     };
+    
 
     const chartData = {
         labels: ["Red", "Blue", "Yellow"],
