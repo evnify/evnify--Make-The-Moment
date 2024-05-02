@@ -3,6 +3,10 @@
     flex-direction: row;
     gap: 20px;
 }
+
+.admin_dashboard_main_section {
+    margin: 0 16px;
+}
 .admin_dashboard_card {
     display: flex;
     flex-direction: column;
@@ -25,7 +29,7 @@
     font-size: 38px;
     font-weight: 500;
 }
-.admin_dashboard_card h3{
+.admin_dashboard_card h3 {
     font-family: "Product Sans";
     font-size: 16px;
     font-weight: 500;
@@ -37,5 +41,20 @@
     background-color: #e4ffe1;
 }
 .card3 {
-    background-color: #FFEFE7;
+    background-color: #ffefe7;
+}
+
+.daily_view_count_chart_container h1 {
+    font-family: "Product Sans";
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.admin_dashboard_chart_main_section {
+    width: 600px;
+    height: 345px;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 11px;
 }
