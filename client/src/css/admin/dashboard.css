@@ -14,7 +14,7 @@
     flex-direction: column;
     justify-content: center;
     width: 204px;
-    height: 136px;
+    height: 146px;
     padding: 16px 12px 12px 30px;
     margin-bottom: 12px;
     border-radius: 11px;
@@ -35,6 +35,8 @@
     font-family: "Product Sans";
     font-size: 16px;
     font-weight: 500;
+    text-decoration: none;
+    color: #000000;
 }
 .card1 {
     background-color: #e8f0fb;
@@ -180,3 +182,41 @@
     font-weight: 400;
     margin-top: 30px;
 }
+
+.main_dashboard_realtime_insights_container {
+    border-radius: 11px;
+    background: #fff;
+    width: 320px;
+    height: 146px;
+    flex-shrink: 0;
+
+    box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    gap: 30px;
+    padding: 0 0 0 20px;
+}
+
+.main_dashboard_date_container {
+    display: flex;
+    flex-direction: column;
+}
+
+.main_dashboard_date_container h1 {
+    color: #534f4f;
+    font-family: "product sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    width: 160px;
+}
+
+.main_dashboard_date_container h2 {
+    color: #534f4f;
+    font-family: "product sans";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-top: -10px;
+}
+
