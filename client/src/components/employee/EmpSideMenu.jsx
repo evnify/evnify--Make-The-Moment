@@ -99,6 +99,16 @@ function EmpSideMenu() {
         }
     };
 
+    function calculateTotalDaysBetweenDates(startDateStr, endDateStr) {
+        var startDate = new Date(startDateStr);
+        var endDate = new Date(endDateStr);
+        var difference = endDate - startDate;
+
+        var daysDifference = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+        return daysDifference;
+    }
+
     useEffect(() => {
         const emp = JSON.parse(localStorage.getItem("currentUser"));
         FetchEmployeeByUserID(emp.userID);
@@ -111,27 +121,49 @@ function EmpSideMenu() {
             return message.error("Start date should be less than end date");
         } else if (startDate < new Date().toISOString().split("T")[0]) {
             return message.error("Start date should be greater than today");
+        } else if (
+            employee.leavesBalance[2].casualLeave -
+                employee.leavesBalance[2].casualUsed ==
+                0 ||
+            employee.leavesBalance[2].casualLeave -
+                employee.leavesBalance[2].casualUsed -
+                calculateTotalDaysBetweenDates(startDate, endDate) <
+                0
+        ) {
+            return message.error(
+                "Your casual leave balance is not enough for this leave request"
+            );
+        } else if (
+            employee.leavesBalance[1].sickLeave -
+            employee.leavesBalance[1].sickUsed == 0 || employee.leavesBalance[1].sickLeave - employee.leavesBalance[1].sickUsed - calculateTotalDaysBetweenDates(startDate, endDate) < 0
+        ){
+            return message.error("Your sick leave balance is not enough for this leave request");
         }
-        try {
-            const leave = {
-                empID: employee.empID,
-                leaveType,
-                startDate,
-                endDate,
-                reason,
-                name: employee.firstName + " " + employee.lastName,
-            };
-            await axios.post("/api/leaves/newLeave", leave);
-            message.success("Leave request submitted successfully");
-            setLeaveModelOpen(false);
-            setEndDate(null);
-            setStartDate(null);
-            setLeaveType("");
-            setReason("");
-            navigate("/employee");
-        } catch (error) {
-            console.log(error);
+        else if (employee.leavesBalance[0].halfLeave -
+            employee.leavesBalance[0].halfUsed == 0 || employee.leavesBalance[0].halfLeave - employee.leavesBalance[0].halfUsed - calculateTotalDaysBetweenDates(startDate, endDate) < 0){
+            return message.error("Your half leave balance is not enough for this leave request");
         }
+
+            try {
+                const leave = {
+                    empID: employee.empID,
+                    leaveType,
+                    startDate,
+                    endDate,
+                    reason,
+                    name: employee.firstName + " " + employee.lastName,
+                };
+                await axios.post("/api/leaves/newLeave", leave);
+                message.success("Leave request submitted successfully");
+                setLeaveModelOpen(false);
+                setEndDate(null);
+                setStartDate(null);
+                setLeaveType("");
+                setReason("");
+                navigate("/employee");
+            } catch (error) {
+                console.log(error);
+            }
     };
 
     return (
