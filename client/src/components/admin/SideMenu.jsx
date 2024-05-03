@@ -45,8 +45,7 @@ const items = [
     ]),
     getItem("Messages", "sub7", <Icon icon="ri:message-2-line" />, [
         getItem("Insights", "/admin/messageinsights"),
-        getItem("All Messages", "/admin/allmessages"),
-        getItem("User Emails", "/admin/useremails")
+        getItem("All Messages", "/admin/allmessages")
     ]),
 ];
 

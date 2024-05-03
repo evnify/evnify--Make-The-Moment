@@ -15,11 +15,7 @@ import PaymentInsights from "./PaymentInsights";
 import Payroll from "./Payroll";
 import MessageInsights from "./MessageInsights";
 import AllMessages from "./AllMessages";
-import UserEmails from "./UserEmails";
 import NavBar from "./NavBar";
-import Charts from "./PackageCharts.jsx";
-import AddPackage from "./AddPackage";
-import UpdatePackage from "./UpdatePackage";
 import UserTab from "./UserTab";
 import Loader from "./Loader";
 
@@ -41,7 +37,6 @@ export {
     Payroll,
     MessageInsights,
     AllMessages,
-    UserEmails,
     NavBar,
     UserTab,
     Loader

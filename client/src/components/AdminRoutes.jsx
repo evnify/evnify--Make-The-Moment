@@ -16,8 +16,7 @@ import {
     PaymentInsights,
     Payroll,
     MessageInsights,
-    AllMessages,
-    UserEmails
+    AllMessages
 } from "./admin";
 
 function AdminRoutes() {
@@ -40,7 +39,6 @@ function AdminRoutes() {
                 <Route path="/payroll" element={<Payroll />} />
                 <Route path="/messageinsights" element={<MessageInsights />} />
                 <Route path="/allmessages" element={<AllMessages />} />
-                <Route path="/useremails" element={<UserEmails />} />
             </Routes>
         </div>
     );
