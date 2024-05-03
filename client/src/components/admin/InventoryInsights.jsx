@@ -36,9 +36,13 @@ function InventoryInsights() {
                 categoryMap.set(category, quantity);
             }
         });
-        return Array.from(categoryMap.entries()).map(
-            ([category, quantity]) => ({ category, quantity })
-        );
+
+
+
+        return Array.from(categoryMap.entries()).map(([category, quantity]) => ({
+            category,
+            quantity
+        }));
     };
 
     const [categoryData, setCategoryData] = useState([]);
@@ -72,22 +76,36 @@ function InventoryInsights() {
         },
     };
 
+
+    const getMostBookedCategories = () => {
+        // Assuming inventories are sorted by booking count
+        return inventories.slice(0, 3).map((item) => item.category);
+    };
+
     const chartData = {
-        labels: ["Red", "Blue", "Yellow"],
+        labels: getMostBookedCategories(),
         datasets: [
             {
-                label: "My First Dataset",
-                data: [300, 50, 100],
+                label: "Booked Categories",
+                data: getMostBookedCategories().map((category) =>
+                    getCategoryData().find((item) => item.category === category)?.quantity ?? 0
+                ),
+
                 backgroundColor: [
                     "rgb(255, 99, 132)",
                     "rgb(54, 162, 235)",
                     "rgb(255, 205, 86)",
-                    "rgb(75, 192, 192)",
+
+                    // Add more colors as needed
+
                 ],
                 hoverOffset: 4,
             },
         ],
     };
+
+
+
 
     const exportToPdf = () => {
         const pdf = new jsPDF();
