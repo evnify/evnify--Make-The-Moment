@@ -296,6 +296,17 @@
     background-color: #f5f5f5;
 }
 
+.admin_leave_request_top_menu_button {
+    color: #fff;
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #533c56;
+    border: none;
+    border-radius: 5px;
+    padding: 7.5px 16px;
+}
+
 .admin_leave_request_top_menu h5 {
     color: #464646;
     font-family: "Product Sans";
