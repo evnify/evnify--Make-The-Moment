@@ -16,6 +16,7 @@ function ChatBox() {
     const [sentMessages, setSentMessages] = useState([]);
     const [receivedMessages, setReceivedMessages] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
@@ -36,7 +37,10 @@ function ChatBox() {
             fetchMessages();
         } catch (error) {
             if (error.response && error.response.status === 400 && error.response.data.message === "Message contains prohibited content") {
-                message.error("Message contains prohibited content");
+                setErrorMessage("Message contains prohibited content");
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 4000);
             } else {
                 console.log(error);
             }
@@ -56,7 +60,7 @@ function ChatBox() {
 
     // Fetch stored selected category from localStorage on component mount
     useEffect(() => {
-        
+
         const storedCategory = localStorage.getItem('selectedCategory');
         if (storedCategory) {
             setSelectedCategory(storedCategory);
@@ -132,7 +136,11 @@ function ChatBox() {
                         height="24"
                         style={{ margin: "0 0 20px 0", height: "25px", fontSize: "10px" }}
                     />
-                    <h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize: "14px" }}>Ask Your Question About {selectedCategory}</h6>
+                    {errorMessage ? (
+                        <h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize: "14px",color: 'red'}}>{errorMessage}</h6>
+                    ) :
+                        (<h6 style={{ margin: "0 0 20px 0", height: "25px", fontSize: "14px" }}>Ask Your Question About {selectedCategory}</h6>)}
+
                 </>
             ) : null}
         </div>
@@ -142,13 +150,13 @@ function ChatBox() {
         <div>
             <form onSubmit={handleFormSubmit}>
                 <input type="text" placeholder="Type a message" value={userMessage} onChange={(e) => setUserMessage(e.target.value)} style={{ width: '80%', border: 'none', alignContent: 'left', outline: 'none', boxShadow: 'none', margin: "0" }} />
-                <Icon icon="material-symbols:send" disable={!userMessage} width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer', color: userMessage ? "black" : "#d3d3d3"}} onClick={handleFormSubmit} />
+                <Icon icon="material-symbols:send" disable={!userMessage} width="24" height="24" style={{ margin: '0 0 0 25', cursor: 'pointer', color: userMessage ? "black" : "#d3d3d3" }} onClick={handleFormSubmit} />
             </form>
         </div>
     );
 
     return (
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+        <div style={{ position: 'fixed', bottom: '40px', right: '30px' }}>
             <img src={chatIcon} alt="chatIco" onClick={handleOpenModal} style={{ width: "65px", height: "65px" }} />
 
             <Modal
@@ -164,8 +172,8 @@ function ChatBox() {
                 mask={false}
                 style={{
                     position: 'absolute',
-                    right: '50px',
-                    top: '160px',
+                    right: '60px',
+                    top: '140px',
                     overflow: 'auto',
                     border: '1px solid #e8e8e8',
                     borderRadius: '8px',
@@ -173,6 +181,7 @@ function ChatBox() {
                 }}
             >
                 {modalHeader}
+
                 {selectedCategory ? (
                     <div className="message-box-chatbox" style={{ scrollbarWidth: "thin" }}>
                         {customerID && groupedMessages[customerID]?.[selectedCategory]?.map((msg, index) => (
