@@ -1179,7 +1179,7 @@ function EmployeeList() {
                                             marginBottom: "3px",
                                         }}
                                     >
-                                        Leave Type
+                                        Employee Type
                                     </span>
                                     <Select
                                         style={{
