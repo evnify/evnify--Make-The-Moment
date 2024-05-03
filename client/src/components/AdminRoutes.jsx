@@ -10,7 +10,6 @@ import {
     InventoryList,
     EmployeeList,
     LeaveRequests,
-    AssignEvents,
     AddBlog,
     ExistingBlogs,
     PaymentInsights,
@@ -32,7 +31,6 @@ function AdminRoutes() {
                 <Route path="/inventorylist" element={<InventoryList />} />
                 <Route path="/employeelist" element={<EmployeeList />} />
                 <Route path="/leaverequests" element={<LeaveRequests />} />
-                <Route path="/assigntoevents" element={<AssignEvents />} />
                 <Route path="/addblog" element={<AddBlog />} />
                 <Route path="/blogs" element={<ExistingBlogs />} />
                 <Route path="/paymentinsights" element={<PaymentInsights />} />

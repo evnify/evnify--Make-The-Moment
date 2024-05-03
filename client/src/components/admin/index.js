@@ -8,7 +8,6 @@ import InventoryInsights from "./InventoryInsights";
 import InventoryList from "./InventoryList";
 import EmployeeList from "./EmployeeList";
 import LeaveRequests from "./LeaveRequests";
-import AssignEvents from "./AssignEvents";
 import AddBlog from "./AddBlog";
 import ExistingBlogs from "./ExistingBlogs";
 import PaymentInsights from "./PaymentInsights";
@@ -30,7 +29,6 @@ export {
     InventoryList,
     EmployeeList,
     LeaveRequests,
-    AssignEvents,
     AddBlog,
     ExistingBlogs,
     PaymentInsights,

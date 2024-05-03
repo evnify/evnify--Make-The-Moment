@@ -32,8 +32,7 @@ const items = [
 
     getItem("Employees", "sub4", <Icon icon="healthicons:city-worker" />, [
         getItem("Employee List", "/admin/employeelist"),
-        getItem("Leave Requests", "/admin/leaverequests"),
-        getItem("Assign To Events", "/admin/assigntoevents")
+        getItem("Leave Requests", "/admin/leaverequests")
     ]),
     getItem("Blogs", "sub5", <Icon icon="ri:news-line" />, [
         getItem("Add New", "/admin/addblog"),

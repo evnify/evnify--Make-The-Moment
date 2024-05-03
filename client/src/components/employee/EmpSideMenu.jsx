@@ -35,11 +35,6 @@ const items = [
         <Icon icon="streamline:graph-bar-increase" />
     ),
     getItem(
-        "Assigned Events",
-        "/employee/events",
-        <Icon icon="ic:round-event-note" />
-    ),
-    getItem(
         "My Leaves",
         "/employee/leaves",
         <Icon icon="pepicons-pop:leave" />
