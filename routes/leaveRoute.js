@@ -104,6 +104,40 @@ router.post("/declineLeave", async (req, res) => {
             { leaveID: leaveID },
             { status: "Rejected" }
         );
+        const leaveData = await leaveModel.findOne({ leaveID: leaveID });
+        const noOfDays = calculateTotalDaysBetweenDates(leaveData.startDate, leaveData.endDate);
+
+        if(leaveData.leaveType === "Sick Leave") {
+            const empID = leaveData.empID;
+            const employee = await employeeModel.findOne({ empID: empID });
+            if(employee) {
+                employee.leavesBalance[1].sickUsed  = employee.leavesBalance[1].sickUsed - noOfDays;
+                await employeeModel.findOneAndUpdate(
+                    { empID: empID },
+                    { leavesBalance: employee.leavesBalance }
+                );
+            }
+        } else if(leaveData.leaveType === "Casual Leave") {
+            const empID = leaveData.empID;
+            const employee = await employeeModel.findOne({ empID: empID });
+            if(employee) {
+                employee.leavesBalance[2].casualUsed = employee.leavesBalance[2].casualUsed - noOfDays;
+                await employeeModel.findOneAndUpdate(
+                    { empID: empID },
+                    { leavesBalance: employee.leavesBalance }
+                );
+            }
+        } else if(leaveData.leaveType === "Half Leave") {
+            const empID = leaveData.empID;
+            const employee = await employeeModel.findOne({ empID: empID });
+            if(employee) {
+                employee.leavesBalance[0].halfUsed = employee.leavesBalance[0].halfUsed - noOfDays;
+                await employeeModel.findOneAndUpdate(
+                    { empID: empID },
+                    { leavesBalance: employee.leavesBalance }
+                );
+            }
+        }
         res.send("Leave request declined successfully");
     } catch (error) {
         return res.status(400).json({ message: error });
