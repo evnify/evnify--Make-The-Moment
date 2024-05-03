@@ -85,7 +85,7 @@ function ViewCountChart() {
 
     return (
         <div className="daily_view_count_chart_container">
-            <h1>Daily Logins</h1>
+            <h1>Daily Page Views</h1>
             <canvas
                 id="viewCountChart"
             ></canvas>
