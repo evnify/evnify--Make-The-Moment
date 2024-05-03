@@ -18,30 +18,12 @@ import {
 } from "./pages";
 import { BrowserRouter, Route, Routes  } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
-import { useEffect,useState } from "react";
-import axios from "axios";
+
+
 
 function App() {
 
-    const [user, setUser] = useState(null);
-    const getUser = async () => {
-        try {
-            const url = `${process.env.REACT_APP_API_URL}/auth/login/success`;
-            const {data} = await axios.get(url, { withCredentials: true });
-            setUser(data.user._json);
-
-        }
-        catch (error) {
-            console.error(error);
-        }
-
-    };
-
-    useEffect(() => {
-        getUser();
-    }
-    , []);
-
+    
 
 
     return (

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-
-
+import React, { useState, useEffect } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
     Button,
@@ -17,8 +16,53 @@ import { useTheme } from "@mui/material/styles";
 import Navbar from "../../../components/users/navBar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
+    const [user, setUser] = useState([]);
+    const [profile, setProfile] = useState([]);
+
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log("Login Failed:", error),
+    });
+
+    useEffect(() => {
+        if (user) {
+            axios
+                .get(
+                    `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: "application/json",
+                        },
+                    }
+                )
+                .then((res) => {
+                    setProfile(res.data);
+                    checkEmailExistence(res.data.email);
+                })
+                .catch((err) => console.log(err));
+        }
+    }, [user]);
+
+    const checkEmailExistence = async (email) => {
+        try {
+            const response = await axios.post(`/api/users/check-existing/${email}`);
+            const emailExists = response.data.exists;
+            
+            if (emailExists) {
+                handleLogin();
+            } else {
+                message.error("Email not registered. Cannot proceed with login.");
+                console.log("Email not registered. Cannot proceed with login.");
+            }
+        } catch (error) {
+            console.error("Error checking email existence:", error);
+        }
+    };
+
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
     const onFinish = (values) => {
@@ -31,6 +75,13 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    const responseMessage = (response) => {
+        console.log(response);
+    };
+    const errorMessage = (error) => {
+        console.log(error);
+    };
 
     const handleLogin = async () => {
         {
@@ -51,6 +102,10 @@ const Login = () => {
                 } else if (userData.userType === "Employee") {
                     navigate("/employee/*");
                     message.success("Login Successful");
+                }
+                else if (userData.userType === "Hr-Manager") {
+                    navigate("/admin/*");
+                    message.success("Login Successful");
                 } else {
                     navigate("/");
                     message.success("Login Successful");
@@ -62,7 +117,7 @@ const Login = () => {
                 setLoading(false);
                 console.error("Login error:", error);
                 setError(true);
-                message.error("Login Failed");
+                message.error("Invalid email or passwor");
             }
         }
     };
@@ -183,9 +238,9 @@ const Login = () => {
                     </div>
 
                     <Grid item xs={12} className="mt-3 ml-2 text-center">
-                        
-
-                       
+                        <button onClick={() => login()}>
+                            Sign in with Google 🚀{" "}
+                        </button>
                     </Grid>
                 </ConfigProvider>
             </div>
