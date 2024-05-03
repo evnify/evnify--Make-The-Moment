@@ -225,7 +225,6 @@ function EmpDashboard() {
                             </div>
                         </div>
                     </div>
-
                     <div className="emp_dashboard_leave_balance_container">
                         <Progress
                             type="circle"

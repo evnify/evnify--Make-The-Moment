@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const leaveModel = require("../models/leave");
+const employeeModel = require("../models/employee");
 
 //Generate unique id for leave
 const generateUniqueID = async () => {
@@ -13,6 +14,16 @@ const generateUniqueID = async () => {
     return id;
 };
 
+function calculateTotalDaysBetweenDates(startDateStr, endDateStr) {
+    var startDate = new Date(startDateStr);
+    var endDate = new Date(endDateStr);
+    var difference = endDate - startDate;
+
+    var daysDifference = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+    return daysDifference;
+}
+
 router.post("/newLeave", async (req, res) => {
     const leaveData = req.body;
     const leaveID = await generateUniqueID();
@@ -21,8 +32,43 @@ router.post("/newLeave", async (req, res) => {
     console.log(leaveData);
     const newLeave = new leaveModel(leaveData);
 
+    const noOfDays = calculateTotalDaysBetweenDates(leaveData.startDate, leaveData.endDate);
+
+    if(leaveData.leaveType === "Sick Leave") {
+        const empID = leaveData.empID;
+        const employee = await employeeModel.findOne({ empID: empID });
+        if(employee) {
+            employee.leavesBalance[1].sickUsed  = employee.leavesBalance[1].sickUsed + noOfDays;
+            await employeeModel.findOneAndUpdate(
+                { empID: empID },
+                { leavesBalance: employee.leavesBalance }
+            );
+        }
+    } else if(leaveData.leaveType === "Casual Leave") {
+        const empID = leaveData.empID;
+        const employee = await employeeModel.findOne({ empID: empID });
+        if(employee) {
+            employee.leavesBalance[2].casualUsed = employee.leavesBalance[2].casualUsed + noOfDays;
+            await employeeModel.findOneAndUpdate(
+                { empID: empID },
+                { leavesBalance: employee.leavesBalance }
+            );
+        }
+    } else if(leaveData.leaveType === "Half Leave") {
+        const empID = leaveData.empID;
+        const employee = await employeeModel.findOne({ empID: empID });
+        if(employee) {
+            employee.leavesBalance[0].halfUsed = employee.leavesBalance[0].halfUsed + noOfDays;
+            await employeeModel.findOneAndUpdate(
+                { empID: empID },
+                { leavesBalance: employee.leavesBalance }
+            );
+        }
+    }
+
     try {
         await newLeave.save();
+
         res.send("Leave request submitted successfully");
     } catch (error) {
         return res.status(400).json({ message: error });

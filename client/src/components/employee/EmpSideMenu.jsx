@@ -58,7 +58,7 @@ function EmpSideMenu() {
     const [employee, setEmployee] = useState({});
 
     // Leave Request model use states
-    const [leaveType, setLeaveType] = useState("sick leave");
+    const [leaveType, setLeaveType] = useState("Sick leave");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [reason, setReason] = useState("");
@@ -128,6 +128,7 @@ function EmpSideMenu() {
             setStartDate(null);
             setLeaveType("");
             setReason("");
+            navigate("/employee");
         } catch (error) {
             console.log(error);
         }
