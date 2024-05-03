@@ -12,12 +12,13 @@ import {
     ConfigProvider,
     message,
 } from "antd";
+import jsPDF from "jspdf";
 import { Icon } from "@iconify/react";
 import moment from "moment";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
 import { Loader } from "../admin";
-
+const imgData = require("../../assets/backgrounds/Leave_conformation_bg.png");
 const { Search, TextArea } = Input;
 const { confirm } = Modal;
 
@@ -88,6 +89,61 @@ function EmpLeaves() {
             },
             width: 350,
         });
+    };
+
+    function convertDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    const downloadRecept = (record) => {
+        console.log(record);
+        const doc = new jsPDF();
+        doc.addImage(imgData, "PNG", 0, 0, 215, 300);
+
+        doc.setFont("helvetica");
+        doc.setFontSize(14);
+        doc.text(`${convertDate(record.updatedAt)}`, 168, 65);
+        doc.text(`${record.name}`, 22, 65);
+        doc.text(`Employee ID : ${record.empID}`, 22, 74);
+
+        doc.text(`Dear ${record.name},`, 22, 95);
+
+            doc.setFontSize(16);
+            doc.setFont(undefined, "bold").text(
+                `Conformation of leave request "${record.leaveID}"`,
+                48,
+                112,
+                { underline: true }
+            );
+            doc.setFontSize(14);
+            const lines = doc.splitTextToSize(
+                `This letter is to confirm the status of your leave application. We are pleased to inform you that your leave request has been approved. Your leave period is from ${record.startDate} to ${record.endDate}. `,
+                180
+            );
+            doc.setFont(undefined, "normal").text(
+                lines,
+                22,
+                130,
+                { underline: true }
+            );
+
+            const line2 = doc.splitTextToSize(
+                `Please make sure to adhere to the company's leave policies during your absence. If you have any questions or require further assistance, feel free to contact us. `,
+                175
+            );
+
+            doc.setFont(undefined, "normal").text(
+                line2,
+                22,
+                155,
+                { underline: true }
+            );
+
+        doc.save(`Leave_Conformation_${record.leaveID}.pdf`);
     };
 
     const columns = [
@@ -185,6 +241,42 @@ function EmpLeaves() {
                                 <Icon icon="mdi:download" />
                             </button>
                         </>
+                    ) : record.status.toLowerCase() === "rejected" ?  (
+                        <>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                disabled
+                            >
+                                <Icon icon="tabler:edit" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                disabled
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#9D9D9D",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                disabled
+                            >
+                                <Icon icon="mdi:download" />
+                            </button>
+                        </>
                     ) : (
                         <>
                             <button
@@ -216,6 +308,7 @@ function EmpLeaves() {
                                     border: "none",
                                     background: "transparent",
                                 }}
+                                onClick={() => downloadRecept(record)}
                             >
                                 <Icon icon="mdi:download" />
                             </button>

@@ -24,6 +24,8 @@ import fb from "./fb.svg";
 import li from "./li.svg";
 import yt from "./yt.svg";
 
+import Leave_conformation_bg from "./backgrounds/Leave_conformation_bg.png"
+
 
 export {
     Logo_black_with_tag,
@@ -48,4 +50,5 @@ export {
     fb,
     li,
     yt,
+    Leave_conformation_bg
 };
