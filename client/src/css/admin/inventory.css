@@ -237,7 +237,7 @@
 
 .inventroy-catagory {
     width: 425px;
-    height: 442px;
+    height: 470px;
     flex-shrink: 0;
     border-radius: 11px;
     background: #fff;
@@ -280,8 +280,33 @@
 
 .inventory_left{
     padding: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .chart_inventory{
     align-items: center;
+}
+
+.inventories{
+    margin-left: 10px;
+    height: auto;
+}
+
+
+.inventroy-catagory-item{
+    width: 750px;
+    height: 252px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #fff;
+    margin-left: 15px;
+}
+
+.view_all{
+    color: #4094f7;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 10px;
 }

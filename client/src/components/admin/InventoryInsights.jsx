@@ -1,12 +1,15 @@
 import { Column } from "@ant-design/plots";
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
 import { Doughnut } from "react-chartjs-2";
 import jsPDF from "jspdf";
 import axios from "axios";
+import { Table, Tag } from "antd";
+import { useNavigate, Link } from "react-router-dom";
 
 function InventoryInsights() {
+    const navigate = useNavigate();
 
     const [inventories, setInventories] = useState([]);
 
@@ -25,7 +28,7 @@ function InventoryInsights() {
 
     const getCategoryData = () => {
         const categoryMap = new Map();
-        inventories.forEach(item => {
+        inventories.forEach((item) => {
             const { category, quantity } = item;
             if (categoryMap.has(category)) {
                 categoryMap.set(category, categoryMap.get(category) + quantity);
@@ -33,7 +36,9 @@ function InventoryInsights() {
                 categoryMap.set(category, quantity);
             }
         });
-        return Array.from(categoryMap.entries()).map(([category, quantity]) => ({ category, quantity }));
+        return Array.from(categoryMap.entries()).map(
+            ([category, quantity]) => ({ category, quantity })
+        );
     };
 
     const [categoryData, setCategoryData] = useState([]);
@@ -66,7 +71,6 @@ function InventoryInsights() {
             },
         },
     };
-    
 
     const chartData = {
         labels: ["Red", "Blue", "Yellow"],
@@ -92,6 +96,48 @@ function InventoryInsights() {
         pdf.addImage(dataURL, "PNG", 10, 10, 200, 75);
         pdf.save("inventory_chart.pdf");
     };
+
+    const columns = [
+        {
+            title: "ITEM",
+            dataIndex: "itemName",
+            key: "itemName",
+        },
+        {
+            title: "Last Updated",
+            dataIndex: "updatedAt",
+            key: "updatedAt",
+            render: (text) => <a>{formatDate(text)}</a>,
+        },
+        {
+            title: "AMOUNT",
+            dataIndex: "quantity",
+            key: "quantity",
+        },
+        {
+            title: "STATUS",
+            key: "quantity",
+            dataIndex: "quantity",
+            render: (quantity) => {
+                let color = "green";
+                let txt = "In Stock";
+                if (quantity === 0) {
+                    color = "red";
+                    txt = "Out of Stock";
+                } else if (quantity < 10) {
+                    color = "orange";
+                    txt = "Low Stock";
+                }
+                return <Tag color={color}>{txt}</Tag>;
+            },
+        },
+    ];
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { month: "short", day: "2-digit", year: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+    }
 
     return (
         <div className="inventory-insight">
@@ -136,7 +182,39 @@ function InventoryInsights() {
                         <Doughnut data={chartData} />
                     </div>
                 </div>
-                <div className="inventories"></div>
+                <div className="inventories">
+                    <div className="inventroy-catagory-item">
+                        <div className="inventory_left">
+                            <div>
+                                <h3>Item Categories</h3>
+                                <p className="p_text">
+                                    Mostly Used Categories in Month
+                                </p>
+                            </div>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#4094F7",
+                                    width: "100px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                }}
+                                onClick={() => {
+                                    navigate("/admin/inventorylist");
+                                }}
+                            >
+                                View All
+                            </button>
+                        </div>
+                        <Table
+                            columns={columns}
+                            dataSource={inventories.slice(0, 5)} // Limit to 5 rows
+                            pagination={false}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
