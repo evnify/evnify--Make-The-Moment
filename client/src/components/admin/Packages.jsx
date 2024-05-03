@@ -88,6 +88,7 @@ function Packages() {
     setIsEditModalOpen(false);
   };
 
+
   //upload images
   const handleCancel = () => setPreviewOpen(false);
   const handlePreview = async (file) => {
@@ -110,6 +111,7 @@ function Packages() {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
   const customRequest = ({ file, onSuccess, onError }) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -137,7 +139,9 @@ function Packages() {
       });
   };
 
-  const handleInventory = (values) => {
+
+  //quantities of selected inventories
+  const handleAddInventory = (values) => {
     const updatedQuantities = {};
     values.forEach(value => {
       const selectedInventory = inventories.find(inventory => inventory.category === value);
@@ -159,16 +163,15 @@ function Packages() {
     }));
   };
 
-
-  const handleAddNewInventory = (value) => {
-    const selectedInventory = inventories.find(inventory => inventory.itemID === value);
+  const handleEditInventory = (value) => {
+    const selectedInventory = inventories.find(inventory => inventory.category === value);
     if (selectedInventory) {
-      const existingIndex = newPackageData.inventories.findIndex(item => item.itemID === value);
+      const existingIndex = newPackageData.inventories.findIndex(item => item.id === selectedInventory.id);
       if (existingIndex === -1) {
         // Add the inventory with quantity 1
         setNewPackageData(prevData => ({
           ...prevData,
-          inventories: [...prevData.inventories, { category: value, id: selectedInventory.id, quantity: 1 }]
+          inventories: [...prevData.inventories, { category: selectedInventory.category, id: selectedInventory.id, quantity: 1 }]
         }));
       } else {
         // If inventory already exists, update its quantity
@@ -181,6 +184,7 @@ function Packages() {
       }
     }
   };
+  
 
   // Create Inventories Dropdown Data
   const uniqueCategories = [...new Set(inventories.map(inventory => inventory.category))];
@@ -295,8 +299,6 @@ function Packages() {
     }
   };
 
-  //update package
-
   // Function to fetch package details by ID
   const fetchPackageById = async (packageId) => {
     try {
@@ -379,8 +381,7 @@ function Packages() {
       render: (text) => (
         <span title={text}>{text.length > 20 ? `${text.substring(0, 35)}...` : text}</span>
       ),
-    },
-    
+    },   
 
 
     {
@@ -578,9 +579,9 @@ function Packages() {
                         optionFilterProp="children"
                         filterOption={(input, option) => (option?.label ?? "").includes(input)}
                         filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-                        onChange={handleInventory} // Use handleInventory function
+                        onChange={handleAddInventory}
                         options={pkgData}
-                        required // Mark this field as required
+                        required 
                       />
 
                       {Object.entries(inventoryQuantities).map(([inventoryId, quantity]) => {
@@ -788,13 +789,13 @@ function Packages() {
                     optionFilterProp="children"
                     filterOption={(input, option) => (option?.label ?? "").includes(input)}
                     filterSort={(optionA, optionB) => (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())}
-                    onChange={handleAddNewInventory} // Use handleAddNewInventory function to add new inventories
+                    onChange={handleEditInventory} // Use handleAddNewInventory function to add new inventories
                     options={pkgData}
                   />
                   {/* Display selected inventories and quantity inputs */}
                   {editPackageData.inventories.map((inventory, index) => (
                     <div key={index} style={{ marginTop: "10px", display: "flex", flexDirection: "row" }}>
-                      <span style={{ marginLeft: "5px" }}>{inventory.itemType}</span>
+                      <span style={{ marginLeft: "5px" }}>{inventory.category}</span>
                       <span>
                         <Input
                           style={{ width: 100, marginLeft: "10px" }}
@@ -803,7 +804,7 @@ function Packages() {
                         />
                         <button
                           style={{ marginLeft: "10px", background: "transparent", border: "none", color: "#f00", cursor: "pointer" }}
-                          onClick={() => handleRemoveInventory(index)} // Call handleRemoveInventory function when the remove button is clicked
+                          onClick={() => handleRemoveInventory(index)} 
                         >
                           Remove
                         </button>
