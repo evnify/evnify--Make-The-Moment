@@ -143,7 +143,7 @@ function EmpSalary() {
                             <Table
                                 columns={columns}
                                 dataSource={salaryList}
-                                pagination={pagination}
+                                pagination={salaryList.length > 10 ? pagination : false}
                                 onChange={handleTableChange}
                             />
                         ) : (

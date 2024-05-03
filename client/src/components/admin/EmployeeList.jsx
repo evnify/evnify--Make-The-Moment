@@ -1423,7 +1423,7 @@ function EmployeeList() {
                                 <Table
                                     columns={columns}
                                     dataSource={filteredEmployeeList}
-                                    pagination={pagination}
+                                    pagination={filteredEmployeeList.length > 10 ? pagination : false}
                                     onChange={handleTableChange}
                                 />
                             ) : (

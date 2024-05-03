@@ -599,7 +599,7 @@ function EmpLeaves() {
                             <Table
                                 columns={columns}
                                 dataSource={filteredLeaves}
-                                pagination={pagination}
+                                pagination={filteredLeaves.length > 10 ? pagination : false}
                                 onChange={handleTableChange}
                             />
                         </div>
