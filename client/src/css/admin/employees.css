@@ -65,14 +65,14 @@
     justify-content: space-between;
 }
 
-.admin_emp_upcoming_event_items{
+.admin_emp_upcoming_event_items {
     height: 210px;
     overflow-y: scroll;
     scrollbar-width: thin;
     scrollbar-color: #737173 #f5f5f5;
 }
 
-.admin_emp_upcoming_event_item{
+.admin_emp_upcoming_event_item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -90,7 +90,7 @@
     width: 150px;
 }
 
-.admin_emp_upcoming_event_item h6{
+.admin_emp_upcoming_event_item h6 {
     color: #565656;
     font-family: "Product Sans";
     font-size: 14px;
@@ -131,7 +131,6 @@
     font-size: 20px;
     font-weight: 600;
     margin: 20px 30px 15px 22px;
-
 }
 
 .admin_emp_upcoming_event_container {
@@ -143,13 +142,12 @@
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
 }
 
-.admin_emp_upcoming_event_container h5{
+.admin_emp_upcoming_event_container h5 {
     color: #464646;
     font-family: "Product Sans";
     font-size: 20px;
     font-weight: 600;
     margin: 20px 30px 15px 22px;
-
 }
 
 .admin_emp_list_container {
@@ -319,8 +317,7 @@
 
 .emp_dashboard_main_container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     width: 840px;
     height: 813px;
     flex-shrink: 0;
@@ -328,6 +325,88 @@
     border: 2px solid #fff;
     background: #fff;
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+}
+
+.emp_dashboard_main_container h2 {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-family: "Product Sans";
+    padding: 20px 0 10px 30px;
+    width: 200px;
+
+}
+
+.emp_dashboard_main_container h3 {
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    font-family: "Product Sans";
+    padding: 20px 0 10px 30px;
+}
+
+.emp_dashboard_main_container h1 {
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 600;
+    font-family: "Product Sans";
+    padding: 20px 0 10px 30px;
+}
+
+.emp_dashboard_main_container p {
+    color: #4f46e5;
+    text-align: center;
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 20px 0 10px 30px;
+    margin-left: 505px;
+}
+
+.emp_dashboard_events_container_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px 10px 30px;
+}
+
+.emp_dashboard_events_container_item_left {
+    background-color: #ada8fb;
+    display: flex;
+    flex-direction: column;
+    width: 62.73px;
+    height: 70px;
+}
+
+.emp_dashboard_events_container_item_right{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 250px;
+    height: 70px;
+    padding: 10px 0 10px 20px;
+
+}
+
+.emp_dashboard_events_container_item_right h5{
+    color: #646363;
+    font-family: "Product Sans";
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    width: 150px;
+
+}
+
+.emp_dashboard_events_container_item_right h4 {
+    color: #0a0a0a;
+    font-family: "Product Sans";
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
 }
 
 .emp_dashboard_pending_laves_container {
@@ -420,8 +499,6 @@
     font-weight: 400;
     padding-bottom: 10px;
 }
-
-
 
 .emp_dashboard_leave_balance_container_right h5 {
     color: #3e3e3e;

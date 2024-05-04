@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Tag, Progress } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Loader from "../admin/Loader";
 
 function EmpDashboard() {
     const [emp, setEmp] = useState("");
     const [employee, setEmployee] = useState();
     const [pendingLeaves, setPendingLeaves] = useState([{}]);
+    const [upcomingEvents, setUpcomingEvents] = useState([{}]);
+    const [isEventsLoading, setIsEventsLoading] = useState(true);
     // Fetch leaves
     const fetchLeaves = async () => {
         const emp = JSON.parse(localStorage.getItem("currentUser"));
@@ -55,9 +58,97 @@ function EmpDashboard() {
         return percentage;
     };
 
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { month: "short", day: "2-digit", year: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+    }
+
+    // Fetch upcoming events
+    const fetchUpcomingEvents = async () => {
+        const today = new Date();
+        const formattedToday = today.toISOString().split("T")[0];
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/bookings/getAllBookings`
+        );
+        const temp = response.data.filter((event) => {
+            return event.eventDate > formattedToday;
+        });
+        setUpcomingEvents(temp);
+        console.log(temp);
+        setIsEventsLoading(false);
+    };
+
+    useEffect(() => {
+        fetchUpcomingEvents();
+    }, []);
+
     return (
         <div className="employee_dashboard_hero">
-            <div className="emp_dashboard_main_container"></div>
+            <div className="emp_dashboard_main_container">
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "space-between",
+                        marginBottom: "20px",
+                    }}
+                >
+                    <h1>Upcoming Events</h1>
+                </div>
+                {isEventsLoading ? (
+                    <div className="center" style={{ marginTop: "140px" }}>
+                        <Loader />
+                    </div>
+                ) : (
+                    <>
+                        {upcomingEvents.length > 0 ? (
+                            upcomingEvents.slice(0, 8).map((item) => {
+                                const eventDate = new Date(item.eventDate);
+                                // Get the date (day of the month) and day (day of the week)
+                                const date = eventDate.getDate();
+                                const day = eventDate.toLocaleDateString(
+                                    "en-US",
+                                    {
+                                        weekday: "short",
+                                    }
+                                );
+                                return (
+                                    <div className="emp_dashboard_events_container_item">
+                                        <div className="emp_dashboard_events_container_item_left center">
+                                            <h4>{date}</h4>
+                                            <h5>{day}</h5>
+                                        </div>
+                                        <div className="emp_dashboard_events_container_item_right">
+                                            <h4>{item.eventType}</h4>
+                                            <h5>{item.packageType}</h5>
+                                        </div>
+                                        {item.eventLocation &&
+                                            item.eventLocation[0] && (
+                                                <h2>
+                                                    {
+                                                        item.eventLocation[0]
+                                                            .district
+                                                    }
+                                                </h2>
+                                            )}
+                                        <h3>{formatDate(item.eventDate)}</h3>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div
+                                className="center"
+                                style={{ marginTop: "80px" }}
+                            >
+                                <h6 style={{ color: "#8d93a5" }}>
+                                    No Upcoming Events
+                                </h6>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
             {employee ? (
                 <div>
                     <div className="emp_dashboard_pending_laves_container">
@@ -94,9 +185,16 @@ function EmpDashboard() {
                             strokeWidth={10}
                             strokeColor={"#4F46E5"}
                             strokeLinecap="square"
-                            percent={calculateLeavePercentage(employee.leavesBalance[2].casualUsed, employee.leavesBalance[2].casualLeave)}
-                            format={(percent) => <span>{employee.leavesBalance[2].casualUsed}/
-                            {employee.leavesBalance[2].casualLeave}</span>}
+                            percent={calculateLeavePercentage(
+                                employee.leavesBalance[2].casualUsed,
+                                employee.leavesBalance[2].casualLeave
+                            )}
+                            format={(percent) => (
+                                <span>
+                                    {employee.leavesBalance[2].casualUsed}/
+                                    {employee.leavesBalance[2].casualLeave}
+                                </span>
+                            )}
                         />
                         <div className="emp_dashboard_leave_balance_container_right">
                             <h4>Casual leave</h4>
@@ -122,7 +220,11 @@ function EmpDashboard() {
                                         fill="#f0f0f0"
                                     />
                                 </svg>
-                                <h5>Remaining - {employee.leavesBalance[2].casualLeave-employee.leavesBalance[2].casualUsed}</h5>
+                                <h5>
+                                    Remaining -{" "}
+                                    {employee.leavesBalance[2].casualLeave -
+                                        employee.leavesBalance[2].casualUsed}
+                                </h5>
                             </div>
                             <div
                                 style={{
@@ -146,7 +248,10 @@ function EmpDashboard() {
                                         fill="#4F46E5"
                                     />
                                 </svg>
-                                <h5>Used - {employee.leavesBalance[2].casualUsed}</h5>
+                                <h5>
+                                    Used -{" "}
+                                    {employee.leavesBalance[2].casualUsed}
+                                </h5>
                             </div>
                         </div>
                     </div>
