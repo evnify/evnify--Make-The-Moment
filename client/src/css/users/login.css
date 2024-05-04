@@ -23,6 +23,12 @@
     width: 100%;
   }
   
+  /* Add this CSS to your stylesheet */
+  .login-form-button:hover {
+    background-color: #99707E !important; /* Change to your desired hover color */
+}
+
+
 
 
 

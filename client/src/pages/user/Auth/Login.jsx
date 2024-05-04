@@ -190,8 +190,9 @@ const Login = () => {
                                 defaultActiveBg: "#1890ff",
                             },
                             hover: {
-                                color: "black", // Change hover color to black
+                                color: "#1890ff",
                             },
+                            
                         },
                     }}
                 >
@@ -267,7 +268,7 @@ const Login = () => {
                                 type="primary"
                                 htmlType="submit"
                                 className="login-form-button"
-                                style={{ borderRadius: "5px" }}
+                                loading={loading}
                                 size="middle"
                                 onClick={handleLogin}
                             >
