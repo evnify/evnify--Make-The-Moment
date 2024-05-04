@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Doughnut } from "react-chartjs-2"; // Added Bar import
 import { Column } from "@ant-design/plots";
-import { Chart } from 'chart.js/auto';
-import LoginCountChart from './LoginCountChart';
-
+import { Chart } from "chart.js/auto";
+import LoginCountChart from "./LoginCountChart";
 
 import UserTab from "./UserTab";
 
@@ -40,7 +39,6 @@ function UsersInsights() {
     const [loginData, setLoginData] = useState([]);
     const [loginType, setLoginType] = useState([]);
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -50,7 +48,7 @@ function UsersInsights() {
                 console.error("Error fetching login data:", error);
             }
         };
-    
+
         fetchData();
     }, []);
     useEffect(() => {
@@ -139,22 +137,20 @@ function UsersInsights() {
     ];
 
     const chartData = {
-        labels: loginType.map(entry => entry._id),
+        labels: loginType.map((entry) => entry._id),
         datasets: [
             {
-                data: loginType.map(entry => entry.count),
+                data: loginType.map((entry) => entry.count),
                 backgroundColor: [
                     "rgb(255, 99, 132)",
                     "rgb(54, 162, 235)",
                     "rgb(255, 205, 86)",
                     "rgb(75, 192, 192)",
-                    
                 ],
                 hoverOffset: 4,
             },
         ],
     };
-
 
     const options = {
         plugins: {
@@ -163,38 +159,6 @@ function UsersInsights() {
             },
         },
     };
-
-    // const config = {
-    //     data: loginData,
-    //     xField: "_id", // Date field
-    //     yField: "count", // Count of logins
-    //     label: {
-    //         formatter: (d) => `${d.count}`, // Display count on the bar
-    //         style: {
-    //             fill: '#fff', // Label text color
-    //         },
-    //     },
-    //     xAxis: {
-    //         title: {
-    //             text: "Date",
-    //         },
-    //     },
-    //     yAxis: {
-    //         title: {
-    //             text: "Number of Logins",
-    //         },
-    //     },
-    //     meta: {
-    //         _id: {
-    //             alias: "Date",
-    //         },
-    //         count: {
-    //             alias: "Number of Logins",
-    //         },
-    //     },
-    //};
-    
-
 
     return (
         <>
@@ -208,7 +172,7 @@ function UsersInsights() {
                         <p>Users Insights</p>
                     </div>
                     <div className="bar_chart">
-                       <LoginCountChart />
+                        <LoginCountChart />
                     </div>
                 </div>
 

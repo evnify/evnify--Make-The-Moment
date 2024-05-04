@@ -441,3 +441,10 @@
     gap: 10px;
     margin-right: 80px;
 }
+
+.daily-login-count-chart-container{
+    width: 560px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: auto;
+}

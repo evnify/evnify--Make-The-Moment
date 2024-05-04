@@ -49,30 +49,26 @@ function LoginCountChart() {
                 labels: labels,
                 datasets: [
                     {
-                        label: "Login Count",
                         data: data.map((item) => item.count),
-                        backgroundColor: "rgb(119, 97, 229)",
+                        backgroundColor: "#533C56",
                         borderRadius: 60,
                     },
                 ],
             },
+            width: 500,
             options: {
                 scales: {
                     x: {
-                        title: {
-                            display: false,
-                            text: "Date",
-                        },
+                        display: false,
                     },
                     y: {
-                        title: {
-                            display: false,
-                            text: "Login Count",
-                        },
                         beginAtZero: true,
                     },
-
-                    
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
                 },
             },
         });
