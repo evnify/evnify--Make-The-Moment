@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Footer } from "../../components";
 import { Carousel, Button, Card, Avatar } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import{ig, fb, li, yt} from "../../assets"
-const { Meta } = Card;
+import axios from "axios";
 
 function HomePage() {
+    const setViewCount = async () => {
+        axios.get(`${process.env.PUBLIC_URL}/api/viewCounts/trigger`)
+        };
+
     const contentStyle = {
         color: "#fff",
         justifyContent: "center",
@@ -19,6 +23,8 @@ function HomePage() {
 
     const navigate = useNavigate();
     const [size, setSize] = useState("large");
+
+    setViewCount();
 
     return (
         <div className="home_page_background_container">
