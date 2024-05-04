@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { Input } from "antd";
 import { Navbar, Footer } from "../../components";
 import { useParams } from "react-router-dom";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { ProductOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
     Checkbox,
@@ -170,7 +170,7 @@ const filter = (inputValue, path) => {
 function Booking() {
     const [navbarSticky, setNavbarSticky] = useState(true);
     const { category, id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [color, setColor] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewProduct, setPreviewProduct] = useState({});
@@ -387,11 +387,11 @@ function Booking() {
                 <div
                     className="Carousel_card_container_image"
                     style={{
-                        backgroundImage: `url(${product[0].itemImage})`,
+                        backgroundImage: `url(${product.itemImage})`,
                     }}
                     onClick={() => {
                         setPreviewOpen(true);
-                        setPreviewProduct(product[0]);
+                        setPreviewProduct(product);
                     }}
                 ></div>
                 <div className="Carousel_card_container_description">
@@ -403,7 +403,7 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h4>{product[0].itemName}</h4>
+                        <h4>{product.itemName}</h4>
                         <button
                             style={{
                                 fontSize: "20px",
@@ -413,7 +413,7 @@ function Booking() {
                             }}
                             className="center booking_cart_button"
                             onClick={(event) => {
-                                addToCart(product[0]);
+                                addToCart(product);
                                 event.target.style.transform = "scale(1.1)";
                                 setTimeout(() => {
                                     event.target.style.transform = "scale(1)";
@@ -431,8 +431,8 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h6>{product[0].unitPrice} LKR</h6>
-                        <p>{product[0].inventoryStatus}</p>
+                        <h6>{product.unitPrice} LKR</h6>
+                        <p>{product.inventoryStatus}</p>
                     </div>
                 </div>
             </div>
@@ -455,36 +455,25 @@ function Booking() {
                 console.error(error);
             }
         };
-        fetchBookingDetails();
+        if (id !== "custom") {
+            fetchBookingDetails();
+        }
+        fetchInventories();
     }, [id]);
 
-    useEffect(() => {
-        const fetchInventories = async () => {
-            setLoading(true);
-            try {
-                if (selectedPackage) {
-                    let temp = selectedPackage[0].inventories;
-                    let inventories = [];
-                    for (let i = 0; i < temp.length; i++) {
-                        const response = await axios.post(
-                            `${process.env.PUBLIC_URL}/api/packages/getInventoryByID`,
-                            {
-                                itemID: temp[i].id,
-                            }
-                        );
-                        if (response.data.length > 0) {
-                            inventories.push(response.data);
-                        }
-                    }
-                    setProducts(inventories);
-                }
-            } catch (error) {
-                console.error(error);
+    const fetchInventories = async () => {
+        setLoading(true);
+        try {
+            if (selectedPackage) {
+                const response = await axios.get(
+                    `${process.env.PUBLIC_URL}/api/packages/getInventoriesByEventType/${category}`
+                );
+                setProducts(response.data);
             }
-        };
-
-        fetchInventories();
-    }, [selectedPackage]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     //Filters
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -500,7 +489,7 @@ function Booking() {
             let temp = [];
             products.map((product) => {
                 if (
-                    product[0].itemName
+                    product.itemName
                         .toLowerCase()
                         .includes(searchKey.toLowerCase())
                 ) {
@@ -510,27 +499,27 @@ function Booking() {
 
             if (color === "Black") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "black"
+                    (item) => item.color.toLowerCase() === "black"
                 );
             } else if (color === "Brown") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "brown"
+                    (item) => item.color.toLowerCase() === "brown"
                 );
             } else if (color === "White") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "white"
+                    (item) => item.color.toLowerCase() === "white"
                 );
             } else if (color === "Red") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "red"
+                    (item) => item.color.toLowerCase() === "red"
                 );
             } else if (color === "Grey") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "grey"
+                    (item) => item.color.toLowerCase() === "grey"
                 );
             } else if (color === "Tan") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "tan"
+                    (item) => item.color.toLowerCase() === "tan"
                 );
             }
             setFilteredProducts(temp);
@@ -543,36 +532,30 @@ function Booking() {
         setPlates([]);
         setWineGlasses([]);
         setOther([]);
+        filterProductsByType();
     }, [searchKey, products, color]);
 
-    useEffect(() => {
-        const filterProductsByType = () => {
-            if (filteredProducts.length === 0) return null;
-
-            filteredProducts.map((item) => {
-                if (item[0].category.toLowerCase() === "chairs") {
-                    setChairs((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "tables") {
-                    setTables((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "cake holders") {
-                    setCakeHolders((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "plates") {
-                    setPlates((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "wineglasses") {
-                    setWineGlasses((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "other") {
-                    setOther((itm) => [...(itm || []), item]);
-                }
-            });
-            setLoading(false);
-        };
-
-        filterProductsByType();
-    }, [filteredProducts]);
+    const filterProductsByType = () => {
+        if (filteredProducts.length === 0) return null;
+        filteredProducts.map((item) => {
+            if (item.category.toLowerCase() === "chairs") {
+                setChairs((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "tables") {
+                setTables((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "cake holders") {
+                setCakeHolders((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "plates") {
+                setPlates((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "wineglasses") {
+                setWineGlasses((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "other") {
+                setOther((itm) => [...(itm || []), item]);
+            }
+        });
+    };
 
     //Booking popup
     const [bookingModal, setBookingModal] = useState(false);
-    const [bookingData, setBookingData] = useState([]);
     const [current, setCurrent] = useState(0);
 
     //Add Billing Address
@@ -620,49 +603,50 @@ function Booking() {
 
     const saveBooking = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (email === "" || cardNumber === "" || expDate === "" || cvc === "" || nameOnCard === "" || zip === "") {
+
+        if (
+            email === "" ||
+            cardNumber === "" ||
+            expDate === "" ||
+            cvc === "" ||
+            nameOnCard === "" ||
+            zip === ""
+        ) {
             message.error("Please fill all the fields");
             return;
-        }else if (cart.length === 0) {
+        } else if (cart.length === 0) {
             message.error("Please add items to the cart");
             return;
         } else if (date === null) {
             message.error("Please select a date");
             return;
-        }else if (!emailRegex.test(email)) {
+        } else if (!emailRegex.test(email)) {
             message.error("Invalid email address");
             return;
         }
 
         try {
-            axios.post(
-                `${process.env.PUBLIC_URL}/api/bookings/saveBooking`,
-                {
-                    customerID : userId,
-                    transactionID : "1234",
-                    eventType : selectedPackage[0].eventType,
-                    packageType : selectedPackage[0].packageType,
-                    eventLocation : [addressData],
-                    eventDate : date,
-                    amount : calculateTotal() + selectedPackage[0].price,
-                    status : "Pending",
-                    AssignedInventory : cart,
-                    AssignedEmployees : [],
-                }
-            );
-            axios.post(
-                `${process.env.PUBLIC_URL}/api/bookings/savePayment`,
-                {
-                    transactionID : "1234",
-                    customerID : userId,
-                    customerEmail : email,
-                    packageType : selectedPackage[0].packageType,
-                    amount : calculateTotal() + selectedPackage[0].price,
-                    paymentType : "Card",
-                    description : "Booking Payment",
-                }
-            )
+            axios.post(`${process.env.PUBLIC_URL}/api/bookings/saveBooking`, {
+                customerID: userId,
+                transactionID: "1234",
+                eventType: selectedPackage[0].eventType,
+                packageType: selectedPackage[0].packageType,
+                eventLocation: [addressData],
+                eventDate: date,
+                amount: calculateTotal() + selectedPackage[0].price,
+                status: "Pending",
+                AssignedInventory: cart,
+                AssignedEmployees: [],
+            });
+            axios.post(`${process.env.PUBLIC_URL}/api/bookings/savePayment`, {
+                transactionID: "1234",
+                customerID: userId,
+                customerEmail: email,
+                packageType: selectedPackage[0].packageType,
+                amount: calculateTotal() + selectedPackage[0].price,
+                paymentType: "Card",
+                description: "Booking Payment",
+            });
             message.success("Booking saved successfully");
             setBookingModal(false);
             setEmail("");
@@ -677,7 +661,7 @@ function Booking() {
             console.error(error);
             message.error("Error saving booking");
         }
-    }
+    };
 
     //Retrieve Address
     const [addressList, setAddressList] = useState([]);
@@ -696,8 +680,11 @@ function Booking() {
         };
 
         fetchAddress();
-        
     }, [userId]);
+
+    setTimeout(() => {
+        setLoading(false);
+    }, 10000);
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -925,60 +912,78 @@ function Booking() {
                                                 </div>
                                             </Radio>
                                             <div className="billing_address_radio_btn1_txt1">
-                                                            <h5>
-                                                                Secondary
-                                                                Billing Address
-                                                            </h5>
-                                                        </div>
+                                                <h5>
+                                                    Secondary Billing Address
+                                                </h5>
+                                            </div>
                                             {addressList.map((address) => (
                                                 <Radio value={2}>
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        gap: "20px",
-                                                    }}
-                                                >
-                                                    <div>
-                                                        {" "}
-                                                        <div className="billing_address_radio_btn1_txt2">
-                                                            <h5>{address.city}</h5>
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexDirection:
+                                                                "row",
+                                                            gap: "20px",
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            {" "}
+                                                            <div className="billing_address_radio_btn1_txt2">
+                                                                <h5>
+                                                                    {
+                                                                        address.city
+                                                                    }
+                                                                </h5>
+                                                            </div>
+                                                            <div className="billing_address_radio_btn1_txt3">
+                                                                <h5>
+                                                                    {
+                                                                        address.postalCode
+                                                                    }
+                                                                    ,{" "}
+                                                                    {
+                                                                        address.addressLine1
+                                                                    }{" "}
+                                                                    ,
+                                                                    {
+                                                                        address.district
+                                                                    }
+                                                                    ,{" "}
+                                                                    {
+                                                                        address.country
+                                                                    }
+                                                                </h5>
+                                                            </div>
                                                         </div>
-                                                        <div className="billing_address_radio_btn1_txt3">
-                                                            <h5>
-                                                                {address.postalCode}, {address.addressLine1} ,{address.district}, {address.country}
-                                                            </h5>
+                                                        <div className="billing_address_radio_btn1_txt4">
+                                                            <div className="billing_address_radio_btn1_delete_btn">
+                                                                <button
+                                                                    style={{
+                                                                        border: "none",
+                                                                        background:
+                                                                            "none",
+                                                                        marginRight:
+                                                                            "10px",
+                                                                    }}
+                                                                >
+                                                                    <Icon icon="material-symbols:delete-outline" />
+                                                                </button>
+                                                            </div>
+                                                            <div className="billing_address_radio_btn1_edit_btn">
+                                                                <button
+                                                                    style={{
+                                                                        border: "none",
+                                                                        background:
+                                                                            "none",
+                                                                    }}
+                                                                >
+                                                                    <Icon icon="tabler:edit" />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="billing_address_radio_btn1_txt4">
-                                                        <div className="billing_address_radio_btn1_delete_btn">
-                                                            <button
-                                                                style={{
-                                                                    border: "none",
-                                                                    background:
-                                                                        "none",
-                                                                    marginRight:
-                                                                        "10px",
-                                                                }}
-                                                            >
-                                                                <Icon icon="material-symbols:delete-outline" />
-                                                            </button>
-                                                        </div>
-                                                        <div className="billing_address_radio_btn1_edit_btn">
-                                                            <button
-                                                                style={{
-                                                                    border: "none",
-                                                                    background:
-                                                                        "none",
-                                                                }}
-                                                            >
-                                                                <Icon icon="tabler:edit" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Radio>
-                                                ))}
+                                                </Radio>
+                                            ))}
                                         </div>
                                     </Radio.Group>
                                 </div>
@@ -1013,10 +1018,11 @@ function Booking() {
                                     </div>
                                     <div className="total_calculate_section">
                                         <h3>
-                                            Total : {" "}
+                                            Total :{" "}
                                             {(calculateTotal() ?? 0) +
                                                 (selectedPackage[0]?.price ??
-                                                    0)}{" "} LKR
+                                                    0)}{" "}
+                                            LKR
                                         </h3>
                                     </div>
                                 </div>
@@ -1048,7 +1054,9 @@ function Booking() {
                                                 type="email"
                                                 placeholder="Email"
                                                 size="large"
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) =>
+                                                    setEmail(e.target.value)
+                                                }
                                                 style={{
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
@@ -1079,7 +1087,11 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
-                                                onChange={(e) => setCardNumber(e.target.value)}
+                                                onChange={(e) =>
+                                                    setCardNumber(
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </div>
                                         <div
@@ -1096,7 +1108,9 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
-                                                onChange={(e) => setExpDate(e.target.value)}
+                                                onChange={(e) =>
+                                                    setExpDate(e.target.value)
+                                                }
                                             />
 
                                             <Input
@@ -1107,7 +1121,9 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
-                                                onChange={(e) => setCvc(e.target.value)}
+                                                onChange={(e) =>
+                                                    setCvc(e.target.value)
+                                                }
                                             />
                                         </div>
                                         <div
@@ -1133,7 +1149,11 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
-                                                onChange={(e) => setNameOnCard(e.target.value)}
+                                                onChange={(e) =>
+                                                    setNameOnCard(
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </div>
                                         <div
@@ -1161,7 +1181,9 @@ function Booking() {
                                                     boxShadow:
                                                         "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
                                                 }}
-                                                onChange={(e) => setZip(e.target.value)}
+                                                onChange={(e) =>
+                                                    setZip(e.target.value)
+                                                }
                                             />
                                         </div>
                                         <div
@@ -1177,8 +1199,10 @@ function Booking() {
                                             </Checkbox>
                                         </div>
                                         <div className="center">
-                                            <button className="payment_confirm_btn_72"
-                                            onClick={saveBooking}>
+                                            <button
+                                                className="payment_confirm_btn_72"
+                                                onClick={saveBooking}
+                                            >
                                                 Pay
                                             </button>
                                         </div>
