@@ -10,14 +10,12 @@ import {
     InventoryList,
     EmployeeList,
     LeaveRequests,
-    AssignEvents,
     AddBlog,
     ExistingBlogs,
     PaymentInsights,
     Payroll,
     MessageInsights,
-    AllMessages,
-    UserEmails
+    AllMessages
 } from "./admin";
 
 function AdminRoutes() {
@@ -33,14 +31,12 @@ function AdminRoutes() {
                 <Route path="/inventorylist" element={<InventoryList />} />
                 <Route path="/employeelist" element={<EmployeeList />} />
                 <Route path="/leaverequests" element={<LeaveRequests />} />
-                <Route path="/assigntoevents" element={<AssignEvents />} />
                 <Route path="/addblog" element={<AddBlog />} />
                 <Route path="/blogs" element={<ExistingBlogs />} />
                 <Route path="/paymentinsights" element={<PaymentInsights />} />
                 <Route path="/payroll" element={<Payroll />} />
                 <Route path="/messageinsights" element={<MessageInsights />} />
                 <Route path="/allmessages" element={<AllMessages />} />
-                <Route path="/useremails" element={<UserEmails />} />
             </Routes>
         </div>
     );

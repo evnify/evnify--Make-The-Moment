@@ -46,10 +46,10 @@ const Login = () => {
                 const userData = response.data;
 
                 if (userData.userType === "Admin") {
-                    navigate("/admin/*");
+                    navigate("/admin");
                     message.success("Login Successful");
                 } else if (userData.userType === "Employee") {
-                    navigate("/employee/*");
+                    navigate("/employee");
                     message.success("Login Successful");
                 } else {
                     navigate("/");
