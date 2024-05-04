@@ -183,6 +183,7 @@ function Booking() {
     const [glassesFilter, setWineGlassesFilter] = useState(false);
     const [decorationsFilter, setDecorationsFilter] = useState(false);
     const [allFilter, setAllFilter] = useState(true);
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
     const items = [
         getItem("Category", "sub1", null, [
@@ -812,6 +813,7 @@ function Booking() {
         };
 
         fetchAddress();
+        setIsHelpModalOpen(true);
     }, [userId]);
 
     setTimeout(() => {
@@ -1577,6 +1579,62 @@ function Booking() {
                     >
                         Save Address
                     </button>
+                </div>
+            </Modal>
+
+            {/* Help model */}
+            <Modal
+                centered
+                open={isHelpModalOpen}
+                onCancel={() => setIsHelpModalOpen(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                    fontSize: 24,
+                                    fontWeight: 700,
+                                }}
+                            >
+                                Instructions to follow
+                            </span>
+                            <span>
+                                You have selected {selectedPackage[0]?.packageType}{" "}. Please follow the instructions below to complete the booking.
+                            </span>
+                                <br />
+                            <ul>
+                                <li>
+                                    <p>Step 1: Add items to the cart</p>
+                                </li>
+                                <p>&nbsp;&nbsp;&nbsp;*You must be select minimum these quantities according to {selectedPackage[0]?.packageType} &nbsp;&nbsp;&nbsp;&nbsp;package policies.</p>
+                                <ol>
+                                    {selectedPackage[0]?.inventories.map((item) => (
+                                        <li>{item.category} : {item.quantity}</li>
+                                    ))}
+                                </ol>
+                                <br />
+                                <p>&nbsp;if you want fully customize please select customize package</p>
+                                <br />
+                                <li>
+                                    <p>Step 2: Add or Select billing address</p>
+                                </li>
+                                <li>
+                                    <p>Step 3: Make the payment</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </Modal>
 
