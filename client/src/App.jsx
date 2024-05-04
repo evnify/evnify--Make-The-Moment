@@ -1,3 +1,4 @@
+
 import "./App.css";
 import {
     HomePage,
@@ -12,11 +13,37 @@ import {
     Blog,
     EmpDashboard,
     ForgetPassword,
+    AccessDenied,
+    PageNotFound,
 } from "./pages";
-import { BrowserRouter, Route, Routes ,Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes  } from "react-router-dom";
 import { Reset, Verify } from "./pages/user";
+import { useEffect,useState } from "react";
+import axios from "axios";
 
 function App() {
+
+    const [user, setUser] = useState(null);
+    const getUser = async () => {
+        try {
+            const url = `${process.env.REACT_APP_API_URL}/auth/login/success`;
+            const {data} = await axios.get(url, { withCredentials: true });
+            setUser(data.user._json);
+
+        }
+        catch (error) {
+            console.error(error);
+        }
+
+    };
+
+    useEffect(() => {
+        getUser();
+    }
+    , []);
+
+
+
     return (
         <div className="App">
             <BrowserRouter basename="/">
@@ -36,8 +63,10 @@ function App() {
                         path="/forgetpassword"
                         element={<ForgetPassword />}
                     />
-                    <Route path="/reset" element={<Reset />} />
+                    <Route path="/reset-password/:id/:token" element={<Reset />} />
                     <Route path="/verify" element={<Verify />} />
+                    <Route path="/accessdenied" element={<AccessDenied />} />
+                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </div>

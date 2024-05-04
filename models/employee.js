@@ -11,6 +11,10 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userID : {
+        type: String,
+        required: true,
+    },
     firstName : {
         type: String,
         required: true,
@@ -49,7 +53,7 @@ const employeeSchema = new mongoose.Schema({
     },
     status : {
         type: String,
-        default: "active",
+        default: "Active",
     },
     leavesBalance : {
         type: Array,
