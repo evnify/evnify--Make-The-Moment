@@ -15,19 +15,16 @@
     margin-bottom: 10px;
 }
 
-.UsersInsights{
+.UsersInsights {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.admin_profile{
+.admin_profile {
     border-radius: 50%;
-    margin: 10px 0 10px 0 ;
-   
-
-
+    margin: 10px 0 10px 0;
 }
 
 .admin_user_details_card {
@@ -388,6 +385,66 @@
     border: none;
     border-radius: 5px;
     padding: 8px 11px;
-    
+}
 
+.chart_title {
+    padding: 15px;
+}
+
+.bar_chart {
+    height: 300px;
+}
+
+
+.chart-container {
+    position: relative;
+    height: 270px;
+    margin-left: 50px;
+}
+
+.chart-legend {
+    position: absolute;
+    top: 50%;
+    right: 20px; /* Adjust the right distance as needed */
+    transform: translateY(-50%);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.legend-label {
+    font-size: 14px;
+}
+
+.admin_user_chart1{
+    height: 400px;
+
+}
+
+.admin_user_chart2{
+    height: 400px;
+}
+
+
+.chart-legend{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 80px;
+}
+
+.daily-login-count-chart-container{
+    width: 560px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: auto;
 }
