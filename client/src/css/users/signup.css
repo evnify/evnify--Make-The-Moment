@@ -38,9 +38,10 @@
     color: aliceblue;
 }
 
-.signup-form-button:hover{
-    background: #533c56;
-    color: aliceblue;
+
+
+.signup-form-button:hover {
+    background-color: #99707E !important; /* Change to your desired hover color */
 }
 
 
