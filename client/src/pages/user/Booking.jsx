@@ -419,6 +419,7 @@ function Booking() {
                 color: product.color,
                 itemType: product.itemType,
                 addedQty: 1,
+                category: product.category,
                 unitPrice: product.unitPrice,
                 quantity: product.quantity,
             };
@@ -433,7 +434,7 @@ function Booking() {
         }
         const updatedCart = cart.map((item) =>
             item.itemID === itemId
-                ? { ...item, addedQty: parseInt(e.target.value, 10) }
+                ? { ...item, quantity: parseInt(e.target.value, 10) }
                 : item
         );
         setCart(updatedCart);
@@ -805,7 +806,6 @@ function Booking() {
                     `${process.env.PUBLIC_URL}/api/bookings/getAddress`,
                     { userID: userId }
                 );
-                console.log(response.data);
                 setAddressList(response.data);
             } catch (error) {
                 console.error(error);
@@ -813,12 +813,102 @@ function Booking() {
         };
 
         fetchAddress();
-        setIsHelpModalOpen(true);
     }, [userId]);
 
     setTimeout(() => {
         setLoading(false);
-    }, 5000);
+    }, 3000);
+
+    const goToCheckout = () => {
+        let chairsCount = 0;
+        let tablesCount = 0;
+        let cakeHoldersCount = 0;
+        let platesCount = 0;
+        let glassesCount = 0;
+        let decorationsCount = 0;
+
+        console.log(cart);
+
+        cart.map((item) => {
+            if (item.category.toLowerCase() === "chairs") {
+                chairsCount += item.quantity;
+            } else if (item.category.toLowerCase() === "tables") {
+                tablesCount += item.quantity;
+            } else if (item.category.toLowerCase() === "cake holders") {
+                cakeHoldersCount += item.quantity;
+            } else if (item.category.toLowerCase() === "plates") {
+                platesCount += item.quantity;
+            } else if (item.category.toLowerCase() === "glasses") {
+                glassesCount += item.quantity;
+            } else if (item.category.toLowerCase() === "decorations") {
+                decorationsCount += item.quantity;
+            }
+        });
+
+        console.log(chairsCount, tablesCount, cakeHoldersCount, platesCount, glassesCount, decorationsCount);
+
+        const maxChairs = selectedPackage[0].inventories.find(
+            (item) => item.category === "chairs"
+        )?.quantity || 0;
+        
+        const maxTables = selectedPackage[0].inventories.find(
+            (item) => item.category === "tables"
+        )?.quantity || 0;
+        
+        const maxCakeHolders = selectedPackage[0].inventories.find(
+            (item) => item.category === "cake holders"
+        )?.quantity || 0;
+        
+        const maxPlates = selectedPackage[0].inventories.find(
+            (item) => item.category === "plates"
+        )?.quantity || 0;
+        
+        const maxGlasses = selectedPackage[0].inventories.find(
+            (item) => item.category === "glasses"
+        )?.quantity || 0;
+        
+        const maxDecorations = selectedPackage[0].inventories.find(
+            (item) => item.category === "decorations"
+        )?.quantity || 0;
+
+        if (chairsCount < parseInt(maxChairs)) {
+            message.error(`Please add ${parseInt(maxChairs) - chairsCount} more chairs`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (tablesCount < parseInt(maxTables)) {
+            message.error(`Please add ${parseInt(maxTables) - tablesCount} more tables`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (cakeHoldersCount < parseInt(maxCakeHolders)) {
+            message.error(`Please add ${parseInt(maxCakeHolders) - cakeHoldersCount} more cake holders`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (platesCount < parseInt(maxPlates)) {
+            message.error(`Please add ${parseInt(maxPlates) - platesCount} more plates`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (glassesCount < parseInt(maxGlasses)) {
+            message.error(`Please add ${parseInt(maxGlasses) - glassesCount} more glasses`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (decorationsCount < parseInt(maxDecorations)) {
+            message.error(`Please add ${parseInt(maxDecorations) - decorationsCount} more decorations`);
+            setIsHelpModalOpen(true);
+            return;
+        }
+        
+
+        if (cart.length === 0) {
+            message.error("Please add items to the cart");
+            return;
+        }
+        setCurrent(1);
+    };
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -967,7 +1057,7 @@ function Booking() {
                                                 </button>
                                                 <input
                                                     type="number"
-                                                    value={item.addedQty}
+                                                    value={item.quantity}
                                                     onChange={(e) =>
                                                         handleChangeQty(
                                                             e,
@@ -990,7 +1080,7 @@ function Booking() {
                                 </div>
                                 <button
                                     className="createBookingBtn_72 "
-                                    onClick={() => setCurrent(1)}
+                                    onClick={goToCheckout}
                                 >
                                     CONTINUE TO CHECKOUT
                                 </button>
@@ -1610,21 +1700,37 @@ function Booking() {
                                 Instructions to follow
                             </span>
                             <span>
-                                You have selected {selectedPackage[0]?.packageType}{" "}. Please follow the instructions below to complete the booking.
+                                You have selected{" "}
+                                {selectedPackage[0]?.packageType} . Please
+                                follow the instructions below to complete the
+                                booking.
                             </span>
-                                <br />
+                            <br />
                             <ul>
                                 <li>
                                     <p>Step 1: Add items to the cart</p>
                                 </li>
-                                <p>&nbsp;&nbsp;&nbsp;*You must be select minimum these quantities according to {selectedPackage[0]?.packageType} &nbsp;&nbsp;&nbsp;&nbsp;package policies.</p>
+                                <p>
+                                    &nbsp;&nbsp;&nbsp;*You must be select
+                                    minimum these quantities according to{" "}
+                                    {selectedPackage[0]?.packageType}{" "}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;package policies.
+                                </p>
                                 <ol>
-                                    {selectedPackage[0]?.inventories.map((item) => (
-                                        <li>{item.category} : {item.quantity}</li>
-                                    ))}
+                                    {selectedPackage[0]?.inventories.map(
+                                        (item) => (
+                                            <li>
+                                                {item.category} :{" "}
+                                                {item.quantity}
+                                            </li>
+                                        )
+                                    )}
                                 </ol>
                                 <br />
-                                <p>&nbsp;if you want fully customize please select customize package</p>
+                                <p>
+                                    &nbsp;if you want fully customize please
+                                    select customize package
+                                </p>
                                 <br />
                                 <li>
                                     <p>Step 2: Add or Select billing address</p>
