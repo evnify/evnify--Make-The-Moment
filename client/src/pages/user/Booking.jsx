@@ -18,7 +18,7 @@ import {
 } from "antd";
 import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
-import axios from "axios";
+import axios, { all } from "axios";
 import { Loader } from "../../components/admin";
 const { Search } = Input;
 
@@ -175,25 +175,98 @@ function Booking() {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewProduct, setPreviewProduct] = useState({});
 
+    //Filters
+    const [chairsFilter, setChairsFilter] = useState(false);
+    const [tablesFilter, setTablesFilter] = useState(false);
+    const [cakeHoldersFilter, setCakeHoldersFilter] = useState(false);
+    const [platesFilter, setPlatesFilter] = useState(false);
+    const [glassesFilter, setWineGlassesFilter] = useState(false);
+    const [decorationsFilter, setDecorationsFilter] = useState(false);
+    const [allFilter, setAllFilter] = useState(true);
+
     const items = [
         getItem("Category", "sub1", null, [
+            <Menu.Item key="all">
+                <Checkbox
+                    checked={allFilter}
+                    onChange={() => {
+                        setAllFilter(!allFilter);
+                        setChairsFilter(false);
+                        setTablesFilter(false);
+                        setCakeHoldersFilter(false);
+                        setPlatesFilter(false);
+                        setWineGlassesFilter(false);
+                        setDecorationsFilter(false);
+                    }}
+                >
+                    All
+                </Checkbox>
+            </Menu.Item>,
             <Menu.Item key="chairs">
-                <Checkbox>Chairs</Checkbox>
+                <Checkbox
+                    checked={chairsFilter}
+                    onChange={() => {
+                        setChairsFilter(!chairsFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Chairs
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="tables">
-                <Checkbox>Tables</Checkbox>
+                <Checkbox
+                    checked={tablesFilter}
+                    onChange={(e) => {
+                        setTablesFilter(!tablesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Tables
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="cakeHolders">
-                <Checkbox>Cake Holders</Checkbox>
+                <Checkbox
+                    checked={cakeHoldersFilter}
+                    onChange={() => {
+                        setCakeHoldersFilter(!cakeHoldersFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Cake Holders
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="plates">
-                <Checkbox>Plates</Checkbox>
+                <Checkbox
+                    checked={platesFilter}
+                    onChange={() => {
+                        setPlatesFilter(!platesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Plates
+                </Checkbox>
             </Menu.Item>,
-            <Menu.Item key="wineglasses">
-                <Checkbox>Wine Glasses</Checkbox>
+            <Menu.Item key="glassesFilter">
+                <Checkbox
+                    checked={glassesFilter}
+                    onChange={() => {
+                        setWineGlassesFilter(!glassesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Glasses
+                </Checkbox>
             </Menu.Item>,
-            <Menu.Item key="other">
-                <Checkbox>Other</Checkbox>
+            <Menu.Item key="decorations">
+                <Checkbox
+                    checked={decorationsFilter}
+                    onChange={() => {
+                        setDecorationsFilter(!decorationsFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Decorations
+                </Checkbox>
             </Menu.Item>,
         ]),
 
@@ -466,7 +539,9 @@ function Booking() {
         try {
             if (selectedPackage) {
                 const response = await axios.get(
-                    `${process.env.PUBLIC_URL}/api/packages/getInventoriesByEventType/${category}`
+                    `${
+                        process.env.PUBLIC_URL
+                    }/api/packages/getInventoriesByEventType/${category.toLowerCase()}`
                 );
                 setProducts(response.data);
             }
@@ -481,21 +556,25 @@ function Booking() {
     const [tables, setTables] = useState(false);
     const [cakeHolders, setCakeHolders] = useState(false);
     const [plates, setPlates] = useState(false);
-    const [wineGlasses, setWineGlasses] = useState(false);
-    const [other, setOther] = useState(false);
+    const [glasses, setGlasses] = useState(false);
+    const [decorations, setDecorations] = useState(false);
 
     useEffect(() => {
         const filterProducts = () => {
             let temp = [];
-            products.map((product) => {
-                if (
-                    product.itemName
-                        .toLowerCase()
-                        .includes(searchKey.toLowerCase())
-                ) {
-                    temp.push(product);
-                }
-            });
+            if (searchKey === "") {
+                products.map((product) => {
+                    if (
+                        product.itemName
+                            .toLowerCase()
+                            .includes(searchKey.toLowerCase())
+                    ) {
+                        temp.push(product);
+                    }
+                });
+            } else {
+                temp = products;
+            }
 
             if (color === "Black") {
                 temp = temp.filter(
@@ -522,6 +601,48 @@ function Booking() {
                     (item) => item.color.toLowerCase() === "tan"
                 );
             }
+
+            if (!allFilter) {
+                let ch = [];
+                let ta = [];
+                let pl = [];
+                let gl = [];
+                let dec = [];
+
+                if (chairsFilter) {
+                    ch = temp.filter(
+                        (item) => item.category.toLowerCase() === "chairs"
+                    );
+                }
+                if (tablesFilter) {
+                    ta = temp.filter(
+                        (item) => item.category.toLowerCase() === "tables"
+                    );
+                }
+                if (cakeHoldersFilter) {
+                    ch = temp.filter(
+                        (item) => item.category.toLowerCase() === "cake holders"
+                    );
+                }
+                if (platesFilter) {
+                    pl = temp.filter(
+                        (item) => item.category.toLowerCase() === "plates"
+                    );
+                }
+                if (glassesFilter) {
+                    gl = temp.filter(
+                        (item) => item.category.toLowerCase() === "glasses"
+                    );
+                }
+                if (decorationsFilter) {
+                    dec = temp.filter(
+                        (item) => item.category.toLowerCase() === "decorations"
+                    );
+                }
+
+                temp = [...ch, ...ta, ...ch, ...pl, ...gl, ...dec];
+            }
+
             setFilteredProducts(temp);
         };
 
@@ -530,10 +651,21 @@ function Booking() {
         setTables([]);
         setCakeHolders([]);
         setPlates([]);
-        setWineGlasses([]);
-        setOther([]);
+        setGlasses([]);
+        setDecorations([]);
         filterProductsByType();
-    }, [searchKey, products, color]);
+    }, [
+        searchKey,
+        products,
+        color,
+        chairsFilter,
+        tablesFilter,
+        decorationsFilter,
+        platesFilter,
+        glassesFilter,
+        cakeHoldersFilter,
+        allFilter,
+    ]);
 
     const filterProductsByType = () => {
         if (filteredProducts.length === 0) return null;
@@ -546,10 +678,10 @@ function Booking() {
                 setCakeHolders((itm) => [...(itm || []), item]);
             } else if (item.category.toLowerCase() === "plates") {
                 setPlates((itm) => [...(itm || []), item]);
-            } else if (item.category.toLowerCase() === "wineglasses") {
-                setWineGlasses((itm) => [...(itm || []), item]);
-            } else if (item.category.toLowerCase() === "other") {
-                setOther((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "glasses") {
+                setGlasses((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "decorations") {
+                setDecorations((itm) => [...(itm || []), item]);
             }
         });
     };
@@ -684,7 +816,7 @@ function Booking() {
 
     setTimeout(() => {
         setLoading(false);
-    }, 10000);
+    }, 5000);
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -1602,11 +1734,11 @@ function Booking() {
                                         />
                                     </div>
                                 ) : null}
-                                {wineGlasses.length > 0 ? (
+                                {glasses.length > 0 ? (
                                     <div className="user_booking_corosal">
-                                        <h3>Wine Glasses</h3>
+                                        <h3>Glasses</h3>
                                         <Carousel
-                                            value={wineGlasses}
+                                            value={glasses}
                                             numScroll={1}
                                             numVisible={4}
                                             style={{
@@ -1618,11 +1750,11 @@ function Booking() {
                                         />
                                     </div>
                                 ) : null}
-                                {other.length > 0 ? (
+                                {decorations.length > 0 ? (
                                     <div className="user_booking_corosal">
-                                        <h3>Others</h3>
+                                        <h3>Decorations</h3>
                                         <Carousel
-                                            value={other}
+                                            value={decorations}
                                             numScroll={1}
                                             numVisible={4}
                                             style={{
