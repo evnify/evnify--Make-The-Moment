@@ -34,6 +34,7 @@ function ViewCountChart() {
 
     const generateLast30Days = () => {
         const today = new Date();
+        today.setDate(today.getDate() + 1)
         const days = [];
         for (let i = 29; i >= 0; i--) {
             const date = new Date(today);
