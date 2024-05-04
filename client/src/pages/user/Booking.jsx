@@ -20,7 +20,6 @@ import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
 import axios from "axios";
 import { Loader } from "../../components/admin";
-import { set } from "mongoose";
 const { Search } = Input;
 
 // Side Menu
