@@ -18,6 +18,7 @@ const messagesRoute = require("./routes/messagesRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const salaryRoute = require("./routes/salaryRoute");
 const emailRoute = require("./routes/emailRoute");
+const viewCountRoute = require("./routes/viewCountRoute");
 const cookieSession = require("cookie-session");
 
 app.use(express.json());
@@ -34,6 +35,7 @@ app.use("/api/payments", paymentRoute);
 app.use("/api/salary", salaryRoute);
 app.use("/auth", authRoute);
 app.use("/api/emails", emailRoute);
+app.use("/api/viewCounts", viewCountRoute);
 
 
 
