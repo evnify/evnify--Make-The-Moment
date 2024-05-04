@@ -202,8 +202,8 @@ function InventoryInsights() {
                 </div>
                 <div className="inventories">
                     <div className="inventroy-catagory-item">
-                        <div className="inventory_left">
-                            <div>
+                        <div className="Invertory-btn">
+                            <div className="inventory_left">
                                 <h3>Item Categories</h3>
                                 <p className="p_text">
                                     Mostly Used Categories in Month

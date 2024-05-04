@@ -281,8 +281,16 @@
 .inventory_left{
     padding: 15px;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.Invertory-btn{
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 20px;
+
 }
 
 .chart_inventory{
