@@ -306,7 +306,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    min-height: 600px;
+    min-height: 435px;
 
     background: #ffffff;
     width: calc(100% - 30px);

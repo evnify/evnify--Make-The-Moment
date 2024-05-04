@@ -142,6 +142,7 @@ const Login = () => {
 
             const userData = response.data;
 
+
             // Redirect based on userType
             switch (userData.userType) {
                 case "Admin":
@@ -154,6 +155,7 @@ const Login = () => {
                     navigate("/admin");
                     break;
                 default:
+
                     navigate("/");
                     break;
             }
