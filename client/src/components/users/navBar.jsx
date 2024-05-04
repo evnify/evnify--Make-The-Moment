@@ -197,7 +197,7 @@ function NavBarUser() {
                 <a
                     style={{ textDecoration: "none" }}
                     rel="noopener noreferrer"
-                    href="/userprofile"
+                    href="/userprofile" 
                 >
                     My Account
                 </a>

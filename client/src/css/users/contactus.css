@@ -310,3 +310,57 @@
   border-color: #1890ff; /* Change the hover border color to blue */
   color: #fff; /* Change the hover text color to white */
 }
+
+
+/*user profile contact us*/
+
+.user-contact-us-left{
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: 500px;
+  border-radius: 11px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin: 10px 0 10px 100px;
+}
+
+.user-contact-us-right{
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  width: 500px;
+  border-radius: 11px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  margin: 10px 100px 10px 0;
+}
+
+.user-contactus-title{
+  font-size: 32px;
+  margin: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.user-contactus-description{
+  font-size: 18px;
+  margin: 10px 20px 10px 20px;
+  text-align: justify;
+  height: 150px;
+  color: #6d7785
+}
+
+.user-contactus-btn{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  width: 150px;
+  cursor: pointer;
+  margin: 20px 0 0 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+.user-contactus-btn:hover {
+  background-color: #8c5c93; 
+  border-color: #533C56;
+  color: #fff;
+}
