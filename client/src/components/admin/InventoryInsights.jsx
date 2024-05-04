@@ -37,12 +37,12 @@ function InventoryInsights() {
             }
         });
 
-
-
-        return Array.from(categoryMap.entries()).map(([category, quantity]) => ({
-            category,
-            quantity
-        }));
+        return Array.from(categoryMap.entries()).map(
+            ([category, quantity]) => ({
+                category,
+                quantity,
+            })
+        );
     };
 
     const [categoryData, setCategoryData] = useState([]);
@@ -51,16 +51,15 @@ function InventoryInsights() {
         const data = getCategoryData();
         setCategoryData(data);
     }, [inventories]);
-
     const config = {
         data: categoryData,
         xField: "category",
         yField: "quantity",
         label: {
-            position: "top", // Adjusted position to show labels at the top of each bar
             style: {
                 fill: "#FFFFFF",
                 opacity: 0.6,
+                maxWidth: 100,
             },
         },
         xAxis: {
@@ -74,8 +73,9 @@ function InventoryInsights() {
                 alias: "Quantity",
             },
         },
+        columnWidthRatio: 0.6, // Adjust this value to decrease the width of the bars
     };
-
+    
 
     const getMostBookedCategories = () => {
         // Assuming inventories are sorted by booking count
@@ -87,8 +87,11 @@ function InventoryInsights() {
         datasets: [
             {
                 label: "Booked Categories",
-                data: getMostBookedCategories().map((category) =>
-                    getCategoryData().find((item) => item.category === category)?.quantity ?? 0
+                data: getMostBookedCategories().map(
+                    (category) =>
+                        getCategoryData().find(
+                            (item) => item.category === category
+                        )?.quantity ?? 0
                 ),
 
                 backgroundColor: [
@@ -97,15 +100,11 @@ function InventoryInsights() {
                     "rgb(255, 205, 86)",
 
                     // Add more colors as needed
-
                 ],
                 hoverOffset: 4,
             },
         ],
     };
-
-
-
 
     const exportToPdf = () => {
         const pdf = new jsPDF();
