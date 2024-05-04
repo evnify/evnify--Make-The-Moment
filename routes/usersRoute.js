@@ -176,7 +176,7 @@ router.post("/activeUser", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { email,password } = req.body;
 
     try {
         const user = await UserModel.findOne({
@@ -210,6 +210,43 @@ router.post("/login", async (req, res) => {
     }
 });
 
+
+router.post("/loginGoogle", async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await UserModel.findOne({
+            email: email,
+            
+        });
+        if (user) {
+            const temp = {
+                userID: user.userID,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                userType: user.userType,
+                status: user.status,
+                profilePic: user.profilePic,
+            };
+            res.send(temp);
+
+            const userLogin = new UserLogin({
+                userId: user._id,
+                userType: user.userType,
+                ipAddress: req.ip,
+            });
+            await userLogin.save();
+        } else {
+            return res.status(400).json({ message: "Login Failed" });
+        }
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+
 router.post("/login-data", async (req, res) => {
     try {
         const loginData = await UserLogin.aggregate([
@@ -221,7 +258,6 @@ router.post("/login-data", async (req, res) => {
                             date: "$timestamp",
                         },
                     },
-
 
                     count: { $sum: 1 },
                 },
@@ -236,14 +272,16 @@ router.post("/login-data", async (req, res) => {
     }
 });
 
-
 router.post("/login-type", async (req, res) => {
     try {
         const loginData = await UserLogin.aggregate([
             {
-                $match: { // Filter by userType
-                    userType: { $in: ["Customer", "Hr-Manager", "Employee", "Admin"] }
-                }
+                $match: {
+                    // Filter by userType
+                    userType: {
+                        $in: ["Customer", "Hr-Manager", "Employee", "Admin"],
+                    },
+                },
             },
             {
                 $group: {
@@ -259,11 +297,6 @@ router.post("/login-type", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-
-
-
-
 
 router.post("/register", async (req, res) => {
     const userID = await generateUniqueID();

@@ -49,13 +49,60 @@ const Login = () => {
 
     const checkEmailExistence = async (email) => {
         try {
-            const response = await axios.post(`/api/users/check-existing/${email}`);
+            const response = await axios.post("/api/users/check-existing", {
+                email,
+            });
             const emailExists = response.data.exists;
-            
+
             if (emailExists) {
-                handleLogin();
+                const user = {
+                    email,
+                };
+                try {
+                    setLoading(true);
+                    const loginResponse = await axios.post(
+                        "/api/users/loginGoogle",
+                        user
+                    );
+                    setLoading(false);
+
+                    const userData = loginResponse.data;
+
+                    // Redirect based on userType
+                    switch (userData.userType) {
+                        case "Admin":
+                            navigate("/admin");
+                            break;
+                        case "Employee":
+                            navigate("/employee");
+                            break;
+                        case "Hr-Manager":
+                            navigate("/admin");
+                            break;
+                        default:
+                            navigate("/");
+                            break;
+                    }
+
+                    // Store user data in local storage
+                    localStorage.setItem(
+                        "currentUser",
+                        JSON.stringify(userData)
+                    );
+
+                    // Reload the window
+                    window.location.reload();
+                } catch (error) {
+                    setLoading(false);
+                    console.error("Login error:", error);
+                    setError(true);
+                    message.error("Invalid email or password");
+                }
             } else {
-                message.error("Email not registered. Cannot proceed with login.");
+                // If email doesn't exist, display error message
+                message.error(
+                    "Email not registered. Cannot proceed with login."
+                );
                 console.log("Email not registered. Cannot proceed with login.");
             }
         } catch (error) {
@@ -84,41 +131,49 @@ const Login = () => {
     };
 
     const handleLogin = async () => {
-        {
+        try {
+            setLoading(true);
             const user = {
                 email,
                 password,
             };
-            try {
-                setLoading(true);
-                const response = await axios.post("/api/users/login", user);
-                setLoading(false);
+            const response = await axios.post("/api/users/login", user);
+            setLoading(false);
 
-                const userData = response.data;
+            const userData = response.data;
 
-                if (userData.userType === "Admin") {
-                    navigate("/admin/*");
-                    message.success("Login Successful");
-                } else if (userData.userType === "Employee") {
-                    navigate("/employee/*");
-                    message.success("Login Successful");
-                }
-                else if (userData.userType === "Hr-Manager") {
-                    navigate("/admin/*");
-                    message.success("Login Successful");
-                } else {
+            // Redirect based on userType
+            switch (userData.userType) {
+                case "Admin":
+                    navigate("/admin");
+                    break;
+                case "Employee":
+                    navigate("/employee");
+                    break;
+                case "Hr-Manager":
+                    navigate("/admin");
+                    break;
+                default:
                     navigate("/");
-                    message.success("Login Successful");
-                }
-
-                localStorage.setItem("currentUser", JSON.stringify(userData));
-                window.location.reload();
-            } catch (error) {
-                setLoading(false);
-                console.error("Login error:", error);
-                setError(true);
-                message.error("Invalid email or passwor");
+                    break;
             }
+
+            // Store user data in local storage
+            localStorage.setItem("currentUser", JSON.stringify(userData));
+
+            // Reload the window
+            window.location.reload();
+            // Before redirecting
+            localStorage.setItem("scrollPosition", window.pageYOffset);
+
+            // After page reloads
+            const scrollPosition = localStorage.getItem("scrollPosition");
+            window.scrollTo(0, scrollPosition);
+        } catch (error) {
+            setLoading(false);
+            console.error("Login error:", error);
+            setError(true);
+            message.error("Invalid email or password");
         }
     };
 
@@ -238,8 +293,15 @@ const Login = () => {
                     </div>
 
                     <Grid item xs={12} className="mt-3 ml-2 text-center">
-                        <button onClick={() => login()}>
-                            Sign in with Google 🚀{" "}
+                        <button
+                            className="login-with-google-btn"
+                            onClick={() => login()}
+                        >
+                            Sign in with Google{" "}
+                            <i className="fab fa-google"></i>
+                        </button>
+                        <button class="login-with-facebook-btn">
+                            Login with Facebook
                         </button>
                     </Grid>
                 </ConfigProvider>
