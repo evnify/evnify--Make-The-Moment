@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Doughnut } from "react-chartjs-2"; // Added Bar import
 import { Column } from "@ant-design/plots";
+import { Chart } from 'chart.js/auto';
+import LoginCountChart from './LoginCountChart';
+
 
 import UserTab from "./UserTab";
 
@@ -161,27 +164,35 @@ function UsersInsights() {
         },
     };
 
-    const config = {
-        data: loginData,
-        xField: "_id", // Date field
-        yField: "count", // Count of logins
-        label: {
-            formatter: (d) => `${d.count}`, // Display count on the bar
-            style: {
-                fill: '#fff', // Label text color
-            },
-        },
-        xAxis: {
-            title: {
-                text: "Date",
-            },
-        },
-        yAxis: {
-            title: {
-                text: "Number of Logins",
-            },
-        },
-    };
+    // const config = {
+    //     data: loginData,
+    //     xField: "_id", // Date field
+    //     yField: "count", // Count of logins
+    //     label: {
+    //         formatter: (d) => `${d.count}`, // Display count on the bar
+    //         style: {
+    //             fill: '#fff', // Label text color
+    //         },
+    //     },
+    //     xAxis: {
+    //         title: {
+    //             text: "Date",
+    //         },
+    //     },
+    //     yAxis: {
+    //         title: {
+    //             text: "Number of Logins",
+    //         },
+    //     },
+    //     meta: {
+    //         _id: {
+    //             alias: "Date",
+    //         },
+    //         count: {
+    //             alias: "Number of Logins",
+    //         },
+    //     },
+    //};
     
 
 
@@ -197,7 +208,7 @@ function UsersInsights() {
                         <p>Users Insights</p>
                     </div>
                     <div className="bar_chart">
-                        <Column {...config} />
+                       <LoginCountChart />
                     </div>
                 </div>
 

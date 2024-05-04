@@ -22,6 +22,7 @@ import AddPackage from "./AddPackage";
 import UpdatePackage from "./UpdatePackage";
 import UserTab from "./UserTab";
 import Loader from "./Loader";
+import LoginCountChart from "./LoginCountChart";
 
 export {
     SideMenu,
@@ -44,5 +45,6 @@ export {
     UserEmails,
     NavBar,
     UserTab,
-    Loader
+    Loader,
+    LoginCountChart
 };
