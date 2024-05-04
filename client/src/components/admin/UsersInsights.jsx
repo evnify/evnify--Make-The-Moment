@@ -166,7 +166,7 @@ function UsersInsights() {
             <div className="chart_container">
                 <div className="admin_user_chart1">
                     <div className="chart_title">
-                        <h3>Users Insights</h3>
+                        <h3>Daily Login's</h3>
                         <p>Users Insights</p>
                     </div>
                     <div className="bar_chart">

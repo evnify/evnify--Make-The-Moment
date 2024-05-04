@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined ,EditOutlined} from "@ant-design/icons";
 import axios from "axios";
 import { Input} from "antd";
+import Link from "antd/es/typography/Link";
 const { Search, TextArea } = Input;
 
 function UserProfile() {
@@ -300,9 +301,11 @@ function UserProfile() {
                                 src={previewImage}
                             />
                         </Modal>
+                        <Link href="/userprofile/UserSettings" >
                         <button className="btn btn-primary edit">
                             Edit Profile
                         </button>
+                    </Link>
                     </div>
                 </div>
 
