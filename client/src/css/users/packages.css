@@ -36,6 +36,9 @@
     justify-content: center;
     border-radius: 11px;
     cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .user_package_type_card_72 h2 {
@@ -60,8 +63,6 @@
     font-style: normal;
     font-weight: 400;
 }
-
-
 
 .user_package_content_container h2 {
     margin: 20px 0 30px 100px;
