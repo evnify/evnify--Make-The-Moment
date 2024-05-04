@@ -129,3 +129,61 @@
   font-weight: 600;
   margin: 0 30px 0 22px;
 }
+
+.payment-insight-container{
+  display: flex;
+  flex-direction: row;
+  color: #464646;
+  width: 100%;
+  height:100%;
+}
+
+.payment-insight{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 97%;
+  height: 350px;
+  border-radius: 11px;
+  margin: 0 0 15px 15px; 
+}
+
+.insight-cards{
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+  width: 280px;
+  height: 100%;
+  border-radius: 11px;
+}
+
+.total-amount-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 160px;
+  border-radius: 11px;
+  background:#e4ffe1;
+}
+
+.total-transaction-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 160px;
+  border-radius: 11px;
+  background:#e8f0fb;
+}
+
+.insight-chart{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 920px;
+  height: 100%;
+  border-radius: 11px;
+  background:#ffffff;
+  padding: 10px;
+}
