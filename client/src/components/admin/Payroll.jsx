@@ -129,30 +129,38 @@ function Payroll() {
 
         doc.setFontSize(14);
         doc.text(`Basic Salary :`, 22, 100);
-        doc.text(`${record.basicSalary} LKR`, 192, 100, { align: 'right' });
-        doc.setFont(undefined, "bold").text(`Allowances`, 22, 112).setFont(undefined, "normal");
+        doc.text(`${record.basicSalary} LKR`, 192, 100, { align: "right" });
+        doc.setFont(undefined, "bold")
+            .text(`Allowances`, 22, 112)
+            .setFont(undefined, "normal");
         {
             var y = 120;
             var x = 0;
             record.allowances.map((allowance, index) => {
                 doc.text(`${allowance.name} :`, 22, y + x * 10);
-                doc.text(`${allowance.amount} LKR`, 192, y + x * 10, { align: 'right' });
+                doc.text(`${allowance.amount} LKR`, 192, y + x * 10, {
+                    align: "right",
+                });
                 x++;
             });
-            x = x+0.5;
+            x = x + 0.5;
         }
-        doc.setFont(undefined, "bold").text(`Deductions`, 22, y + x*10 ).setFont(undefined, "normal");
+        doc.setFont(undefined, "bold")
+            .text(`Deductions`, 22, y + x * 10)
+            .setFont(undefined, "normal");
         x++;
         {
             record.deductions.map((deduction, index) => {
                 doc.text(`${deduction.name} :`, 22, y + x * 10);
-                doc.text(`${deduction.amount} LKR`, 192, y + x * 10, { align: 'right' });
+                doc.text(`${deduction.amount} LKR`, 192, y + x * 10, {
+                    align: "right",
+                });
                 x++;
             });
         }
 
         doc.text(`Total Salary :`, 22, 220);
-        doc.text(`${record.netSalary} LKR`, 192, 220, { align: 'right' });
+        doc.text(`${record.netSalary} LKR`, 192, 220, { align: "right" });
 
         doc.save(`pay_sheet_of_${record.salaryID}.pdf`);
     };
@@ -618,6 +626,14 @@ function Payroll() {
         }
     };
 
+    const deleteDeduction = (index) => {
+        setDeductions((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
+    };
+
     const newAllowance = (e) => {
         e.preventDefault();
         if (allowanceName === "" || allowanceName === null)
@@ -632,6 +648,14 @@ function Payroll() {
             setAllowanceName("");
             setAllowanceAmount("");
         }
+    };
+
+    const deleteAllowance = (index) => {
+        setAllowances((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
     };
 
     //Retrieve All Employee Details
@@ -711,7 +735,6 @@ function Payroll() {
         console.log("searchKey", searchKey);
         console.log("selectedType", selectedType);
     }, [searchKey, selectedType, salaryList]);
-
 
     return (
         <div>
@@ -1002,6 +1025,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteAllowance(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1117,6 +1151,15 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteAllowance(index)}
+                            ></button>
                         </div>
                     ))}
                 </div>
