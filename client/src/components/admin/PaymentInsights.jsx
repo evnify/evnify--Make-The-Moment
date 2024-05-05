@@ -109,6 +109,41 @@ function PaymentInsights() {
         },
     ];
 
+    //genarate CSV
+    const generateCSVData = () => {
+        if (!paymentData) return "";
+        const headers = [
+            "Transaction ID",
+            "Customer ID",
+            "Customer Email",
+            "Description",
+            "Amount",
+        ];
+        const rows = paymentData.map((payment) => [
+            payment.transactionID,
+            payment.customerID,
+            payment.customerEmail,
+            payment.description,
+            payment.amount,
+        ]);
+        const csvData = [headers, ...rows];
+        const csvContent = csvData.map((row) => row.join(",")).join("\n");
+        return csvContent;
+    };
+
+    const handleDownloadCSV = () => {
+        const csvContent = generateCSVData();
+        if (csvContent) {
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "payment_history.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    };
+
     return (
         <div>
             <div className="payment-insight-container">
@@ -177,8 +212,11 @@ function PaymentInsights() {
                         <div className="payment-table-top">
                             <div className="payment-table-title">Payments</div>
                             <div clssName="export-payment-btn">
-                                <button className="export-payment-csv">
-                                    Export Csv
+                                <button
+                                    className="export-payment-csv"
+                                    onClick={handleDownloadCSV}
+                                >
+                                    Export CSV
                                 </button>
                             </div>
                         </div>
