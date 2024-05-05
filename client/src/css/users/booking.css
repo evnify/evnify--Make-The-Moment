@@ -288,6 +288,7 @@
     padding: 40px 0 0 0;
     overflow-y: scroll;
     overflow-x: hidden;
+    scrollbar-width: thin;
 }
 
 .booking_cart_item_footer {
@@ -348,7 +349,7 @@
     width: 50px;
     height: 30px;
     border-radius: 5px;
-    border: 1px solid #363636;
+    border: 1px solid #b1b1b1;
     padding: 5px;
     margin-bottom: 20px;
 }
@@ -405,8 +406,19 @@
     display: flex;
     flex-direction: column;
     margin-top: 10px; 
-    width: 500px;
+    width: 450px;
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: thin;
 }
+.secondary_address_radio_btn1_txt1 h5 {
+    color: var(--Gray-900, #161c24);
+    font-size: 19.013px;
+    font-weight: 700;
+    margin-left: 25px;
+}
+
 .billing_address_radio_btn1_txt1 h5 {
     color: var(--Gray-900, #161c24);
     font-size: 19.013px;
@@ -444,6 +456,8 @@
     height: fit-content;
     background: transparent;
     border: none;
+    cursor: pointer;
+    color: #49516f;
 }
 .booking_cart_item_container_3{
     display: flex;
@@ -469,6 +483,7 @@
     margin-left: 50px;
     overflow-y: scroll;
     overflow-x: hidden;
+    scrollbar-width: thin;
     padding: 40px 0 0 0;
 }
 .payment_confirm_btn_72{

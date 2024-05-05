@@ -185,6 +185,9 @@ function Booking() {
     const [allFilter, setAllFilter] = useState(true);
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
+    const [selectedAddress, setSelectedAddress] = useState({});
+    const [isEdit, setIsEdit] = useState(false);
+
     const items = [
         getItem("Category", "sub1", null, [
             <Menu.Item key="all">
@@ -372,13 +375,9 @@ function Booking() {
     const [userId, setUserId] = useState({});
 
     useEffect(() => {
-        const fetchUserByID = async () => {
-            const user = JSON.parse(localStorage.getItem("currentUser"));
-            const userID = user.userID;
-            setUserId(userID);
-        };
-
-        fetchUserByID();
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        setUserId(userID);
     }, []);
 
     const [date, setDate] = useState(null);
@@ -552,6 +551,35 @@ function Booking() {
         }
     };
 
+    const fetchAddress = async () => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        let temp = [];
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/getDefaultAddress`,
+                { userID: userID }
+            );
+            setDefaultAddress(response.data);
+            setSelectedAddress(response.data);
+            temp.push(response.data);
+            try {
+                const response1 = await axios.post(
+                    `${process.env.PUBLIC_URL}/api/bookings/getSecondaryAddress`,
+                    { userID: userID }
+                );
+                response1.data.map((address) => {
+                    temp.push(address);
+                });
+                setAddressList(temp);
+            } catch (error) {
+                console.error(error);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     //Filters
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [chairs, setChairs] = useState(false);
@@ -711,10 +739,8 @@ function Booking() {
                 { userID: userId, address: addressData }
             );
             message.success("Address saved successfully");
+            fetchAddress();
             setIsModalOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error("Error saving address");
             //clear form
             setAddressData({
                 country: "Sri Lanka",
@@ -724,6 +750,9 @@ function Booking() {
                 city: "",
                 postalCode: "",
             });
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving address");
         }
     };
 
@@ -799,19 +828,9 @@ function Booking() {
 
     //Retrieve Address
     const [addressList, setAddressList] = useState([]);
+    const [defaultAddress, setDefaultAddress] = useState({});
     useEffect(() => {
-        const fetchAddress = async () => {
-            try {
-                const response = await axios.post(
-                    `${process.env.PUBLIC_URL}/api/bookings/getAddress`,
-                    { userID: userId }
-                );
-                setAddressList(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
+        setAddressList([]);
         fetchAddress();
     }, [userId]);
 
@@ -845,69 +864,158 @@ function Booking() {
             }
         });
 
-        console.log(chairsCount, tablesCount, cakeHoldersCount, platesCount, glassesCount, decorationsCount);
+        console.log(
+            chairsCount,
+            tablesCount,
+            cakeHoldersCount,
+            platesCount,
+            glassesCount,
+            decorationsCount
+        );
 
-        const maxChairs = selectedPackage[0].inventories.find(
-            (item) => item.category === "chairs"
-        )?.quantity || 0;
-        
-        const maxTables = selectedPackage[0].inventories.find(
-            (item) => item.category === "tables"
-        )?.quantity || 0;
-        
-        const maxCakeHolders = selectedPackage[0].inventories.find(
-            (item) => item.category === "cake holders"
-        )?.quantity || 0;
-        
-        const maxPlates = selectedPackage[0].inventories.find(
-            (item) => item.category === "plates"
-        )?.quantity || 0;
-        
-        const maxGlasses = selectedPackage[0].inventories.find(
-            (item) => item.category === "glasses"
-        )?.quantity || 0;
-        
-        const maxDecorations = selectedPackage[0].inventories.find(
-            (item) => item.category === "decorations"
-        )?.quantity || 0;
+        const maxChairs =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "chairs"
+            )?.quantity || 0;
+
+        const maxTables =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "tables"
+            )?.quantity || 0;
+
+        const maxCakeHolders =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "cake holders"
+            )?.quantity || 0;
+
+        const maxPlates =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "plates"
+            )?.quantity || 0;
+
+        const maxGlasses =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "glasses"
+            )?.quantity || 0;
+
+        const maxDecorations =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "decorations"
+            )?.quantity || 0;
 
         if (chairsCount < parseInt(maxChairs)) {
-            message.error(`Please add ${parseInt(maxChairs) - chairsCount} more chairs`);
+            message.error(
+                `Please add ${parseInt(maxChairs) - chairsCount} more chairs`
+            );
             setIsHelpModalOpen(true);
             return;
         }
         if (tablesCount < parseInt(maxTables)) {
-            message.error(`Please add ${parseInt(maxTables) - tablesCount} more tables`);
+            message.error(
+                `Please add ${parseInt(maxTables) - tablesCount} more tables`
+            );
             setIsHelpModalOpen(true);
             return;
         }
         if (cakeHoldersCount < parseInt(maxCakeHolders)) {
-            message.error(`Please add ${parseInt(maxCakeHolders) - cakeHoldersCount} more cake holders`);
+            message.error(
+                `Please add ${
+                    parseInt(maxCakeHolders) - cakeHoldersCount
+                } more cake holders`
+            );
             setIsHelpModalOpen(true);
             return;
         }
         if (platesCount < parseInt(maxPlates)) {
-            message.error(`Please add ${parseInt(maxPlates) - platesCount} more plates`);
+            message.error(
+                `Please add ${parseInt(maxPlates) - platesCount} more plates`
+            );
             setIsHelpModalOpen(true);
             return;
         }
         if (glassesCount < parseInt(maxGlasses)) {
-            message.error(`Please add ${parseInt(maxGlasses) - glassesCount} more glasses`);
+            message.error(
+                `Please add ${parseInt(maxGlasses) - glassesCount} more glasses`
+            );
             setIsHelpModalOpen(true);
             return;
         }
         if (decorationsCount < parseInt(maxDecorations)) {
-            message.error(`Please add ${parseInt(maxDecorations) - decorationsCount} more decorations`);
+            message.error(
+                `Please add ${
+                    parseInt(maxDecorations) - decorationsCount
+                } more decorations`
+            );
             setIsHelpModalOpen(true);
             return;
         }
-        
 
         if (cart.length === 0) {
             message.error("Please add items to the cart");
             return;
         }
         setCurrent(1);
+    };
+
+    const handleRadioChange = (e, a) => {
+        setSelectedAddress(a);
+        console.log(a);
+    };
+
+    // address delete
+    const handleDeleteAddress = async (address) => {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/deleteAddress`,
+                { userID: userId, address: address }
+            );
+            message.success("Address deleted successfully");
+            fetchAddress();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    //edit address
+    const [editIndex, setEditIndex] = useState(0);
+    const editAddressData = () => {
+        console.log(addressData, editIndex);
+        try {
+            axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/updateAddress`,
+                { userID: userId, addressIndex: editIndex, newAddress: addressData }
+            );
+            message.success("Address edited successfully");
+            fetchAddress();
+            setIsModalOpen(false);
+            //clear form
+            setAddressData({
+                country: "Sri Lanka",
+                addressLine1: "",
+                addressLine2: "",
+                district: "",
+                city: "",
+                postalCode: "",
+            });
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving address");
+        }
+    };
+
+    const handleEditAddress = (address, index) => {
+        setIsEdit(true);
+        setEditIndex(--index);
+        setAddressData({
+            country: "Sri Lanka",
+            addressLine1: address.addressLine1,
+            addressLine2: address.addressLine2,
+            district: address.district,
+            city: address.city,
+            postalCode: address.postalCode,
+        });
+        setIsModalOpen(true);
+
     };
 
     return (
@@ -1095,7 +1203,10 @@ function Booking() {
                                     <div>
                                         <button
                                             className="add_new_address_Btn_72 "
-                                            onClick={() => setIsModalOpen(true)}
+                                            onClick={() => {
+                                                setIsModalOpen(true);
+                                                setIsEdit(false);
+                                            }}
                                         >
                                             Add New Address
                                         </button>
@@ -1103,7 +1214,7 @@ function Booking() {
                                 </div>
                                 <hr className="billing_address_hr_tag" />
                                 <div className="billing_address_radio_section">
-                                    <Radio.Group>
+                                    <Radio.Group defaultValue={0}>
                                         <div
                                             style={{
                                                 display: "flex",
@@ -1111,12 +1222,17 @@ function Booking() {
                                             }}
                                         >
                                             <Radio
-                                                value={1}
+                                                value={0}
                                                 className="billing_address_radio_btn1"
+                                                onChange={(e) =>
+                                                    handleRadioChange(
+                                                        e,
+                                                        defaultAddress
+                                                    )
+                                                }
                                             >
                                                 <div>
                                                     <div>
-                                                        {" "}
                                                         <div className="billing_address_radio_btn1_txt1">
                                                             <h5>
                                                                 Default Billing
@@ -1128,86 +1244,137 @@ function Booking() {
                                                         </div>
                                                         <div className="billing_address_radio_btn1_txt3">
                                                             <h5>
-                                                                1800, New Kandy
-                                                                Road ,Malabe, SL
+                                                                {
+                                                                    defaultAddress.addressLine1
+                                                                }{" "}
+                                                                ,
+                                                                {
+                                                                    defaultAddress.district
+                                                                }
+                                                                ,{" "}
+                                                                {
+                                                                    defaultAddress.city
+                                                                }{" "}
+                                                                SL
                                                             </h5>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </Radio>
-                                            <div className="billing_address_radio_btn1_txt1">
-                                                <h5>
-                                                    Secondary Billing Address
-                                                </h5>
-                                            </div>
-                                            {addressList.map((address) => (
-                                                <Radio value={2}>
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            flexDirection:
-                                                                "row",
-                                                            gap: "20px",
-                                                        }}
-                                                    >
-                                                        <div>
-                                                            {" "}
-                                                            <div className="billing_address_radio_btn1_txt2">
-                                                                <h5>
-                                                                    {
-                                                                        address.city
-                                                                    }
-                                                                </h5>
-                                                            </div>
-                                                            <div className="billing_address_radio_btn1_txt3">
-                                                                <h5>
-                                                                    {
-                                                                        address.postalCode
-                                                                    }
-                                                                    ,{" "}
-                                                                    {
-                                                                        address.addressLine1
-                                                                    }{" "}
-                                                                    ,
-                                                                    {
-                                                                        address.district
-                                                                    }
-                                                                    ,{" "}
-                                                                    {
-                                                                        address.country
-                                                                    }
-                                                                </h5>
-                                                            </div>
-                                                        </div>
-                                                        <div className="billing_address_radio_btn1_txt4">
-                                                            <div className="billing_address_radio_btn1_delete_btn">
-                                                                <button
-                                                                    style={{
-                                                                        border: "none",
-                                                                        background:
-                                                                            "none",
-                                                                        marginRight:
-                                                                            "10px",
-                                                                    }}
-                                                                >
-                                                                    <Icon icon="material-symbols:delete-outline" />
-                                                                </button>
-                                                            </div>
-                                                            <div className="billing_address_radio_btn1_edit_btn">
-                                                                <button
-                                                                    style={{
-                                                                        border: "none",
-                                                                        background:
-                                                                            "none",
-                                                                    }}
-                                                                >
-                                                                    <Icon icon="tabler:edit" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                            {addressList.length > 1 && (
+                                                <>
+                                                    <div className="secondary_address_radio_btn1_txt1">
+                                                        <h5>
+                                                            Secondary Billing
+                                                            Address
+                                                        </h5>
                                                     </div>
-                                                </Radio>
-                                            ))}
+                                                    {addressList
+                                                        .slice(
+                                                            1,
+                                                            addressList.length
+                                                        )
+                                                        .map(
+                                                            (
+                                                                address,
+                                                                index
+                                                            ) => (
+                                                                <>
+                                                                    <Radio
+                                                                        value={
+                                                                            ++index
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            handleRadioChange(
+                                                                                e,
+                                                                                address
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <div
+                                                                            style={{
+                                                                                display:
+                                                                                    "flex",
+                                                                                flexDirection:
+                                                                                    "row",
+                                                                                gap: "20px",
+                                                                            }}
+                                                                        >
+                                                                            <div>
+                                                                                {" "}
+                                                                                <div className="billing_address_radio_btn1_txt3">
+                                                                                    <h5>
+                                                                                        {
+                                                                                            address.addressLine1
+                                                                                        }{" "}
+                                                                                        ,
+                                                                                        {
+                                                                                            address.district
+                                                                                        }
+
+                                                                                        ,{" "}
+                                                                                        {
+                                                                                            address.city
+                                                                                        }{" "}
+                                                                                        {
+                                                                                            address.postalCode
+                                                                                        }{" "}
+                                                                                        SL
+                                                                                    </h5>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="billing_address_radio_btn1_txt4">
+                                                                                <div className="billing_address_radio_btn1_delete_btn">
+                                                                                    <button
+                                                                                        style={{
+                                                                                            border: "none",
+                                                                                            background:
+                                                                                                "none",
+                                                                                            marginRight:
+                                                                                                "10px",
+                                                                                            color: "#49516f",
+                                                                                        }}
+                                                                                        onClick={() =>
+                                                                                            handleDeleteAddress(
+                                                                                                address
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        <Icon icon="material-symbols:delete-outline" />
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="billing_address_radio_btn1_edit_btn">
+                                                                                    <button
+                                                                                        style={{
+                                                                                            border: "none",
+                                                                                            background:
+                                                                                                "none",
+                                                                                            color: "#49516f",
+                                                                                        }}
+                                                                                        onClick={() =>
+                                                                                            handleEditAddress(
+                                                                                                address, index
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        <Icon icon="tabler:edit" />
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </Radio>
+                                                                    <hr
+                                                                        style={{
+                                                                            width: "400px",
+                                                                        }}
+                                                                    />
+                                                                </>
+                                                            )
+                                                        )}
+                                                </>
+                                            )}
                                         </div>
                                     </Radio.Group>
                                 </div>
@@ -1527,6 +1694,7 @@ function Booking() {
                                         addressLine1: e.target.value,
                                     })
                                 }
+                                value={addressData.addressLine1}
                             />
                         </div>
                         <div
@@ -1554,6 +1722,7 @@ function Booking() {
                                         addressLine2: e.target.value,
                                     })
                                 }
+                                value={addressData.addressLine2}
                             />
                         </div>
                         <div
@@ -1584,6 +1753,7 @@ function Booking() {
                                 placeholder="Please select"
                                 showSearch={{ filter }}
                                 onSearch={(value) => console.log(value)}
+                                value={addressData.district}
                             />
                         </div>
                     </div>
@@ -1650,25 +1820,23 @@ function Booking() {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <span
-                            style={{
-                                marginTop: "3px",
-                            }}
-                        >
-                            <Checkbox>
-                                Make this as my default payment method
-                            </Checkbox>
-                        </span>
-                    </div>
                 </div>
                 <div className=" center">
-                    <button
-                        className="saveAddressBtn_72"
-                        onClick={saveAddressData}
-                    >
-                        Save Address
-                    </button>
+                    {isEdit ? (
+                        <button
+                            className="saveAddressBtn_72 center"
+                            onClick={editAddressData}
+                        >
+                            Edit Address
+                        </button>
+                    ) : (
+                        <button
+                            className="saveAddressBtn_72 center"
+                            onClick={saveAddressData}
+                        >
+                            Save Address
+                        </button>
+                    )}
                 </div>
             </Modal>
 
@@ -1823,6 +1991,10 @@ function Booking() {
                                             return message.error(
                                                 "Please add items to the cart"
                                             );
+                                        } else if (date === null) {
+                                            return message.error(
+                                                "Please select a date"
+                                            );
                                         } else {
                                             setBookingModal(true);
                                         }
@@ -1943,6 +2115,10 @@ function Booking() {
                                             if (cart.length === 0) {
                                                 return message.error(
                                                     "Please add items to the cart"
+                                                );
+                                            } else if (date === null) {
+                                                return message.error(
+                                                    "Please select a date"
                                                 );
                                             } else {
                                                 setBookingModal(true);

@@ -60,13 +60,61 @@ router.post("/savePayment", async (req, res) => {
     }
 });
 
-router.post("/getAddress", async (req, res) => {
+router.post("/getSecondaryAddress", async (req, res) => {
     const { userID } = req.body;
     try {
         const user = await UserModel.findOne({
             userID,
         });
         res.send(user.addressArr);
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+router.post("/getDefaultAddress", async (req, res) => {
+    const { userID } = req.body;
+    try {
+        const user = await UserModel.findOne({
+            userID,
+        });
+
+        const defaultAddress = {
+            country: "Sri Lanka",
+            addressLine1: user.address1[0],
+            addressLine2: "",
+            district: user.province[0],
+            city: user.city[0],
+            postalCode: user.zipcode,
+        };
+
+        res.send(defaultAddress);
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+router.post("/deleteAddress", async (req, res) => {
+    const { userID, address } = req.body;
+    try {
+        const user = await UserModel.findOneAndUpdate(
+            { userID },
+            { $pull: { addressArr: address } }
+        );
+        res.send("Address deleted successfully");
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+router.post("/updateAddress", async (req, res) => {
+    const { userID, addressIndex, newAddress } = req.body; // Assuming addressIndex is the index of the address to update
+    try {
+        const user = await UserModel.findOneAndUpdate(
+            { userID },
+            { $set: { [`addressArr.${addressIndex}`]: newAddress } } // Update the address at the specified index
+        );
+        res.send("Address updated successfully");
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
@@ -121,7 +169,11 @@ router.post("/saveAddress", async (req, res) => {
 router.post("/editBookingById", async (req, res) => {
     try {
         const { _id, cart } = req.body;
-        const booking = await Booking.findByIdAndUpdate({ _id }, { AssignedInventory: cart }, { new: true });
+        const booking = await Booking.findByIdAndUpdate(
+            { _id },
+            { AssignedInventory: cart },
+            { new: true }
+        );
         res.send(booking);
     } catch (error) {
         return res.status(400).json({ message: error });
