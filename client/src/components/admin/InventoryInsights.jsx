@@ -1,15 +1,16 @@
-import { Column } from "@ant-design/plots";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
-import { Doughnut } from "react-chartjs-2";
 import jsPDF from "jspdf";
 import axios from "axios";
 import { Table, Tag } from "antd";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Chart from "chart.js/auto";
 
 function InventoryInsights() {
     const navigate = useNavigate();
+    const doughnutChartRef = useRef(null);
+    const columnChartRef = useRef(null);
 
     const [inventories, setInventories] = useState([]);
 
@@ -51,64 +52,14 @@ function InventoryInsights() {
         const data = getCategoryData();
         setCategoryData(data);
     }, [inventories]);
-    const config = {
-        data: categoryData,
-        xField: "category",
-        yField: "quantity",
-        label: {
-            style: {
-                fill: "#FFFFFF",
-                opacity: 0.6,
-                maxWidth: 100,
-            },
-        },
-        xAxis: {
-            label: {
-                autoHide: true,
-                autoRotate: false,
-            },
-        },
-        meta: {
-            quantity: {
-                alias: "Quantity",
-            },
-        },
-        columnWidthRatio: 0.6, // Adjust this value to decrease the width of the bars
-    };
-    
 
     const getMostBookedCategories = () => {
-        // Assuming inventories are sorted by booking count
         return inventories.slice(0, 3).map((item) => item.category);
-    };
-
-    const chartData = {
-        labels: getMostBookedCategories(),
-        datasets: [
-            {
-                label: "Booked Categories",
-                data: getMostBookedCategories().map(
-                    (category) =>
-                        getCategoryData().find(
-                            (item) => item.category === category
-                        )?.quantity ?? 0
-                ),
-
-                backgroundColor: [
-                    "rgb(255, 99, 132)",
-                    "rgb(54, 162, 235)",
-                    "rgb(255, 205, 86)",
-
-                    // Add more colors as needed
-                ],
-                hoverOffset: 4,
-            },
-        ],
     };
 
     const exportToPdf = () => {
         const pdf = new jsPDF();
-        const canvas = document.querySelector(".chart_inventory canvas");
+        const canvas = document.getElementById("column-chart2");
         const dataURL = canvas.toDataURL();
         pdf.addImage(dataURL, "PNG", 10, 10, 200, 75);
         pdf.save("inventory_chart.pdf");
@@ -133,7 +84,7 @@ function InventoryInsights() {
         },
         {
             title: "STATUS",
-            key: "quantity",
+            key: "status",
             dataIndex: "quantity",
             render: (quantity) => {
                 let color = "green";
@@ -155,6 +106,79 @@ function InventoryInsights() {
         const options = { month: "short", day: "2-digit", year: "numeric" };
         return date.toLocaleDateString("en-US", options);
     }
+
+    useEffect(() => {
+        if (doughnutChartRef.current) {
+            doughnutChartRef.current.destroy();
+        }
+        const ctx = document.getElementById("doughnut-chart2");
+        if (ctx) {
+            const newChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: getMostBookedCategories(),
+                    datasets: [
+                        {
+                            label: "Booked Categories",
+                            data: getMostBookedCategories().map(
+                                (category) =>
+                                    getCategoryData().find(
+                                        (item) => item.category === category
+                                    )?.quantity ?? 0
+                            ),
+                            backgroundColor: [
+                                "rgb(255, 99, 132)",
+                                "rgb(54, 162, 235)",
+                                "rgb(255, 205, 86)",
+                            ],
+                            hoverOffset: 4,
+                        },
+                    ],
+                },
+            });
+            doughnutChartRef.current = newChartInstance;
+        }
+    }, [inventories]);
+
+    useEffect(() => {
+        if (columnChartRef.current) {
+            columnChartRef.current.destroy();
+        }
+        const ctx = document.getElementById("column-chart2");
+        if (ctx) {
+            const newChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: categoryData.map((data) => data.category),
+                    datasets: [
+                        {
+                            label: "Quantity",
+                            data: categoryData.map((data) => data.quantity),
+                            backgroundColor: "rgb(54, 162, 235)",
+                            borderWidth: 1,
+                        },
+                    ],
+                },
+                
+            options: {
+                scales: {
+                    x: {
+                        display: false,
+                    },
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+            },
+            });
+            columnChartRef.current = newChartInstance;
+        }
+    }, [categoryData]);
 
     return (
         <div className="inventory-insight">
@@ -183,7 +207,7 @@ function InventoryInsights() {
                     </button>
                 </div>
                 <div className="chart_inventory">
-                    <Column {...config} />
+                    <canvas id="column-chart2"></canvas>
                 </div>
             </div>
 
@@ -191,12 +215,10 @@ function InventoryInsights() {
                 <div className="inventroy-catagory">
                     <div className="inventory_left">
                         <h3>Item Categories</h3>
-                        <p className="p_text">
-                            Mostly Used Categories in Month
-                        </p>
+                        <p className="p_text">Mostly Used Categories in Month</p>
                     </div>
-                    <div div className="chart_inventory">
-                        <Doughnut data={chartData} />
+                    <div className="chart_inventory">
+                        <canvas id="doughnut-chart2"></canvas>
                     </div>
                 </div>
                 <div className="inventories">
@@ -204,9 +226,7 @@ function InventoryInsights() {
                         <div className="Invertory-btn">
                             <div className="inventory_left">
                                 <h3>Item Categories</h3>
-                                <p className="p_text">
-                                    Mostly Used Categories in Month
-                                </p>
+                                <p className="p_text">Mostly Used Categories in Month</p>
                             </div>
                             <button
                                 style={{
