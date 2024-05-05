@@ -118,8 +118,9 @@ function PaymentInsights() {
                             <div
                                 style={{
                                     marginTop: "20px",
-                                    fontSize: "18px",
-                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    fontFamily: "Product Sans",
+                                    fontWeight: "300",
                                 }}
                             >
                                 Total Amount
@@ -127,8 +128,9 @@ function PaymentInsights() {
                             <div
                                 style={{
                                     marginTop: "20px",
-                                    fontSize: "32px",
-                                    fontWeight: "bold",
+                                    fontSize: "34px",
+                                    fontFamily: "Product Sans",
+                                    fontWeight: "500",
                                 }}
                             >
                                 {paymentData.reduce(
@@ -142,8 +144,9 @@ function PaymentInsights() {
                             <div
                                 style={{
                                     marginTop: "20px",
-                                    fontSize: "18px",
-                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    fontFamily: "Product Sans",
+                                    fontWeight: "300",
                                 }}
                             >
                                 Transaction Count
@@ -151,8 +154,9 @@ function PaymentInsights() {
                             <div
                                 style={{
                                     marginTop: "20px",
-                                    fontSize: "32px",
-                                    fontWeight: "bold",
+                                    fontSize: "34px",
+                                    fontFamily: "Product Sans",
+                                    fontWeight: "500",
                                 }}
                             >
                                 {paymentData.length}

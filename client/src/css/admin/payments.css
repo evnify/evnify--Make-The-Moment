@@ -179,12 +179,11 @@
 
 .insight-chart{
   display: flex;
-  width: 925px;
+  width: 935px;
   height: 100%;
   border-radius: 11px;
   background:#ffffff;
   padding: 10px;
-  margin-right: 16px;
 }
 
 .payment-table-container{
