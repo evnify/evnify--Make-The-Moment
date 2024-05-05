@@ -73,22 +73,33 @@
     margin-bottom: 20px;
 }
 
-.emp_logout_btn{
+.emp_logout_btn {
     background-color: transparent;
     border: none;
     padding-right: 90px;
 }
 
-.request_leave_model_body_container{
+.request_leave_model_body_container {
     padding: 10px 10px;
     margin-bottom: 30px;
 }
 
-.leave_request_popup_footer_container{
+.leave_request_popup_footer_container {
     display: flex;
     gap: 75px;
     margin-top: 30px;
-    
 }
 
-/* Leave Request */
+/* Salaries */
+.emp_salary_list_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    background: #ffffff;
+    width: calc(100% - 30px);
+    margin: 0 0 15px 15px;
+    border-radius: 11px;
+    min-height: 435px;
+}

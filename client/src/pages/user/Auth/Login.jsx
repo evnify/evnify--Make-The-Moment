@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-
-
+import React, { useState, useEffect } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
     Button,
@@ -17,8 +16,100 @@ import { useTheme } from "@mui/material/styles";
 import Navbar from "../../../components/users/navBar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
+    const [user, setUser] = useState([]);
+    const [profile, setProfile] = useState([]);
+
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log("Login Failed:", error),
+    });
+
+    useEffect(() => {
+        if (user) {
+            axios
+                .get(
+                    `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: "application/json",
+                        },
+                    }
+                )
+                .then((res) => {
+                    setProfile(res.data);
+                    checkEmailExistence(res.data.email);
+                })
+                .catch((err) => console.log(err));
+        }
+    }, [user]);
+
+    const checkEmailExistence = async (email) => {
+        try {
+            const response = await axios.post("/api/users/check-existing", {
+                email,
+            });
+            const emailExists = response.data.exists;
+
+            if (emailExists) {
+                const user = {
+                    email,
+                };
+                try {
+                    setLoading(true);
+                    const loginResponse = await axios.post(
+                        "/api/users/loginGoogle",
+                        user
+                    );
+                    setLoading(false);
+
+                    const userData = loginResponse.data;
+
+                    // Redirect based on userType
+                    switch (userData.userType) {
+                        case "Admin":
+                            navigate("/admin");
+                            break;
+                        case "Employee":
+                            navigate("/employee");
+                            break;
+                        case "Hr-Manager":
+                            navigate("/admin");
+                            break;
+                        default:
+                            navigate("/");
+                            break;
+                    }
+
+                    // Store user data in local storage
+                    localStorage.setItem(
+                        "currentUser",
+                        JSON.stringify(userData)
+                    );
+
+                    // Reload the window
+                    window.location.reload();
+                } catch (error) {
+                    setLoading(false);
+                    console.error("Login error:", error);
+                    setError(true);
+                    message.error("Invalid email or password");
+                }
+            } else {
+                // If email doesn't exist, display error message
+                message.error(
+                    "Email not registered. Cannot proceed with login."
+                );
+                console.log("Email not registered. Cannot proceed with login.");
+            }
+        } catch (error) {
+            console.error("Error checking email existence:", error);
+        }
+    };
+
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down("sm"));
     const onFinish = (values) => {
@@ -32,38 +123,59 @@ const Login = () => {
 
     const navigate = useNavigate();
 
+    const responseMessage = (response) => {
+        console.log(response);
+    };
+    const errorMessage = (error) => {
+        console.log(error);
+    };
+
     const handleLogin = async () => {
-        {
+        try {
+            setLoading(true);
             const user = {
                 email,
                 password,
             };
-            try {
-                setLoading(true);
-                const response = await axios.post("/api/users/login", user);
-                setLoading(false);
+            const response = await axios.post("/api/users/login", user);
+            setLoading(false);
 
-                const userData = response.data;
+            const userData = response.data;
 
-                if (userData.userType === "Admin") {
-                    navigate("/admin/*");
-                    message.success("Login Successful");
-                } else if (userData.userType === "Employee") {
-                    navigate("/employee/*");
-                    message.success("Login Successful");
-                } else {
+
+            // Redirect based on userType
+            switch (userData.userType) {
+                case "Admin":
+                    navigate("/admin");
+                    break;
+                case "Employee":
+                    navigate("/employee");
+                    break;
+                case "Hr-Manager":
+                    navigate("/admin");
+                    break;
+                default:
+
                     navigate("/");
-                    message.success("Login Successful");
-                }
-
-                localStorage.setItem("currentUser", JSON.stringify(userData));
-                window.location.reload();
-            } catch (error) {
-                setLoading(false);
-                console.error("Login error:", error);
-                setError(true);
-                message.error("Login Failed");
+                    break;
             }
+
+            // Store user data in local storage
+            localStorage.setItem("currentUser", JSON.stringify(userData));
+
+            // Reload the window
+            window.location.reload();
+            // Before redirecting
+            localStorage.setItem("scrollPosition", window.pageYOffset);
+
+            // After page reloads
+            const scrollPosition = localStorage.getItem("scrollPosition");
+            window.scrollTo(0, scrollPosition);
+        } catch (error) {
+            setLoading(false);
+            console.error("Login error:", error);
+            setError(true);
+            message.error("Invalid email or password");
         }
     };
 
@@ -80,8 +192,9 @@ const Login = () => {
                                 defaultActiveBg: "#1890ff",
                             },
                             hover: {
-                                color: "black", // Change hover color to black
+                                color: "#1890ff",
                             },
+                            
                         },
                     }}
                 >
@@ -157,7 +270,7 @@ const Login = () => {
                                 type="primary"
                                 htmlType="submit"
                                 className="login-form-button"
-                                style={{ borderRadius: "5px" }}
+                                loading={loading}
                                 size="middle"
                                 onClick={handleLogin}
                             >
@@ -183,9 +296,16 @@ const Login = () => {
                     </div>
 
                     <Grid item xs={12} className="mt-3 ml-2 text-center">
-                        
-
-                       
+                        <button
+                            className="login-with-google-btn"
+                            onClick={() => login()}
+                        >
+                            Sign in with Google{" "}
+                            <i className="fab fa-google"></i>
+                        </button>
+                        <button class="login-with-facebook-btn">
+                            Login with Facebook
+                        </button>
                     </Grid>
                 </ConfigProvider>
             </div>
