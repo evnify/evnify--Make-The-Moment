@@ -131,6 +131,7 @@ const Login = () => {
     };
 
     const handleLogin = async () => {
+       
         try {
             setLoading(true);
             const user = {
@@ -142,7 +143,15 @@ const Login = () => {
 
             const userData = response.data;
 
+            if (userData.status === "Suspended") {
+                // Redirect user to contact us page
+               
+                navigate("/blog");
+                message.error("Your account has been suspended. Please contact us for more information.");
+            }
 
+            
+            
             // Redirect based on userType
             switch (userData.userType) {
                 case "Admin":
@@ -173,9 +182,8 @@ const Login = () => {
             window.scrollTo(0, scrollPosition);
         } catch (error) {
             setLoading(false);
-            console.error("Login error:", error);
-            setError(true);
             message.error("Invalid email or password");
+        
         }
     };
 

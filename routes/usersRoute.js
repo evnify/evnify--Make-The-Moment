@@ -28,11 +28,14 @@ const generateUniqueID = async () => {
     return userID;
 };
 
+
+
 router.post("/addUser", async (req, res) => {
     const UserUserData = req.body;
     const password = await generateUniquePwd();
     const userID = await generateUniqueID();
-    UserUserData.password = password;
+    const hashedPassword = await bcrypt.hash(password, 10); // Hashing the password
+    UserUserData.password = hashedPassword;
     UserUserData.userID = userID;
 
     const existingEmail = await UserModel.findOne({
@@ -53,11 +56,18 @@ router.post("/addUser", async (req, res) => {
 
     try {
         const response = await newUser.save();
+
+        // Send email to user with the original password
+        sendPasswordEmail(UserUserData.email, password);
+
         res.send(response);
     } catch (error) {
         return res.status(400).json({ message: error });
     }
 });
+
+
+
 
 router.get("/getUser", async (req, res) => {
     try {
@@ -300,23 +310,24 @@ router.post("/login-type", async (req, res) => {
 
 router.post("/register", async (req, res) => {
     const userID = await generateUniqueID();
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashing the password
 
-    const newuser = new UserModel({
+    const newUser = new UserModel({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
-        password: req.body.password,
+        password: hashedPassword, // Store hashed password
         userID: userID,
         username: req.body.username,
         profilePic: req.body.profilePic,
     });
 
     try {
-        const user = await newuser.save();
+        const user = await newUser.save();
         return res.send("User Registered Successfully");
     } catch (error) {
-        console.log("error in route");
+        console.log("Error in route:", error);
         return res.status(400).json({ error });
     }
 });
@@ -438,6 +449,38 @@ function sendResetLinkByEmail(email, resetLink) {
     });
 }
 
+function sendPasswordEmail(email, password) {
+
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.GMAIL_EMAIL,
+            pass: process.env.GMAIL_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: {
+            name: "Evnify",
+            address: process.env.GMAIL_EMAIL,
+        },
+        to: email,
+        subject: "Password",
+        html: `Your password is: ${password}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Error sending email:", error);
+        } else {
+            console.log("Email sent: " + info.response);
+        }
+    }
+    );
+}
 router.get("/generate-reset-link/:id/:token", async (req, res) => {
     const { id, token } = req.params;
 
