@@ -758,7 +758,6 @@ function Booking() {
         }
     };
 
-
     //Retrieve Address
     const [addressList, setAddressList] = useState([]);
     const [defaultAddress, setDefaultAddress] = useState({});
@@ -1048,7 +1047,13 @@ function Booking() {
                     <div className="booking_model_main_container">
                         <Steps
                             current={current}
-                            onChange={(current) => setCurrent(current)}
+                            onChange={(current) => {
+                                if (current == 1) {
+                                    goToCheckout()
+                                } else {
+                                    setCurrent(current);
+                                }
+                            }}
                             style={{
                                 marginBottom: 24,
                                 marginTop: 10,
@@ -1356,7 +1361,13 @@ function Booking() {
                                     </div>
                                 </div>
                                 <Elements stripe={stripePromise}>
-                                    <PaymentForm cart={cart} userId={userId} selectedPackage={selectedPackage} selectedAddress={selectedAddress} date={date}/>
+                                    <PaymentForm
+                                        cart={cart}
+                                        userId={userId}
+                                        selectedPackage={selectedPackage}
+                                        selectedAddress={selectedAddress}
+                                        date={date}
+                                    />
                                 </Elements>
                             </div>
                         )}

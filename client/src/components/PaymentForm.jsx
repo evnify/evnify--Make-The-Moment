@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Input, Checkbox, message } from "antd";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PaymentForm = (props) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const stripe = useStripe();
     const elements = useElements();
+    const [terms, setTerms] = useState(false);
+
+    const navigate = useNavigate();
 
     const { cart, userId, selectedPackage, selectedAddress, date } = props;
 
@@ -27,6 +31,9 @@ const PaymentForm = (props) => {
         } else if (!emailRegex.test(email)) {
             message.error("Invalid email address");
             return;
+        } else if (!terms) {
+            message.error("Please agree to the terms and conditions");
+            return;
         }
 
         setLoading(true);
@@ -44,8 +51,6 @@ const PaymentForm = (props) => {
             setError(error.message);
             setLoading(false);
         } else {
-            // Send the token to your server
-            console.log(token);
             onToken(token);
 
             setLoading(false);
@@ -89,6 +94,7 @@ const PaymentForm = (props) => {
             message.success("Booking saved successfully");
             setEmail("");
             setNameOnCard("");
+            navigate("/userprofile/booking")
         } catch (error) {
             console.error(error);
             message.error("Error saving booking");
@@ -232,8 +238,8 @@ const PaymentForm = (props) => {
                         </span>
 
                         <Input
-                            type="number"
-                            placeholder="ZIP"
+                            type="text"
+                            placeholder="Country or region"
                             size="large"
                             style={{
                                 boxShadow:
@@ -248,7 +254,7 @@ const PaymentForm = (props) => {
                             flexDirection: "column",
                         }}
                     >
-                        <Checkbox>Agree to the terms and conditions</Checkbox>
+                        <Checkbox onChange={()=> setTerms(!terms)}>Agree to the terms and conditions</Checkbox>
                     </div>
                     <div className="center">
                         <button
