@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2"; // Added Bar import
+import { Chart } from "chart.js/auto";
 import LoginCountChart from "./LoginCountChart";
-
 import UserTab from "./UserTab";
 
 import {

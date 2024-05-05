@@ -140,10 +140,9 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                     <Select.Option value="tables">Tables</Select.Option>
                     <Select.Option value="cakeholders">Cake Holders</Select.Option>
                     <Select.Option value="plates">Plates</Select.Option>
-                    <Select.Option value="wineglasses">Wine Glasses</Select.Option>
+                    <Select.Option value="glasses"> Glasses</Select.Option>
                     <Select.Option value="trays">Trays</Select.Option>
                     <Select.Option value="decorations">Decorations</Select.Option>
-                    <Select.Option value="other">Other</Select.Option>
                 </Select>
             </Form.Item>
 
