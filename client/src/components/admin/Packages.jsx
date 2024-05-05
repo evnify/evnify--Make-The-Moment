@@ -12,7 +12,8 @@ import {
 import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { CSVLink } from "react-csv";
-import { Pie } from "react-chartjs-2";
+import { Doughnut  } from "react-chartjs-2";
+import Chart from "chart.js/auto";
 
 const { TextArea } = Input;
 const { Search } = Input;
@@ -277,6 +278,7 @@ function Packages() {
     useEffect(() => {
         fetchAllPackages();
         fetchBookings();
+        fetchPkgViewCountData();
     }, []);
 
     // fetch all inventories drop down list
@@ -447,6 +449,66 @@ function Packages() {
 
     ////chart configuration////
 
+    //get daily view count
+    const [viewCounts, setViewCounts] = useState([]);
+
+    const createChart = (labels, data) => {
+        const ctx = document.getElementById("lineChart");
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "View Counts",
+                        data: data,
+                        borderColor: "#5b8ff9",
+                        borderWidth: 2,
+                        fill: false,
+                        backgroundColor: "transparent"
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: "Date",
+                        },
+                        grid: {
+                            display: false,
+                        },
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: "View Count",
+                        },
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    };
+    
+    const fetchPkgViewCountData = async () => {
+        try {
+            const response = await axios.get("/api/pkgViewCounts/getAllCounts");
+            setViewCounts(response.data);
+            console.log("All View Counts:", response.data);
+            const last30DaysViewCounts = response.data.slice(-7); // Get the last 30 days' data
+            const labels = last30DaysViewCounts.map((data) => data.date);
+            const data = last30DaysViewCounts.map((data) => data.count);
+            createChart(labels, data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    
+
     //get bookings
     const [bookings, setBookings] = useState([]);
 
@@ -554,7 +616,34 @@ function Packages() {
     return (
         <div>
             <div className="booking-package-insight-div">
-                <div className="booking-package-div-insight-left"></div>
+                <div className="booking-package-div-insight-left">
+                <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            height: "60px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",                      
+                            }}
+                        >
+                            <div>
+                                <h4> Packages </h4>
+                            </div>
+                            <div>Daily package view count in past 07 days</div>
+                        </div>
+                        <div>               
+                        </div>
+                    </div>
+                    <div style={{padding:"10px"}}>
+                    <canvas id="lineChart" height={200}></canvas>
+                    </div>
+                </div>
                 <div className="booking-package-div-insight-right">
                     <div
                         style={{
@@ -596,7 +685,7 @@ function Packages() {
                         </div>
                     </div>
                     <div className="package-insight-categories">
-                    <Pie data={pieChartData} />
+                    <Doughnut data={pieChartData}/>
                     </div>
                 </div>
             </div>
