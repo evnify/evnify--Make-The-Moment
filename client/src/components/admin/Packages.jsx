@@ -9,9 +9,10 @@ import {
     Button,
     message,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { CSVLink } from "react-csv";
+import { Pie } from "react-chartjs-2";
 
 const { TextArea } = Input;
 const { Search } = Input;
@@ -104,7 +105,6 @@ function Packages() {
         setPreviewOpen(true);
         setPreviewTitle(
             file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-            
         );
     };
 
@@ -131,7 +131,7 @@ function Packages() {
                     onSuccess();
                     message.success("Image uploaded successfully");
                     setImages([...images, response.data.data.url]); // imgbb API returns image URL
-                    console.log("img url:",images);
+                    console.log("img url:", images);
 
                     setLoading(false);
                 } else {
@@ -159,7 +159,7 @@ function Packages() {
         const urls = fileList.map((file) => file.url);
         setEditPackageData({
             ...editPackageData,
-            contentImages: urls.slice(1, 6)
+            contentImages: urls.slice(1, 6),
         });
     };
 
@@ -276,8 +276,8 @@ function Packages() {
     };
     useEffect(() => {
         fetchAllPackages();
+        fetchBookings();
     }, []);
-
 
     // fetch all inventories drop down list
     const fetchAllInventories = async () => {
@@ -292,7 +292,6 @@ function Packages() {
     useEffect(() => {
         fetchAllInventories();
     }, []);
-
 
     // Delete an package
     const DeletePackage = async (packageId) => {
@@ -342,11 +341,11 @@ function Packages() {
                 }))
             );
             setIsEditModalOpen(true);
-            console.log("preview image:",previewImage)
-        console.log("preview title:",previewTitle)
-        console.log("editimage",editImages)
-        console.log("setEditFileList",editFileList)
-        console.log("filelist",fileList)
+            console.log("preview image:", previewImage);
+            console.log("preview title:", previewTitle);
+            console.log("editimage", editImages);
+            console.log("setEditFileList", editFileList);
+            console.log("filelist", fileList);
             console.log("Edit Package Data:", packageData);
         } catch (error) {
             console.error("Error handling edit package:", error);
@@ -402,7 +401,6 @@ function Packages() {
         console.log(extras);
     };
 
-
     //search Filter
     const handleSearch = (value) => {
         const searchValue = value.toLowerCase();
@@ -445,6 +443,46 @@ function Packages() {
             Extras: packaged.extras.join(";"), // Combine extras with semicolon separator
         }));
         return csvData;
+    };
+
+    ////chart configuration////
+
+    //get bookings
+    const [bookings, setBookings] = useState([]);
+
+    const fetchBookings = async () => {
+        try {
+            const response = await axios.get("/api/bookings/getAllBookings");
+            setBookings(response.data);
+            console.log("All Bookings:", response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const bookingPackages = bookings.map((booking) => booking.packageType); // Extract package types from bookings
+    const packageCounts = bookingPackages.reduce((counts, packageType) => {
+    counts[packageType] = (counts[packageType] || 0) + 1; // Count occurrences of each package type
+    return counts;
+}, {});
+
+    const pieChartData = {
+        labels: Object.keys(packageCounts),
+        datasets: [
+            {
+                label: 'Packages',
+                data: Object.values(packageCounts),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                ],
+                borderWidth: 1,
+            },
+        ],
     };
 
     // Package table columns
@@ -517,7 +555,51 @@ function Packages() {
         <div>
             <div className="booking-package-insight-div">
                 <div className="booking-package-div-insight-left"></div>
-                <div className="booking-package-div-insight-right"></div>
+                <div className="booking-package-div-insight-right">
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            height: "60px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",
+                                border: "1px solid #ccc",
+                            }}
+                        >
+                            <div>
+                                <h4> Packages </h4>
+                            </div>
+                            <div>Most popular Packages among users </div>
+                        </div>
+                        <div>
+                            <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#4094F7",
+                                    width: "100px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                    marginTop: "15px",
+                                }}
+                                onClick={""}
+                            >
+                                <PrinterOutlined style={{ gap: "10" }} />
+                                Export
+                            </button>                        
+                        </div>
+                    </div>
+                    <div className="package-insight-categories">
+                    <Pie data={pieChartData} />
+                    </div>
+                </div>
             </div>
 
             <div className="booking-package-details-change">
@@ -1368,7 +1450,7 @@ function Packages() {
                                 >
                                     {/* {editFileList.length >= 4
                                         ? null
-                                        : uploadButton} */}  
+                                        : uploadButton} */}
                                 </Upload>
                             </div>
                         </div>
