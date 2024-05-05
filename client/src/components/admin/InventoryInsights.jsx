@@ -64,6 +64,30 @@ function InventoryInsights() {
         pdf.save("inventory_chart.pdf");
     };
 
+    const exportToPdf2 = () => {
+        const pdf = new jsPDF();
+        const canvas = document.getElementById("doughnut-chart2");
+    
+        // Get the dimensions of the canvas
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+    
+        // Set the dimensions and position for the image in the PDF
+        const pdfWidth = 100; // Width of the image in the PDF
+        const pdfHeight = (canvasHeight / canvasWidth) * pdfWidth; // Maintain aspect ratio
+        const xPos = 10; // X position of the image in the PDF
+        const yPos = 10; // Y position of the image in the PDF
+    
+        // Convert the canvas to a data URL
+        const dataURL = canvas.toDataURL();
+    
+        // Add the image to the PDF
+        pdf.addImage(dataURL, "PNG", xPos, yPos, pdfWidth, pdfHeight);
+    
+        // Save the PDF
+        pdf.save("inventory_chart.pdf");
+    };
+    
     const columns = [
         {
             title: "ITEM",
@@ -209,11 +233,12 @@ function InventoryInsights() {
                                 height: "35px",
                                 color: "#fff",
                                 borderRadius: "5px",
+                                marginTop: "20px"
                             }}
                             onClick={exportToPdf}
                         >
                             <PrinterOutlined style={{ gap: "10" }} />
-                            Export pdf
+                            Export
                         </button>
                     </div>
                     <div className="chart_inventory2">
@@ -221,11 +246,29 @@ function InventoryInsights() {
                     </div>
                 </div>
                 <div className="inventroy-catagory">
+                <div className="inventory-insight-card">
                     <div className="inventory_left">
                         <h3>Item Categories</h3>
                         <p className="p_text">
                             Mostly Used Categories in Month
                         </p>
+                    </div>
+                    <button
+                            style={{
+                                fontSize: "14px",
+                                border: "none",
+                                backgroundColor: "#4094F7",
+                                width: "100px",
+                                height: "35px",
+                                color: "#fff",
+                                borderRadius: "5px",
+                                marginTop: "20px"
+                            }}
+                            onClick={exportToPdf2}
+                        >
+                            <PrinterOutlined style={{ gap: "10" }} />
+                            Export
+                        </button>
                     </div>
                     <div className="chart_inventory">
                         <canvas id="doughnut-chart2"></canvas>
@@ -252,6 +295,7 @@ function InventoryInsights() {
                                     height: "35px",
                                     color: "#fff",
                                     borderRadius: "5px",
+                                    marginTop: "20px"
                                 }}
                                 onClick={() => {
                                     navigate("/admin/inventorylist");

@@ -262,7 +262,7 @@
 .inventory-insight-card p {
     color: #777;
     font-family: Inter;
-    font-size: 18px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 500;
     line-height: 25.103px;
@@ -297,6 +297,7 @@
     flex-direction: row;
     justify-content: space-between;
     margin-top: 20px;
+    
 
 }
 
