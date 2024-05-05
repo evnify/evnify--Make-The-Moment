@@ -32,8 +32,7 @@ const items = [
 
     getItem("Employees", "sub4", <Icon icon="healthicons:city-worker" />, [
         getItem("Employee List", "/admin/employeelist"),
-        getItem("Leave Requests", "/admin/leaverequests"),
-        getItem("Assign To Events", "/admin/assigntoevents")
+        getItem("Leave Requests", "/admin/leaverequests")
     ]),
     getItem("Blogs", "sub5", <Icon icon="ri:news-line" />, [
         getItem("Add New", "/admin/addblog"),
@@ -45,8 +44,7 @@ const items = [
     ]),
     getItem("Messages", "sub7", <Icon icon="ri:message-2-line" />, [
         getItem("Insights", "/admin/messageinsights"),
-        getItem("All Messages", "/admin/allmessages"),
-        getItem("User Emails", "/admin/useremails")
+        getItem("All Messages", "/admin/allmessages")
     ]),
 ];
 
