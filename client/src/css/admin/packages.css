@@ -1,7 +1,7 @@
 .booking-package-insight-div {
     display: flex;
     flex-direction: row;
-    height: 357px;
+    height: 500px;
     justify-content: space-between;
     margin: 0 15px 0 15px;
 }
@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     width: 600px;
-    height: 355px;
+    height: 490px;
     padding: 10px;
     border-radius: 11px;
     background-color: white;
@@ -21,7 +21,7 @@
     display: flex;
     flex-direction: column;
     width: 600px;
-    height: 355px;
+    height: 490px;
     padding: 10px;
     border-radius: 11px;
     background-color: white;
@@ -103,8 +103,7 @@
 .package-insight-categories{
     display: flex;
     justify-content: center;
-    width: 600px;
-    height: 400px;
+    width: 580px;
+    height: 410px;
     background-color: #fff;
-    border: #9e9b9b 1px solid;
 }

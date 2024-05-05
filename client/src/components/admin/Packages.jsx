@@ -568,8 +568,7 @@ function Packages() {
                             style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent: "space-between",
-                                border: "1px solid #ccc",
+                                justifyContent: "space-between",                      
                             }}
                         >
                             <div>
