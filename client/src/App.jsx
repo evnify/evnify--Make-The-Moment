@@ -27,6 +27,7 @@ function App() {
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<SignUp />} />
+                        <Route path="*" element={<PageNotFound />} />
                     </Routes>
                 </GoogleOAuthProvider>
                 <Routes>
@@ -52,7 +53,6 @@ function App() {
                     />
                     <Route path="/verify" element={<Verify />} />
                     <Route path="/accessdenied" element={<AccessDenied />} />
-                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </div>

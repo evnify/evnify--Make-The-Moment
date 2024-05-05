@@ -4,6 +4,12 @@ const Payment = require("../models/payment");
 const UserModel = require("../models/user");
 const router = express.Router();
 
+const stripe = require("stripe")(
+    process.env.STRIPE_SECRET_KEY
+);
+
+const { v4: uuidv4 } = require("uuid");
+
 router.get("/getBookings", async (req, res) => {
     try {
         const { page, limit } = req.query;
@@ -175,6 +181,37 @@ router.post("/editBookingById", async (req, res) => {
             { new: true }
         );
         res.send(booking);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.post("/payment", async (req, res) => {
+    const token = req.body.token;
+    const amount = req.body.amount;
+    const description = req.body.description;
+    const idempotencyKey = uuidv4();
+
+    try {
+        const customer = await stripe.customers.create({
+            email: token.email,
+            source: token.id,
+        });
+
+        const payment = await stripe.charges.create(
+            {
+                amount: amount * 100,
+                currency: "LKR",
+                customer: customer.id,
+                receipt_email: token.email,
+                description: `Purchased the ${description}`,
+            },
+            {
+                idempotencyKey: idempotencyKey,
+            }
+        );
+
+        res.send(payment);
     } catch (error) {
         return res.status(400).json({ message: error });
     }
