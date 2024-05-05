@@ -9,7 +9,9 @@ import {
     message,
     Image,
     Input,
-    Space
+    Space,
+    Tag,
+    
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
@@ -128,8 +130,21 @@ function InventoryList() {
             },
         },
         {
-            title: "Status",
-            dataIndex: "status",
+            title: "STATUS",
+            key: "status",
+            dataIndex: "quantity",
+            render: (quantity) => {
+                let color = "green";
+                let txt = "In Stock";
+                if (quantity === 0) {
+                    color = "red";
+                    txt = "Out of Stock";
+                } else if (quantity < 10) {
+                    color = "orange";
+                    txt = "Low Stock";
+                }
+                return <Tag color={color}>{txt}</Tag>;
+            },
         },
         {
             title: "Action",
@@ -226,7 +241,11 @@ function InventoryList() {
         if (searchKey && searchKey !== "") {
             tempList = tempList.filter(
                 (item) =>
+                    item.itemID
+                        .toLowerCase()
+                        .includes(searchKey.toLowerCase())||
                     item.itemName
+
                         .toLowerCase()
                         .includes(searchKey.toLowerCase())
             );
