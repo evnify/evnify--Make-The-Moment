@@ -263,7 +263,6 @@
     border-radius: 11px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     margin: 15px;
-
 }
 
 .booking_model_main_container {
@@ -405,7 +404,7 @@
 .billing_address_radio_section {
     display: flex;
     flex-direction: column;
-    margin-top: 10px; 
+    margin-top: 10px;
     width: 450px;
     height: 300px;
     overflow-y: scroll;
@@ -442,7 +441,7 @@
     justify-content: flex-start;
     width: 250.595px;
 }
-.billing_address_radio_btn1_txt5 h5{
+.billing_address_radio_btn1_txt5 h5 {
     color: var(--Gray-600, #637381);
     font-size: 14.26px;
     font-weight: 500;
@@ -459,10 +458,10 @@
     cursor: pointer;
     color: #49516f;
 }
-.booking_cart_item_container_3{
+.booking_cart_item_container_3 {
     display: flex;
     background-color: white;
-    
+
     align-items: center;
     flex-direction: row;
     height: 500px;
@@ -486,7 +485,7 @@
     scrollbar-width: thin;
     padding: 40px 0 0 0;
 }
-.payment_confirm_btn_72{
+.payment_confirm_btn_72 {
     border-radius: 11px;
     background: #533c56;
     display: flex;
@@ -499,7 +498,7 @@
     color: #fff;
 }
 
-.total_calculate_section{
+.total_calculate_section {
     margin-left: 30px;
     margin-top: 150px;
 }
@@ -511,4 +510,11 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+}
+
+.card-element-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    width: 320px;
 }

@@ -1,8 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { Input } from "antd";
-import { Navbar, Footer } from "../../components";
+import { Navbar, Footer, PaymentForm } from "../../components";
 import { useParams } from "react-router-dom";
-import { ProductOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 import moment from "moment";
 import {
     Checkbox,
@@ -20,6 +20,8 @@ import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
 import axios, { all } from "axios";
 import { Loader } from "../../components/admin";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 const { Search } = Input;
 
 // Side Menu
@@ -756,75 +758,6 @@ function Booking() {
         }
     };
 
-    //Save booking
-    const [email, setEmail] = useState("");
-    const [cardNumber, setCardNumber] = useState("");
-    const [expDate, setExpDate] = useState("");
-    const [cvc, setCvc] = useState("");
-    const [nameOnCard, setNameOnCard] = useState("");
-    const [zip, setZip] = useState("");
-
-    const saveBooking = () => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (
-            email === "" ||
-            cardNumber === "" ||
-            expDate === "" ||
-            cvc === "" ||
-            nameOnCard === "" ||
-            zip === ""
-        ) {
-            message.error("Please fill all the fields");
-            return;
-        } else if (cart.length === 0) {
-            message.error("Please add items to the cart");
-            return;
-        } else if (date === null) {
-            message.error("Please select a date");
-            return;
-        } else if (!emailRegex.test(email)) {
-            message.error("Invalid email address");
-            return;
-        }
-
-        try {
-            axios.post(`${process.env.PUBLIC_URL}/api/bookings/saveBooking`, {
-                customerID: userId,
-                transactionID: "1234",
-                eventType: selectedPackage[0].eventType,
-                packageType: selectedPackage[0].packageType,
-                eventLocation: [addressData],
-                eventDate: date,
-                amount: calculateTotal() + selectedPackage[0].price,
-                status: "Pending",
-                AssignedInventory: cart,
-                AssignedEmployees: [],
-            });
-            axios.post(`${process.env.PUBLIC_URL}/api/bookings/savePayment`, {
-                transactionID: "1234",
-                customerID: userId,
-                customerEmail: email,
-                packageType: selectedPackage[0].packageType,
-                amount: calculateTotal() + selectedPackage[0].price,
-                paymentType: "Card",
-                description: "Booking Payment",
-            });
-            message.success("Booking saved successfully");
-            setBookingModal(false);
-            setEmail("");
-            setCardNumber("");
-            setExpDate("");
-            setCvc("");
-            setNameOnCard("");
-            setZip("");
-            setCart([]);
-            setDate(null);
-        } catch (error) {
-            console.error(error);
-            message.error("Error saving booking");
-        }
-    };
 
     //Retrieve Address
     const [addressList, setAddressList] = useState([]);
@@ -981,10 +914,11 @@ function Booking() {
     const editAddressData = () => {
         console.log(addressData, editIndex);
         try {
-            axios.post(
-                `${process.env.PUBLIC_URL}/api/bookings/updateAddress`,
-                { userID: userId, addressIndex: editIndex, newAddress: addressData }
-            );
+            axios.post(`${process.env.PUBLIC_URL}/api/bookings/updateAddress`, {
+                userID: userId,
+                addressIndex: editIndex,
+                newAddress: addressData,
+            });
             message.success("Address edited successfully");
             fetchAddress();
             setIsModalOpen(false);
@@ -1015,8 +949,11 @@ function Booking() {
             postalCode: address.postalCode,
         });
         setIsModalOpen(true);
-
     };
+
+    const stripePromise = loadStripe(
+        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
+    );
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -1355,7 +1292,8 @@ function Booking() {
                                                                                         }}
                                                                                         onClick={() =>
                                                                                             handleEditAddress(
-                                                                                                address, index
+                                                                                                address,
+                                                                                                index
                                                                                             )
                                                                                         }
                                                                                     >
@@ -1417,188 +1355,9 @@ function Booking() {
                                         </h3>
                                     </div>
                                 </div>
-                                <div id="payment-element" style={{ flex: 1 }}>
-                                    <div
-                                        style={{
-                                            width: 420,
-                                            padding: "0 50px",
-                                        }}
-                                    >
-                                        <hr />
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Email
-                                            </span>
-                                            <Input
-                                                type="email"
-                                                placeholder="Email"
-                                                size="large"
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Card Information
-                                            </span>
-                                            <Input
-                                                type="number"
-                                                placeholder="1234 1234 1234 1234"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCardNumber(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "row",
-                                            }}
-                                        >
-                                            <Input
-                                                type="number"
-                                                placeholder="MM/YY"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setExpDate(e.target.value)
-                                                }
-                                            />
-
-                                            <Input
-                                                type="number"
-                                                placeholder="CVC"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCvc(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Name On card
-                                            </span>
-                                            <Input
-                                                placeholder="Full name on card"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setNameOnCard(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Country Or region
-                                            </span>
-
-                                            <Input
-                                                type="number"
-                                                placeholder="ZIP"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setZip(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <Checkbox>
-                                                Agree to the terms and
-                                                conditions
-                                            </Checkbox>
-                                        </div>
-                                        <div className="center">
-                                            <button
-                                                className="payment_confirm_btn_72"
-                                                onClick={saveBooking}
-                                            >
-                                                Pay
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Elements stripe={stripePromise}>
+                                    <PaymentForm cart={cart} userId={userId} selectedPackage={selectedPackage} selectedAddress={selectedAddress} date={date}/>
+                                </Elements>
                             </div>
                         )}
                     </div>
