@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { jsPDF } from "jspdf";
 
 import {
     Input,
@@ -18,6 +19,8 @@ import {
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
+
+const imgData = require("../../assets/backgrounds/paysheet_bg.png");
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -111,6 +114,55 @@ function Payroll() {
         } catch (error) {
             message.error("Something went wrong");
         }
+    }
+
+    const downloadRecept = (record) => {
+        const doc = new jsPDF();
+        doc.addImage(imgData, "PNG", 0, 0, 215, 300);
+
+        doc.setFont("helvetica");
+        doc.setFontSize(14);
+        doc.text(`${convertDate(record.updatedAt)}`, 168, 65);
+        doc.text(`${record.employeeName}`, 22, 65);
+        doc.text(`Employee ID : ${record.employeeID}`, 22, 74);
+        doc.text(`Salary ID : ${record.salaryID}`, 22, 83);
+
+        doc.setFontSize(14);
+        doc.text(`Basic Salary :`, 22, 100);
+        doc.text(`${record.basicSalary} LKR`, 192, 100, { align: 'right' });
+        doc.setFont(undefined, "bold").text(`Allowances`, 22, 112).setFont(undefined, "normal");
+        {
+            var y = 120;
+            var x = 0;
+            record.allowances.map((allowance, index) => {
+                doc.text(`${allowance.name} :`, 22, y + x * 10);
+                doc.text(`${allowance.amount} LKR`, 192, y + x * 10, { align: 'right' });
+                x++;
+            });
+            x = x+0.5;
+        }
+        doc.setFont(undefined, "bold").text(`Deductions`, 22, y + x*10 ).setFont(undefined, "normal");
+        x++;
+        {
+            record.deductions.map((deduction, index) => {
+                doc.text(`${deduction.name} :`, 22, y + x * 10);
+                doc.text(`${deduction.amount} LKR`, 192, y + x * 10, { align: 'right' });
+                x++;
+            });
+        }
+
+        doc.text(`Total Salary :`, 22, 220);
+        doc.text(`${record.netSalary} LKR`, 192, 220, { align: 'right' });
+
+        doc.save(`pay_sheet_of_${record.salaryID}.pdf`);
+    };
+
+    function convertDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
     }
 
     // Edit model
@@ -458,6 +510,7 @@ function Payroll() {
                             border: "none",
                             background: "transparent",
                         }}
+                        onClick={() => downloadRecept(record)}
                     >
                         <Icon icon="mdi:download" />
                     </button>
