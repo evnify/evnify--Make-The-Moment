@@ -339,4 +339,36 @@
     justify-content: space-between;
 }
 
+.invtaray_top_bar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+   
 
+   
+}
+
+.bg_invetoey_table{
+    width: 1230px;
+    height: 1000px;
+    background-color: #ffffff;
+    border-radius: 11px;
+   
+  
+    margin-left: 15px;
+}
+
+
+
+.inventory_list_top_menu{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+   
+}
+
+.row_inventory{
+    padding: 15px;
+    margin-bottom: 15px;
+}
