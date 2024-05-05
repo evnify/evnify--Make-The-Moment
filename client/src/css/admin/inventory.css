@@ -217,31 +217,29 @@
 }
 
 .inventory-insight-top {
-    width: 1220px;
-    height: 500px;
-    flex-shrink: 0;
-    border-radius: 11px;
-    background: #fff;
-    margin: auto;
-    margin-bottom: 15px;
-    margin-left: 15px;
-}
-
-.inventory-insight-bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: auto;
-    margin-bottom: 15px;
-}
-
-.inventroy-catagory {
-    width: 425px;
+    width: 750px;
     height: 470px;
     flex-shrink: 0;
     border-radius: 11px;
     background: #fff;
+    margin: auto;
     margin-left: 15px;
+}
+
+.inventory-insight-bottom {
+    width: 120px;
+    margin-bottom: 15px;
+    margin-left: 5px;
+}
+
+.inventroy-catagory {
+    width: 450px;
+    height: 470px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: #fff;
+    margin-right: 20px;
+
 }
 
 .inventories {
@@ -251,6 +249,7 @@
     border-radius: 11.255px;
     background: #fff;
     margin-right: 15px;
+    margin-left: 15px;
 }
 
 .inventory-insight-card {
@@ -271,11 +270,19 @@
 }
 
 .chart_inventory {
-    width: 1145px;
-    height: 316.223px;
+    width: 1245px;
+    height: 360px;
     flex-shrink: 0;
-    margin: auto;
-    margin-top: 20px;
+    margin-left: 40px;
+    
+}
+
+.chart_inventory2{
+    width: 1245px;
+    height: 320px;
+    flex-shrink: 0;
+    margin-left: 30px;
+
 }
 
 .inventory_left{
@@ -304,21 +311,31 @@
 
 
 .inventroy-catagory-item{
-    width: 750px;
-    height: 252px;
+    width:1200px;
+    height: 480px;
     flex-shrink: 0;
     border-radius: 11px;
     background: #fff;
-    margin-left: 15px;
+    margin-left: 20px;
+    margin-right: 15px;
 }
 
 .view_all{
     color: #4094f7;
     font-size: 18px;
     font-weight: 500;
-    margin-top: 10px;
+    margin-top: 30px;
+    margin-right: 15px;
 }
 
 .chart_inventory{
     width: 800px;
 }
+
+.top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+

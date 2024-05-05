@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
 import { PrinterOutlined } from "@ant-design/icons";
 import jsPDF from "jspdf";
 import axios from "axios";
@@ -135,10 +134,19 @@ function InventoryInsights() {
                         },
                     ],
                 },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            align: "top",
+                        },
+                    },
+                },
             });
             doughnutChartRef.current = newChartInstance;
         }
     }, [inventories]);
+    
 
     useEffect(() => {
         if (columnChartRef.current) {
@@ -156,79 +164,86 @@ function InventoryInsights() {
                             data: categoryData.map((data) => data.quantity),
                             backgroundColor: "rgb(54, 162, 235)",
                             borderWidth: 1,
+                            barThickness: 40,
                         },
                     ],
                 },
-                
-            options: {
-                scales: {
-                    x: {
-                        display: false,
+                width: 500,
+                options: {
+                    scales: {
+                        x: {
+                            display: false,
+                        },
+                        y: {
+                            beginAtZero: true,
+                        },
                     },
-                    y: {
-                        beginAtZero: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
                     },
                 },
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                },
-            },
             });
             columnChartRef.current = newChartInstance;
         }
     }, [categoryData]);
 
     return (
-        <div className="inventory-insight">
-            <div className="inventory-insight-top">
-                <div className="inventory-insight-card">
-                    <div className="inventory_left">
-                        <h3>Inventory</h3>
-                        <p className="p_text">
-                            Inventory Distribution in Last 30 Days
-                        </p>
+        <>
+            <div className="top">
+                <div className="inventory-insight-top">
+                    <div className="inventory-insight-card">
+                        <div className="inventory_left">
+                            <h3>Inventory</h3>
+                            <p className="p_text">
+                                Inventory Distribution in Last 30 Days
+                            </p>
+                        </div>
+                        <button
+                            style={{
+                                fontSize: "14px",
+                                border: "none",
+                                backgroundColor: "#4094F7",
+                                width: "100px",
+                                height: "35px",
+                                color: "#fff",
+                                borderRadius: "5px",
+                            }}
+                            onClick={exportToPdf}
+                        >
+                            <PrinterOutlined style={{ gap: "10" }} />
+                            Export pdf
+                        </button>
                     </div>
-                    <button
-                        style={{
-                            fontSize: "14px",
-                            border: "none",
-                            backgroundColor: "#4094F7",
-                            width: "100px",
-                            height: "35px",
-                            color: "#fff",
-                            borderRadius: "5px",
-                        }}
-                        onClick={exportToPdf}
-                    >
-                        <PrinterOutlined style={{ gap: "10" }} />
-                        Export pdf
-                    </button>
+                    <div className="chart_inventory2">
+                        <canvas className="canvas" id="column-chart2"></canvas>
+                    </div>
                 </div>
-                <div className="chart_inventory">
-                    <canvas id="column-chart2"></canvas>
-                </div>
-            </div>
-
-            <div className="inventory-insight-bottom">
                 <div className="inventroy-catagory">
                     <div className="inventory_left">
                         <h3>Item Categories</h3>
-                        <p className="p_text">Mostly Used Categories in Month</p>
+                        <p className="p_text">
+                            Mostly Used Categories in Month
+                        </p>
                     </div>
                     <div className="chart_inventory">
                         <canvas id="doughnut-chart2"></canvas>
                     </div>
                 </div>
+            </div>
+            <div className="inventory-insight-bottom">
                 <div className="inventories">
                     <div className="inventroy-catagory-item">
                         <div className="Invertory-btn">
                             <div className="inventory_left">
                                 <h3>Item Categories</h3>
-                                <p className="p_text">Mostly Used Categories in Month</p>
+                                <p className="p_text">
+                                    Mostly Used Categories in Month
+                                </p>
                             </div>
                             <button
+                            className="view_all"
                                 style={{
                                     fontSize: "14px",
                                     border: "none",
@@ -253,7 +268,7 @@ function InventoryInsights() {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

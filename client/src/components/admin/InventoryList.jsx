@@ -13,7 +13,6 @@ import {
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
- 
 import axios from "axios";
 const baseURL = "http://localhost:5000/api/inventories";
 
