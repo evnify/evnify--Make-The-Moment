@@ -17,6 +17,7 @@ import AllMessages from "./AllMessages";
 import NavBar from "./NavBar";
 import UserTab from "./UserTab";
 import Loader from "./Loader";
+import LoginCountChart from "./LoginCountChart";
 
 export {
     SideMenu,
@@ -37,5 +38,6 @@ export {
     AllMessages,
     NavBar,
     UserTab,
-    Loader
+    Loader,
+    LoginCountChart
 };
