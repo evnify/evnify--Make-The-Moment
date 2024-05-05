@@ -252,6 +252,14 @@ function Payroll() {
         }
     };
 
+    const deleteEditAllowances = (index) => {
+        setEditAllowances((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
+    };
+
     const addEditDeduction = (e) => {
         e.preventDefault();
         setEditDeductionSelect((prevState) => [
@@ -278,6 +286,14 @@ function Payroll() {
             setEditDeductionName("");
             setEditDeductionAmount("");
         }
+    };
+
+    const deleteEditDeduction = (index) => {
+        setEditDeductions((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
     };
 
     useEffect(() => {
@@ -1473,6 +1489,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteEditAllowances(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1590,6 +1617,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteEditDeduction(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
