@@ -12,6 +12,7 @@ function InventoryInsights() {
     const columnChartRef = useRef(null);
 
     const [inventories, setInventories] = useState([]);
+    const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
         fetchData();
@@ -19,8 +20,11 @@ function InventoryInsights() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get("/api/inventories/getInventories");
-            setInventories(response.data);
+            const inventoryResponse = await axios.get("/api/inventories/getInventories");
+            setInventories(inventoryResponse.data);
+
+            const bookingResponse = await axios.get("/api/bookings/getAllBookings");
+            setBookings(bookingResponse.data);
         } catch (error) {
             console.error(error);
         }
@@ -45,6 +49,52 @@ function InventoryInsights() {
         );
     };
 
+    
+    const getMostBookedInventories = () => {
+        const categoriesMap = new Map();
+        bookings.forEach((booking) => {
+            booking.AssignedInventory.forEach((item) => {
+                if (categoriesMap.has(item.category)) {
+                    categoriesMap.set(item.category, categoriesMap.get(item.category) + item.addedQty); // Change here to use addedQty
+                } else {
+                    categoriesMap.set(item.category, item.addedQty); // Change here to use addedQty
+                }
+            });
+        });
+    
+        // Sort the categories by total addedQty in descending order
+        const sortedCategories = Array.from(categoriesMap.entries()).sort(
+            (a, b) => b[1] - a[1]
+        );
+    
+        // Return the top six categories
+        return sortedCategories.slice(0, 6).map(([category, addedQty]) => ({
+            category,
+            addedQty
+        }));
+    };
+    
+    
+    
+
+
+    const getAllCategories = () => {
+        const categories = {};
+        bookings.forEach((booking) => {
+            booking.AssignedInventory.forEach((item) => {
+                if (categories[item.category]) {
+                    categories[item.category] += item.quantity;
+                } else {
+                    categories[item.category] = item.quantity;
+                }
+            });
+        });
+    
+        return Object.keys(categories);
+    };
+    
+
+    
     const [categoryData, setCategoryData] = useState([]);
 
     useEffect(() => {
@@ -52,10 +102,13 @@ function InventoryInsights() {
         setCategoryData(data);
     }, [inventories]);
 
-    const getMostBookedCategories = () => {
-        return inventories.slice(0, 3).map((item) => item.category);
-    };
+    useEffect (() => {
+        const data = getCategoryData();
+        setCategoryData(data);
+    }, [bookings]);
 
+
+    
     const exportToPdf = () => {
         const pdf = new jsPDF();
         const canvas = document.getElementById("column-chart2");
@@ -139,20 +192,16 @@ function InventoryInsights() {
             const newChartInstance = new Chart(ctx, {
                 type: "doughnut",
                 data: {
-                    labels: getMostBookedCategories(),
+                    labels: getMostBookedInventories().map(item => item.category),
                     datasets: [
                         {
-                            label: "Booked Categories",
-                            data: getMostBookedCategories().map(
-                                (category) =>
-                                    getCategoryData().find(
-                                        (item) => item.category === category
-                                    )?.quantity ?? 0
-                            ),
+                            label: "Items Qty",
+                            data: getMostBookedInventories().map(item => item.addedQty),
                             backgroundColor: [
                                 "rgb(255, 99, 132)",
                                 "rgb(54, 162, 235)",
                                 "rgb(255, 205, 86)",
+                                // Add more colors if needed
                             ],
                             hoverOffset: 4,
                         },
@@ -169,7 +218,9 @@ function InventoryInsights() {
             });
             doughnutChartRef.current = newChartInstance;
         }
-    }, [inventories]);
+    }, [bookings]);
+    
+    
     
 
     useEffect(() => {
