@@ -849,7 +849,8 @@ function Booking() {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
-                        <Table columns={columns} dataSource={bookingList} />
+                        <Table columns={columns} dataSource={bookingList} 
+                        pagination={bookingList.length >= 8 ? {} : false}/>
                     </div>
                 </div>
             </div>

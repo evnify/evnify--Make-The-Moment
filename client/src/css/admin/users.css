@@ -306,11 +306,10 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    min-height: 435px;
-
+    min-height: 665px;
+    width : 1220px;
     background: #ffffff;
-    width: calc(100% - 30px);
-    margin: 0 0 15px 15px;
+    margin: 16px;
     border-radius: 11px;
 }
 
