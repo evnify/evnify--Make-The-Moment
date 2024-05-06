@@ -180,7 +180,12 @@ function MessageInsights() {
             {/* Other Insights */}
             <div className="message-insight-bottom-insight">
                 <div className="message-insight-categories">
-                    <Pie data={pieChartData} />
+                    <div style={{fontSize:"22px", fontWeight:"500"}}>
+                        Categories
+                    </div>
+                    <div style={{width:"450px", height:"450px"}}>
+                        <Pie data={pieChartData} />
+                    </div>
                 </div>
                 <div className="message-calender-view">
                     <div>

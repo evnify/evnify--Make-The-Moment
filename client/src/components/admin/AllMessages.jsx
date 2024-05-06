@@ -257,19 +257,21 @@ function AllMessages() {
         setIsSearching(false);
     };
 
-    // Function to generate CSV content from chat data
     const generateCSVData = () => {
-        if (!selectedChatData) return '';
+        const uid = selectedUserID;
+        if (!groupedMessages[uid]) return '';
 
         // Define CSV headers
-        const headers = ['Date', 'Time', 'Sender', 'Message'];
+        const headers = ['MessageId','Date', 'Time', 'Sender', 'Message', 'Category'];
 
         // Map chat messages to CSV rows
-        const rows = selectedChatData.map(msg => [
+        const rows = groupedMessages[uid].map(msg => [
+            msg.messageId,
             moment(msg.sendDate).format('YYYY-MM-DD'),
             moment(msg.sendTime, 'HH:mm:ss').format('HH:mm A'),
             msg.sender,
-            msg.message
+            msg.message,
+            msg.category
         ]);
 
         // Combine headers and rows
