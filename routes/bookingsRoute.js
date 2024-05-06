@@ -190,28 +190,31 @@ router.post("/payment", async (req, res) => {
     const token = req.body.token;
     const amount = req.body.amount;
     const description = req.body.description;
+    const email = req.body.email;
     const idempotencyKey = uuidv4();
+
+    console.log(idempotencyKey);
 
     try {
         const customer = await stripe.customers.create({
-            email: token.email,
+            email: email,
             source: token.id,
         });
 
-        const payment = await stripe.charges.create(
+        const response = await stripe.charges.create(
             {
                 amount: amount * 100,
                 currency: "LKR",
                 customer: customer.id,
-                receipt_email: token.email,
-                description: `Purchased the ${description}`,
+                receipt_email: email,
+                description: `${description}`,
             },
             {
                 idempotencyKey: idempotencyKey,
             }
         );
 
-        res.send(payment);
+        res.send(response);
     } catch (error) {
         return res.status(400).json({ message: error });
     }

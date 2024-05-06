@@ -21,6 +21,8 @@ function Booking() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBookingData, setSelectedBookingData] = useState(null);
 
+    var imgData = require('../../assets/backgrounds/reservationConformation.png');
+
     useEffect(() => {
         const fetchBookings = async () => {
             try {
@@ -54,19 +56,37 @@ function Booking() {
         setCart(record.AssignedInventory);
     };
 
+    function convertDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
     const handelConformationDownload = async (record) => {
-        var imgData = 'https://i.ibb.co/DfXKTkC/Evnify-Reservation-Conformation.png';
 
         const doc = new jsPDF();
         doc.addImage(imgData, 'PNG', 0, 0, 215, 300);
 
-        doc.save(`Invoice_${record._id}.pdf`);
+        doc.setFont("helvetica");
+        doc.setFontSize(14);
+        doc.text(`${convertDate(record.updatedAt)}`, 80, 77.5);
+        doc.text(`${record.transactionID}`, 80, 90);
+        doc.text(`${record.eventType}`, 80, 102.2);
+        doc.text(`${record.packageType}`, 80, 116.1);
+        doc.text(`${convertDate(record.eventDate)}`, 80, 129);
+        doc.text(`${record.amount} LKR`, 80, 142);
+        doc.text(`${record.eventLocation[0].addressLine1}`, 80, 155.5);
+        doc.text(`${record.eventLocation[0].city}, ${record.eventLocation[0].district}, `, 80, 163.5);
+        doc.text(`${record.eventLocation[0].postalCode}`, 80, 171.5);
 
+        doc.save(`Invoice_${record._id}.pdf`);
     };
 
     const columns = [
         {
-            title: "Date",
+            title: "Booked On",
             dataIndex: "createdAt",
             key: "createdAt",
             render: (createdAt) => {
@@ -83,14 +103,34 @@ function Booking() {
             key: "packageType",
         },
         {
+            title: "Event Type",
+            dataIndex: "eventType",
+            key: "eventType",
+        },
+        {
+            title: "Transaction ID",
+            dataIndex: "transactionID",
+            key: "transactionID",
+        },
+        {
+            title: "Event Date",
+            dataIndex: "eventDate",
+            key: "eventDate",
+            render: (eventDate) => {
+                const date = new Date(eventDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${day}/${month}/${year}`;
+            },
+        },
+        {
             title: "Amount",
             dataIndex: "amount",
             key: "amount",
-        },
-        {
-            title: "Invoice",
-            dataIndex: "transcationID",
-            key: "transcationID",
+            render: (amount) => {
+                return `${amount} LKR`;
+            },
         },
         {
             title: "Status",
@@ -119,10 +159,11 @@ function Booking() {
                             fontSize: "14px",
                             border: "solid 1px #C4CDD5",
                             backgroundColor: "#ffff",
-                            padding: "8px 16px",
+                            padding: "8px 20px",
                             color: "#000868E96",
                             fontWeight: 500,
                             borderRadius: "5px",
+                            fontFamily : "Product Sans",
                         }}
                         onClick={() => handleViewClick(record)}
                     >
@@ -133,11 +174,14 @@ function Booking() {
                             fontSize: "14px",
                             border: "none",
                             backgroundColor: "#4094F7",
-                            padding: "8px 16px",
+                            padding: "8px 18px",
                             color: "#fff",
                             borderRadius: "5px",
+                            fontWeight: 500,
+                            fontFamily : "Product Sans",
                         }}
                         onClick={() => handelConformationDownload(record)}
+                        className="center"
                     >
                         <PrinterOutlined style={{ gap: "10" }} />
                         &nbsp;
@@ -805,7 +849,8 @@ function Booking() {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
-                        <Table columns={columns} dataSource={bookingList} />
+                        <Table columns={columns} dataSource={bookingList} 
+                        pagination={bookingList.length >= 8 ? {} : false}/>
                     </div>
                 </div>
             </div>
