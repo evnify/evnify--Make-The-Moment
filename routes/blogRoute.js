@@ -13,6 +13,16 @@ router.post("/addBlogs", async (req, res) => {
     }
 });
 
+router.get("/getBlogById/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const blog = await blogModel.findById(id);
+        res.send(blog);
+    } catch (error) {
+        return res.status(400).json({ message: "Something went wrong" });
+    }
+});
+
 router.get("/getBlogs", async (req, res) => {
     try {
         const blogs = await blogModel.find();

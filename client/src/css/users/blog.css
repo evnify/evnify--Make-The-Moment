@@ -188,16 +188,16 @@
 .blog_page_all_blog_main_section {
     background-color: #fff;
     flex-direction: column;
+    flex-wrap: wrap;
     width: 1132px;
     height: 1016px;
     display: flex;
-    gap: 10px;
     border-radius: 20px;
     margin-bottom: 20px;
 }
-.all_blog__section_blog4 {
+.all_blog__section_blog {
     margin-top: 20px;
-    margin-left: 30px;
+    margin-left: 20px;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -311,6 +311,8 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 40px;
+    height: 450px;
+    width: 370px;
 }
 .all_blog_main_component2 {
     display: flex;
@@ -322,7 +324,7 @@
     margin-left: 30px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+   
     cursor: pointer;
 }
 .blog_page_blog7_main {
