@@ -134,24 +134,27 @@ const Login = () => {
        
         try {
             setLoading(true);
+            
             const user = {
                 email,
                 password,
             };
+            
+            // Proceed with login request
             const response = await axios.post("/api/users/login", user);
             setLoading(false);
-
+    
             const userData = response.data;
 
+    
+            // Check if the user is suspended
             if (userData.status === "Suspended") {
-                // Redirect user to contact us page
-               
-                navigate("/blog");
-                message.error("Your account has been suspended. Please contact us for more information.");
+                message.error("Your account has been suspended");
+                navigate("/contactus");
+                return; // Exit the function early
             }
+    
 
-            
-            
             // Redirect based on userType
             switch (userData.userType) {
                 case "Admin":
@@ -164,28 +167,22 @@ const Login = () => {
                     navigate("/admin");
                     break;
                 default:
-
                     navigate("/");
                     break;
             }
-
+    
             // Store user data in local storage
             localStorage.setItem("currentUser", JSON.stringify(userData));
-
-            // Reload the window
-            window.location.reload();
-            // Before redirecting
+    
+            // Before redirecting, store scroll position
             localStorage.setItem("scrollPosition", window.pageYOffset);
-
-            // After page reloads
-            const scrollPosition = localStorage.getItem("scrollPosition");
-            window.scrollTo(0, scrollPosition);
         } catch (error) {
             setLoading(false);
             message.error("Invalid email or password");
         
         }
     };
+    
 
     return (
         <>
@@ -202,7 +199,6 @@ const Login = () => {
                             hover: {
                                 color: "#1890ff",
                             },
-                            
                         },
                     }}
                 >
