@@ -35,6 +35,7 @@ function Booking() {
         counts[status] = (counts[status] || 0) + 1;
         return counts;
     }, {});
+    
 
     const pieChartData = {
         labels: Object.keys(packageCounts),
