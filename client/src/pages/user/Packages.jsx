@@ -57,8 +57,10 @@ function Packages() {
             } catch (error) {
                 console.log("Error fetching data", error);
             }
-        }
+        }       
         getPackageData();
+        setViewCount();
+        
     }, []);
 
     const handleImageClick = (packageId) => {
@@ -77,6 +79,10 @@ function Packages() {
             navigate(`/booking/${category}/${selectedPackage._id}`);
         }
     };
+
+    const setViewCount = async () => {
+        axios.get(`/api/pkgViewCounts/trigger`)
+        };     
     return (
         <>
             <Navbar />
