@@ -16,6 +16,24 @@
 
 }
 
+.btn-btn-login{
+  background-color: #533C56;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 20px 0 0 0;
+  padding: 8px 16px;
+  width: 290px;
+  font-size: 14px;
+}
+
+.btn-btn-login:hover {
+  background-color: #8c5c93; 
+  border-color: #533C56; 
+  color: #fff; 
+} 
+
 .category-box-container{
   display: flex;
   flex-direction: column;
