@@ -50,6 +50,31 @@ function Booking() {
     }
   };
 
+  const handlePaidBooking = async (record) => {
+    try {
+      await axios.get(`/api/bookings/updateBookingStatus/${record._id}`);
+      fetchBookings();
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+    }
+  }
+
+  const showPaidConform = (record) => {
+    confirm({
+      title: "Are you sure you want to mark this booking as conform?",
+      okText: "Yes",
+      okType: "primary",
+      cancelText: "No",
+      onOk() {
+        handlePaidBooking(record);
+      },
+      onCancel() {
+        console.log("Paid operation cancelled");
+      },
+    });
+  }
+
+
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -140,7 +165,7 @@ function Booking() {
                             border: "none",
                             background: "transparent",
                         }}
-                        // onClick={() => showPaidConform(record)}
+                        onClick={() => showPaidConform(record)}
                     >
                         <Icon icon="icon-park-outline:correct" />
                     </button>

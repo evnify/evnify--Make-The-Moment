@@ -4,9 +4,7 @@ const Payment = require("../models/payment");
 const UserModel = require("../models/user");
 const router = express.Router();
 
-const stripe = require("stripe")(
-    process.env.STRIPE_SECRET_KEY
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const { v4: uuidv4 } = require("uuid");
 
@@ -130,6 +128,24 @@ router.get("/getAllBookings", async (req, res) => {
     try {
         const bookings = await Booking.find();
         res.send(bookings);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.get("/updateBookingStatus/:_id", async (req, res) => {
+    try {
+        const { _id } = req.params;
+        console.log(_id);
+        const booking = await Booking.findByIdAndUpdate(
+            _id,
+            { status: "Conformed" },
+            { new: true }
+        );
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.send(booking);
     } catch (error) {
         return res.status(400).json({ message: error });
     }
