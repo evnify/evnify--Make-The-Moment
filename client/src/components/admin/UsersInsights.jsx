@@ -62,22 +62,19 @@ function UsersInsights() {
         fetchLoginTypeData();
     }, []);
 
-   
-
     const fetchUserList = async () => {
         try {
             const response = await axios.get("/api/users/getUser");
+
             // Sort inventories by date in descending order
-            const sortedData = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const sortedData = response.data.sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
             setData(sortedData);
         } catch (error) {
             console.error(error);
         }
     };
-    
-    
-
-    
 
     useEffect(() => {
         fetchUserList();
@@ -227,7 +224,6 @@ function UsersInsights() {
                                 dataSource={data && data.slice(0, 10)}
                                 columns={columns}
                                 pagination={false}
-                                
                             />
                         </div>
                     </div>
