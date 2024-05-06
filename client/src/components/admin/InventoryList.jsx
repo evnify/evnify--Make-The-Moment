@@ -68,7 +68,9 @@ function InventoryList() {
     const fetchData = async () => {
         try {
             const response = await axios.get("/api/inventories/getInventories");
-            setInventories(response.data);
+            // Sort inventories by date in descending order
+            const sortedInventories = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setInventories(sortedInventories);
         } catch (error) {
             console.error(error);
         }

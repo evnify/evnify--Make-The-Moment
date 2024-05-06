@@ -62,15 +62,22 @@ function UsersInsights() {
         fetchLoginTypeData();
     }, []);
 
+   
+
     const fetchUserList = async () => {
         try {
             const response = await axios.get("/api/users/getUser");
-            setData(response.data);
-            setLoading(false);
+            // Sort inventories by date in descending order
+            const sortedData = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setData(sortedData);
         } catch (error) {
             console.error(error);
         }
     };
+    
+    
+
+    
 
     useEffect(() => {
         fetchUserList();
@@ -217,15 +224,10 @@ function UsersInsights() {
                         {loading && <Loader />}
                         <div className="col-md-12">
                             <Table
-                                dataSource={data}
+                                dataSource={data && data.slice(0, 10)}
                                 columns={columns}
-                                pagination={{
-                                    pageSize: 7,
-                                    hideOnSinglePage: true,
-                                }}
-                                footer={() => (
-                                    <div className="footer-number">{`Total ${data.length} items`}</div>
-                                )}
+                                pagination={false}
+                                
                             />
                         </div>
                     </div>
