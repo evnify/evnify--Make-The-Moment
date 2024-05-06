@@ -197,27 +197,24 @@ function NavBarUser() {
                 <a
                     style={{ textDecoration: "none" }}
                     rel="noopener noreferrer"
-                    href="/userprofile"
+                    href="/userprofile" 
                 >
                     My Account
                 </a>
             ),
             key: "0",
         },
-
-        {
+        user && user.userType !== "Customer" && {
             label: (
                 <a
                     style={{ textDecoration: "none" }}
-                    href="/login"
-                    onClick={logout}
+                    href="/admin"
                 >
-                    Help
+                    Admin
                 </a>
             ),
-            key: "1",
+            key: "admin",
         },
-
         {
             label: (
                 <a
@@ -231,7 +228,7 @@ function NavBarUser() {
             key: "2",
         },
     ];
-
+    
     useEffect(() => {
         if (window.location.pathname === "/") {
             setCurrent("home");

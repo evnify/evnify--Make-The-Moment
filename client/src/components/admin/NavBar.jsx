@@ -8,6 +8,21 @@ const items = [
             <a
                 style={{ textDecoration: "none" }}
                 rel="noopener noreferrer"
+                href="/" // Update the href to your home page URL
+            >
+                Home
+            </a>
+        ),
+        key: "2", // Assign a unique key for this item
+    },
+    {
+        type: "divider",
+    },
+    {
+        label: (
+            <a
+                style={{ textDecoration: "none" }}
+                rel="noopener noreferrer"
                 href="/userprofile"
             >
                 Profile
@@ -34,6 +49,7 @@ const items = [
         key: "1",
     },
 ];
+
 
 function NavBar() {
     const [loggedUser, setLoggedUser] = useState(null);

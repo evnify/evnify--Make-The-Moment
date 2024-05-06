@@ -942,15 +942,15 @@ function UserList() {
                     },
                 }}
             >
-                <div className="admin_user_list_container">
-                    <div className="admin_user_list_top_menu">
-                        <div
-                            style={{
-                                marginRight: "auto",
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
+                <div className="admin_leave_request_container">
+                <div className="admin_leave_request_top_menu">
+                    <div
+                        style={{
+                            marginRight: "auto",
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
                             <h5>All Users</h5>
                             <Search
                                 placeholder="Search by Name"
