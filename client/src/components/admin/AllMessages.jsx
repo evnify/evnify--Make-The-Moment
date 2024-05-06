@@ -9,7 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import { SendOutlined, CaretDownOutlined, BellFilled } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
-import Loader from "./Loader";
 
 const { Search } = Input
 
@@ -207,7 +206,6 @@ function AllMessages() {
         }
     };
 
-
     const handlePreviewClick = (userID) => {
         setSelectedUserID(userID); // Set the selected user ID
         markMessagesAsRead(userID);
@@ -259,17 +257,20 @@ function AllMessages() {
 
     // Function to generate CSV content from chat data
     const generateCSVData = () => {
-        if (!selectedChatData) return '';
+        const uid = selectedUserID;
+        if (!groupedMessages[uid]) return '';
 
         // Define CSV headers
-        const headers = ['Date', 'Time', 'Sender', 'Message'];
+        const headers = ['MessageId','Date', 'Time', 'Sender', 'Message', 'Category'];
 
         // Map chat messages to CSV rows
-        const rows = selectedChatData.map(msg => [
+        const rows = groupedMessages[uid].map(msg => [
+            msg.messageId,
             moment(msg.sendDate).format('YYYY-MM-DD'),
             moment(msg.sendTime, 'HH:mm:ss').format('HH:mm A'),
             msg.sender,
-            msg.message
+            msg.message,
+            msg.category
         ]);
 
         // Combine headers and rows
@@ -349,50 +350,47 @@ function AllMessages() {
                                         );
                                     })}
                                 </>
-                            ) : (
-                                // Conditional rendering for grouped messages
-                                Object.keys(filteredMessages).length ? (
-                                    Object.keys(filteredMessages).map((customerID) => {
-                                        const user = users.find(user => user.userID === customerID)
-                                        if (!user) {
-                                            console.log(`User not found for userID: ${customerID}`);
-                                            return null;
-                                        }
-                                        return (
-                                            <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
-                                                onClick={() => handlePreviewClick(customerID)}>
-                                                <div className="all-message-profile-pic">
-                                                    <img src={user.profilePic || messageDp} alt="DP" />
+                            ) :
+                                (Object.keys(filteredMessages).map((customerID) => {
+                                    // Find the user with the matching userID
+                                    const user = users.find(user => user.userID === customerID);
+                                    // Check if the user is found
+                                    if (!user) {
+                                        console.log(`User not found for userID: ${customerID}`);
+                                        return null; // Skip rendering if user not found
+                                    }
+                                    return (
+                                        <div key={customerID} className={`message-received-preview ${selectedUserID === customerID ? 'selected' : ''}`}
+                                            onClick={() => handlePreviewClick(customerID)}>
+                                            <div className="all-message-profile-pic">
+                                                <img src={user.profilePic || messageDp} alt="DP" />
+                                            </div>
+                                            <div className="all-message-name">
+                                                <div className="all-message-timeandname">
+                                                    <div className="all-message-name-tag">
+                                                        <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
+                                                    </div>
+                                                    <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].sendTime}
+                                                    </div>
                                                 </div>
-                                                <div className="all-message-name">
-                                                    <div className="all-message-timeandname">
-                                                        <div className="all-message-name-tag">
-                                                            <b>{user.firstName} {user.lastName}</b> {/* Display user's full name */}
-                                                        </div>
-                                                        <div style={{ fontSize: "15px", color: "#b3b3b3", padding: "3px 0 0 0" }}>
-                                                            {groupedMessages[customerID][groupedMessages[customerID].length - 1].sendTime}
-                                                        </div>
+                                                <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
+                                                    <div style={{ width: "250px" }}>
+                                                        {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 34)}
                                                     </div>
-                                                    <div style={{ fontSize: "15px", color: "#b3b3b3", display: "flex", flexDirection: "row" }}>
-                                                        <div style={{ width: "250px" }}>
-                                                            {groupedMessages[customerID][groupedMessages[customerID].length - 1].message.substring(0, 34)}
-                                                        </div>
-                                                        {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
-                                                    </div>
-                                                    <div>
-                                                        <Tag color="purple">{groupedMessages[customerID][groupedMessages[customerID].length - 1].category}</Tag>
-                                                    </div>
+                                                    {groupedMessages[customerID].some(msg => msg.status === 'unread') && <BellFilled style={{ fontSize: '14px', color: 'red', }} />}
+                                                </div>
+                                                <div>
+                                                    <Tag color="purple">{groupedMessages[customerID][groupedMessages[customerID].length - 1].category}</Tag>
                                                 </div>
                                             </div>
-                                        );
-                                    })
-                                ) : (
-                                    <div style={{ alignItems: 'center', justifyContent: "center", marginTop: "200px" }}>
-                                        <Loader />
-                                    </div>
-                                )
-                            )}
+                                        </div>
+                                    );
+                                }))
+
+                            }
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -421,8 +419,8 @@ function AllMessages() {
                         <div style={{ display: "flex", width: "240px", justifyContent: "flex-end" }}>
                             {selectedUser ? (<div style={{ margin: "25px 0 0 20px" }} onClick={handleDownloadCSV}>
                                 <Icon icon="material-symbols:download" width="32" height="32" />
-                            </div>) : null}
-
+                            </div>): null}
+                            
                         </div>
 
                     </div>
@@ -452,7 +450,7 @@ function AllMessages() {
 
                                             {msg.sender === 'customer' ? (
                                                 <div className="message-receved-admin">
-                                                    <img src={selectedUser && selectedUser.profilePic} alt="dp" style={{ width: "40px", height: "40px", borderRadius:"50%" }} />
+                                                    <img src={selectedUser && selectedUser.profilePic} alt="dp" style={{ width: "40px", height: "40px" }} />
                                                     <div style={{ background: "#f1f1f1", borderRadius: "11px", margin: "0 5px 0 15px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "black", display: "flex", flexDirection: "column" }}>
                                                         <div><p>{msg.message}</p></div>
                                                         <div style={{ fontSize: "10px", display: "flex", justifyContent: "flex-end" }}>{moment(msg.sendTime, 'HH:mm:ss').format('hh:mm A')}</div>
@@ -492,12 +490,7 @@ function AllMessages() {
                                                                 },
                                                             }}
                                                         >
-                                                            {moment().diff(moment(msg.sendDate + ' ' + msg.sendTime, 'YYYY-MM-DD HH:mm:ss'), 'minutes') > 15 ? 
-                                                            (
-                                                                <MenuItem disabled> Delete </MenuItem>
-                                                            ) : (
-                                                                <MenuItem onClick={() => deleteMessage(msg._id)}> Delete </MenuItem>
-                                                            )}
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
                                                         </Menu>
                                                     </div>
                                                 </div>
@@ -538,18 +531,8 @@ function AllMessages() {
                                                                 },
                                                             }}
                                                         >
-
-                                                            {moment().diff(moment(msg.sendDate + ' ' + msg.sendTime, 'YYYY-MM-DD HH:mm:ss'), 'minutes') > 15 ? (
-                                                                <>
-                                                                    <MenuItem disabled>Delete</MenuItem>
-                                                                    <MenuItem disabled>Edit</MenuItem>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
-                                                                    <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
-                                                                </>
-                                                            )}
+                                                            <MenuItem onClick={() => editMessage(msg._id)}>Edit</MenuItem>
+                                                            <MenuItem onClick={() => deleteMessage(msg._id)}>Delete</MenuItem>
                                                         </Menu>
                                                     </div>
                                                     <div style={{ background: "#7b63ff", borderRadius: "11px", margin: "0 15px 0 5px", padding: "6px", minWidth: "150px", maxWidth: "400px", color: "#ffffff", display: "flex", flexDirection: "column" }}>
