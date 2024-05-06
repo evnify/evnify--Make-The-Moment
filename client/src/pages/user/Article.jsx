@@ -40,45 +40,46 @@ function Article() {
     }, []);
 
     useEffect(() => {
-        setLikes(10);
-    }, []);
+        const fetchArticle = async () => {
+            try {
+                const response = await axios.get(`/api/blogs/getBlogById/${params.id}`);
+                setArticle(response.data);
+                setLikes(response.data.likes.length);
+                const user = JSON.parse(localStorage.getItem("currentUser"));
+                if (user && response.data.likes.includes(user.userID)) {
+                    setLiked(true);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchArticle();
+    }, [params.id]);
+
 
     const handleLikeButtonClick = async () => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
-
+        console.log("user",user)
         if (!user) {
             window.location.href = "/login";
             return;
         }
 
         try {
-            const userId = user._id;
-            if (liked) {
-                await axios.post("/api/places/unlike", {
-                    placeId: params.placeid,
-                    userId,
-                    userId,
-                });
-                setPlace((prevPlace) => ({
-                    ...prevPlace,
-                    likes: Math.max(prevPlace.likes - 1, 0),
-                }));
-                setLikes((prevLikes) => Math.max(prevLikes - 1, 0)); // Update likes count
-            } else {
-                await axios.post("/api/places/like", {
-                    placeId: userId,
-                });
-                setPlace((prevPlace) => ({
-                    ...prevPlace,
-                    likes: prevPlace.likes + 1,
-                }));
-                setLikes((prevLikes) => prevLikes + 1); // Update likes count
-            }
-            setLiked((prevLiked) => !prevLiked);
+            const updatedLikes = liked ? likes - 1 : likes + 1;
+            setLiked(!liked);
+            setLikes(updatedLikes);
+            const response = await axios.post("/api/blogs/updateLikes", {
+                articleId: article._id,
+                userId: user.userID,
+                liked: !liked,
+            });
+            console.log(response); // Log response if needed
         } catch (error) {
-            console.error("Error liking/unliking place:", error);
+            console.error("Error liking/unliking article:", error);
         }
     };
+
     const likedColor = "#e4264e";
 
     return (
@@ -97,7 +98,7 @@ function Article() {
                             className="like_button_container"
                             icon={
                                 liked ? (
-                                    <HeartFilled className="liked-heart" />
+                                    <HeartFilled className="liked-heart" style={{ color:"#e4264e"}}/>
                                 ) : (
                                     <HeartOutlined />
                                 )

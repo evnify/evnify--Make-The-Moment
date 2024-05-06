@@ -55,6 +55,33 @@ router.post("/deleteBlogById", async (req, res) => {
 }
 );
 
+router.post("/updateLikes", async (req, res) => {
+    const { articleId, userId } = req.body;
+    try {
+        let article = await blogModel.findById(articleId);
+        if (!article) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+
+        // Check if the user has already liked the article
+        const likedIndex = article.likes.indexOf(userId);
+        if (likedIndex === -1) {
+            // If the user hasn't liked the article, add the user ID to the likes array
+            article.likes.push(userId);
+            await article.save();
+        } else {
+            // If the user has already liked the article, remove the user ID from the likes array
+            article.likes.splice(likedIndex, 1);
+            await article.save();
+        }    
+
+        res.send("Likes updated successfully");
+    } catch (error) {
+        console.error("Error updating likes:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 
 module.exports = router;
