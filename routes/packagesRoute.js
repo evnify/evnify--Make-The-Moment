@@ -100,11 +100,11 @@ router.post("/getPackagesByType", async (req, res) => {
 
 
 //Generate unique id for leave
-const generateUniqueID = async () => {
+const generateUniqueID = async (packageType, eventType) => {
     let id = 'PKG' + Math.floor(100000 + Math.random() * 900000);
-    const existingPackage = await packageModel.findOne({ packageId: id });
+    const existingPackage = await packageModel.findOne({ packageId: id, packageType: packageType, eventType: eventType });
     if (existingPackage) {
-        return generateUniqueID();
+        return generateUniqueID(packageType, eventType);
     }
     return id;
 };
@@ -131,10 +131,30 @@ router.get('/allInventory', async (req, res) => {
 
 // Add a new package
 router.post('/addPackage', async (req, res) => {
-    const packageId = await generateUniqueID();
-    Package.packageId = packageId;
-    const { packageType, eventType, price, description, baseImage, inventories, extras, contentImages } = req.body;
+    const { packageType, eventType } = req.body;
+    
+    // Check if the event type already has three package types
     try {
+        const packageCount = await Package.countDocuments({ eventType: eventType });
+        if (packageCount >= 3) {
+            return res.status(400).json({ message: 'Each event type can have only three package types.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+
+    // Generate unique package ID
+    const packageId = await generateUniqueID(packageType, eventType);
+
+    try {
+        // Check if the package already exists
+        const existingPackage = await Package.findOne({ packageType: packageType, eventType: eventType });
+        if (existingPackage) {
+            return res.status(400).json({ message: 'Package already exists for this event type and package type.' });
+        }
+
+        // Create new package
+        const { price, description, baseImage, inventories, extras, contentImages } = req.body;
         const newPackage = new Package({
             packageId,
             packageType,

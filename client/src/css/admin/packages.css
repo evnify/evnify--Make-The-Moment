@@ -1,7 +1,7 @@
 .booking-package-insight-div {
     display: flex;
     flex-direction: row;
-    height: 357px;
+    height: 500px;
     justify-content: space-between;
     margin: 0 15px 0 15px;
 }
@@ -9,8 +9,8 @@
 .booking-package-div-insight-left {
     display: flex;
     flex-direction: column;
-    width: 572px;
-    height: 355px;
+    width: 600px;
+    height: 490px;
     padding: 10px;
     border-radius: 11px;
     background-color: white;
@@ -20,8 +20,8 @@
 .booking-package-div-insight-right {
     display: flex;
     flex-direction: column;
-    width: 572px;
-    height: 355px;
+    width: 600px;
+    height: 490px;
     padding: 10px;
     border-radius: 11px;
     background-color: white;
@@ -98,4 +98,13 @@
     border: 1px solid #9e9b9b;
     align-items: center;
     justify-content: center;
+}
+
+.package-insight-categories{
+    display: flex;
+    justify-content: center;
+    width: 580px;
+    height: 390px;
+    margin-top: 15px;
+    background-color: #fff;
 }
