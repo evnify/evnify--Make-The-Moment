@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Navbar, Footer } from "../../components";
+import React, { useState } from "react";
+import { Navbar, Footer,ChatBox } from "../../components";
 import { Carousel, Button, Card, Avatar } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import{ig, fb, li, yt} from "../../assets"
@@ -408,6 +408,7 @@ function HomePage() {
                     </div>
                 </div>
             </div>
+            <ChatBox />
             <Footer />
         </div>
     );
