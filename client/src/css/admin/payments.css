@@ -129,3 +129,117 @@
   font-weight: 600;
   margin: 0 30px 0 22px;
 }
+
+.payment-insight-container{
+  display: flex;
+  flex-direction: column;
+  color: #464646;
+  width: 100%;
+  height:100%;
+}
+
+.payment-insight{
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  justify-content: space-between;
+  height: 350px;
+  border-radius: 11px;
+  margin: 0 16px 15px 15px; 
+}
+
+.insight-cards{
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+  width: 280px;
+  height: 100%;
+  border-radius: 11px;
+}
+
+.total-amount-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 160px;
+  border-radius: 11px;
+  background:#e4ffe1;
+}
+
+.total-transaction-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 160px;
+  border-radius: 11px;
+  background:#e8f0fb;
+}
+
+.insight-chart{
+  display: flex;
+  width: 935px;
+  height: 100%;
+  border-radius: 11px;
+  background:#ffffff;
+  padding: 10px;
+}
+
+.payment-table-container{
+  display: flex;
+  flex-direction: column;
+  border-radius: 11px;
+  background:#ffffff;
+  padding: 10px;
+  margin-left: 15px;
+  margin-right: 16px;
+}
+
+.payment-table-top{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 60px;
+  border-radius: 11px;
+  padding: 10px;
+}
+
+.export-payment-btn{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.export-payment-csv{
+  color: #fff;
+  justify-content: flex-end;
+  align-items: center;
+  font-family: "Product Sans";
+  height: 38px;
+  width: 100px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #533c56;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 11px;
+  margin-right: 30px;
+}
+
+.payment-table-title{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  border-radius: 11px;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.payment-table{
+  width: 100%;
+  border-radius: 11px;
+  background:#ffffff;
+}
