@@ -151,7 +151,7 @@ function Blog() {
                                         <Link
                                             to={`/article/${
                                                 blogs.length > 0 &&
-                                                blogs[blogs.length - 1]._id
+                                                blogs[blogs.length - 3]._id
                                             }`}
                                         >
                                             <div

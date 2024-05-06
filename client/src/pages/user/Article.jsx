@@ -13,35 +13,35 @@ import {
 import { Divider, Flex, Tag } from "antd";
 
 function Article() {
-    const [likes, setLikes] = useState(0); 
+    const [likes, setLikes] = useState(0);
     const params = useParams();
     const [place, setPlace] = useState({});
     const [image, setImage] = useState("");
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
-    const [article, setArticle] = useState({}); 
+    const [article, setArticle] = useState({});
     const { TextArea } = Input;
     const [size, setSize] = useState("large");
 
-    const {id} = useParams();
+    const { id } = useParams();
 
-        const fetchBlogs = async () => {
-            try {
-                const response = await axios.get(`/api/blogs/getBlogById/${id}`);
-                setArticle(response.data);
-                console.log(response.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        useEffect(() => {  
-            fetchBlogs();
-        }, []);
+    const fetchBlogs = async () => {
+        try {
+            const response = await axios.get(`/api/blogs/getBlogById/${id}`);
+            setArticle(response.data);
+            console.log(article);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        fetchBlogs();
+        console.log(article.images);
+    }, []);
 
     useEffect(() => {
-        
         setLikes(10);
-    }, []); 
+    }, []);
 
     const handleLikeButtonClick = async () => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
@@ -87,9 +87,7 @@ function Article() {
             {/* article name section */}
             <div className="article_top_name_section_container">
                 <h1>{article.blogTitle}</h1>
-                <h2>
-                {article.blogTitleDescription}
-                </h2>
+                <h2>{article.blogTitleDescription}</h2>
             </div>
             {/* image view here */}
             <div className="article_images_background_container">
@@ -130,58 +128,70 @@ function Article() {
                 <div className="admin_blog_view_image_view_patten">
                     <div className="frameDiv">
                         <div className="group">
-                            <img
-                                className="icon1"
-                                alt=""
-                                src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA04848.jpg`}
-                            />
-                            <img
-                                className="icon2"
-                                alt=""
-                                src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/IMG_1925.jpg`}
-                            />
-                            <img
-                                className="icon3"
-                                alt=""
-                                src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA04922-1.jpg`}
-                            />
+                            {article.images && article.images[0] && (
+                                <img
+                                    className="icon1"
+                                    alt=""
+                                    src={article.images[0]}
+                                />
+                            )}
+                            {article.images && article.images[1] && (
+                                <img
+                                    className="icon2"
+                                    alt=""
+                                    src={article.images[1]}
+                                />
+                            )}
+                            {article.images && article.images[2] && (
+                                <img
+                                    className="icon3"
+                                    alt=""
+                                    src={article.images[2]}
+                                />
+                            )}
                         </div>
-                        <img
-                            className="icon4"
-                            alt=""
-                            src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA04989.jpg`}
-                        />
-                        <img
-                            className="icon5"
-                            alt=""
-                            src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA04954.jpg`}
-                        />
-                        <img
-                            className="icon6"
-                            alt=""
-                            src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA05270.jpg`}
-                        />
-                        <img
-                            className="icon7"
-                            alt=""
-                            src={`https://www.prabathkanishkaphotography.com/wp-content/uploads/2020/11/PRA05248.jpg`}
-                        />
+                        {article.images && article.images[3] && (
+                            <img
+                                className="icon4"
+                                alt=""
+                                src={article.images[3]}
+                            />
+                        )}
+                        {article.images && article.images[4] && (
+                            <img
+                                className="icon5"
+                                alt=""
+                                src={article.images[4]}
+                            />
+                        )}
+                        {article.images && article.images[5] && (
+                            <img
+                                className="icon6"
+                                alt=""
+                                src={article.images[5]}
+                            />
+                        )}
+                        {article.images && article.images[6] && (
+                            <img
+                                className="icon7"
+                                alt=""
+                                src={article.images[6]}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
             <div className="article_description_section_container">
                 <div className="article_description_view_section_container">
-                    <h2>
-                    {article.description}
-                    </h2>
+                    <h2>{article.description}</h2>
                 </div>
                 <div className="article_view_page_tags_section">
-                {article.tags &&
-                            article.tags.map((tag, index) => (
-                                <Tag color="success" key={index}>
-                                    {tag}
-                                </Tag>
-                            ))}
+                    {article.tags &&
+                        article.tags.map((tag, index) => (
+                            <Tag color="success" key={index}>
+                                {tag}
+                            </Tag>
+                        ))}
                 </div>
             </div>
             <div className="article_comment_section_container">
@@ -189,7 +199,8 @@ function Article() {
                     <h3>Comments</h3>
                     <br />
                     <div className="article_comment_section">
-                        <TextArea className="article_comment_add_section"
+                        <TextArea
+                            className="article_comment_add_section"
                             rows={4}
                             placeholder="Comment here"
                             maxLength={1000}
@@ -208,9 +219,7 @@ function Article() {
                             </Button>
                         </div>
                     </div>
-                    <div>
-                        Comments
-                    </div>
+                    <div>Comments</div>
                 </div>
             </div>
             <Footer />
