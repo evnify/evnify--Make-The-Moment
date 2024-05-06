@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Modal, Tag, Space } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+import { Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 
 import axios from "axios";
@@ -11,6 +12,7 @@ const { confirm } = Modal;
 function Booking() {
     const [bookingList, setBookingList] = useState([]);
     const [viewCounts, setViewCounts] = useState([]);
+    const [bookings, setBookings] = useState([]);
 
     const handleDeleteConfirmation = (id) => {
         confirm({
@@ -26,6 +28,39 @@ function Booking() {
                 console.log("Delete operation cancelled");
             },
         });
+    };
+
+    const bookingPackages = bookings.map((booking) => booking.status);
+    const packageCounts = bookingPackages.reduce((counts, status) => {
+        counts[status] = (counts[status] || 0) + 1;
+        return counts;
+    }, {});
+
+    const pieChartData = {
+        labels: Object.keys(packageCounts),
+        datasets: [
+            {
+                label: "Packages",
+                data: Object.values(packageCounts),
+                backgroundColor: [
+                    "rgb(50, 149, 131, 0.9)",
+                    "rgb(255, 77, 79, 0.9)",
+                    "rgba(255, 206, 86, 0.9)",
+                    "rgba(75, 192, 192, 0.9)",
+                    "rgba(153, 102, 255, 0.9)",
+                    "rgba(255, 159, 64, 0.9)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const options = {
+        plugins: {
+            legend: {
+                display: false,
+            },
+        },
     };
 
     const handleDeleteBooking = async (id) => {
@@ -47,6 +82,7 @@ function Booking() {
         try {
             const response = await axios.get(`/api/bookings/getAllBookings`);
             setBookingList(response.data);
+            setBookings(response.data);
         } catch (error) {
             console.log("Error fetching bookings:", error);
         }
@@ -280,14 +316,36 @@ function Booking() {
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="booking_dashboard_chart_container">
-                <div className="booking_dashboard_doughnut_container"></div>
+                <div className="booking_dashboard_doughnut_container">
+                    <h4>Packages</h4>
+                    <p>Daily Purchases in past 07 days</p>
+                    <div className="booking_dashboard_doughnut">
+                        <Doughnut data={pieChartData} options={options} />
+                        <div>
+                            {pieChartData.labels.map((label, index) => (
+                                <div key={index} className="legend-item">
+                                    <div
+                                        className="legend-color"
+                                        style={{
+                                            backgroundColor:
+                                                pieChartData.datasets[0]
+                                                    .backgroundColor[index],
+                                            margin: "4px",
+                                        }}
+                                    ></div>
+                                    <div className="legend-label">{label}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
                 <div className="booking_dashboard_line_container">
                     <h4>Packages</h4>
                     <p>Daily Purchases in past 07 days</p>
                     <canvas id="lineChart" height={300}></canvas>
                 </div>
             </div>
-            <div className="admin_leave_request_container">
+            <div className="admin_booking_container">
                 <div className="admin_leave_request_top_menu">
                     <h5>All Leaves</h5>
                 </div>
