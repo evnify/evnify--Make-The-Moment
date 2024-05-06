@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
+import Loader from "./Loader";
+import { Link } from "react-router-dom";
 import moment from "moment";
 import {
     ConfigProvider,
@@ -20,6 +22,7 @@ import {
 } from "antd";
 
 import axios from "axios";
+import { set } from "mongoose";
 
 let index = 0;
 
@@ -30,6 +33,13 @@ function EmployeeList() {
     const [addEmployeeModelOpen, setAddEmployeeModelOpen] = useState(false);
     const [tableModelOpen, setTableModelOpen] = useState(false);
     const [tableModelContent, setTableModelContent] = useState();
+
+    const [isLeavesLoading, setIsLeavesLoading] = useState(true);
+    const [isEmployeeLoading, setIsEmployeeLoading] = useState(false);
+    const [isEventsLoading, setIsEventsLoading] = useState(false);
+
+    // fetch upcoming events
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
 
     // Type Selector
     const [items, setItems] = useState([
@@ -160,19 +170,16 @@ function EmployeeList() {
                 `${process.env.PUBLIC_URL}/api/employees/editEmployee`,
                 empData
             );
-            await axios.post(
-                `${process.env.PUBLIC_URL}/api/users/editUser`,
-                {
-                    userID: tableModelContent.userID,
-                    username: editUsername,
-                    profilePic: editProfileImage,
-                    firstName: editFirstName,
-                    lastName: editLastName,
-                    email: editEmail,
-                    phoneNumber: editPhoneNumber,
-                    address1: editAddress
-                }
-            );
+            await axios.post(`${process.env.PUBLIC_URL}/api/users/editUser`, {
+                userID: tableModelContent.userID,
+                username: editUsername,
+                profilePic: editProfileImage,
+                firstName: editFirstName,
+                lastName: editLastName,
+                email: editEmail,
+                phoneNumber: editPhoneNumber,
+                address1: editAddress,
+            });
             message.success("Employee edit successfully");
             setTableModelOpen(false);
             fetchEmployeeList();
@@ -282,7 +289,6 @@ function EmployeeList() {
         setEditUsername(record.username);
         setEditProfileImage(record.profileImage);
         setEditStatus(record.status);
-        console.log(record.status);
         setFileListEdit([
             {
                 uid: "1",
@@ -297,7 +303,22 @@ function EmployeeList() {
             `${process.env.PUBLIC_URL}/api/employees/getAllEmployees`
         );
         setEmployeeList(response.data);
+        setIsEmployeeLoading(false);
     }
+
+    const [pendingLeaves, setPendingLeaves] = useState([]);
+    //Fetch pending leaves
+    const fetchPendingLeaves = async () => {
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/leaves/getPendingLeaves`
+        );
+        setPendingLeaves(response.data);
+        setIsLeavesLoading(false);
+    };
+
+    useEffect(() => {
+        fetchPendingLeaves();
+    }, []);
 
     const saveEmployee = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -332,10 +353,10 @@ function EmployeeList() {
             email,
             phoneNumber,
             username,
-            profilePic : profileImage,
+            profilePic: profileImage,
             userType: "Employee",
-            status : "Active",
-            address1 : address,
+            status: "Active",
+            address1: address,
         };
 
         try {
@@ -354,7 +375,7 @@ function EmployeeList() {
                 phoneNumber,
                 username,
                 profileImage,
-                userID : response.data.userID,
+                userID: response.data.userID,
             };
 
             const res = await axios.post(
@@ -475,6 +496,24 @@ function EmployeeList() {
             });
     };
 
+    const fetchUpcomingEvents = async () => {
+        const today = new Date();
+        const formattedToday = today.toISOString().split("T")[0];
+        const response = await axios.get(
+            `${process.env.PUBLIC_URL}/api/bookings/getAllBookings`
+        );
+
+        const temp = response.data.filter((event) => {
+            return event.eventDate > formattedToday;
+        });
+        setUpcomingEvents(temp);
+        setIsEventsLoading(false);
+    };
+
+    useEffect(() => {
+        fetchUpcomingEvents();
+    }, []);
+
     // Table Functions
     const [employeeList, setEmployeeList] = useState([]);
     const [pagination, setPagination] = useState({
@@ -523,10 +562,9 @@ function EmployeeList() {
                 `${process.env.PUBLIC_URL}/api/employees/activeEmployee`,
                 { empID: tableModelContent.empID }
             );
-            await axios.post(
-                `${process.env.PUBLIC_URL}/api/users/activeUser`,
-                { userID: tableModelContent.userID }
-            );
+            await axios.post(`${process.env.PUBLIC_URL}/api/users/activeUser`, {
+                userID: tableModelContent.userID,
+            });
             message.success("Employee activated successfully");
             setTableModelOpen(false);
             setIsActiveModalOpen(false);
@@ -543,6 +581,16 @@ function EmployeeList() {
     //Filter employee list
     const [filteredEmployeeList, setFilteredEmployeeList] = useState([]);
     const [searchKey, setSearchKey] = useState("");
+
+    const formatDareful = (date) => {
+        const createdAtDate = new Date(date);
+        const formattedDate = createdAtDate.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+        });
+        return formattedDate;
+    };
 
     useEffect(() => {
         let tempList = employeeList;
@@ -925,11 +973,97 @@ function EmployeeList() {
                         </div>
                         <div className="admin_emp_details_card card2">
                             <h1>Pending Leaves</h1>
-                            <h2>26</h2>
+                            <h2>{pendingLeaves.length}</h2>
                         </div>
                     </div>
-                    <div className="admin_emp_pending_leave_container"></div>
-                    <div className="admin_emp_upcoming_event_container"></div>
+                    <div className="admin_emp_pending_leave_container">
+                        <div className="admin_emp_pending_leave_inner_container">
+                            <div style={{ height: "244px" }}>
+                                <h5>Pending Leave Requests</h5>
+                                {!isLeavesLoading ? (
+                                    <div className="admin_emp_pending_leave_list_itm">
+                                        {pendingLeaves.length > 0 ? (
+                                            pendingLeaves
+                                                .slice(0, 4)
+                                                .map((item) => (
+                                                    <div className="admin_dashboard_pending_lave_rows">
+                                                        <h4>{item.name}</h4>
+                                                        <h6>
+                                                            {formatDareful(
+                                                                item.createdAt
+                                                            )}
+                                                        </h6>
+                                                        <Tag color="orange">
+                                                            Pending
+                                                        </Tag>
+                                                    </div>
+                                                ))
+                                        ) : (
+                                            <div
+                                                className="center"
+                                                style={{ marginTop: "100px" }}
+                                            >
+                                                <h6
+                                                    style={{ color: "#8d93a5" }}
+                                                >
+                                                    No Pending Leave Requests
+                                                </h6>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="center"
+                                        style={{ marginTop: "90px" }}
+                                    >
+                                        <h6 style={{ color: "#8d93a5" }}>
+                                            Loading...
+                                        </h6>
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{ width: "100%" }} className="center">
+                                <Link to="/admin/leaverequests">
+                                    <p>See All Requests</p>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="admin_emp_upcoming_event_container">
+                        <h5>Upcoming Events</h5>
+                        {!isEventsLoading ? (
+                            <div className="admin_emp_upcoming_event_items">
+                                {upcomingEvents.length > 0 ? (
+                                    upcomingEvents.map((event) => (
+                                        <div className="admin_emp_upcoming_event_item">
+                                            <h4>
+                                                {event.eventType}
+                                                {" - "}
+                                                {event.packageType}
+                                            </h4>
+                                            <h6>{event.eventDate}</h6>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div
+                                        className="center"
+                                        style={{ marginTop: "100px" }}
+                                    >
+                                        <h6 style={{ color: "#8d93a5" }}>
+                                            No Upcoming Events
+                                        </h6>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div
+                                className="center"
+                                style={{ marginTop: "90px" }}
+                            >
+                                <h6 style={{ color: "#8d93a5" }}>Loading...</h6>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="admin_emp_list_container">
                     <div className="admin_emp_list_top_menu">
@@ -1045,7 +1179,7 @@ function EmployeeList() {
                                             marginBottom: "3px",
                                         }}
                                     >
-                                        Leave Type
+                                        Employee Type
                                     </span>
                                     <Select
                                         style={{
@@ -1284,13 +1418,19 @@ function EmployeeList() {
                     </Modal>
 
                     <div style={{ width: "100%" }}>
-                        <div>
-                            <Table
-                                columns={columns}
-                                dataSource={filteredEmployeeList}
-                                pagination={pagination}
-                                onChange={handleTableChange}
-                            />
+                        <div style={{ minHeight: "192px" }}>
+                            {!isEmployeeLoading ? (
+                                <Table
+                                    columns={columns}
+                                    dataSource={filteredEmployeeList}
+                                    pagination={filteredEmployeeList.length > 10 ? pagination : false}
+                                    onChange={handleTableChange}
+                                />
+                            ) : (
+                                <div className="center" style={{height : "192px"}}>
+                                    <Loader />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

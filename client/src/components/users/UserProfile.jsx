@@ -4,7 +4,7 @@ import { Upload, message, Modal } from "antd";
 import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined ,EditOutlined} from "@ant-design/icons";
 import axios from "axios";
-import { Input, Select, Divider, Space } from "antd";
+import { Input} from "antd";
 const { Search, TextArea } = Input;
 
 function UserProfile() {
@@ -161,34 +161,51 @@ function UserProfile() {
     const [coverPhoto, setCoverPhoto] = useState(null);
 
    
+   
+
 
 
     const handleUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
+    
         try {
             const formData = new FormData();
             formData.append('image', file);
-
+    
             const response = await axios.post(
                 "https://api.imgbb.com/1/upload?key=700c61f2bf87cf203338efe206d7e66f",
                 formData
             );
-
-            if (response.data.data) {
+    
+            if (response.data.data && response.data.data.url) {
                 const imageUrl = response.data.data.url;
-                
-
                 updateUserCover(imageUrl);
+                message.success("Image uploaded successfully,It will be display soon");
+                fetchCoverPicUrl();
                 
             } else {
                 console.error('Failed to upload image');
+                message.error("Failed to upload image");
             }
         } catch (error) {
             console.error('Error uploading image:', error);
+            message.error("Error uploading image");
         }
     };
+    
+    const fetchCoverPicUrl = async () => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = { userID: user.userID };
+        try {
+            const res = await axios.post("/api/users/getUserById", userID); 
+            setCoverPhoto(res.data.coverPic);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
 
     
 
@@ -601,7 +618,9 @@ function UserProfile() {
                     </div>
                 </div>
             </div>
+            
         </div>
+        
     );
 }
 
