@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Modal, Tag, Space, Button } from "antd";
 import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-
-import BookingSteps from "../users/BookingSteps";
+import { Icon } from "@iconify/react";
 
 import axios from "axios";
 
@@ -66,9 +65,9 @@ function Booking() {
       key: "customerID",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Transaction ID",
+      dataIndex: "transactionID",
+      key: "transactionID",
     },
     {
       title: "Package Type",
@@ -99,9 +98,9 @@ function Booking() {
       dataIndex: "status",
       render: (status) => {
         let color = "green";
-        if (status === "rejected") {
+        if (status === "Cancelled") {
           color = "red";
-        } else if (status === "pending") {
+        } else if (status === "Pending") {
           color = "orange";
         }
         return <Tag color={color}>{status}</Tag>;
@@ -111,6 +110,9 @@ function Booking() {
       title: "Amount Paid",
       dataIndex: "amount",
       key: "amountPaid",
+      render: (amount) => {
+        return `${amount} LKR`;
+      },
     },
     {
       title: "Booked Date",
@@ -129,14 +131,59 @@ function Booking() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            type="primary"
-            danger
-            onClick={() => handleDeleteConfirmation(record._id)}
-            icon={<DeleteOutlined />}
-          ></Button>
+            {record.status === "Pending" ? (
+                <>
+                    <button
+                        style={{
+                            fontSize: "20px",
+                            color: "#757171",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                        // onClick={() => showPaidConform(record)}
+                    >
+                        <Icon icon="icon-park-outline:correct" />
+                    </button>
+                    <button
+                        style={{
+                            fontSize: "20px",
+                            color: "#757171",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                        onClick={() => handleDeleteConfirmation(record._id)}
+                    >
+                        <Icon icon="material-symbols:delete-outline" />
+                    </button>
+                </>
+            ) : (
+                <>
+                    <button
+                        disabled
+                        style={{
+                            fontSize: "20px",
+                            color: "#9D9D9D",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                    >
+                        <Icon icon="icon-park-outline:correct" />
+                    </button>
+                    <button
+                        disabled
+                        style={{
+                            fontSize: "20px",
+                            color: "#9D9D9D",
+                            border: "none",
+                            background: "transparent",
+                        }}
+                    >
+                        <Icon icon="material-symbols:delete-outline" />
+                    </button>
+                </>
+            )}
         </Space>
-      ),
+    ),
     },
   ];
 
