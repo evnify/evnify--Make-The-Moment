@@ -103,6 +103,7 @@
 .admin_user_list {
     margin-left: 30px;
     margin-right: 30px;
+    margin-bottom: 20px;
 }
 
 .add_user_top_container {
@@ -111,6 +112,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 20px;
+    
 }
 
 .add_user_popup_details_container {
@@ -369,6 +371,7 @@
     margin-left: 30px;
     justify-content: space-between;
     margin: auto;
+   
 }
 
 .admin_user_bar_btn {
