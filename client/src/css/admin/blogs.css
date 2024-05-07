@@ -1,7 +1,7 @@
 .admin_add_blog_section_one{
     background-color: #ffffff;
     height: 530px;
-    width: 1140px;
+    width: 1220px;
     display: flex;
     margin-left: 16px;
     border-radius: 12px;
@@ -22,12 +22,12 @@
 }
 .admin_add_blog_section_border{
     border: 1px solid;
-    width: 1120px;
+    width: 1180px;
     height: 460px;
     border-color: #D9D9D9;
     display: flex;
     flex-direction: row;
-    margin-left: 10px;
+    margin-left: 20px;
     border-radius: 12px;
     
 }
@@ -41,7 +41,7 @@
 
 }
 .admin_add_blog_section_add_blog_from{
-    padding-left: 20px;
+    padding-left: 10px;
     display: flex;
     flex-direction: column;
 
@@ -55,7 +55,7 @@
     margin-top: 20px;
     background-color: #ffffff;
     height: 587px;
-    width: 1140px;
+    width: 1220px;
     margin-left: 16px;
     border-radius: 12px;
     display: flex;
@@ -84,7 +84,7 @@
     display: flex;
     flex-direction: row;
     padding-bottom: 20px;
-    margin-left: 850px;
+    margin-left: 950px;
     margin-right: 20px;
     margin-top: 30px;
 
@@ -109,12 +109,13 @@
 .admin_existing_blog_counts_containers{
     display: flex;
     flex-direction: row;
+    gap: 20px;
 }
 /* card1 */
 .admin_existing_blog_total_blog_container1{
     background-color: #E8F0FB;
     height: 136px;
-    width: 265px;
+    width: 285px;
     display: flex;
     margin-left: 16px;
     border-radius: 11px;
@@ -154,7 +155,7 @@
 .admin_existing_blog_total_blog_container2{
     background-color: #E4FFE1;
     height: 136px;
-    width: 265px;
+    width: 285px;
     display: flex;
     margin-left: 16px;
     border-radius: 11px;
@@ -193,7 +194,7 @@
 .admin_existing_blog_total_blog_container3{
     background-color: #FDEBF9;
     height: 136px;
-    width: 265px;
+    width: 285px;
     display: flex;
     margin-left: 16px;
     border-radius: 11px;
@@ -232,7 +233,7 @@
 .admin_existing_blog_total_blog_container4{
     background-color: #DBCAFF;
     height: 136px;
-    width: 265px;
+    width: 285px;
     display: flex;
     margin-left: 16px;
     border-radius: 11px;
@@ -272,7 +273,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 1116px;
+    width: 1200px;
     height: 80px;
     padding: 0 15px;
     border-radius: 11px 11px 0 0;
@@ -288,7 +289,7 @@ color: #464646;
 .admin_existing_blog_table__view_back{
     background-color: #ffffff;
     height: 800px;
-    width: 1135px;
+    width: 1220px;
     display: flex;
     margin-left: 16px;
     border-radius: 12px;
@@ -305,7 +306,7 @@ color: #464646;
     font-weight: 300;
     line-height: 20px;
     padding-left: 10px;
-    padding-top: 10px; 
+    padding-top: 10px;
     padding-bottom: 20px;
 }
 
