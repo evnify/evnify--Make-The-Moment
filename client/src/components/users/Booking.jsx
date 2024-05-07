@@ -5,21 +5,37 @@ import {
     Space,
     ConfigProvider,
     Modal,
-    Input,
     Steps,
     Radio,
-    Checkbox,
     message,
 } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import jsPDF from "jspdf";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+import EditPaymentForm from "../EditPaymentForm";
 
 function Booking() {
     const [bookingList, setBookingList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBookingData, setSelectedBookingData] = useState(null);
+    const [defaultCart, setDefaultCart] = useState([]);
+
+    const stripePromise = loadStripe(
+        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
+    );
+
+    // fetch user id
+    const [userId, setUserId] = useState({});
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        setUserId(userID);
+    }, []);
 
     var imgData = require("../../assets/backgrounds/reservationConformation.png");
 
@@ -66,6 +82,7 @@ function Booking() {
     const handleViewClick = async (record) => {
         setSelectedBookingData(record);
         setIsModalOpen(true);
+        setDefaultCart(record.AssignedInventory);
         setCart(record.AssignedInventory);
         console.log(record.AssignedInventory);
     };
@@ -220,15 +237,24 @@ function Booking() {
         );
     };
 
+    const calculateDefault = () => {
+        return defaultCart.reduce(
+            (total, item) => total + item.unitPrice * item.addedQty,
+            0
+        );
+    };
+
     const handleRemoveItem = (itemId) => {
         const updatedCart = cart.filter((item) => item.itemID !== itemId);
         setCart(updatedCart);
         message.success("Item removed from cart");
     };
 
-    const handleChangeQty = (e, itemId) => {
-        if (e.target.value < 1) {
-            return message.error("Quantity cannot be less than 1");
+    const handleChangeQty = (e, itemId, index) => {
+        if (e.target.value < defaultCart[index].addedQty) {
+            return message.error(
+                `Quantity cannot be less than existing quantity ${defaultCart[index].addedQty}`
+            );
         }
         const updatedCart = cart.map((item) =>
             item.itemID === itemId
@@ -339,7 +365,7 @@ function Booking() {
                                     <h4>Your Package</h4>
                                 </div>
                                 <div className="booking_cart_item">
-                                    {cart.map((item) => (
+                                    {cart.map((item, index) => (
                                         <div
                                             className="booking_cart_item_body"
                                             key={item.itemId}
@@ -367,7 +393,8 @@ function Booking() {
                                                     onChange={(e) =>
                                                         handleChangeQty(
                                                             e,
-                                                            item.itemID
+                                                            item.itemID,
+                                                            index
                                                         )
                                                     }
                                                 />
@@ -380,8 +407,8 @@ function Booking() {
                                     <p>Subtotal({cart.length} Items)</p>
                                     <h6>
                                         LKR{" "}
-                                        {(calculateTotal() ?? 0) +
-                                            (selectedPackage[0]?.price ?? 0)}
+                                        {(calculateTotal() ?? 0) -
+                                            (calculateDefault() ?? 0)}
                                     </h6>
                                 </div>
                                 <button
@@ -390,7 +417,10 @@ function Booking() {
                                 >
                                     CONTINUE TO CHECKOUT
                                 </button>
-                                <p>You can only add, if you have any concern contact us</p>
+                                <p>
+                                    You can only add, if you have any concern
+                                    contact us
+                                </p>
                             </div>
                         ) : current == 1 ? (
                             <div className="booking_cart_item_container">
@@ -553,195 +583,24 @@ function Booking() {
                                     <div className="total_calculate_section">
                                         <h3>
                                             Total :{" "}
-                                            {(calculateTotal() ?? 0) +
-                                                (selectedPackage[0]?.price ??
-                                                    0)}{" "}
+                                            {(calculateTotal() ?? 0) -
+                                                (calculateDefault() ?? 0)}{" "}
                                             LKR
                                         </h3>
                                     </div>
                                 </div>
-                                <div id="payment-element" style={{ flex: 1 }}>
-                                    <div
-                                        style={{
-                                            width: 420,
-                                            padding: "0 50px",
-                                        }}
-                                    >
-                                        <hr />
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Email
-                                            </span>
-                                            <Input
-                                                type="email"
-                                                placeholder="Email"
-                                                size="large"
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Card Information
-                                            </span>
-                                            <Input
-                                                type="number"
-                                                placeholder="1234 1234 1234 1234"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCardNumber(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "row",
-                                            }}
-                                        >
-                                            <Input
-                                                type="number"
-                                                placeholder="MM/YY"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setExpDate(e.target.value)
-                                                }
-                                            />
-
-                                            <Input
-                                                type="number"
-                                                placeholder="CVC"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCvc(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Name On card
-                                            </span>
-                                            <Input
-                                                placeholder="Full name on card"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setNameOnCard(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Country Or region
-                                            </span>
-
-                                            <Input
-                                                type="number"
-                                                placeholder="ZIP"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setZip(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <Checkbox>
-                                                Agree to the terms and
-                                                conditions
-                                            </Checkbox>
-                                        </div>
-                                        <div className="center">
-                                            <button
-                                                className="payment_confirm_btn_72"
-                                                onClick={editBooking}
-                                            >
-                                                Pay
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Elements stripe={stripePromise}>
+                                    <EditPaymentForm
+                                        cart={cart}
+                                        userId={userId}
+                                        selectedPackage={selectedPackage}
+                                        selectedAddress={selectedAddress}
+                                        price={
+                                            (calculateTotal() ?? 0) -
+                                            (calculateDefault() ?? 0)
+                                        }
+                                    />
+                                </Elements>
                             </div>
                         )}
                     </div>
@@ -865,14 +724,18 @@ function Booking() {
                                                 <>
                                                     <button
                                                         className="cancel_Package_72 center"
-                                                        style={{ background: "gray" }}
+                                                        style={{
+                                                            background: "gray",
+                                                        }}
                                                         disabled
                                                     >
                                                         Cancel Booking
                                                     </button>
                                                     <button
                                                         className="saveAddressBtn_72 center"
-                                                        style={{ background: "gray" }}
+                                                        style={{
+                                                            background: "gray",
+                                                        }}
                                                         disabled
                                                     >
                                                         Update Booking

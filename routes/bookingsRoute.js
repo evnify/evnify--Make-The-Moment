@@ -206,10 +206,10 @@ router.post("/saveAddress", async (req, res) => {
 
 router.post("/editBookingById", async (req, res) => {
     try {
-        const { _id, cart } = req.body;
+        const { _id, cart, amount } = req.body;
         const booking = await Booking.findByIdAndUpdate(
             { _id },
-            { AssignedInventory: cart },
+            { AssignedInventory: cart, amount },
             { new: true }
         );
         res.send(booking);
