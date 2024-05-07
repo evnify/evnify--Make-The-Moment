@@ -422,7 +422,6 @@ function Booking() {
                 addedQty: 1,
                 category: product.category,
                 unitPrice: product.unitPrice,
-                quantity: product.quantity,
             };
             setCart([...cart, newItem]);
         }
@@ -435,7 +434,7 @@ function Booking() {
         }
         const updatedCart = cart.map((item) =>
             item.itemID === itemId
-                ? { ...item, quantity: parseInt(e.target.value, 10) }
+                ? { ...item, addedQty: parseInt(e.target.value, 10) }
                 : item
         );
         setCart(updatedCart);
@@ -782,28 +781,19 @@ function Booking() {
 
         cart.map((item) => {
             if (item.category.toLowerCase() === "chairs") {
-                chairsCount += item.quantity;
+                chairsCount += item.addedQty;
             } else if (item.category.toLowerCase() === "tables") {
-                tablesCount += item.quantity;
+                tablesCount += item.addedQty;
             } else if (item.category.toLowerCase() === "cake holders") {
-                cakeHoldersCount += item.quantity;
+                cakeHoldersCount += item.addedQty;
             } else if (item.category.toLowerCase() === "plates") {
-                platesCount += item.quantity;
+                platesCount += item.addedQty;
             } else if (item.category.toLowerCase() === "glasses") {
-                glassesCount += item.quantity;
+                glassesCount += item.addedQty;
             } else if (item.category.toLowerCase() === "decorations") {
-                decorationsCount += item.quantity;
+                decorationsCount += item.addedQty;
             }
         });
-
-        console.log(
-            chairsCount,
-            tablesCount,
-            cakeHoldersCount,
-            platesCount,
-            glassesCount,
-            decorationsCount
-        );
 
         const maxChairs =
             selectedPackage[0].inventories.find(
@@ -892,7 +882,21 @@ function Booking() {
     const handleRadioChange = (e, a) => {
         setSelectedAddress(a);
         console.log(a);
+        console.log(selectedAddress);
     };
+
+    const [shippingCost, setShippingCost] = useState(0);
+
+    //Retrieve shipping cost by city
+    function getPriceByValue(value) {
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === value) {
+                setShippingCost(options[i].price);
+                return options[i].price;
+            }
+        }
+        return null;
+    }
 
     // address delete
     const handleDeleteAddress = async (address) => {
@@ -1049,7 +1053,7 @@ function Booking() {
                             current={current}
                             onChange={(current) => {
                                 if (current == 1) {
-                                    goToCheckout()
+                                    goToCheckout();
                                 } else {
                                     setCurrent(current);
                                 }
@@ -1107,7 +1111,7 @@ function Booking() {
                                                 </button>
                                                 <input
                                                     type="number"
-                                                    value={item.quantity}
+                                                    value={item.addedQty}
                                                     onChange={(e) =>
                                                         handleChangeQty(
                                                             e,
@@ -1355,7 +1359,10 @@ function Booking() {
                                             Total :{" "}
                                             {(calculateTotal() ?? 0) +
                                                 (selectedPackage[0]?.price ??
-                                                    0)}{" "}
+                                                    0) +
+                                                (getPriceByValue(
+                                                    selectedAddress.district
+                                                ) ?? 0)}{" "}
                                             LKR
                                         </h3>
                                     </div>
@@ -1367,6 +1374,7 @@ function Booking() {
                                         selectedPackage={selectedPackage}
                                         selectedAddress={selectedAddress}
                                         date={date}
+                                        shippingCost={shippingCost}
                                     />
                                 </Elements>
                             </div>

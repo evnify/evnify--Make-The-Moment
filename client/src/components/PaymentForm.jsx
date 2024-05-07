@@ -13,7 +13,7 @@ const PaymentForm = (props) => {
 
     const navigate = useNavigate();
 
-    const { cart, userId, selectedPackage, selectedAddress, date } = props;
+    const { cart, userId, selectedPackage, selectedAddress, date, shippingCost } = props;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -52,8 +52,6 @@ const PaymentForm = (props) => {
             setLoading(false);
         } else {
             onToken(token);
-
-            setLoading(false);
         }
     };
 
@@ -91,6 +89,7 @@ const PaymentForm = (props) => {
                 paymentType: "card",
                 description: transaction.description,
             });
+            setLoading(false);
             message.success("Booking saved successfully");
             setEmail("");
             setNameOnCard("");
@@ -261,7 +260,7 @@ const PaymentForm = (props) => {
                             className="payment_confirm_btn_72"
                             type="submit"
                         >
-                            Pay
+                            {loading ? "Processing..." : "Pay Now"}
                         </button>
                     </div>
                 </div>
