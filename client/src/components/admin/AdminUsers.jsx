@@ -97,12 +97,16 @@ function UserList() {
     const [editStatus, setEditStatus] = useState("");
     const [fileListEdit, setFileListEdit] = useState([]);
 
-    async function fetchUserList() {
-        const response = await axios.get(
-            `${process.env.PUBLIC_URL}/api/users/getUser`
-        );
-        setData(response.data);
-    }
+    const fetchUserList = async () => {
+        try {
+            const response = await axios.get("/api/users/getUser");
+            // Sort inventories by date in descending order
+            const sortedData = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setData(sortedData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
         const fetchUserList = async () => {
