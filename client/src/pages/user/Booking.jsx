@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { Input } from "antd";
-import { Navbar, Footer } from "../../components";
+import { Navbar, Footer, PaymentForm } from "../../components";
 import { useParams } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -18,9 +18,10 @@ import {
 } from "antd";
 import { Icon } from "@iconify/react";
 import { Carousel } from "primereact/carousel";
-import axios from "axios";
+import axios, { all } from "axios";
 import { Loader } from "../../components/admin";
-import { set } from "mongoose";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 const { Search } = Input;
 
 // Side Menu
@@ -171,30 +172,107 @@ const filter = (inputValue, path) => {
 function Booking() {
     const [navbarSticky, setNavbarSticky] = useState(true);
     const { category, id } = useParams();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [color, setColor] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewProduct, setPreviewProduct] = useState({});
 
+    //Filters
+    const [chairsFilter, setChairsFilter] = useState(false);
+    const [tablesFilter, setTablesFilter] = useState(false);
+    const [cakeHoldersFilter, setCakeHoldersFilter] = useState(false);
+    const [platesFilter, setPlatesFilter] = useState(false);
+    const [glassesFilter, setWineGlassesFilter] = useState(false);
+    const [decorationsFilter, setDecorationsFilter] = useState(false);
+    const [allFilter, setAllFilter] = useState(true);
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
+    const [selectedAddress, setSelectedAddress] = useState({});
+    const [isEdit, setIsEdit] = useState(false);
+
     const items = [
         getItem("Category", "sub1", null, [
+            <Menu.Item key="all">
+                <Checkbox
+                    checked={allFilter}
+                    onChange={() => {
+                        setAllFilter(!allFilter);
+                        setChairsFilter(false);
+                        setTablesFilter(false);
+                        setCakeHoldersFilter(false);
+                        setPlatesFilter(false);
+                        setWineGlassesFilter(false);
+                        setDecorationsFilter(false);
+                    }}
+                >
+                    All
+                </Checkbox>
+            </Menu.Item>,
             <Menu.Item key="chairs">
-                <Checkbox>Chairs</Checkbox>
+                <Checkbox
+                    checked={chairsFilter}
+                    onChange={() => {
+                        setChairsFilter(!chairsFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Chairs
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="tables">
-                <Checkbox>Tables</Checkbox>
+                <Checkbox
+                    checked={tablesFilter}
+                    onChange={(e) => {
+                        setTablesFilter(!tablesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Tables
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="cakeHolders">
-                <Checkbox>Cake Holders</Checkbox>
+                <Checkbox
+                    checked={cakeHoldersFilter}
+                    onChange={() => {
+                        setCakeHoldersFilter(!cakeHoldersFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Cake Holders
+                </Checkbox>
             </Menu.Item>,
             <Menu.Item key="plates">
-                <Checkbox>Plates</Checkbox>
+                <Checkbox
+                    checked={platesFilter}
+                    onChange={() => {
+                        setPlatesFilter(!platesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Plates
+                </Checkbox>
             </Menu.Item>,
-            <Menu.Item key="wineglasses">
-                <Checkbox>Wine Glasses</Checkbox>
+            <Menu.Item key="glassesFilter">
+                <Checkbox
+                    checked={glassesFilter}
+                    onChange={() => {
+                        setWineGlassesFilter(!glassesFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Glasses
+                </Checkbox>
             </Menu.Item>,
-            <Menu.Item key="other">
-                <Checkbox>Other</Checkbox>
+            <Menu.Item key="decorations">
+                <Checkbox
+                    checked={decorationsFilter}
+                    onChange={() => {
+                        setDecorationsFilter(!decorationsFilter);
+                        setAllFilter(false);
+                    }}
+                >
+                    Decorations
+                </Checkbox>
             </Menu.Item>,
         ]),
 
@@ -299,13 +377,9 @@ function Booking() {
     const [userId, setUserId] = useState({});
 
     useEffect(() => {
-        const fetchUserByID = async () => {
-            const user = JSON.parse(localStorage.getItem("currentUser"));
-            const userID = user.userID;
-            setUserId(userID);
-        };
-
-        fetchUserByID();
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        setUserId(userID);
     }, []);
 
     const [date, setDate] = useState(null);
@@ -346,8 +420,8 @@ function Booking() {
                 color: product.color,
                 itemType: product.itemType,
                 addedQty: 1,
+                category: product.category,
                 unitPrice: product.unitPrice,
-                quantity: product.quantity,
             };
             setCart([...cart, newItem]);
         }
@@ -388,11 +462,11 @@ function Booking() {
                 <div
                     className="Carousel_card_container_image"
                     style={{
-                        backgroundImage: `url(${product[0].itemImage})`,
+                        backgroundImage: `url(${product.itemImage})`,
                     }}
                     onClick={() => {
                         setPreviewOpen(true);
-                        setPreviewProduct(product[0]);
+                        setPreviewProduct(product);
                     }}
                 ></div>
                 <div className="Carousel_card_container_description">
@@ -404,7 +478,7 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h4>{product[0].itemName}</h4>
+                        <h4>{product.itemName}</h4>
                         <button
                             style={{
                                 fontSize: "20px",
@@ -414,7 +488,7 @@ function Booking() {
                             }}
                             className="center booking_cart_button"
                             onClick={(event) => {
-                                addToCart(product[0]);
+                                addToCart(product);
                                 event.target.style.transform = "scale(1.1)";
                                 setTimeout(() => {
                                     event.target.style.transform = "scale(1)";
@@ -432,8 +506,8 @@ function Booking() {
                             width: "100%",
                         }}
                     >
-                        <h6>{product[0].unitPrice} LKR</h6>
-                        <p>{product[0].inventoryStatus}</p>
+                        <h6>{product.unitPrice} LKR</h6>
+                        <p>{product.inventoryStatus}</p>
                     </div>
                 </div>
             </div>
@@ -456,36 +530,56 @@ function Booking() {
                 console.error(error);
             }
         };
-        fetchBookingDetails();
+        if (id !== "custom") {
+            fetchBookingDetails();
+        }
+        fetchInventories();
     }, [id]);
 
-    useEffect(() => {
-        const fetchInventories = async () => {
-            setLoading(true);
+    const fetchInventories = async () => {
+        setLoading(true);
+        try {
+            if (selectedPackage) {
+                const response = await axios.get(
+                    `${
+                        process.env.PUBLIC_URL
+                    }/api/packages/getInventoriesByEventType/${category.toLowerCase()}`
+                );
+                setProducts(response.data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchAddress = async () => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        let temp = [];
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/getDefaultAddress`,
+                { userID: userID }
+            );
+            setDefaultAddress(response.data);
+            setSelectedAddress(response.data);
+            temp.push(response.data);
             try {
-                if (selectedPackage) {
-                    let temp = selectedPackage[0].inventories;
-                    let inventories = [];
-                    for (let i = 0; i < temp.length; i++) {
-                        const response = await axios.post(
-                            `${process.env.PUBLIC_URL}/api/packages/getInventoryByID`,
-                            {
-                                itemID: temp[i].id,
-                            }
-                        );
-                        if (response.data.length > 0) {
-                            inventories.push(response.data);
-                        }
-                    }
-                    setProducts(inventories);
-                }
+                const response1 = await axios.post(
+                    `${process.env.PUBLIC_URL}/api/bookings/getSecondaryAddress`,
+                    { userID: userID }
+                );
+                response1.data.map((address) => {
+                    temp.push(address);
+                });
+                setAddressList(temp);
             } catch (error) {
                 console.error(error);
             }
-        };
-
-        fetchInventories();
-    }, [selectedPackage]);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     //Filters
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -493,47 +587,48 @@ function Booking() {
     const [tables, setTables] = useState(false);
     const [cakeHolders, setCakeHolders] = useState(false);
     const [plates, setPlates] = useState(false);
-    const [wineGlasses, setWineGlasses] = useState(false);
-    const [other, setOther] = useState(false);
+    const [glasses, setGlasses] = useState(false);
+    const [decorations, setDecorations] = useState(false);
 
     useEffect(() => {
         const filterProducts = () => {
             let temp = [];
             products.map((product) => {
                 if (
-                    product[0].itemName
-                        .toLowerCase()
-                        .includes(searchKey.toLowerCase())
+                    product.itemName.toLowerCase().includes(searchKey.toLowerCase())
                 ) {
                     temp.push(product);
                 }
             });
 
+            console.log(temp);
+
             if (color === "Black") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "black"
+                    (item) => item.color.toLowerCase() === "black"
                 );
             } else if (color === "Brown") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "brown"
+                    (item) => item.color.toLowerCase() === "brown"
                 );
             } else if (color === "White") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "white"
+                    (item) => item.color.toLowerCase() === "white"
                 );
             } else if (color === "Red") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "red"
+                    (item) => item.color.toLowerCase() === "red"
                 );
             } else if (color === "Grey") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "grey"
+                    (item) => item.color.toLowerCase() === "grey"
                 );
             } else if (color === "Tan") {
                 temp = temp.filter(
-                    (item) => item[0].color.toLowerCase() === "tan"
+                    (item) => item.color.toLowerCase() === "tan"
                 );
             }
+            console.log(temp);
             setFilteredProducts(temp);
         };
 
@@ -542,38 +637,35 @@ function Booking() {
         setTables([]);
         setCakeHolders([]);
         setPlates([]);
-        setWineGlasses([]);
-        setOther([]);
+        setGlasses([]);
+        setDecorations([]);
     }, [searchKey, products, color]);
 
+    const filterProductsByType = () => {
+        if (filteredProducts.length === 0) return null;
+        filteredProducts.map((item) => {
+            if (item.category.toLowerCase() === "chairs") {
+                setChairs((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "tables") {
+                setTables((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "cake holders") {
+                setCakeHolders((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "plates") {
+                setPlates((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "glasses") {
+                setGlasses((itm) => [...(itm || []), item]);
+            } else if (item.category.toLowerCase() === "decorations") {
+                setDecorations((itm) => [...(itm || []), item]);
+            }
+        });
+    };
+
     useEffect(() => {
-        const filterProductsByType = () => {
-            if (filteredProducts.length === 0) return null;
-
-            filteredProducts.map((item) => {
-                if (item[0].category.toLowerCase() === "chairs") {
-                    setChairs((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "tables") {
-                    setTables((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "cake holders") {
-                    setCakeHolders((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "plates") {
-                    setPlates((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "wineglasses") {
-                    setWineGlasses((itm) => [...(itm || []), item]);
-                } else if (item[0].category.toLowerCase() === "other") {
-                    setOther((itm) => [...(itm || []), item]);
-                }
-            });
-            setLoading(false);
-        };
-
         filterProductsByType();
     }, [filteredProducts]);
 
     //Booking popup
     const [bookingModal, setBookingModal] = useState(false);
-    const [bookingData, setBookingData] = useState([]);
     const [current, setCurrent] = useState(0);
 
     //Add Billing Address
@@ -595,10 +687,8 @@ function Booking() {
                 { userID: userId, address: addressData }
             );
             message.success("Address saved successfully");
+            fetchAddress();
             setIsModalOpen(false);
-        } catch (error) {
-            console.error(error);
-            message.error("Error saving address");
             //clear form
             setAddressData({
                 country: "Sri Lanka",
@@ -608,97 +698,199 @@ function Booking() {
                 city: "",
                 postalCode: "",
             });
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving address");
         }
     };
 
-    //Save booking
-    const [email, setEmail] = useState("");
-    const [cardNumber, setCardNumber] = useState("");
-    const [expDate, setExpDate] = useState("");
-    const [cvc, setCvc] = useState("");
-    const [nameOnCard, setNameOnCard] = useState("");
-    const [zip, setZip] = useState("");
-
-    const saveBooking = () => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (email === "" || cardNumber === "" || expDate === "" || cvc === "" || nameOnCard === "" || zip === "") {
-            message.error("Please fill all the fields");
-            return;
-        }else if (cart.length === 0) {
-            message.error("Please add items to the cart");
-            return;
-        } else if (date === null) {
-            message.error("Please select a date");
-            return;
-        }else if (!emailRegex.test(email)) {
-            message.error("Invalid email address");
-            return;
-        }
-
-        try {
-            axios.post(
-                `${process.env.PUBLIC_URL}/api/bookings/saveBooking`,
-                {
-                    customerID : userId,
-                    transactionID : "1234",
-                    eventType : selectedPackage[0].eventType,
-                    packageType : selectedPackage[0].packageType,
-                    eventLocation : [addressData],
-                    eventDate : date,
-                    amount : calculateTotal() + selectedPackage[0].price,
-                    status : "Pending",
-                    AssignedInventory : cart,
-                    AssignedEmployees : [],
-                }
-            );
-            axios.post(
-                `${process.env.PUBLIC_URL}/api/bookings/savePayment`,
-                {
-                    transactionID : "1234",
-                    customerID : userId,
-                    customerEmail : email,
-                    packageType : selectedPackage[0].packageType,
-                    amount : calculateTotal() + selectedPackage[0].price,
-                    paymentType : "Card",
-                    description : "Booking Payment",
-                }
-            )
-            message.success("Booking saved successfully");
-            setBookingModal(false);
-            setEmail("");
-            setCardNumber("");
-            setExpDate("");
-            setCvc("");
-            setNameOnCard("");
-            setZip("");
-            setCart([]);
-            setDate(null);
-        } catch (error) {
-            console.error(error);
-            message.error("Error saving booking");
-        }
-    }
-
     //Retrieve Address
     const [addressList, setAddressList] = useState([]);
+    const [defaultAddress, setDefaultAddress] = useState({});
     useEffect(() => {
-        const fetchAddress = async () => {
-            try {
-                const response = await axios.post(
-                    `${process.env.PUBLIC_URL}/api/bookings/getAddress`,
-                    { userID: userId }
-                );
-                console.log(response.data);
-                setAddressList(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
+        setAddressList([]);
         fetchAddress();
-        
     }, [userId]);
+
+    setTimeout(() => {
+        setLoading(false);
+    }, 3000);
+
+    const goToCheckout = () => {
+        let chairsCount = 0;
+        let tablesCount = 0;
+        let cakeHoldersCount = 0;
+        let platesCount = 0;
+        let glassesCount = 0;
+        let decorationsCount = 0;
+
+        console.log(cart);
+
+        cart.map((item) => {
+            if (item.category.toLowerCase() === "chairs") {
+                chairsCount += item.addedQty;
+            } else if (item.category.toLowerCase() === "tables") {
+                tablesCount += item.addedQty;
+            } else if (item.category.toLowerCase() === "cake holders") {
+                cakeHoldersCount += item.addedQty;
+            } else if (item.category.toLowerCase() === "plates") {
+                platesCount += item.addedQty;
+            } else if (item.category.toLowerCase() === "glasses") {
+                glassesCount += item.addedQty;
+            } else if (item.category.toLowerCase() === "decorations") {
+                decorationsCount += item.addedQty;
+            }
+        });
+
+        const maxChairs =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "chairs"
+            )?.quantity || 0;
+
+        const maxTables =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "tables"
+            )?.quantity || 0;
+
+        const maxCakeHolders =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "cake holders"
+            )?.quantity || 0;
+
+        const maxPlates =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "plates"
+            )?.quantity || 0;
+
+        const maxGlasses =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "glasses"
+            )?.quantity || 0;
+
+        const maxDecorations =
+            selectedPackage[0].inventories.find(
+                (item) => item.category === "decorations"
+            )?.quantity || 0;
+
+        if (chairsCount < parseInt(maxChairs)) {
+            message.error(
+                `Please add ${parseInt(maxChairs) - chairsCount} more chairs`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (tablesCount < parseInt(maxTables)) {
+            message.error(
+                `Please add ${parseInt(maxTables) - tablesCount} more tables`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (cakeHoldersCount < parseInt(maxCakeHolders)) {
+            message.error(
+                `Please add ${
+                    parseInt(maxCakeHolders) - cakeHoldersCount
+                } more cake holders`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (platesCount < parseInt(maxPlates)) {
+            message.error(
+                `Please add ${parseInt(maxPlates) - platesCount} more plates`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (glassesCount < parseInt(maxGlasses)) {
+            message.error(
+                `Please add ${parseInt(maxGlasses) - glassesCount} more glasses`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+        if (decorationsCount < parseInt(maxDecorations)) {
+            message.error(
+                `Please add ${
+                    parseInt(maxDecorations) - decorationsCount
+                } more decorations`
+            );
+            setIsHelpModalOpen(true);
+            return;
+        }
+
+        if (cart.length === 0) {
+            message.error("Please add items to the cart");
+            return;
+        }
+        setCurrent(1);
+    };
+
+    const handleRadioChange = (e, a) => {
+        setSelectedAddress(a);
+        console.log(a);
+        console.log(selectedAddress);
+    };
+
+    // address delete
+    const handleDeleteAddress = async (address) => {
+        try {
+            const response = await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/deleteAddress`,
+                { userID: userId, address: address }
+            );
+            message.success("Address deleted successfully");
+            fetchAddress();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    //edit address
+    const [editIndex, setEditIndex] = useState(0);
+    const editAddressData = () => {
+        console.log(addressData, editIndex);
+        try {
+            axios.post(`${process.env.PUBLIC_URL}/api/bookings/updateAddress`, {
+                userID: userId,
+                addressIndex: editIndex,
+                newAddress: addressData,
+            });
+            message.success("Address edited successfully");
+            fetchAddress();
+            setIsModalOpen(false);
+            //clear form
+            setAddressData({
+                country: "Sri Lanka",
+                addressLine1: "",
+                addressLine2: "",
+                district: "",
+                city: "",
+                postalCode: "",
+            });
+        } catch (error) {
+            console.error(error);
+            message.error("Error saving address");
+        }
+    };
+
+    const handleEditAddress = (address, index) => {
+        setIsEdit(true);
+        setEditIndex(--index);
+        setAddressData({
+            country: "Sri Lanka",
+            addressLine1: address.addressLine1,
+            addressLine2: address.addressLine2,
+            district: address.district,
+            city: address.city,
+            postalCode: address.postalCode,
+        });
+        setIsModalOpen(true);
+    };
+
+    const stripePromise = loadStripe(
+        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
+    );
 
     return (
         <div style={{ backgroundColor: "#efefef" }}>
@@ -793,7 +985,13 @@ function Booking() {
                     <div className="booking_model_main_container">
                         <Steps
                             current={current}
-                            onChange={(current) => setCurrent(current)}
+                            onChange={(current) => {
+                                if (current == 1) {
+                                    goToCheckout();
+                                } else {
+                                    setCurrent(current);
+                                }
+                            }}
                             style={{
                                 marginBottom: 24,
                                 marginTop: 10,
@@ -870,7 +1068,7 @@ function Booking() {
                                 </div>
                                 <button
                                     className="createBookingBtn_72 "
-                                    onClick={() => setCurrent(1)}
+                                    onClick={goToCheckout}
                                 >
                                     CONTINUE TO CHECKOUT
                                 </button>
@@ -885,7 +1083,10 @@ function Booking() {
                                     <div>
                                         <button
                                             className="add_new_address_Btn_72 "
-                                            onClick={() => setIsModalOpen(true)}
+                                            onClick={() => {
+                                                setIsModalOpen(true);
+                                                setIsEdit(false);
+                                            }}
                                         >
                                             Add New Address
                                         </button>
@@ -893,7 +1094,7 @@ function Booking() {
                                 </div>
                                 <hr className="billing_address_hr_tag" />
                                 <div className="billing_address_radio_section">
-                                    <Radio.Group>
+                                    <Radio.Group defaultValue={0}>
                                         <div
                                             style={{
                                                 display: "flex",
@@ -901,12 +1102,17 @@ function Booking() {
                                             }}
                                         >
                                             <Radio
-                                                value={1}
+                                                value={0}
                                                 className="billing_address_radio_btn1"
+                                                onChange={(e) =>
+                                                    handleRadioChange(
+                                                        e,
+                                                        defaultAddress
+                                                    )
+                                                }
                                             >
                                                 <div>
                                                     <div>
-                                                        {" "}
                                                         <div className="billing_address_radio_btn1_txt1">
                                                             <h5>
                                                                 Default Billing
@@ -918,68 +1124,138 @@ function Booking() {
                                                         </div>
                                                         <div className="billing_address_radio_btn1_txt3">
                                                             <h5>
-                                                                1800, New Kandy
-                                                                Road ,Malabe, SL
+                                                                {
+                                                                    defaultAddress.addressLine1
+                                                                }{" "}
+                                                                ,
+                                                                {
+                                                                    defaultAddress.district
+                                                                }
+                                                                ,{" "}
+                                                                {
+                                                                    defaultAddress.city
+                                                                }{" "}
+                                                                SL
                                                             </h5>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </Radio>
-                                            <div className="billing_address_radio_btn1_txt1">
-                                                            <h5>
-                                                                Secondary
-                                                                Billing Address
-                                                            </h5>
-                                                        </div>
-                                            {addressList.map((address) => (
-                                                <Radio value={2}>
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        gap: "20px",
-                                                    }}
-                                                >
-                                                    <div>
-                                                        {" "}
-                                                        <div className="billing_address_radio_btn1_txt2">
-                                                            <h5>{address.city}</h5>
-                                                        </div>
-                                                        <div className="billing_address_radio_btn1_txt3">
-                                                            <h5>
-                                                                {address.postalCode}, {address.addressLine1} ,{address.district}, {address.country}
-                                                            </h5>
-                                                        </div>
+                                            {addressList.length > 1 && (
+                                                <>
+                                                    <div className="secondary_address_radio_btn1_txt1">
+                                                        <h5>
+                                                            Secondary Billing
+                                                            Address
+                                                        </h5>
                                                     </div>
-                                                    <div className="billing_address_radio_btn1_txt4">
-                                                        <div className="billing_address_radio_btn1_delete_btn">
-                                                            <button
-                                                                style={{
-                                                                    border: "none",
-                                                                    background:
-                                                                        "none",
-                                                                    marginRight:
-                                                                        "10px",
-                                                                }}
-                                                            >
-                                                                <Icon icon="material-symbols:delete-outline" />
-                                                            </button>
-                                                        </div>
-                                                        <div className="billing_address_radio_btn1_edit_btn">
-                                                            <button
-                                                                style={{
-                                                                    border: "none",
-                                                                    background:
-                                                                        "none",
-                                                                }}
-                                                            >
-                                                                <Icon icon="tabler:edit" />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Radio>
-                                                ))}
+                                                    {addressList
+                                                        .slice(
+                                                            1,
+                                                            addressList.length
+                                                        )
+                                                        .map(
+                                                            (
+                                                                address,
+                                                                index
+                                                            ) => (
+                                                                <>
+                                                                    <Radio
+                                                                        value={
+                                                                            ++index
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            handleRadioChange(
+                                                                                e,
+                                                                                address
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <div
+                                                                            style={{
+                                                                                display:
+                                                                                    "flex",
+                                                                                flexDirection:
+                                                                                    "row",
+                                                                                gap: "20px",
+                                                                            }}
+                                                                        >
+                                                                            <div>
+                                                                                {" "}
+                                                                                <div className="billing_address_radio_btn1_txt3">
+                                                                                    <h5>
+                                                                                        {
+                                                                                            address.addressLine1
+                                                                                        }{" "}
+                                                                                        ,
+                                                                                        {
+                                                                                            address.district
+                                                                                        }
+
+                                                                                        ,{" "}
+                                                                                        {
+                                                                                            address.city
+                                                                                        }{" "}
+                                                                                        {
+                                                                                            address.postalCode
+                                                                                        }{" "}
+                                                                                        SL
+                                                                                    </h5>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="billing_address_radio_btn1_txt4">
+                                                                                <div className="billing_address_radio_btn1_delete_btn">
+                                                                                    <button
+                                                                                        style={{
+                                                                                            border: "none",
+                                                                                            background:
+                                                                                                "none",
+                                                                                            marginRight:
+                                                                                                "10px",
+                                                                                            color: "#49516f",
+                                                                                        }}
+                                                                                        onClick={() =>
+                                                                                            handleDeleteAddress(
+                                                                                                address
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        <Icon icon="material-symbols:delete-outline" />
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="billing_address_radio_btn1_edit_btn">
+                                                                                    <button
+                                                                                        style={{
+                                                                                            border: "none",
+                                                                                            background:
+                                                                                                "none",
+                                                                                            color: "#49516f",
+                                                                                        }}
+                                                                                        onClick={() =>
+                                                                                            handleEditAddress(
+                                                                                                address,
+                                                                                                index
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        <Icon icon="tabler:edit" />
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </Radio>
+                                                                    <hr
+                                                                        style={{
+                                                                            width: "400px",
+                                                                        }}
+                                                                    />
+                                                                </>
+                                                            )
+                                                        )}
+                                                </>
+                                            )}
                                         </div>
                                     </Radio.Group>
                                 </div>
@@ -1014,177 +1290,23 @@ function Booking() {
                                     </div>
                                     <div className="total_calculate_section">
                                         <h3>
-                                            Total : {" "}
+                                            Total :{" "}
                                             {(calculateTotal() ?? 0) +
                                                 (selectedPackage[0]?.price ??
-                                                    0)}{" "} LKR
+                                                    0)}{" "}
+                                            LKR
                                         </h3>
                                     </div>
                                 </div>
-                                <div id="payment-element" style={{ flex: 1 }}>
-                                    <div
-                                        style={{
-                                            width: 420,
-                                            padding: "0 50px",
-                                        }}
-                                    >
-                                        <hr />
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Email
-                                            </span>
-                                            <Input
-                                                type="email"
-                                                placeholder="Email"
-                                                size="large"
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Card Information
-                                            </span>
-                                            <Input
-                                                type="number"
-                                                placeholder="1234 1234 1234 1234"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) => setCardNumber(e.target.value)}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "row",
-                                            }}
-                                        >
-                                            <Input
-                                                type="number"
-                                                placeholder="MM/YY"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) => setExpDate(e.target.value)}
-                                            />
-
-                                            <Input
-                                                type="number"
-                                                placeholder="CVC"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) => setCvc(e.target.value)}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Name On card
-                                            </span>
-                                            <Input
-                                                placeholder="Full name on card"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) => setNameOnCard(e.target.value)}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Country Or region
-                                            </span>
-
-                                            <Input
-                                                type="number"
-                                                placeholder="ZIP"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) => setZip(e.target.value)}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <Checkbox>
-                                                Agree to the terms and
-                                                conditions
-                                            </Checkbox>
-                                        </div>
-                                        <div className="center">
-                                            <button className="payment_confirm_btn_72"
-                                            onClick={saveBooking}>
-                                                Pay
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Elements stripe={stripePromise}>
+                                    <PaymentForm
+                                        cart={cart}
+                                        userId={userId}
+                                        selectedPackage={selectedPackage}
+                                        selectedAddress={selectedAddress}
+                                        date={date}
+                                    />
+                                </Elements>
                             </div>
                         )}
                     </div>
@@ -1280,6 +1402,7 @@ function Booking() {
                                         addressLine1: e.target.value,
                                     })
                                 }
+                                value={addressData.addressLine1}
                             />
                         </div>
                         <div
@@ -1307,6 +1430,7 @@ function Booking() {
                                         addressLine2: e.target.value,
                                     })
                                 }
+                                value={addressData.addressLine2}
                             />
                         </div>
                         <div
@@ -1337,6 +1461,7 @@ function Booking() {
                                 placeholder="Please select"
                                 showSearch={{ filter }}
                                 onSearch={(value) => console.log(value)}
+                                value={addressData.district}
                             />
                         </div>
                     </div>
@@ -1403,25 +1528,95 @@ function Booking() {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <span
-                            style={{
-                                marginTop: "3px",
-                            }}
-                        >
-                            <Checkbox>
-                                Make this as my default payment method
-                            </Checkbox>
-                        </span>
-                    </div>
                 </div>
                 <div className=" center">
-                    <button
-                        className="saveAddressBtn_72"
-                        onClick={saveAddressData}
-                    >
-                        Save Address
-                    </button>
+                    {isEdit ? (
+                        <button
+                            className="saveAddressBtn_72 center"
+                            onClick={editAddressData}
+                        >
+                            Edit Address
+                        </button>
+                    ) : (
+                        <button
+                            className="saveAddressBtn_72 center"
+                            onClick={saveAddressData}
+                        >
+                            Save Address
+                        </button>
+                    )}
+                </div>
+            </Modal>
+
+            {/* Help model */}
+            <Modal
+                centered
+                open={isHelpModalOpen}
+                onCancel={() => setIsHelpModalOpen(false)}
+                footer={null}
+                width={550}
+            >
+                <div className="request_leave_model_body_container">
+                    <div>
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <span
+                                style={{
+                                    marginRight: "60px",
+                                    marginBottom: "3px",
+                                    fontSize: 24,
+                                    fontWeight: 700,
+                                }}
+                            >
+                                Instructions to follow
+                            </span>
+                            <span>
+                                You have selected{" "}
+                                {selectedPackage[0]?.packageType} . Please
+                                follow the instructions below to complete the
+                                booking.
+                            </span>
+                            <br />
+                            <ul>
+                                <li>
+                                    <p>Step 1: Add items to the cart</p>
+                                </li>
+                                <p>
+                                    &nbsp;&nbsp;&nbsp;*You must be select
+                                    minimum these quantities according to{" "}
+                                    {selectedPackage[0]?.packageType}{" "}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;package policies.
+                                </p>
+                                <ol>
+                                    {selectedPackage[0]?.inventories.map(
+                                        (item) => (
+                                            <li>
+                                                {item.category} :{" "}
+                                                {item.quantity}
+                                            </li>
+                                        )
+                                    )}
+                                </ol>
+                                <br />
+                                <p>
+                                    &nbsp;if you want fully customize please
+                                    select customize package
+                                </p>
+                                <br />
+                                <li>
+                                    <p>Step 2: Add or Select billing address</p>
+                                </li>
+                                <li>
+                                    <p>Step 3: Make the payment</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </Modal>
 
@@ -1504,6 +1699,10 @@ function Booking() {
                                             return message.error(
                                                 "Please add items to the cart"
                                             );
+                                        } else if (date === null) {
+                                            return message.error(
+                                                "Please select a date"
+                                            );
                                         } else {
                                             setBookingModal(true);
                                         }
@@ -1579,11 +1778,11 @@ function Booking() {
                                         />
                                     </div>
                                 ) : null}
-                                {wineGlasses.length > 0 ? (
+                                {glasses.length > 0 ? (
                                     <div className="user_booking_corosal">
-                                        <h3>Wine Glasses</h3>
+                                        <h3>Glasses</h3>
                                         <Carousel
-                                            value={wineGlasses}
+                                            value={glasses}
                                             numScroll={1}
                                             numVisible={4}
                                             style={{
@@ -1595,11 +1794,11 @@ function Booking() {
                                         />
                                     </div>
                                 ) : null}
-                                {other.length > 0 ? (
+                                {decorations.length > 0 ? (
                                     <div className="user_booking_corosal">
-                                        <h3>Others</h3>
+                                        <h3>Decorations</h3>
                                         <Carousel
-                                            value={other}
+                                            value={decorations}
                                             numScroll={1}
                                             numVisible={4}
                                             style={{
@@ -1624,6 +1823,10 @@ function Booking() {
                                             if (cart.length === 0) {
                                                 return message.error(
                                                     "Please add items to the cart"
+                                                );
+                                            } else if (date === null) {
+                                                return message.error(
+                                                    "Please select a date"
                                                 );
                                             } else {
                                                 setBookingModal(true);
