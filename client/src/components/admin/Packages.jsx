@@ -663,24 +663,7 @@ function Packages() {
                             </div>
                             <div>Most popular Packages among users </div>
                         </div>
-                        <div>
-                            <button
-                                style={{
-                                    fontSize: "14px",
-                                    border: "none",
-                                    backgroundColor: "#4094F7",
-                                    width: "100px",
-                                    height: "35px",
-                                    color: "#fff",
-                                    borderRadius: "5px",
-                                    marginTop: "15px",
-                                }}
-                                onClick={""}
-                            >
-                                <PrinterOutlined style={{ gap: "10" }} />
-                                Export
-                            </button>
-                        </div>
+                        <div></div>
                     </div>
                     <div className="package-insight-categories">
                         <Doughnut data={pieChartData} />
@@ -1154,7 +1137,7 @@ function Packages() {
                                     height: "40px",
                                     border: "none",
                                     borderRadius: "5px",
-                                    background: "red",
+                                    background: "#4094f7",
                                     color: "white",
                                     cursor: "pointer",
                                     fontSize: "14px",
