@@ -321,6 +321,38 @@ function ExistingBlogs() {
         });
     };
 
+    const generateCSVData = () => {
+
+        const headers = ['blogId','eventDate', 'blogTitle', 'blogTitleDescription', 'Category'];
+
+        const rows = Blogs.map(blog => [
+            blog._id,
+            blog.eventDate,
+            blog.blogTitle,
+            blog.blogTitleDescription,
+            blog.category,
+        ]);
+
+        const csvData = [headers, ...rows];
+        const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+        return csvContent;
+    };
+
+    // Function to handle downloading CSV file
+    const handleDownloadCSV = () => {
+        const csvContent = generateCSVData();
+        if (csvContent) {
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'blogsList.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    };
+
 
     return (
         <div>
@@ -388,9 +420,9 @@ function ExistingBlogs() {
                                     height: "35px",
                                     color: "#fff",
                                     borderRadius: "5px",
-                                    marginRight: "-300px",
+                                    marginRight: "-400px",
                                 }}
-                                onClick={""}
+                                onClick={handleDownloadCSV}
                             >
                                 <PrinterOutlined style={{ gap: "10" }} />
                                 Export

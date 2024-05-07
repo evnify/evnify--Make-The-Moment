@@ -63,7 +63,7 @@ function Article() {
         try {
             const response = await axios.post("/api/blogs/addComment", {
                 articleId: article._id,
-                userID: user.userID,
+                userID: user.username,
                 comment,
             });
             console.log(response.data);
@@ -269,7 +269,13 @@ function Article() {
                 <div className="article_comment_section_input">
                     <h3>Comments</h3>
                     <br />
-                    <div style={{ display: "flex", flexDirection: "row", gap:"60px"  }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "60px",
+                        }}
+                    >
                         <div className="article_comment_section">
                             <TextArea
                                 className="article_comment_add_section"
@@ -294,15 +300,29 @@ function Article() {
                                 </Button>
                             </div>
                         </div>
-                        <div style={{
-                            marginTop: "-50px",
-                            marginLeft: "50px",
-                        }}>
+                        <div
+                            style={{
+                                marginTop: "-50px",
+                                marginLeft: "50px",
+                            }}
+                        >
                             {/* Render comments */}
                             {articleComments.map((comment) => (
                                 <div key={comment}>
-                                    <h6>{comment.userID}</h6>
-                                    <p>{comment.comment}</p>
+                                    <div
+                                        style={{
+                                            marginTop: "15px",
+                                            boxShadow:
+                                                "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                            borderRadius: "8px"
+                                        }}
+                                    >
+                                        <div style={{margin:"8px"}}>
+                                            {" "}
+                                            <h6 style={{fontSize:"8px"}}>{comment.userID}</h6>
+                                            <p>{comment.comment}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -315,9 +335,10 @@ function Article() {
                 onOk={handleCommentSubmit}
                 onCancel={handleCloseModal}
                 footer={null}
-                
             >
-                <div style={{ display: "flex", gap: "30px", marginTop:"20px" }}>
+                <div
+                    style={{ display: "flex", gap: "30px", marginTop: "20px" }}
+                >
                     <FacebookShareButton
                         url={shareUrl}
                         quote={""}
