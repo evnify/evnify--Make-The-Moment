@@ -116,9 +116,7 @@ const ForgetPassword = () => {
                             Sign in with Google{" "}
                             <i className="fab fa-google"></i>
                         </button>
-                        <button class="login-with-facebook-btn">
-                            Login with Facebook
-                        </button>
+                       
                     </Grid>
             </div>
         </>

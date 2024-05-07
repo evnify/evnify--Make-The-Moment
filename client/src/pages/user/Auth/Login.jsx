@@ -21,6 +21,8 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 const Login = () => {
     const [user, setUser] = useState([]);
     const [profile, setProfile] = useState([]);
+    
+   
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
@@ -131,17 +133,29 @@ const Login = () => {
     };
 
     const handleLogin = async () => {
+       
         try {
             setLoading(true);
+            
             const user = {
                 email,
                 password,
             };
+            
+            // Proceed with login request
             const response = await axios.post("/api/users/login", user);
             setLoading(false);
-
+    
             const userData = response.data;
 
+    
+            // Check if the user is suspended
+            if (userData.status === "Suspended") {
+                message.error("Your account has been suspended");
+                navigate("/contactus");
+                return; // Exit the function early
+            }
+    
 
             // Redirect based on userType
             switch (userData.userType) {
@@ -155,29 +169,22 @@ const Login = () => {
                     navigate("/admin");
                     break;
                 default:
-
                     navigate("/");
                     break;
             }
-
+    
             // Store user data in local storage
             localStorage.setItem("currentUser", JSON.stringify(userData));
-
-            // Reload the window
-            window.location.reload();
-            // Before redirecting
+    
+            // Before redirecting, store scroll position
             localStorage.setItem("scrollPosition", window.pageYOffset);
-
-            // After page reloads
-            const scrollPosition = localStorage.getItem("scrollPosition");
-            window.scrollTo(0, scrollPosition);
         } catch (error) {
             setLoading(false);
-            console.error("Login error:", error);
-            setError(true);
             message.error("Invalid email or password");
+        
         }
     };
+    
 
     return (
         <>
@@ -194,7 +201,6 @@ const Login = () => {
                             hover: {
                                 color: "#1890ff",
                             },
-                            
                         },
                     }}
                 >
@@ -303,9 +309,7 @@ const Login = () => {
                             Sign in with Google{" "}
                             <i className="fab fa-google"></i>
                         </button>
-                        <button class="login-with-facebook-btn">
-                            Login with Facebook
-                        </button>
+                        
                     </Grid>
                 </ConfigProvider>
             </div>

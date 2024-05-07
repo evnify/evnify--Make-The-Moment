@@ -53,18 +53,17 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
             const response = await axios.put(
                 `/api/inventories/putInventories/${id}`,
                 updatedInventory
-                
             );
-            message.success("Inventory added successful");
+            message.success("Inventory updated successfully");
             return response.data;
         } catch (error) {
-             if (error.response && error.response.status === 400) {
+            if (error.response && error.response.status === 400) {
                 // Handle the case where the item name already exists
                 message.error("Item with the same name already exists.");
             } else {
-                console.error("Error creating inventory:", error);
+                console.error("Error updating inventory:", error);
                 throw error;
-            };
+            }
         }
     };
 
@@ -85,7 +84,6 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 const body = { ...values };
                 await updateInventory(initialValues._id, body);
                 await onUpdate();
-                
             } else {
                 const file = values.file[0].originFileObj;
                 const filePath = `lectureMaterials/${file.name}`;
@@ -94,7 +92,6 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
 
                 await createInventory(body);
                 await onUpdate();
-                
             }
             onClose();
         } catch (error) {

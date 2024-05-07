@@ -12,7 +12,7 @@ import {
 import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { CSVLink } from "react-csv";
-import { Doughnut  } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 
 const { TextArea } = Input;
@@ -465,7 +465,7 @@ function Packages() {
                         borderColor: "#5b8ff9",
                         borderWidth: 2,
                         fill: false,
-                        backgroundColor: "transparent"
+                        backgroundColor: "transparent",
                     },
                 ],
             },
@@ -493,7 +493,7 @@ function Packages() {
             },
         });
     };
-    
+
     const fetchPkgViewCountData = async () => {
         try {
             const response = await axios.get("/api/pkgViewCounts/getAllCounts");
@@ -507,7 +507,6 @@ function Packages() {
             console.log(error);
         }
     };
-    
 
     //get bookings
     const [bookings, setBookings] = useState([]);
@@ -524,23 +523,23 @@ function Packages() {
 
     const bookingPackages = bookings.map((booking) => booking.packageType); // Extract package types from bookings
     const packageCounts = bookingPackages.reduce((counts, packageType) => {
-    counts[packageType] = (counts[packageType] || 0) + 1; // Count occurrences of each package type
-    return counts;
-}, {});
+        counts[packageType] = (counts[packageType] || 0) + 1; // Count occurrences of each package type
+        return counts;
+    }, {});
 
     const pieChartData = {
         labels: Object.keys(packageCounts),
         datasets: [
             {
-                label: 'Packages',
+                label: "Packages",
                 data: Object.values(packageCounts),
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
+                    "rgba(255, 99, 132, 0.6)",
+                    "rgba(54, 162, 235, 0.6)",
+                    "rgba(255, 206, 86, 0.6)",
+                    "rgba(75, 192, 192, 0.6)",
+                    "rgba(153, 102, 255, 0.6)",
+                    "rgba(255, 159, 64, 0.6)",
                 ],
                 borderWidth: 1,
             },
@@ -617,7 +616,7 @@ function Packages() {
         <div>
             <div className="booking-package-insight-div">
                 <div className="booking-package-div-insight-left">
-                <div
+                    <div
                         style={{
                             display: "flex",
                             flexDirection: "row",
@@ -629,7 +628,7 @@ function Packages() {
                             style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent: "space-between",                      
+                                justifyContent: "space-between",
                             }}
                         >
                             <div>
@@ -637,11 +636,10 @@ function Packages() {
                             </div>
                             <div>Daily package view count in past 07 days</div>
                         </div>
-                        <div>               
-                        </div>
+                        <div></div>
                     </div>
-                    <div style={{padding:"10px"}}>
-                    <canvas id="lineChart" height={200}></canvas>
+                    <div style={{ padding: "10px" }}>
+                        <canvas id="lineChart" height={200}></canvas>
                     </div>
                 </div>
                 <div className="booking-package-div-insight-right">
@@ -657,7 +655,7 @@ function Packages() {
                             style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                justifyContent: "space-between",                      
+                                justifyContent: "space-between",
                             }}
                         >
                             <div>
@@ -681,11 +679,11 @@ function Packages() {
                             >
                                 <PrinterOutlined style={{ gap: "10" }} />
                                 Export
-                            </button>                        
+                            </button>
                         </div>
                     </div>
                     <div className="package-insight-categories">
-                    <Doughnut data={pieChartData}/>
+                        <Doughnut data={pieChartData} />
                     </div>
                 </div>
             </div>

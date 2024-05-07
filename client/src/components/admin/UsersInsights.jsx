@@ -65,8 +65,12 @@ function UsersInsights() {
     const fetchUserList = async () => {
         try {
             const response = await axios.get("/api/users/getUser");
-            setData(response.data);
-            setLoading(false);
+
+            // Sort inventories by date in descending order
+            const sortedData = response.data.sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
+            setData(sortedData);
         } catch (error) {
             console.error(error);
         }
@@ -166,7 +170,7 @@ function UsersInsights() {
             <div className="chart_container">
                 <div className="admin_user_chart1">
                     <div className="chart_title">
-                        <h3>Users Insights</h3>
+                        <h3>Daily Login's</h3>
                         <p>Users Insights</p>
                     </div>
                     <div className="bar_chart">
@@ -217,15 +221,9 @@ function UsersInsights() {
                         {loading && <Loader />}
                         <div className="col-md-12">
                             <Table
-                                dataSource={data}
+                                dataSource={data && data.slice(0, 10)}
                                 columns={columns}
-                                pagination={{
-                                    pageSize: 7,
-                                    hideOnSinglePage: true,
-                                }}
-                                footer={() => (
-                                    <div className="footer-number">{`Total ${data.length} items`}</div>
-                                )}
+                                pagination={false}
                             />
                         </div>
                     </div>
