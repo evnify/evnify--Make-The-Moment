@@ -504,14 +504,6 @@ const Signup = () => {
                             className="signup-form-button"
                             size="middle"
                             style={{ borderRadius: "5px" }}
-                            disabled={
-                                !form.isFieldsTouched(true) || // Disable button if any field hasn't been touched
-                                !!form
-                                    .getFieldsError()
-                                    .filter(({ errors }) => errors.length)
-                                    .length || // Disable if there are any fields with errors
-                                !form.getFieldValue("agree") // Disable if the agreement checkbox is not checked
-                            }
                             onClick={register}
                         >
                             Sign Up

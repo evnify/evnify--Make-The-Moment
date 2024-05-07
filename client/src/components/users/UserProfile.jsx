@@ -21,19 +21,31 @@ function UserProfile() {
         const fetchUserByID = async () => {
             const user = JSON.parse(localStorage.getItem("currentUser"));
             const userID = { userID: user.userID };
-
+    
             try {
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);
-                setFileList([
-                    {
-                        uid: "1",
-                        name: "image.png",
-                        status: "done",
-                        url: res.data.profilePic,
-                    },
-                    
-                ]);
+                if (!res.data.profilePic) {
+                    // Set default profile picture URL
+                    const defaultProfilePic = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png";
+                    setFileList([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: defaultProfilePic,
+                        },
+                    ]);
+                } else {
+                    setFileList([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: res.data.profilePic,
+                        },
+                    ]);
+                }
                 setCoverPhoto(res.data.coverPic);
                 console.log(res.data);
                 setAllFieldsFilled(checkAllFieldsFilled(res.data));
@@ -43,6 +55,9 @@ function UserProfile() {
         };
         fetchUserByID();
     }, []);
+    
+
+    
 
     const checkAllFieldsFilled = (userData) => {
         const requiredFields = [
