@@ -1,0 +1,75 @@
+.booking_dashboard_chart_container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.booking_dashboard_doughnut_container {
+    width: 50%;
+    height: 400px;
+    display: flex;
+    background-color: white;
+    margin-left: 16px;
+    border-radius: 11px;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.booking_dashboard_chart_container h4 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    font-family: "Product Sans";
+}
+
+.admin_booking_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 300px;
+    width : 1220px;
+    background: #ffffff;
+    margin: 16px;
+    border-radius: 11px;
+
+}
+
+.booking_dashboard_doughnut_container p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    font-family: "Product Sans";
+}
+
+.booking_dashboard_doughnut {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 70px;
+    height: 290px;
+}
+
+.booking_dashboard_line_container {
+    width: 50%;
+    height: 400px;
+    display: flex;
+    background-color: white;
+    margin: 0 16px;
+    border-radius: 11px;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.booking_dashboard_line_container p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    font-family: "Product Sans";
+}
+
+.booking_dashboard_line_container h4 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    font-family: "Product Sans";
+}

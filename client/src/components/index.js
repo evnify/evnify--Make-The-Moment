@@ -4,6 +4,7 @@ import EmpRoutes from "./EmpRoutes";
 import ChatBox from "./ChatBox";
 import { EmpSideMenu, EmpHero } from "./employee";
 import UserRoutes from "./UserRoutes";
+import PaymentForm from "./PaymentForm.jsx"
 import {
     UserSideMenu,
     SideMenuItems,
@@ -29,4 +30,5 @@ export {
     Navbar,
     Footer,
     Loader,
+    PaymentForm
 };

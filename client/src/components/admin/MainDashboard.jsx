@@ -3,6 +3,7 @@ import ViewCountChart from "./ViewCountChart";
 import axios from "axios";
 import { Table, Tag } from "antd";
 import { useNavigate, Link } from "react-router-dom";
+import { Doughnut } from "react-chartjs-2";
 
 function MainDashboard() {
     const [inventories, setInventories] = useState([]);
@@ -12,12 +13,56 @@ function MainDashboard() {
     const [userCount, setUserCount] = useState(0);
     const [totalRevenue, setTotalRevenue] = useState(0);
 
+    const [bookings, setBookings] = useState([]);
+
+    const fetchBookings = async () => {
+        try {
+            const response = await axios.get(`/api/bookings/getAllBookings`);
+            setBookings(response.data);
+        } catch (error) {
+            console.log("Error fetching bookings:", error);
+        }
+    };
+
     async function fetchUserList() {
         const response = await axios.get(
             `${process.env.PUBLIC_URL}/api/users/getUser`
         );
         setUserCount(response.data.length);
     }
+
+    const bookingPackages = bookings.map((booking) => booking.eventType);
+    const packageCounts = bookingPackages.reduce((counts, eventType) => {
+        counts[eventType] = (counts[eventType] || 0) + 1;
+        return counts;
+    }, {});
+
+    const pieChartData = {
+        labels: Object.keys(packageCounts),
+        datasets: [
+            {
+                label: "Packages",
+                data: Object.values(packageCounts),
+                backgroundColor: [
+                    "rgb(50, 149, 131, 0.9)",
+                    "rgb(255, 77, 79, 0.9)",
+                    "rgba(255, 206, 86, 0.9)",
+                    "rgba(75, 192, 192, 0.9)",
+                    "rgba(153, 102, 255, 0.9)",
+                    "rgba(255, 159, 64, 0.9)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const options = {
+        plugins: {
+            legend: {
+                display: false,
+            },
+        },
+    };
 
     const fetchUpcomingEvents = async () => {
         const today = new Date();
@@ -26,7 +71,7 @@ function MainDashboard() {
             `${process.env.PUBLIC_URL}/api/bookings/getAllBookings`
         );
         setUpcomingEventsCount(response.data.length);
-        let total = 0
+        let total = 0;
         response.data.map((event) => {
             total += event.amount;
         });
@@ -64,6 +109,7 @@ function MainDashboard() {
         fetchData();
         fetchUserList();
         fetchUpcomingEvents();
+        fetchBookings();
     }, []);
 
     function formatDate(dateString) {
@@ -144,22 +190,45 @@ function MainDashboard() {
                 <div className="admin_dashboard_card card1">
                     <h1>Upcoming Events</h1>
                     <h2>{upcomingEventsCount}</h2>
-                    <Link to = "/admin/bookings" style={{ textDecoration: 'none' }}><h3>see more</h3></Link>
+                    <Link
+                        to="/admin/bookings"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <h3>see more</h3>
+                    </Link>
                 </div>
                 <div className="admin_dashboard_card card2">
                     <h1>Total Revenue</h1>
-                    <h2 style={{ fontSize: "32px" }}>{totalRevenue} <span style={{ fontSize: "14px" }}>LKR</span></h2>
-                    <Link to = "/admin/bookings" style={{ textDecoration: 'none' }}><h3>see more</h3></Link>
+                    <h2 style={{ fontSize: "32px" }}>
+                        {totalRevenue}{" "}
+                        <span style={{ fontSize: "14px" }}>LKR</span>
+                    </h2>
+                    <Link
+                        to="/admin/bookings"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <h3>see more</h3>
+                    </Link>
                 </div>
                 <div className="admin_dashboard_card card3">
                     <h1>Inventory Count</h1>
                     <h2>{totalInventory}</h2>
-                    <Link to = "/admin/inventorylist" style={{ textDecoration: 'none' }}><h3>see more</h3></Link>
+                    <Link
+                        to="/admin/inventorylist"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <h3>see more</h3>
+                    </Link>
                 </div>
                 <div className="admin_dashboard_card card4">
                     <h1>Total Users</h1>
                     <h2>{userCount}</h2>
-                    <Link to = "/admin/bookings" style={{ textDecoration: 'none' }}><h3>see more</h3></Link>
+                    <Link
+                        to="/admin/bookings"
+                        style={{ textDecoration: "none" }}
+                    >
+                        <h3>see more</h3>
+                    </Link>
                 </div>
                 <div className="main_dashboard_realtime_insights_container center">
                     {isDaytime ? (
@@ -207,7 +276,29 @@ function MainDashboard() {
                 <div className="admin_dashboard_chart_main_section">
                     <ViewCountChart />
                 </div>
-                <div className="admin_dashboard_chart_packages_section"></div>
+                <div className="admin_dashboard_chart_packages_section">
+                    <h4>Packages</h4>
+                    <p>Daily Purchases in past 07 days</p>
+                    <div className="main_dashboard_doughnut">
+                        <Doughnut data={pieChartData} options={options} />
+                        <div>
+                            {pieChartData.labels.map((label, index) => (
+                                <div key={index} className="legend-item">
+                                    <div
+                                        className="legend-color"
+                                        style={{
+                                            backgroundColor:
+                                                pieChartData.datasets[0]
+                                                    .backgroundColor[index],
+                                            margin: "4px",
+                                        }}
+                                    ></div>
+                                    <div className="legend-label">{label}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
             <div style={{ display: "flex" }}>
                 <div className="main_dashboard_inventory_section">
