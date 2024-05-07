@@ -390,7 +390,7 @@ function Booking() {
                                 >
                                     CONTINUE TO CHECKOUT
                                 </button>
-                                <p>Please, get it now before it sells out.</p>
+                                <p>You can only add, if you have any concern contact us</p>
                             </div>
                         ) : current == 1 ? (
                             <div className="booking_cart_item_container">
