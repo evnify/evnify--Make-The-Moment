@@ -596,7 +596,19 @@ function Payroll() {
                 fetchPayrollList();
             }
         } catch (error) {
-            message.error("Something went wrong");
+            if (error.response) {
+                if (error.response.status === 400) {
+                    message.error(error.response.data.message);
+                } else {
+                    message.error(
+                        "Server error: " + error.response.data.message
+                    );
+                }
+            } else if (error.request) {
+                message.error("No response from server");
+            } else {
+                message.error("Error: " + error.message);
+            }
         }
     };
 
