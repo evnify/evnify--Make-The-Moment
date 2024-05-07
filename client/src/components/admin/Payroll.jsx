@@ -895,9 +895,15 @@ function Payroll() {
                                     size="large"
                                     placeholder="Enter Salary"
                                     value={basicSalary}
-                                    onChange={(e) =>
-                                        setBasicSalary(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        if (e.target.value < 0) {
+                                            message.error(
+                                                "Please enter a valid amount"
+                                            );
+                                            return;
+                                        }
+                                        setBasicSalary(e.target.value);
+                                    }}
                                 />
                             </div>
                             <div
@@ -1010,7 +1016,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={allowanceAmount}
-                            onChange={(e) => setAllowanceAmount(e.target.value)}
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setAllowanceAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1136,7 +1150,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={deductionAmount}
-                            onChange={(e) => setDeductionAmount(e.target.value)}
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setDeductionAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1174,8 +1196,10 @@ function Payroll() {
                                     border: "none",
                                     background: "transparent",
                                 }}
-                                onClick={() => deleteAllowance(index)}
-                            ></button>
+                                onClick={() => deleteDeduction(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1339,9 +1363,15 @@ function Payroll() {
                                     size="large"
                                     placeholder="Enter Salary"
                                     value={editBasicSalary}
-                                    onChange={(e) =>
-                                        setEditBasicSalary(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        if (e.target.value < 0) {
+                                            message.error(
+                                                "Please enter a valid amount"
+                                            );
+                                            return;
+                                        }
+                                        setEditBasicSalary(e.target.value);
+                                    }}
                                 />
                             </div>
                             <div
@@ -1456,9 +1486,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={editAllowanceAmount}
-                            onChange={(e) =>
-                                setEditAllowanceAmount(e.target.value)
-                            }
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setEditAllowanceAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1584,9 +1620,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={editDeductionAmount}
-                            onChange={(e) =>
-                                setEditDeductionAmount(e.target.value)
-                            }
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setEditDeductionAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
