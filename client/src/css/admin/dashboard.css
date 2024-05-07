@@ -71,6 +71,30 @@
     border-radius: 11px;
     margin: 0 0 0 16px;
     box-shadow: 3px 3px 9px 0px rgba(190, 190, 190, 0.13);
+    padding: 16px;
+}
+
+.main_dashboard_doughnut {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 70px;
+    height: 240px;
+    padding-right: 80px;
+}
+
+.admin_dashboard_chart_packages_section h4 {
+    font-family: "Product Sans";
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+.admin_dashboard_chart_packages_section p {
+    font-family: "Product Sans";
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
 }
 
 .main_dashboard_inventory_section {
