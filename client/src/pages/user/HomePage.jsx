@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { Navbar, Footer } from "../../components";
+import React, { useState, useEffect } from "react";
+import { Navbar, Footer, ChatBox } from "../../components";
 import { Carousel, Button, Card, Avatar } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import{ig, fb, li, yt} from "../../assets"
-const { Meta } = Card;
+import { ig, fb, li, yt } from "../../assets";
+import axios from "axios";
 
 function HomePage() {
+    const setViewCount = async () => {
+        axios.get(`${process.env.PUBLIC_URL}/api/viewCounts/trigger`);
+    };
+
     const contentStyle = {
         color: "#fff",
         justifyContent: "center",
@@ -19,6 +23,22 @@ function HomePage() {
 
     const navigate = useNavigate();
     const [size, setSize] = useState("large");
+    const [allBlogs, setBlogs] = useState([]);
+
+    const fetchBlogs = async () => {
+        try {
+            const response = await axios.get("/api/blogs/getBlogs");
+            setBlogs(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    useEffect(() => {
+        fetchBlogs();
+    }, []);
+
+    setViewCount();
 
     return (
         <div className="home_page_background_container">
@@ -95,24 +115,42 @@ function HomePage() {
                     <h2>Our Category</h2>
                 </div>
                 <div className="home_page_our_category_section1">
-                    <div className="home_page_category_card1" onClick={()=> navigate("/packages/Wedding")} >
+                    <div
+                        className="home_page_category_card1"
+                        onClick={() => navigate("/packages/Wedding")}
+                    >
                         <h3>Weddings</h3>
                     </div>
-                    <div className="home_page_category_card2" onClick={()=> navigate("/packages/Birthday")}>
+                    <div
+                        className="home_page_category_card2"
+                        onClick={() => navigate("/packages/Birthday")}
+                    >
                         <h3>Birthdays</h3>
                     </div>
-                    <div className="home_page_category_card3" onClick={()=> navigate("/packages/GetToGether")}>
+                    <div
+                        className="home_page_category_card3"
+                        onClick={() => navigate("/packages/GetToGether")}
+                    >
                         <h3>Get Together</h3>
                     </div>
                 </div>
                 <div className="home_page_category_section2">
-                    <div className="home_page_category_card4" onClick={()=> navigate("/packages/Farewell")}>
+                    <div
+                        className="home_page_category_card4"
+                        onClick={() => navigate("/packages/Farewell")}
+                    >
                         <h3>Farewell</h3>
                     </div>
-                    <div className="home_page_category_card5" onClick={()=> navigate("/packages/brideToBe")}>
+                    <div
+                        className="home_page_category_card5"
+                        onClick={() => navigate("/packages/brideToBe")}
+                    >
                         <h3>Bride To Be</h3>
                     </div>
-                    <div className="home_page_category_card6" onClick={()=> navigate("/packages/Anniversary")}>
+                    <div
+                        className="home_page_category_card6"
+                        onClick={() => navigate("/packages/Anniversary")}
+                    >
                         <h3>Anniversary</h3>
                     </div>
                 </div>
@@ -148,28 +186,16 @@ function HomePage() {
                 </div>
                 <div className="social_media_icon_section">
                     <div className="social_media_icon1">
-                        <img
-                            src={ig}
-                            alt="instergram"
-                        />
+                        <img src={ig} alt="instergram" />
                     </div>
                     <div className="social_media_icon2">
-                        <img
-                            src={yt}
-                            alt="youtube"
-                        />
+                        <img src={yt} alt="youtube" />
                     </div>
                     <div className="social_media_icon3">
-                        <img
-                            src={fb}
-                            alt="facebook"
-                        />
+                        <img src={fb} alt="facebook" />
                     </div>
                     <div className="social_media_icon4">
-                        <img
-                            src={li}
-                            alt="linkedin"
-                        />
+                        <img src={li} alt="linkedin" />
                     </div>
                 </div>
                 <div className="home_page_trending_package_section">
@@ -180,7 +206,12 @@ function HomePage() {
                                 <h3>Packages</h3>
                             </div>
                             <div className="home_page_ancer_tag_css">
-                                <Link to="/packages" style={{ textDecoration: 'none' }}><h4>See All</h4></Link>
+                                <Link
+                                    to="/packages"
+                                    style={{ textDecoration: "none" }}
+                                >
+                                    <h4>See All</h4>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -252,10 +283,13 @@ function HomePage() {
                                     <h2>Our&nbsp;</h2>
                                     <h3>Blog</h3>
                                 </div>
-                                <div
-                                    className="home_page_blog_ancer_tag_css"
-                                >
-                                    <Link to="/blog" style={{ textDecoration: 'none' }}><h4>See All</h4></Link>
+                                <div className="home_page_blog_ancer_tag_css">
+                                    <Link
+                                        to="/blog"
+                                        style={{ textDecoration: "none" }}
+                                    >
+                                        <h4>See All</h4>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="home_page_our_blog_section_cards1">
@@ -266,18 +300,23 @@ function HomePage() {
                                         cursor: "pointer",
                                     }}
                                     cover={
+                                        allBlogs.length > 0 && allBlogs[0].images.length > 0 &&
                                         <img
                                             style={{
                                                 padding: "10px",
                                             }}
                                             alt="example"
-                                            src="https://i.ibb.co/NLssnJH/image3.png"
+                                            src={allBlogs[0].images[0]}
                                         />
                                     }
                                 >
                                     <div className="home_page_blog_card_txt">
-                                        <h2>Weddings Blog</h2>
-                                        <h1>• 20 Feb 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[0].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[0].eventDate}</h1>
+                                        )}
                                     </div>
                                 </Card>
                                 <div>
@@ -288,18 +327,23 @@ function HomePage() {
                                             cursor: "pointer",
                                         }}
                                         cover={
-                                            <img
-                                                style={{
-                                                    padding: "10px",
-                                                }}
-                                                alt="example"
-                                                src="https://i.ibb.co/vm9pLZV/unsplash-qf-WMUXDc-N18.png"
-                                            />
+                                            allBlogs.length > 0 && allBlogs[1].images.length > 0 &&
+                                        <img
+                                            style={{
+                                                padding: "10px",
+                                            }}
+                                            alt="example"
+                                            src={allBlogs[1].images[0]}
+                                        />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
-                                            <h2>Bride TO Be Party Blog</h2>
-                                            <h1>• 14 Jan 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[1].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[1].eventDate}</h1>
+                                        )}
                                         </div>
                                     </Card>
                                 </div>
@@ -308,21 +352,27 @@ function HomePage() {
                                         className="home_page_our_blog_card3"
                                         style={{
                                             width: 300,
+                                            height: 300,
                                             cursor: "pointer",
                                         }}
                                         cover={
-                                            <img
-                                                style={{
-                                                    padding: "10px",
-                                                }}
-                                                alt="example"
-                                                src="https://i.ibb.co/7YGbL1W/18.png"
-                                            />
+                                            allBlogs.length > 0 && allBlogs[2].images.length > 0 &&
+                                        <img
+                                            style={{
+                                                padding: "10px",
+                                            }}
+                                            alt="example"
+                                            src={allBlogs[2].images[0]}
+                                        />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
-                                            <h2>Birthday Blog</h2>
-                                            <h1>• 15 Feb 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[2].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[2].eventDate}</h1>
+                                        )}
                                         </div>
                                     </Card>
                                 </div>
@@ -333,21 +383,27 @@ function HomePage() {
                                         className="home_page_our_blog_card4"
                                         style={{
                                             width: 300,
+                                            height: 300,
                                             cursor: "pointer",
                                         }}
                                         cover={
-                                            <img
-                                                style={{
-                                                    padding: "10px",
-                                                }}
-                                                alt="example"
-                                                src="https://i.ibb.co/c2p57HV/22.png"
-                                            />
+                                            allBlogs.length > 0 && allBlogs[3].images.length > 0 &&
+                                        <img
+                                            style={{
+                                                padding: "10px",
+                                            }}
+                                            alt="example"
+                                            src={allBlogs[3].images[0]}
+                                        />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
-                                            <h2>Weddings Blog</h2>
-                                            <h1>• 20 Feb 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[3].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[3].eventDate}</h1>
+                                        )}
                                         </div>
                                     </Card>
                                 </div>
@@ -356,21 +412,27 @@ function HomePage() {
                                         className="home_page_our_blog_card5"
                                         style={{
                                             width: 300,
+                                            height: 300,
                                             cursor: "pointer",
                                         }}
                                         cover={
-                                            <img
-                                                style={{
-                                                    padding: "10px",
-                                                }}
-                                                alt="example"
-                                                src="https://i.ibb.co/M7dt431/12.png"
-                                            />
+                                            allBlogs.length > 0 && allBlogs[4].images.length > 0 &&
+                                        <img
+                                            style={{
+                                                padding: "10px",
+                                            }}
+                                            alt="example"
+                                            src={allBlogs[1].images[0]}
+                                        />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
-                                            <h2>Bride TO Be Party Blog</h2>
-                                            <h1>• 14 Jan 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[4].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[4].eventDate}</h1>
+                                        )}
                                         </div>
                                     </Card>
                                 </div>
@@ -379,21 +441,27 @@ function HomePage() {
                                         className="home_page_our_blog_card6"
                                         style={{
                                             width: 300,
+                                            height: 300,
                                             cursor: "pointer",
                                         }}
                                         cover={
-                                            <img
-                                                style={{
-                                                    padding: "10px",
-                                                }}
-                                                alt="example"
-                                                src="https://i.ibb.co/fdTYnzg/44.png"
-                                            />
+                                            allBlogs.length > 0 && allBlogs[5].images.length > 0 &&
+                                        <img
+                                            style={{
+                                                padding: "10px",
+                                            }}
+                                            alt="example"
+                                            src={allBlogs[0].images[0]}
+                                        />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
-                                            <h2>Birthday Blog</h2>
-                                            <h1>• 15 Feb 2024</h1>
+                                        {allBlogs.length > 0 && (
+                                            <h2>{allBlogs[0].blogTitle}</h2>
+                                        )}
+                                        {allBlogs.length > 0 && (
+                                        <h1>• {allBlogs[0].eventDate}</h1>
+                                        )}
                                         </div>
                                     </Card>
                                 </div>
@@ -402,6 +470,7 @@ function HomePage() {
                     </div>
                 </div>
             </div>
+            <ChatBox />
             <Footer />
         </div>
     );

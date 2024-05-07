@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { jsPDF } from "jspdf";
 
 import {
     Input,
@@ -18,6 +19,8 @@ import {
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
+
+const imgData = require("../../assets/backgrounds/paysheet_bg.png");
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -113,6 +116,63 @@ function Payroll() {
         }
     }
 
+    const downloadRecept = (record) => {
+        const doc = new jsPDF();
+        doc.addImage(imgData, "PNG", 0, 0, 215, 300);
+
+        doc.setFont("helvetica");
+        doc.setFontSize(14);
+        doc.text(`${convertDate(record.updatedAt)}`, 168, 65);
+        doc.text(`${record.employeeName}`, 22, 65);
+        doc.text(`Employee ID : ${record.employeeID}`, 22, 74);
+        doc.text(`Salary ID : ${record.salaryID}`, 22, 83);
+
+        doc.setFontSize(14);
+        doc.text(`Basic Salary :`, 22, 100);
+        doc.text(`${record.basicSalary} LKR`, 192, 100, { align: "right" });
+        doc.setFont(undefined, "bold")
+            .text(`Allowances`, 22, 112)
+            .setFont(undefined, "normal");
+        {
+            var y = 120;
+            var x = 0;
+            record.allowances.map((allowance, index) => {
+                doc.text(`${allowance.name} :`, 22, y + x * 10);
+                doc.text(`${allowance.amount} LKR`, 192, y + x * 10, {
+                    align: "right",
+                });
+                x++;
+            });
+            x = x + 0.5;
+        }
+        doc.setFont(undefined, "bold")
+            .text(`Deductions`, 22, y + x * 10)
+            .setFont(undefined, "normal");
+        x++;
+        {
+            record.deductions.map((deduction, index) => {
+                doc.text(`${deduction.name} :`, 22, y + x * 10);
+                doc.text(`${deduction.amount} LKR`, 192, y + x * 10, {
+                    align: "right",
+                });
+                x++;
+            });
+        }
+
+        doc.text(`Total Salary :`, 22, 220);
+        doc.text(`${record.netSalary} LKR`, 192, 220, { align: "right" });
+
+        doc.save(`pay_sheet_of_${record.salaryID}.pdf`);
+    };
+
+    function convertDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
     // Edit model
 
     const [editModelOpen, setEditModelOpen] = useState(false);
@@ -192,6 +252,14 @@ function Payroll() {
         }
     };
 
+    const deleteEditAllowances = (index) => {
+        setEditAllowances((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
+    };
+
     const addEditDeduction = (e) => {
         e.preventDefault();
         setEditDeductionSelect((prevState) => [
@@ -218,6 +286,14 @@ function Payroll() {
             setEditDeductionName("");
             setEditDeductionAmount("");
         }
+    };
+
+    const deleteEditDeduction = (index) => {
+        setEditDeductions((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
     };
 
     useEffect(() => {
@@ -458,6 +534,7 @@ function Payroll() {
                             border: "none",
                             background: "transparent",
                         }}
+                        onClick={() => downloadRecept(record)}
                     >
                         <Icon icon="mdi:download" />
                     </button>
@@ -519,7 +596,19 @@ function Payroll() {
                 fetchPayrollList();
             }
         } catch (error) {
-            message.error("Something went wrong");
+            if (error.response) {
+                if (error.response.status === 400) {
+                    message.error(error.response.data.message);
+                } else {
+                    message.error(
+                        "Server error: " + error.response.data.message
+                    );
+                }
+            } else if (error.request) {
+                message.error("No response from server");
+            } else {
+                message.error("Error: " + error.message);
+            }
         }
     };
 
@@ -565,6 +654,14 @@ function Payroll() {
         }
     };
 
+    const deleteDeduction = (index) => {
+        setDeductions((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
+    };
+
     const newAllowance = (e) => {
         e.preventDefault();
         if (allowanceName === "" || allowanceName === null)
@@ -579,6 +676,14 @@ function Payroll() {
             setAllowanceName("");
             setAllowanceAmount("");
         }
+    };
+
+    const deleteAllowance = (index) => {
+        setAllowances((prevState) => {
+            const temp = [...prevState];
+            temp.splice(index, 1);
+            return temp;
+        });
     };
 
     //Retrieve All Employee Details
@@ -802,9 +907,15 @@ function Payroll() {
                                     size="large"
                                     placeholder="Enter Salary"
                                     value={basicSalary}
-                                    onChange={(e) =>
-                                        setBasicSalary(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        if (e.target.value < 0) {
+                                            message.error(
+                                                "Please enter a valid amount"
+                                            );
+                                            return;
+                                        }
+                                        setBasicSalary(e.target.value);
+                                    }}
                                 />
                             </div>
                             <div
@@ -917,7 +1028,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={allowanceAmount}
-                            onChange={(e) => setAllowanceAmount(e.target.value)}
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setAllowanceAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -948,6 +1067,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteAllowance(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1032,7 +1162,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={deductionAmount}
-                            onChange={(e) => setDeductionAmount(e.target.value)}
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setDeductionAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1063,6 +1201,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteDeduction(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1226,9 +1375,15 @@ function Payroll() {
                                     size="large"
                                     placeholder="Enter Salary"
                                     value={editBasicSalary}
-                                    onChange={(e) =>
-                                        setEditBasicSalary(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        if (e.target.value < 0) {
+                                            message.error(
+                                                "Please enter a valid amount"
+                                            );
+                                            return;
+                                        }
+                                        setEditBasicSalary(e.target.value);
+                                    }}
                                 />
                             </div>
                             <div
@@ -1343,9 +1498,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={editAllowanceAmount}
-                            onChange={(e) =>
-                                setEditAllowanceAmount(e.target.value)
-                            }
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setEditAllowanceAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1376,6 +1537,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteEditAllowances(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -1460,9 +1632,15 @@ function Payroll() {
                             }}
                             type="number"
                             value={editDeductionAmount}
-                            onChange={(e) =>
-                                setEditDeductionAmount(e.target.value)
-                            }
+                            onChange={(e) => {
+                                if (e.target.value < 0) {
+                                    message.error(
+                                        "Please enter a valid amount"
+                                    );
+                                    return;
+                                }
+                                setEditDeductionAmount(e.target.value);
+                            }}
                         />
                         <Button
                             type="text"
@@ -1493,6 +1671,17 @@ function Payroll() {
                                 }}
                                 disabled
                             />
+                            <button
+                                style={{
+                                    fontSize: "20px",
+                                    color: "#757171",
+                                    border: "none",
+                                    background: "transparent",
+                                }}
+                                onClick={() => deleteEditDeduction(index)}
+                            >
+                                <Icon icon="material-symbols:delete-outline" />
+                            </button>
                         </div>
                     ))}
                 </div>

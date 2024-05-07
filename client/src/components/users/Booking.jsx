@@ -5,38 +5,70 @@ import {
     Space,
     ConfigProvider,
     Modal,
-    Input,
     Steps,
     Radio,
-    Checkbox,
     message,
 } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import axios from "axios";
+import jsPDF from "jspdf";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+import EditPaymentForm from "../EditPaymentForm";
 
 function Booking() {
     const [bookingList, setBookingList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBookingData, setSelectedBookingData] = useState(null);
+    const [defaultCart, setDefaultCart] = useState([]);
+
+    const stripePromise = loadStripe(
+        "pk_test_51OW27PIgh0lMKMevGMnDm4suVchcjJqo78U5Zw86wYtbRbg1af16R1JXdYsKhzYhnFnyycKuoLyE3RtbmTR9sYPe00cNsii5yG"
+    );
+
+    // fetch user id
+    const [userId, setUserId] = useState({});
 
     useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const response = await axios.get(
-                    `/api/bookings/getAllBookings`
-                );
-                setBookingList(response.data);
-            } catch (error) {
-                console.log("Error fetching bookings:", error);
-            }
-        };
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        const userID = user.userID;
+        setUserId(userID);
+    }, []);
+
+    var imgData = require("../../assets/backgrounds/reservationConformation.png");
+
+    const fetchBookings = async () => {
+        try {
+            const response = await axios.get(`/api/bookings/getAllBookings`);
+            setBookingList(response.data);
+        } catch (error) {
+            console.log("Error fetching bookings:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchBookings();
     }, []);
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        setSelectedBookingData(null);
+    const handleCancelBooking = async (_id, paymentId) => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/refundPayment`,
+                {
+                    paymentId,
+                }
+            );
+            await axios.get(`/api/bookings/updateBookingCancel/${_id}`);
+            message.success("Booking cancelled successfully");
+            fetchBookings();
+            setIsModalOpen(false);
+            setSelectedBookingData(null);
+        } catch (error) {
+            console.error(error);
+            message.error("Error cancelling booking");
+        }
     };
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -50,12 +82,50 @@ function Booking() {
     const handleViewClick = async (record) => {
         setSelectedBookingData(record);
         setIsModalOpen(true);
+        setDefaultCart(record.AssignedInventory);
         setCart(record.AssignedInventory);
+        console.log(record.AssignedInventory);
+    };
+
+    function convertDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    const handelConformationDownload = async (record) => {
+        const doc = new jsPDF();
+        doc.addImage(imgData, "PNG", 0, 0, 215, 300);
+
+        doc.setFont("helvetica");
+        doc.setFontSize(14);
+        doc.text(`${convertDate(record.updatedAt)}`, 80, 77.5);
+        doc.text(`${record.transactionID}`, 80, 90);
+        doc.text(`${record.eventType}`, 80, 102.2);
+        doc.text(`${record.packageType}`, 80, 116.1);
+        doc.text(`${convertDate(record.eventDate)}`, 80, 129);
+        doc.text(`${record.amount} LKR`, 80, 142);
+        doc.text(`${record.eventLocation[0].addressLine1}`, 80, 155.5);
+        doc.text(
+            `${record.eventLocation[0].city}, ${record.eventLocation[0].district}, `,
+            80,
+            163.5
+        );
+        doc.text(`${record.eventLocation[0].postalCode}`, 80, 171.5);
+
+        doc.save(`Invoice_${record._id}.pdf`);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+        setSelectedBookingData(null);
     };
 
     const columns = [
         {
-            title: "Date",
+            title: "Booked On",
             dataIndex: "createdAt",
             key: "createdAt",
             render: (createdAt) => {
@@ -72,14 +142,34 @@ function Booking() {
             key: "packageType",
         },
         {
+            title: "Event Type",
+            dataIndex: "eventType",
+            key: "eventType",
+        },
+        {
+            title: "Transaction ID",
+            dataIndex: "transactionID",
+            key: "transactionID",
+        },
+        {
+            title: "Event Date",
+            dataIndex: "eventDate",
+            key: "eventDate",
+            render: (eventDate) => {
+                const date = new Date(eventDate);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${day}/${month}/${year}`;
+            },
+        },
+        {
             title: "Amount",
             dataIndex: "amount",
             key: "amount",
-        },
-        {
-            title: "Invoice",
-            dataIndex: "transcationID",
-            key: "transcationID",
+            render: (amount) => {
+                return `${amount} LKR`;
+            },
         },
         {
             title: "Status",
@@ -87,9 +177,9 @@ function Booking() {
             dataIndex: "status",
             render: (status) => {
                 let color = "green";
-                if (status === "rejected") {
+                if (status === "Canceled") {
                     color = "red";
-                    return <Tag color={color}> {"Cancelled"}</Tag>;
+                    return <Tag color={color}> {"Canceled"}</Tag>;
                 } else if (status === "Pending") {
                     color = "orange";
                     return <Tag color={color}> {"Pending"}</Tag>;
@@ -108,11 +198,11 @@ function Booking() {
                             fontSize: "14px",
                             border: "solid 1px #C4CDD5",
                             backgroundColor: "#ffff",
-                            width: "90px",
-                            height: "35px",
+                            padding: "8px 20px",
                             color: "#000868E96",
                             fontWeight: 500,
                             borderRadius: "5px",
+                            fontFamily: "Product Sans",
                         }}
                         onClick={() => handleViewClick(record)}
                     >
@@ -121,32 +211,19 @@ function Booking() {
                     <button
                         style={{
                             fontSize: "14px",
-                            border: "solid 1px #C4CDD5",
-                            backgroundColor: "#ffff",
-                            width: "90px",
-                            height: "35px",
-                            color: "#000868E96",
-                            fontWeight: 500,
-                            borderRadius: "5px",
-                        }}
-                        onClick={() => handleEdit(record)}
-                    >
-                        Edit
-                    </button>
-                    <button
-                        style={{
-                            fontSize: "14px",
                             border: "none",
                             backgroundColor: "#4094F7",
-                            width: "100px",
-                            height: "35px",
+                            padding: "8px 18px",
                             color: "#fff",
                             borderRadius: "5px",
+                            fontWeight: 500,
+                            fontFamily: "Product Sans",
                         }}
-                        // onClick={() => showDeclineConfirm(record.leaveID)}
+                        onClick={() => handelConformationDownload(record)}
+                        className="center"
                     >
                         <PrinterOutlined style={{ gap: "10" }} />
-                        Export pdf
+                        &nbsp; Export pdf
                     </button>
                 </Space>
             ),
@@ -160,15 +237,24 @@ function Booking() {
         );
     };
 
+    const calculateDefault = () => {
+        return defaultCart.reduce(
+            (total, item) => total + item.unitPrice * item.addedQty,
+            0
+        );
+    };
+
     const handleRemoveItem = (itemId) => {
         const updatedCart = cart.filter((item) => item.itemID !== itemId);
         setCart(updatedCart);
         message.success("Item removed from cart");
     };
 
-    const handleChangeQty = (e, itemId) => {
-        if (e.target.value < 1) {
-            return message.error("Quantity cannot be less than 1");
+    const handleChangeQty = (e, itemId, index) => {
+        if (e.target.value < defaultCart[index].addedQty) {
+            return message.error(
+                `Quantity cannot be less than existing quantity ${defaultCart[index].addedQty}`
+            );
         }
         const updatedCart = cart.map((item) =>
             item.itemID === itemId
@@ -212,14 +298,16 @@ function Booking() {
         }
 
         try {
-            await axios.post(`${process.env.PUBLIC_URL}/api/bookings/editBookingById`, {
-                _id: selectedPackage[0]._id,
-                cart
-            })
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/editBookingById`,
+                {
+                    _id: selectedPackage[0]._id,
+                    cart,
+                }
+            );
             message.success("Booking updated successfully");
             setBookingModal(false);
-        }
-        catch (error) {
+        } catch (error) {
             console.log("Error editing booking:", error);
             message.error("Error editing booking");
         }
@@ -277,7 +365,7 @@ function Booking() {
                                     <h4>Your Package</h4>
                                 </div>
                                 <div className="booking_cart_item">
-                                    {cart.map((item) => (
+                                    {cart.map((item, index) => (
                                         <div
                                             className="booking_cart_item_body"
                                             key={item.itemId}
@@ -305,7 +393,8 @@ function Booking() {
                                                     onChange={(e) =>
                                                         handleChangeQty(
                                                             e,
-                                                            item.itemID
+                                                            item.itemID,
+                                                            index
                                                         )
                                                     }
                                                 />
@@ -318,8 +407,8 @@ function Booking() {
                                     <p>Subtotal({cart.length} Items)</p>
                                     <h6>
                                         LKR{" "}
-                                        {(calculateTotal() ?? 0) +
-                                            (selectedPackage[0]?.price ?? 0)}
+                                        {(calculateTotal() ?? 0) -
+                                            (calculateDefault() ?? 0)}
                                     </h6>
                                 </div>
                                 <button
@@ -328,7 +417,10 @@ function Booking() {
                                 >
                                     CONTINUE TO CHECKOUT
                                 </button>
-                                <p>Please, get it now before it sells out.</p>
+                                <p>
+                                    You can only add, if you have any concern
+                                    contact us
+                                </p>
                             </div>
                         ) : current == 1 ? (
                             <div className="booking_cart_item_container">
@@ -491,195 +583,24 @@ function Booking() {
                                     <div className="total_calculate_section">
                                         <h3>
                                             Total :{" "}
-                                            {(calculateTotal() ?? 0) +
-                                                (selectedPackage[0]?.price ??
-                                                    0)}{" "}
+                                            {(calculateTotal() ?? 0) -
+                                                (calculateDefault() ?? 0)}{" "}
                                             LKR
                                         </h3>
                                     </div>
                                 </div>
-                                <div id="payment-element" style={{ flex: 1 }}>
-                                    <div
-                                        style={{
-                                            width: 420,
-                                            padding: "0 50px",
-                                        }}
-                                    >
-                                        <hr />
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Email
-                                            </span>
-                                            <Input
-                                                type="email"
-                                                placeholder="Email"
-                                                size="large"
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Card Information
-                                            </span>
-                                            <Input
-                                                type="number"
-                                                placeholder="1234 1234 1234 1234"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCardNumber(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                flexDirection: "row",
-                                            }}
-                                        >
-                                            <Input
-                                                type="number"
-                                                placeholder="MM/YY"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setExpDate(e.target.value)
-                                                }
-                                            />
-
-                                            <Input
-                                                type="number"
-                                                placeholder="CVC"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setCvc(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Name On card
-                                            </span>
-                                            <Input
-                                                placeholder="Full name on card"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setNameOnCard(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    marginBottom: "3px",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600,
-                                                }}
-                                            >
-                                                Country Or region
-                                            </span>
-
-                                            <Input
-                                                type="number"
-                                                placeholder="ZIP"
-                                                size="large"
-                                                style={{
-                                                    boxShadow:
-                                                        "0px 1.468px 3.669px 0px rgba(0, 0, 0, 0.08)",
-                                                }}
-                                                onChange={(e) =>
-                                                    setZip(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                marginTop: "8px",
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}
-                                        >
-                                            <Checkbox>
-                                                Agree to the terms and
-                                                conditions
-                                            </Checkbox>
-                                        </div>
-                                        <div className="center">
-                                            <button
-                                                className="payment_confirm_btn_72"
-                                                onClick={editBooking}
-                                            >
-                                                Pay
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Elements stripe={stripePromise}>
+                                    <EditPaymentForm
+                                        cart={cart}
+                                        userId={userId}
+                                        selectedPackage={selectedPackage}
+                                        selectedAddress={selectedAddress}
+                                        price={
+                                            (calculateTotal() ?? 0) -
+                                            (calculateDefault() ?? 0)
+                                        }
+                                    />
+                                </Elements>
                             </div>
                         )}
                     </div>
@@ -698,8 +619,6 @@ function Booking() {
                     centered
                     onCancel={handleCancel}
                     open={isModalOpen}
-                    // onOk={() => setBookingList(false)}
-
                     footer={null}
                     width={715}
                 >
@@ -745,29 +664,22 @@ function Booking() {
                                 <span className="package_includes_txt_section">
                                     Package Includes
                                 </span>
-                                <div className="Add_Address_popup_quntity_container">
-                                    <div className="add_booking_popup_container_left">
-                                        <span>Item Name</span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                    </div>
-                                    <div className="add_booking_popup_container_right">
-                                        <span>Quantity</span>
-                                        <span>2</span>
-                                        <span>2</span>
-                                        <span>2</span>
-                                    </div>
+                                <div className="package_includes_container">
+                                    {cart.map((item) => (
+                                        <div
+                                            key={item.itemId}
+                                            className="Add_Address_popup_quntity_container"
+                                        >
+                                            <div className="add_booking_popup_container_left">
+                                                <span>{item.itemName}</span>
+                                            </div>
+                                            <div className="add_booking_popup_container_right">
+                                                <span>{item.addedQty}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
+
                                 <hr
                                     style={{
                                         borderWidth: "2px",
@@ -778,15 +690,58 @@ function Booking() {
                                     <div className="add_employee_popup_details_container_right">
                                         <div className="add_quntity_price_section">
                                             <span>Total Amount</span>
-                                            <span>LKR 25000</span>
+                                            <span>
+                                                {selectedBookingData.amount} LKR
+                                            </span>
                                         </div>
                                         <div className="add_quntity_price_btn_section">
-                                            <button className="cancel_Package_72 ">
-                                                Cancel Booking
-                                            </button>
-                                            <button className="saveAddressBtn_72 ">
-                                                Update Booking
-                                            </button>
+                                            {selectedBookingData.status ===
+                                            "Pending" ? (
+                                                <>
+                                                    <button
+                                                        className="cancel_Package_72 center"
+                                                        onClick={() =>
+                                                            handleCancelBooking(
+                                                                selectedBookingData._id,
+                                                                selectedBookingData.transactionID
+                                                            )
+                                                        }
+                                                    >
+                                                        Cancel Booking
+                                                    </button>
+                                                    <button
+                                                        className="saveAddressBtn_72 center"
+                                                        onClick={() =>
+                                                            handleEdit(
+                                                                selectedBookingData
+                                                            )
+                                                        }
+                                                    >
+                                                        Update Booking
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        className="cancel_Package_72 center"
+                                                        style={{
+                                                            background: "gray",
+                                                        }}
+                                                        disabled
+                                                    >
+                                                        Cancel Booking
+                                                    </button>
+                                                    <button
+                                                        className="saveAddressBtn_72 center"
+                                                        style={{
+                                                            background: "gray",
+                                                        }}
+                                                        disabled
+                                                    >
+                                                        Update Booking
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -809,7 +764,11 @@ function Booking() {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
-                        <Table columns={columns} dataSource={bookingList} />
+                        <Table
+                            columns={columns}
+                            dataSource={bookingList}
+                            pagination={bookingList.length >= 8 ? {} : false}
+                        />
                     </div>
                 </div>
             </div>

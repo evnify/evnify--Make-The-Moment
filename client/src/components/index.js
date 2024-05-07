@@ -1,9 +1,10 @@
-import { SideMenu, NavBar } from "./admin";
+import { SideMenu, NavBar, Loader } from "./admin";
 import AdminRoutes from "./AdminRoutes";
 import EmpRoutes from "./EmpRoutes";
 import ChatBox from "./ChatBox";
 import { EmpSideMenu, EmpHero } from "./employee";
 import UserRoutes from "./UserRoutes";
+import PaymentForm from "./PaymentForm.jsx"
 import {
     UserSideMenu,
     SideMenuItems,
@@ -28,4 +29,6 @@ export {
     BookingSteps,
     Navbar,
     Footer,
+    Loader,
+    PaymentForm
 };

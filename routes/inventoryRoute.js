@@ -15,6 +15,14 @@ const generateUniqueID = async () => {
 // Create a new inventory item
 router.post("/addInventory", async (req, res) => {
     try {
+        // Check if the itemName already exists
+        const existingItem = await Inventory.findOne({ itemName: req.body.itemName });
+        if (existingItem) {
+            // If itemName already exists, return an error
+            return res.status(400).json({ message: "Item with the same name already exists." });
+        }
+        
+        // If itemName doesn't exist, proceed to create the new item
         const itemID = await generateUniqueID();
         req.body.itemID = itemID;
         const newItem = await Inventory.create(req.body);
@@ -23,6 +31,7 @@ router.post("/addInventory", async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 // Get all inventory items
 router.get("/getInventories", async (req, res) => {
@@ -50,14 +59,22 @@ router.get("/:id", async (req, res) => {
 // Update an inventory item
 router.put("/putInventories/:id", async (req, res) => {
     try {
+        const existingItem = await Inventory.findOne({ itemName: req.body.itemName });
+        if (existingItem && existingItem._id.toString() !== req.params.id) {
+            // If an item with the same name already exists and it's not the item being updated
+            return res.status(400).json({ message: "Item name already exists" });
+        }
+
         const updatedItem = await Inventory.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true }
         );
+
         if (!updatedItem) {
             return res.status(404).json({ message: "Item not found" });
         }
+
         res.json(updatedItem);
     } catch (error) {
         res.status(400).json({ message: error.message });

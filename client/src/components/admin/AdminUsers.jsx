@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined,PrinterOutlined } from "@ant-design/icons";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import {
@@ -97,12 +97,16 @@ function UserList() {
     const [editStatus, setEditStatus] = useState("");
     const [fileListEdit, setFileListEdit] = useState([]);
 
-    async function fetchUserList() {
-        const response = await axios.get(
-            `${process.env.PUBLIC_URL}/api/users/getUser`
-        );
-        setData(response.data);
-    }
+    const fetchUserList = async () => {
+        try {
+            const response = await axios.get("/api/users/getUser");
+            // Sort inventories by date in descending order
+            const sortedData = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setData(sortedData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
         const fetchUserList = async () => {
@@ -942,15 +946,15 @@ function UserList() {
                     },
                 }}
             >
-                <div className="admin_user_list_container">
-                    <div className="admin_user_list_top_menu">
-                        <div
-                            style={{
-                                marginRight: "auto",
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
+                <div className="admin_leave_request_container">
+                <div className="admin_leave_request_top_menu">
+                    <div
+                        style={{
+                            marginRight: "auto",
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
                             <h5>All Users</h5>
                             <Search
                                 placeholder="Search by Name"
@@ -1003,12 +1007,21 @@ function UserList() {
                             </button>
 
                             <button
-                                className="admin_user_list_top_menu_button "
-                                onClick={handleExport}
-                                style={{ marginLeft: "10px" }}
-                            >
-                                Export
-                            </button>
+                        style={{
+                            fontSize: "14px",
+                            border: "none",
+                            backgroundColor: "#4094F7",
+                            width: "100px",
+                            height: "37px",
+                            color: "#fff",
+                            borderRadius: "5px",
+                            marginLeft: "10px",
+                        }}
+                        onClick={handleExport}
+                    >
+                        <PrinterOutlined style={{ gap:"20" }} />
+                        Export 
+                    </button>
                         </div>
                     </div>
 

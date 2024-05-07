@@ -17,6 +17,16 @@ router.post("/addPayroll", async (req, res) => {
     const salaryID = await generateUniqueID();
     salaryData.salaryID = salaryID;
     try {
+        const existingPayroll = await salaryModel.findOne({
+            employeeID: salaryData.employeeID,
+            fromDate: { $lte: salaryData.toDate },
+            toDate: { $gte: salaryData.fromDate }
+        });
+
+        if (existingPayroll) {
+            return res.status(400).json({ message: "User already has a payroll within the specified date range" });
+        }
+
         const payRoll = new salaryModel(salaryData);
         await payRoll.save();
         res.status(200).send("Payroll added successfully");
@@ -70,7 +80,7 @@ router.post("/updatePayroll", async (req, res) => {
 router.post("/getPayrollByEmpID", async (req, res) => {
     const empID = req.body.empID;
     try {
-        const payRoll = await salaryModel.find({ empID: empID });
+        const payRoll = await salaryModel.find({ employeeID: empID });
         res.status(200).send(payRoll);
     } catch (err) {
         return res.status(400).json({ message: "something went wrong" });

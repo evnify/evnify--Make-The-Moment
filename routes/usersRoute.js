@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const UserModel = require("../models/user");
+const UserLogin = require("../models/userLogin");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -31,7 +32,8 @@ router.post("/addUser", async (req, res) => {
     const UserUserData = req.body;
     const password = await generateUniquePwd();
     const userID = await generateUniqueID();
-    UserUserData.password = password;
+    const hashedPassword = await bcrypt.hash(password, 10); // Hashing the password
+    UserUserData.password = hashedPassword;
     UserUserData.userID = userID;
 
     const existingEmail = await UserModel.findOne({
@@ -52,6 +54,10 @@ router.post("/addUser", async (req, res) => {
 
     try {
         const response = await newUser.save();
+
+        // Send email to user with the original password
+        sendPasswordEmail(UserUserData.email, password);
+
         res.send(response);
     } catch (error) {
         return res.status(400).json({ message: error });
@@ -97,13 +103,12 @@ router.post("/updateUser/:id", async (req, res) => {
     const { id } = req.params;
     const userData = req.body;
     try {
-        await UserModel.findOneAndUpdate ({ userID: id }, userData);
+        await UserModel.findOneAndUpdate({ userID: id }, userData);
         res.send("User updated successfully");
     } catch (error) {
         return res.status(400).json({ message: error });
     }
 });
-
 
 router.post("/change-password", async (req, res) => {
     const { userId, currentPassword, newPassword } = req.body;
@@ -117,7 +122,6 @@ router.post("/change-password", async (req, res) => {
         // Compare passwords in plaintext
         if (user.password !== currentPassword) {
             return res.status(401).json({ message: "Incorrect password" });
-            
         }
 
         await UserModel.findOneAndUpdate(
@@ -135,7 +139,9 @@ router.post("/delete-account", async (req, res) => {
     const { userId } = req.body;
 
     try {
-        const deletedUser = await UserModel.findOneAndDelete({ userID: userId });
+        const deletedUser = await UserModel.findOneAndDelete({
+            userID: userId,
+        });
         if (!deletedUser) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -145,8 +151,6 @@ router.post("/delete-account", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-
 
 router.post("/suspendUser", async (req, res) => {
     const userData = req.body;
@@ -180,10 +184,49 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        const user = await UserModel.findOne({ email: email });
+
+        if (user) {
+            // Compare password with hashed password using bcrypt
+            const passwordMatch = await bcrypt.compare(password, user.password);
+
+            if (passwordMatch) {
+                const temp = {
+                    userID: user.userID,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    username: user.username,
+                    email: user.email,
+                    userType: user.userType,
+                    status: user.status,
+                    profilePic: user.profilePic,
+                };
+                res.send(temp);
+
+                const userLogin = new UserLogin({
+                    userId: user._id,
+                    userType: user.userType,
+                    ipAddress: req.ip,
+                });
+                await userLogin.save();
+            } else {
+                return res.status(400).json({ message: "Login Failed" });
+            }
+        } else {
+            return res.status(400).json({ message: "Login Failed" });
+        }
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+
+router.post("/loginGoogle", async (req, res) => {
+    const { email } = req.body;
+
+    try {
         const user = await UserModel.findOne({
             email: email,
-            password: password,
-        }); 
+        });
         if (user) {
             const temp = {
                 userID: user.userID,
@@ -196,6 +239,13 @@ router.post("/login", async (req, res) => {
                 profilePic: user.profilePic,
             };
             res.send(temp);
+
+            const userLogin = new UserLogin({
+                userId: user._id,
+                userType: user.userType,
+                ipAddress: req.ip,
+            });
+            await userLogin.save();
         } else {
             return res.status(400).json({ message: "Login Failed" });
         }
@@ -204,25 +254,77 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.post("/login-data", async (req, res) => {
+    try {
+        const loginData = await UserLogin.aggregate([
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$timestamp",
+                        },
+                    },
+
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { _id: 1 } },
+        ]);
+
+        res.json(loginData);
+    } catch (error) {
+        console.error("Error fetching login data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/login-type", async (req, res) => {
+    try {
+        const loginData = await UserLogin.aggregate([
+            {
+                $match: {
+                    // Filter by userType
+                    userType: {
+                        $in: ["Customer", "Hr-Manager", "Employee", "Admin"],
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: "$userType", // Group by userType
+                    count: { $sum: 1 }, // Count the logins for each userType
+                },
+            },
+        ]);
+
+        res.json(loginData);
+    } catch (error) {
+        console.error("Error fetching login data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 router.post("/register", async (req, res) => {
     const userID = await generateUniqueID();
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashing the password
 
-    const newuser = new UserModel({
+    const newUser = new UserModel({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
-        password: req.body.password,
+        password: hashedPassword, // Store hashed password
         userID: userID,
         username: req.body.username,
         profilePic: req.body.profilePic,
     });
 
     try {
-        const user = await newuser.save();
+        const user = await newUser.save();
         return res.send("User Registered Successfully");
     } catch (error) {
-        console.log("error in route");
+        console.log("Error in route:", error);
         return res.status(400).json({ error });
     }
 });
@@ -243,7 +345,6 @@ router.post("/getUserById", async (req, res) => {
     }
 });
 
-
 router.post("/updateUserProfile", async (req, res) => {
     const { userID, profilePic, username } = req.body;
     try {
@@ -257,12 +358,10 @@ router.post("/updateUserProfile", async (req, res) => {
     }
 });
 
-
 router.post("/updateUserCover", async (req, res) => {
     const { userID, coverPic } = req.body;
     try {
-        await
-        UserModel.findOneAndUpdate(
+        await UserModel.findOneAndUpdate(
             { userID: userID },
             { coverPic: coverPic }
         );
@@ -290,7 +389,6 @@ router.post("/check-existing", async (req, res) => {
 
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-
 
 router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -331,9 +429,8 @@ function sendResetLinkByEmail(email, resetLink) {
 
     const mailOptions = {
         from: {
-
             name: "Evnify",
-            address: process.env.GMAIL_EMAIL
+            address: process.env.GMAIL_EMAIL,
         },
         to: email,
         subject: "Password Reset",
@@ -349,6 +446,91 @@ function sendResetLinkByEmail(email, resetLink) {
     });
 }
 
+function sendPasswordEmail(email, password) {
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.GMAIL_EMAIL,
+            pass: process.env.GMAIL_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: {
+            name: "Evnify",
+            address: process.env.GMAIL_EMAIL,
+        },
+        to: email,
+        subject: "Temp password",
+        html: `
+            <!DOCTYPE html>
+            <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f4f4f4;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Password Reset</h1>
+        </div>
+        <div class="content">
+            <p>Hello,</p>
+            <p>We received a request to reset your password. Here is your new password:</p>
+            <h2>${password}</h2>
+            <p>Please login with this password and change it immediately for security reasons.</p>
+            <p>If you did not request a password reset, please ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you,</p>
+            <p>The Evnify Team</p>
+        </div>
+    </div>
+</body>
+</html>
+        `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Error sending email:", error);
+        } else {
+            console.log("Email sent: " + info.response);
+        }
+    });
+}
 router.get("/generate-reset-link/:id/:token", async (req, res) => {
     const { id, token } = req.params;
 
@@ -397,7 +579,9 @@ router.post("/reset-password/:id/:token", async (req, res) => {
                 { userID: id },
                 { password: password } // Just set the password directly
             );
-            return res.status(200).json({ message: "Password updated successfully" });
+            return res
+                .status(200)
+                .json({ message: "Password updated successfully" });
         } catch (error) {
             console.error(error);
             return res.status(401).json({ message: "Token has expired" });
@@ -407,6 +591,5 @@ router.post("/reset-password/:id/:token", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 
 module.exports = router;

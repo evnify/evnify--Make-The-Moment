@@ -9,12 +9,12 @@ import {
     message,
     Image,
     Input,
-    Space
+    Space,
+    Tag,
+    Radio,
 } from "antd";
 import AddInventoryForm from "./AddInventoryForm";
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
- 
 import axios from "axios";
 const baseURL = "http://localhost:5000/api/inventories";
 
@@ -25,6 +25,41 @@ function InventoryList() {
     const [editOpen, setEditOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [form] = Form.useForm();
+    const [lowStockCount, setLowStockCount] = useState(0);
+    const [outOfStockCount, setOutOfStockCount] = useState(0);
+    const [consumableCount, setConsumableCount] = useState(0);
+    const [nonConsumableCount, setNonConsumableCount] = useState(0);
+    const [selectedType, setSelectedType] = useState("all");
+
+    useEffect(() => {
+        const calculateCounts = () => {
+            let lowStock = 0;
+            let outOfStock = 0;
+            let consumable = 0;
+            let nonConsumable = 0;
+
+            inventories.forEach((item) => {
+                if (item.quantity <= 10) {
+                    lowStock++;
+                }
+                if (item.quantity === 0) {
+                    outOfStock++;
+                }
+                if (item.itemType === "consumable") {
+                    consumable++;
+                } else {
+                    nonConsumable++;
+                }
+            });
+
+            setLowStockCount(lowStock);
+            setOutOfStockCount(outOfStock);
+            setConsumableCount(consumable);
+            setNonConsumableCount(nonConsumable);
+        };
+
+        calculateCounts();
+    }, [inventories]);
 
     useEffect(() => {
         fetchData();
@@ -33,28 +68,28 @@ function InventoryList() {
     const fetchData = async () => {
         try {
             const response = await axios.get("/api/inventories/getInventories");
-            setInventories(response.data);
+            // Sort inventories by date in descending order
+            const sortedInventories = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setInventories(sortedInventories);
         } catch (error) {
             console.error(error);
         }
     };
 
-    
-//update inventory
+    //update inventory
     const handleEdit = (record) => {
         setEditData(record);
         setEditOpen(true);
         form.setFieldsValue(record);
     };
 
-//delete inventory    
+    //delete inventory
     const deleteInventory = async (id) => {
         try {
             await axios.delete(`/api/inventories/deleteInventories/${id}`);
             fetchData();
             message.success("Inventory deleted successfully");
             return true; // Success
-            
         } catch (error) {
             console.error("Error deleting inventory:", error);
             throw error;
@@ -96,8 +131,21 @@ function InventoryList() {
             },
         },
         {
-            title: "Status",
-            dataIndex: "status",
+            title: "STATUS",
+            key: "status",
+            dataIndex: "quantity",
+            render: (quantity) => {
+                let color = "green";
+                let txt = "In Stock";
+                if (quantity === 0) {
+                    color = "red";
+                    txt = "Out of Stock";
+                } else if (quantity < 10) {
+                    color = "orange";
+                    txt = "Low Stock";
+                }
+                return <Tag color={color}>{txt}</Tag>;
+            },
         },
         {
             title: "Action",
@@ -191,21 +239,33 @@ function InventoryList() {
 
     useEffect(() => {
         let tempList = inventories;
+
         if (searchKey && searchKey !== "") {
             tempList = tempList.filter(
                 (item) =>
+                    item.itemID
+                        .toLowerCase()
+                        .includes(searchKey.toLowerCase()) ||
                     item.itemName
                         .toLowerCase()
                         .includes(searchKey.toLowerCase())
             );
         }
-    
+        if (selectedType !== "all") {
+            if (selectedType === "inStock") {
+                tempList = tempList.filter((item) => item.quantity > 10);
+            } else if (selectedType === "lowStock") {
+                tempList = tempList.filter((item) => item.quantity < 10);
+            } else if (selectedType === "outofStock") {
+                tempList = tempList.filter((item) => item.quantity === 0);
+            }
+        }
+
         setFilteredInventoryList(tempList);
-    
+
         console.log("InventoryList", inventories);
         console.log("searchKey", searchKey);
-    }, [searchKey,FilteredInventoryList, inventories]);
-    
+    }, [searchKey, selectedType, inventories]);
 
     return (
         <div className="admin_inventory_list_counts_container">
@@ -225,7 +285,7 @@ function InventoryList() {
                     <div className="inventory_total_card2">
                         <div className="inventory_total_card2_txt">
                             <h3>Low Stock Items</h3>
-                            <h2>13</h2>
+                            <h2>{lowStockCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -235,7 +295,7 @@ function InventoryList() {
                     <div className="inventory_total_card3">
                         <div className="inventory_total_card3_txt">
                             <h3>Out of Stock Items</h3>
-                            <h2>1</h2>
+                            <h2>{outOfStockCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -245,7 +305,7 @@ function InventoryList() {
                     <div className="inventory_total_card4">
                         <div className="inventory_total_card4_txt">
                             <h3>Consumable Items</h3>
-                            <h2>130</h2>
+                            <h2>{consumableCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -255,21 +315,27 @@ function InventoryList() {
                     <div className="inventory_total_card5">
                         <div className="inventory_total_card5_txt">
                             <h3>Nonconsumable Items</h3>
-                            <h2>458</h2>
+                            <h2>{nonConsumableCount}</h2>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div
                 style={{
                     padding: 16,
-                    height: "80vh",
+                    Width: "80PX",
+                    margin: "20px",
+                    borderRadius: 10,
+
                     backgroundColor: "white",
                 }}
             >
-                <Row justify={"space-between"}>
-                    <h3>Inventory List</h3>
-                    <Search className="inventory_list_search button"
+                <Row className="row_inventory">
+                <h3 style={{ marginRight: '20px' }}>Inventory List</h3>
+
+                    <Search
+                        className="inventory_list_search button"
                         placeholder="Search by Name"
                         size="large"
                         onSearch={(value) => setSearchKey(value)}
@@ -278,15 +344,38 @@ function InventoryList() {
                             height: 40,
                         }}
                     />
-                    <Button
-                        className="add_inventory_button"
+                    <div style={{ marginLeft: "auto", alignItems: "center" }}>
+                        <Radio.Group
+                            value={selectedType}
+                            onChange={(e) => {
+                                setSelectedType(e.target.value);
+                            }}
+                            size="large"
+                            style={{
+                                width: 400,
+                            }}
+                        >
+                            <Radio.Button value="all">All</Radio.Button>
+                            <Radio.Button value="inStock">
+                                In Stock
+                            </Radio.Button>
+                            <Radio.Button value="lowStock">
+                                Low Stock
+                            </Radio.Button>
+                            <Radio.Button value="outofStock">
+                                Out of Stock
+                            </Radio.Button>
+                        </Radio.Group>
+                    </div>
+                    <button
+                        className="admin_user_list_top_menu_button"
                         onClick={() => {
                             setAddOpen(true);
                             form.resetFields();
                         }}
                     >
                         Add Inventory
-                    </Button>
+                    </button>
                 </Row>
                 <Table
                     dataSource={FilteredInventoryList}

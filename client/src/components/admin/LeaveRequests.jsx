@@ -12,6 +12,8 @@ import {
 import { Icon } from "@iconify/react";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "axios";
+import { CSVLink } from 'react-csv';
+import moment from "moment";
 
 const { confirm } = Modal;
 
@@ -113,6 +115,50 @@ function LeaveRequests() {
 
     const handleTableChange = (pagination, filters, sorter) => {
         setPagination(pagination);
+    };
+
+    const generateLeaveCSVData = (leaveList) => {
+        // Check if leaveList is empty or undefined
+        if (!leaveList || leaveList.length === 0) return '';
+
+        // Define CSV headers
+        const headers = ['Leave ID', 'Name', 'Employee ID', 'Leave Type', 'Start Date', 'End Date', 'Reason', 'Status'];
+
+        // Map leave requests to CSV rows
+        const rows = leaveList.map(leave => [
+            leave.leaveID,
+            leave.name,
+            leave.empID,
+            leave.leaveType,
+            moment(leave.startDate).format('YYYY-MM-DD'),
+            moment(leave.endDate).format('YYYY-MM-DD'),
+            leave.reason,
+            leave.status,
+        ]);
+
+        // Combine headers and rows
+        const csvData = [headers, ...rows];
+
+        // Convert to CSV string
+        const csvContent = csvData.map(row => row.join(',')).join('\n');
+
+        return csvContent;
+    };
+
+    // Function to handle CSV export
+    const handleExport = () => {
+        const csvData = generateLeaveCSVData(leaveList); // Generate CSV data using leaveList
+        if (csvData) {
+            // Create a Blob object and initiate download
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'leave_requests.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
     const columns = [
@@ -318,8 +364,6 @@ function LeaveRequests() {
 
         setFilteredLeaves(tempList);
     }, [searchKey, selectedType, leaveList]);
-
-    
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -569,13 +613,29 @@ function LeaveRequests() {
                             </Radio.Button>
                         </Radio.Group>
                     </div>
+                    <button className="admin_leave_request_top_menu_button center" onClick={() => handleExport()}>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                        >
+                            <path
+                                d="M14.1 4.27778H3.9V0.5H14.1V4.27778ZM14.1 9.47222C14.3408 9.47222 14.5428 9.38156 14.706 9.20022C14.8692 9.01889 14.9506 8.79474 14.95 8.52778C14.95 8.26019 14.8684 8.03604 14.7052 7.85533C14.542 7.67463 14.3403 7.58396 14.1 7.58333C13.8592 7.58333 13.6574 7.674 13.4948 7.85533C13.3322 8.03667 13.2506 8.26081 13.25 8.52778C13.25 8.79537 13.3316 9.01983 13.4948 9.20117C13.658 9.3825 13.8597 9.47285 14.1 9.47222ZM12.4 15.6111V11.8333H5.6V15.6111H12.4ZM14.1 17.5H3.9V13.7222H0.5V8.05556C0.5 7.25278 0.747917 6.58002 1.24375 6.03728C1.73958 5.49454 2.34167 5.22285 3.05 5.22222H14.95C15.6725 5.22222 16.2783 5.49391 16.7673 6.03728C17.2563 6.58065 17.5006 7.25341 17.5 8.05556V13.7222H14.1V17.5Z"
+                                fill="#F6F8F9"
+                            />
+                        </svg>
+                        &nbsp;
+                        Export
+                    </button>
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
                         <Table
                             columns={columns}
                             dataSource={filteredLeaves}
-                            pagination={pagination}
+                            pagination={filteredLeaves.length >= 10 ? pagination : false}
                             onChange={handleTableChange}
                         />
                     </div>

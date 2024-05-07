@@ -109,8 +109,15 @@ const ForgetPassword = () => {
                 </div>
 
                 <Grid item xs={12} className="mt-3 ml-2 text-center">
-                    <FirebaseSocial />
-                </Grid>
+                        <button
+                            className="login-with-google-btn"
+                           // onClick={() => login()}
+                        >
+                            Sign in with Google{" "}
+                            <i className="fab fa-google"></i>
+                        </button>
+                       
+                    </Grid>
             </div>
         </>
     );
