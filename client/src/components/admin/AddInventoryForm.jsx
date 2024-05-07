@@ -29,17 +29,22 @@ const uploadFile = async (file, path) => {
 const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
     const [loading, setLoading] = useState(false);
 
-
     const createInventory = async (newInventory) => {
         try {
             const response = await axios.post(
                 "/api/inventories/addInventory",
                 newInventory
             );
+            message.success("Inventory added successful");
             return response.data;
         } catch (error) {
-            console.error("Error creating inventory:", error);
-            throw error;
+            if (error.response && error.response.status === 400) {
+                // Handle the case where the item name already exists
+                message.error("Item with the same name already exists.");
+            } else {
+                console.error("Error creating inventory:", error);
+                throw error;
+            }
         }
     };
 
@@ -48,14 +53,20 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
             const response = await axios.put(
                 `/api/inventories/putInventories/${id}`,
                 updatedInventory
+                
             );
+            message.success("Inventory added successful");
             return response.data;
         } catch (error) {
-            console.error("Error updating inventory:", error);
-            throw error;
+             if (error.response && error.response.status === 400) {
+                // Handle the case where the item name already exists
+                message.error("Item with the same name already exists.");
+            } else {
+                console.error("Error creating inventory:", error);
+                throw error;
+            };
         }
     };
-    
 
     const onFinish = async (values) => {
         console.log(values);
@@ -74,7 +85,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 const body = { ...values };
                 await updateInventory(initialValues._id, body);
                 await onUpdate();
-                message.success("Inventory updated successful");
+                
             } else {
                 const file = values.file[0].originFileObj;
                 const filePath = `lectureMaterials/${file.name}`;
@@ -83,7 +94,7 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
 
                 await createInventory(body);
                 await onUpdate();
-                message.success("Inventory added successful");
+                
             }
             onClose();
         } catch (error) {
@@ -138,12 +149,15 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 <Select placeholder="Category">
                     <Select.Option value="chairs">Chairs</Select.Option>
                     <Select.Option value="tables">Tables</Select.Option>
-                    <Select.Option value="cakeholders">Cake Holders</Select.Option>
+                    <Select.Option value="cakeholders">
+                        Cake Holders
+                    </Select.Option>
                     <Select.Option value="plates">Plates</Select.Option>
-                    <Select.Option value="wineglasses">Wine Glasses</Select.Option>
+                    <Select.Option value="glasses"> Glasses</Select.Option>
                     <Select.Option value="trays">Trays</Select.Option>
-                    <Select.Option value="decorations">Decorations</Select.Option>
-                    <Select.Option value="other">Other</Select.Option>
+                    <Select.Option value="decorations">
+                        Decorations
+                    </Select.Option>
                 </Select>
             </Form.Item>
 
@@ -172,7 +186,14 @@ const AddInventoryForm = ({ form, onClose, onUpdate, initialValues }) => {
                 label="Quantity"
                 rules={[
                     { required: true, message: "Please input the quantity" },
-                    { validator: (_, value) => value >= 0 ? Promise.resolve() : Promise.reject("Please enter a non-negative value for quantity") }
+                    {
+                        validator: (_, value) =>
+                            value >= 0
+                                ? Promise.resolve()
+                                : Promise.reject(
+                                      "Please enter a non-negative value for quantity"
+                                  ),
+                    },
                 ]}
             >
                 <Input type="number" />
