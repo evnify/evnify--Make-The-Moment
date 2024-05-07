@@ -16,8 +16,8 @@ import {
 import { Icon } from "@iconify/react";
 import { PlusOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
 import axios, { all } from "axios";
+import {useNavigate} from 'react-router-dom';
 const { Search, TextArea } = Input;
-
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -27,6 +27,8 @@ const getBase64 = (file) =>
     });
 
 function ExistingBlogs() {
+    const navigate = useNavigate();
+
     const [pagination, setPagination] = useState({
         pageSize: 10,
         current: 1,
@@ -44,14 +46,19 @@ function ExistingBlogs() {
     const [Blogs, setBlogs] = useState([]);
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+    const [commentCount, setCommentCount] = useState(0);
+
     useEffect(() => {
         fetchBlogs();
-    }, []);
+        calculateCounts();
+    }, [Blogs]);
 
     const fetchBlogs = async () => {
         try {
             const response = await axios.get("/api/blogs/getBlogs");
             setBlogs(response.data);
+            console.log(response.data)
         } catch (error) {
             console.error(error);
         }
@@ -248,7 +255,9 @@ function ExistingBlogs() {
                     >
                         <Icon icon="tabler:edit" />
                     </button>
-                    <button className="admin_existing_blog_view_btn">
+                    <button className="admin_existing_blog_view_btn"
+                    onClick={() => navigate(`/article/${record._id}`)}
+                    >
                         <Icon icon="mdi:eye-outline" />
                     </button>
                 </Space>
@@ -353,6 +362,17 @@ function ExistingBlogs() {
         }
     };
 
+    const calculateCounts = () => {
+        let totalLikes = 0;
+        let totalComments = 0;
+        Blogs.forEach(blog => {
+            totalLikes += blog.likes.length;
+            totalComments += blog.comments.length;
+        });
+        setLikeCount(totalLikes);
+        setCommentCount(totalComments);
+    };
+
 
     return (
         <div>
@@ -369,7 +389,7 @@ function ExistingBlogs() {
                     <div className="admin_existing_blog_total_card2">
                         <div className="admin_existing_blog_card2_txt">
                             <h3>Like Count</h3>
-                            <h2>100</h2>
+                            <h2>{likeCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -377,7 +397,7 @@ function ExistingBlogs() {
                     <div className="admin_existing_blog_total_card3">
                         <div className="admin_existing_blog_card3_txt">
                             <h3>Comment Count</h3>
-                            <h2>70</h2>
+                            <h2>{commentCount}</h2>
                         </div>
                     </div>
                 </div>
@@ -385,7 +405,7 @@ function ExistingBlogs() {
                     <div className="admin_existing_blog_total_card4">
                         <div className="admin_existing_blog_card4_txt">
                             <h3>Share Count</h3>
-                            <h2>150</h2>
+                            <h2>5</h2>
                         </div>
                     </div>
                 </div>
@@ -465,7 +485,7 @@ function ExistingBlogs() {
                 <div>
                     <Modal
                         title={null}
-                        width={1200}
+                        width={1280}
                         height={700}
                         footer={null}
                         open={isModalOpen}
