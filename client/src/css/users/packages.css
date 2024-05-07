@@ -273,12 +273,9 @@
 .cancel_Package_72 {
     border-radius: 11px;
     background: #424866;
-    width: 244px;
-    height: 45px;
-    justify-content: center;
-    align-items: center;
     margin-top: 10px;
     color: #fff;
+    padding: 4px 8px;
 }
 .Package_includes_72 {
     width: 595px;
@@ -368,16 +365,27 @@
 .add_booking_popup_container_left {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px;
     margin-left: 30px;
-    margin-top: 10px;
 }
 .Add_Address_popup_quntity_container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 20px;
+    gap: 5px;
 }
+
+.package_includes_container {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 10px;
+    height: 160px;
+
+    overflow-y: scroll;
+    scrollbar-width: thin;
+}
+
 .add_booking_popup_container_left span {
     color: var(--Core-black, #000);
     font-size: 14px;

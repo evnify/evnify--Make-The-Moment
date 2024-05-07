@@ -136,10 +136,26 @@ router.get("/getAllBookings", async (req, res) => {
 router.get("/updateBookingStatus/:_id", async (req, res) => {
     try {
         const { _id } = req.params;
-        console.log(_id);
         const booking = await Booking.findByIdAndUpdate(
             _id,
             { status: "Conformed" },
+            { new: true }
+        );
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.send(booking);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
+
+router.get("/updateBookingCancel/:_id", async (req, res) => {
+    try {
+        const { _id } = req.params;
+        const booking = await Booking.findByIdAndUpdate(
+            _id,
+            { status: "Canceled" },
             { new: true }
         );
         if (!booking) {
@@ -235,5 +251,22 @@ router.post("/payment", async (req, res) => {
         return res.status(400).json({ message: error });
     }
 });
+
+router.post("/refundPayment", async (req, res) => {
+    const { paymentId } = req.body;
+
+    try {
+        const refund = await stripe.refunds.create({
+            charge: paymentId, // Assuming you stored the charge ID during payment creation
+        });
+
+        res.send(refund);
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+});
+
+
+
 
 module.exports = router;

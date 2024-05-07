@@ -14,32 +14,45 @@ import {
 import { PrinterOutlined } from "@ant-design/icons";
 import { Icon } from "@iconify/react";
 import axios from "axios";
-import jsPDF from 'jspdf'
+import jsPDF from "jspdf";
 
 function Booking() {
     const [bookingList, setBookingList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBookingData, setSelectedBookingData] = useState(null);
 
-    var imgData = require('../../assets/backgrounds/reservationConformation.png');
+    var imgData = require("../../assets/backgrounds/reservationConformation.png");
+
+    const fetchBookings = async () => {
+        try {
+            const response = await axios.get(`/api/bookings/getAllBookings`);
+            setBookingList(response.data);
+        } catch (error) {
+            console.log("Error fetching bookings:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const response = await axios.get(
-                    `/api/bookings/getAllBookings`
-                );
-                setBookingList(response.data);
-            } catch (error) {
-                console.log("Error fetching bookings:", error);
-            }
-        };
         fetchBookings();
     }, []);
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        setSelectedBookingData(null);
+    const handleCancelBooking = async (_id, paymentId) => {
+        try {
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/refundPayment`,
+                {
+                    paymentId,
+                }
+            );
+            await axios.get(`/api/bookings/updateBookingCancel/${_id}`);
+            message.success("Booking cancelled successfully");
+            fetchBookings();
+            setIsModalOpen(false);
+            setSelectedBookingData(null);
+        } catch (error) {
+            console.error(error);
+            message.error("Error cancelling booking");
+        }
     };
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -54,6 +67,7 @@ function Booking() {
         setSelectedBookingData(record);
         setIsModalOpen(true);
         setCart(record.AssignedInventory);
+        console.log(record.AssignedInventory);
     };
 
     function convertDate(dateString) {
@@ -65,9 +79,8 @@ function Booking() {
     }
 
     const handelConformationDownload = async (record) => {
-
         const doc = new jsPDF();
-        doc.addImage(imgData, 'PNG', 0, 0, 215, 300);
+        doc.addImage(imgData, "PNG", 0, 0, 215, 300);
 
         doc.setFont("helvetica");
         doc.setFontSize(14);
@@ -78,10 +91,19 @@ function Booking() {
         doc.text(`${convertDate(record.eventDate)}`, 80, 129);
         doc.text(`${record.amount} LKR`, 80, 142);
         doc.text(`${record.eventLocation[0].addressLine1}`, 80, 155.5);
-        doc.text(`${record.eventLocation[0].city}, ${record.eventLocation[0].district}, `, 80, 163.5);
+        doc.text(
+            `${record.eventLocation[0].city}, ${record.eventLocation[0].district}, `,
+            80,
+            163.5
+        );
         doc.text(`${record.eventLocation[0].postalCode}`, 80, 171.5);
 
         doc.save(`Invoice_${record._id}.pdf`);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+        setSelectedBookingData(null);
     };
 
     const columns = [
@@ -138,9 +160,9 @@ function Booking() {
             dataIndex: "status",
             render: (status) => {
                 let color = "green";
-                if (status === "rejected") {
+                if (status === "Canceled") {
                     color = "red";
-                    return <Tag color={color}> {"Cancelled"}</Tag>;
+                    return <Tag color={color}> {"Canceled"}</Tag>;
                 } else if (status === "Pending") {
                     color = "orange";
                     return <Tag color={color}> {"Pending"}</Tag>;
@@ -163,7 +185,7 @@ function Booking() {
                             color: "#000868E96",
                             fontWeight: 500,
                             borderRadius: "5px",
-                            fontFamily : "Product Sans",
+                            fontFamily: "Product Sans",
                         }}
                         onClick={() => handleViewClick(record)}
                     >
@@ -178,14 +200,13 @@ function Booking() {
                             color: "#fff",
                             borderRadius: "5px",
                             fontWeight: 500,
-                            fontFamily : "Product Sans",
+                            fontFamily: "Product Sans",
                         }}
                         onClick={() => handelConformationDownload(record)}
                         className="center"
                     >
                         <PrinterOutlined style={{ gap: "10" }} />
-                        &nbsp;
-                        Export pdf
+                        &nbsp; Export pdf
                     </button>
                 </Space>
             ),
@@ -251,14 +272,16 @@ function Booking() {
         }
 
         try {
-            await axios.post(`${process.env.PUBLIC_URL}/api/bookings/editBookingById`, {
-                _id: selectedPackage[0]._id,
-                cart
-            })
+            await axios.post(
+                `${process.env.PUBLIC_URL}/api/bookings/editBookingById`,
+                {
+                    _id: selectedPackage[0]._id,
+                    cart,
+                }
+            );
             message.success("Booking updated successfully");
             setBookingModal(false);
-        }
-        catch (error) {
+        } catch (error) {
             console.log("Error editing booking:", error);
             message.error("Error editing booking");
         }
@@ -737,8 +760,6 @@ function Booking() {
                     centered
                     onCancel={handleCancel}
                     open={isModalOpen}
-                    // onOk={() => setBookingList(false)}
-
                     footer={null}
                     width={715}
                 >
@@ -784,29 +805,22 @@ function Booking() {
                                 <span className="package_includes_txt_section">
                                     Package Includes
                                 </span>
-                                <div className="Add_Address_popup_quntity_container">
-                                    <div className="add_booking_popup_container_left">
-                                        <span>Item Name</span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                        <span>
-                                            I-RFAQK Melamine Cake Stand 9
-                                            I-Black-Versatile Cake Stand 
-                                        </span>
-                                    </div>
-                                    <div className="add_booking_popup_container_right">
-                                        <span>Quantity</span>
-                                        <span>2</span>
-                                        <span>2</span>
-                                        <span>2</span>
-                                    </div>
+                                <div className="package_includes_container">
+                                    {cart.map((item) => (
+                                        <div
+                                            key={item.itemId}
+                                            className="Add_Address_popup_quntity_container"
+                                        >
+                                            <div className="add_booking_popup_container_left">
+                                                <span>{item.itemName}</span>
+                                            </div>
+                                            <div className="add_booking_popup_container_right">
+                                                <span>{item.addedQty}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
+
                                 <hr
                                     style={{
                                         borderWidth: "2px",
@@ -817,16 +831,54 @@ function Booking() {
                                     <div className="add_employee_popup_details_container_right">
                                         <div className="add_quntity_price_section">
                                             <span>Total Amount</span>
-                                            <span>LKR 25000</span>
+                                            <span>
+                                                {selectedBookingData.amount} LKR
+                                            </span>
                                         </div>
                                         <div className="add_quntity_price_btn_section">
-                                            <button className="cancel_Package_72 ">
-                                                Cancel Booking
-                                            </button>
-                                            <button className="saveAddressBtn_72 "
-                                            onClick={() => handleEdit(selectedBookingData)}>
-                                                Update Booking
-                                            </button>
+                                            {selectedBookingData.status ===
+                                            "Pending" ? (
+                                                <>
+                                                    <button
+                                                        className="cancel_Package_72 center"
+                                                        onClick={() =>
+                                                            handleCancelBooking(
+                                                                selectedBookingData._id,
+                                                                selectedBookingData.transactionID
+                                                            )
+                                                        }
+                                                    >
+                                                        Cancel Booking
+                                                    </button>
+                                                    <button
+                                                        className="saveAddressBtn_72 center"
+                                                        onClick={() =>
+                                                            handleEdit(
+                                                                selectedBookingData
+                                                            )
+                                                        }
+                                                    >
+                                                        Update Booking
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        className="cancel_Package_72 center"
+                                                        style={{ background: "gray" }}
+                                                        disabled
+                                                    >
+                                                        Cancel Booking
+                                                    </button>
+                                                    <button
+                                                        className="saveAddressBtn_72 center"
+                                                        style={{ background: "gray" }}
+                                                        disabled
+                                                    >
+                                                        Update Booking
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -849,8 +901,11 @@ function Booking() {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div>
-                        <Table columns={columns} dataSource={bookingList} 
-                        pagination={bookingList.length >= 8 ? {} : false}/>
+                        <Table
+                            columns={columns}
+                            dataSource={bookingList}
+                            pagination={bookingList.length >= 8 ? {} : false}
+                        />
                     </div>
                 </div>
             </div>
