@@ -26,6 +26,8 @@ const generateUniqueID = async () => {
 };
 
 const hateWords = [
+    "hate",
+    "bitch",
     "racism",
     "sexist",
     "homophobic",
