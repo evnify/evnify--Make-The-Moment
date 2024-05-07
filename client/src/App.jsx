@@ -24,11 +24,11 @@ function App() {
         <div className="App">
             <BrowserRouter basename="/">
                 <GoogleOAuthProvider clientId="550101808419-h6glh8sc3bpfnkaq38963jjruntadf51.apps.googleusercontent.com">
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/signup" element={<SignUp />} />
-                        
-                    </Routes>
+                        <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/signup" element={<SignUp />} />
+                        </Routes>
+    
                 </GoogleOAuthProvider>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
@@ -53,7 +53,6 @@ function App() {
                     />
                     <Route path="/verify" element={<Verify />} />
                     <Route path="/accessdenied" element={<AccessDenied />} />
-                    <Route path="*" element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
         </div>
