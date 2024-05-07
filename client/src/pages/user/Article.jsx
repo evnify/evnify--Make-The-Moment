@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Navbar, Footer } from "../../components";
 import axios from "axios";
-import { Button, Input, Radio } from "antd";
+import { Button, Input, Radio, Modal } from "antd";
 import { useParams } from "react-router-dom";
 import {
     HeartOutlined,
@@ -10,6 +10,20 @@ import {
     FireOutlined,
     FireFilled,
 } from "@ant-design/icons";
+import {
+    FacebookShareButton,
+    WhatsappShareButton,
+    FacebookIcon,
+    WhatsappIcon,
+    InstagramShareButton,
+    LinkedinShareButton,
+    EmailShareButton,
+    EmailIcon,
+    LinkedinIcon,
+    InstagramIcon,
+    PinterestShareButton,
+    PinterestIcon,
+} from "react-share";
 import { Divider, Flex, Tag } from "antd";
 
 function Article() {
@@ -22,8 +36,56 @@ function Article() {
     const [article, setArticle] = useState({});
     const { TextArea } = Input;
     const [size, setSize] = useState("large");
+    const [comment, setComment] = useState("");
+    const [comments, setComments] = useState([]);
+    const [articleComments, setArticleComments] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const shareUrl = `https://www.evnify.com/articles/${article._id}`;
 
     const { id } = useParams();
+
+    const handleOpenModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCommentChange = (e) => {
+        setComment(e.target.value);
+    };
+
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+
+    const handleCommentSubmit = async () => {
+        try {
+            const response = await axios.post("/api/blogs/addComment", {
+                articleId: article._id,
+                userID: user.userID,
+                comment,
+            });
+            console.log(response.data);
+            setComment(""); // Clear the comment input field
+        } catch (error) {
+            console.error("Error adding comment:", error);
+        }
+    };
+    const fetchArticle = async () => {
+        try {
+            const response = await axios.get(
+                `/api/blogs/getBlogById/${params.id}`
+            );
+            setArticle(response.data);
+            setLikes(response.data.likes.length);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        fetchArticle();
+    }, [params.id]);
 
     const fetchBlogs = async () => {
         try {
@@ -42,9 +104,12 @@ function Article() {
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await axios.get(`/api/blogs/getBlogById/${params.id}`);
+                const response = await axios.get(
+                    `/api/blogs/getBlogById/${params.id}`
+                );
                 setArticle(response.data);
                 setLikes(response.data.likes.length);
+                setArticleComments(response.data.comments);
                 const user = JSON.parse(localStorage.getItem("currentUser"));
                 if (user && response.data.likes.includes(user.userID)) {
                     setLiked(true);
@@ -56,10 +121,9 @@ function Article() {
         fetchArticle();
     }, [params.id]);
 
-
     const handleLikeButtonClick = async () => {
         const user = JSON.parse(localStorage.getItem("currentUser"));
-        console.log("user",user)
+        console.log("user", user);
         if (!user) {
             window.location.href = "/login";
             return;
@@ -74,7 +138,7 @@ function Article() {
                 userId: user.userID,
                 liked: !liked,
             });
-            console.log(response); // Log response if needed
+            console.log(response);
         } catch (error) {
             console.error("Error liking/unliking article:", error);
         }
@@ -98,7 +162,10 @@ function Article() {
                             className="like_button_container"
                             icon={
                                 liked ? (
-                                    <HeartFilled className="liked-heart" style={{ color:"#e4264e"}}/>
+                                    <HeartFilled
+                                        className="liked-heart"
+                                        style={{ color: "#e4264e" }}
+                                    />
                                 ) : (
                                     <HeartOutlined />
                                 )
@@ -113,7 +180,10 @@ function Article() {
                                 {likes} Likes
                             </span>
                         </Button>
-                        <button className="article_share_btn">
+                        <button
+                            className="article_share_btn"
+                            onClick={handleOpenModal}
+                        >
                             <Icon
                                 icon="majesticons:share"
                                 width="48"
@@ -199,30 +269,92 @@ function Article() {
                 <div className="article_comment_section_input">
                     <h3>Comments</h3>
                     <br />
-                    <div className="article_comment_section">
-                        <TextArea
-                            className="article_comment_add_section"
-                            rows={4}
-                            placeholder="Comment here"
-                            maxLength={1000}
-                            style={{ width: 400, height: 100 }}
-                        />
-                        <div className="article_save_btn_section">
-                            <Button
-                                type="link"
-                                className="article_comment_send_btn"
-                            >
-                                <Icon
-                                    icon="fluent:send-24-filled"
-                                    width="28"
-                                    height="28"
-                                />
-                            </Button>
+                    <div style={{ display: "flex", flexDirection: "row", gap:"60px"  }}>
+                        <div className="article_comment_section">
+                            <TextArea
+                                className="article_comment_add_section"
+                                rows={4}
+                                placeholder="Comment here"
+                                maxLength={1000}
+                                style={{ width: 400, height: 100 }}
+                                value={comment}
+                                onChange={handleCommentChange}
+                            />
+                            <div className="article_save_btn_section">
+                                <Button
+                                    type="link"
+                                    className="article_comment_send_btn"
+                                    onClick={handleCommentSubmit}
+                                >
+                                    <Icon
+                                        icon="fluent:send-24-filled"
+                                        width="28"
+                                        height="28"
+                                    />
+                                </Button>
+                            </div>
+                        </div>
+                        <div style={{
+                            marginTop: "-50px",
+                            marginLeft: "50px",
+                        }}>
+                            {/* Render comments */}
+                            {articleComments.map((comment) => (
+                                <div key={comment}>
+                                    <h6>{comment.userID}</h6>
+                                    <p>{comment.comment}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <div>Comments</div>
                 </div>
             </div>
+            <Modal
+                title="Share In Social media"
+                visible={isModalVisible}
+                onOk={handleCommentSubmit}
+                onCancel={handleCloseModal}
+                footer={null}
+                
+            >
+                <div style={{ display: "flex", gap: "30px", marginTop:"20px" }}>
+                    <FacebookShareButton
+                        url={shareUrl}
+                        quote={""}
+                        hashtag={"#Blogs.."}
+                    >
+                        <FacebookIcon size={40} round={true} />
+                    </FacebookShareButton>
+                    <WhatsappShareButton
+                        url={shareUrl}
+                        quote={"Title"}
+                        hashtag={"#Blogs.."}
+                    >
+                        <WhatsappIcon size={40} round={true} />
+                    </WhatsappShareButton>
+                    <LinkedinShareButton
+                        url={shareUrl}
+                        quote={"Title"}
+                        hashtag={"#Blogs.."}
+                    >
+                        <LinkedinIcon size={40} round={true} />
+                    </LinkedinShareButton>
+                    <EmailShareButton
+                        url={shareUrl}
+                        quote={"Title"}
+                        hashtag={"#Blogs.."}
+                    >
+                        <EmailIcon size={40} round={true} />
+                    </EmailShareButton>
+                    <PinterestShareButton
+                        url={shareUrl}
+                        quote={"Title"}
+                        hashtag={"#Blogs.."}
+                    >
+                        <PinterestIcon size={40} round={true} />
+                    </PinterestShareButton>
+                </div>
+            </Modal>
             <Footer />
         </div>
     );

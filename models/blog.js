@@ -25,6 +25,7 @@ const blogSchema = new mongoose.Schema({
     tags : [],
     images : [],
     likes :[],
+    comments: [] 
 
 }, { timestamps: true });
 

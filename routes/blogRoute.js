@@ -62,15 +62,11 @@ router.post("/updateLikes", async (req, res) => {
         if (!article) {
             return res.status(404).json({ message: "Article not found" });
         }
-
-        // Check if the user has already liked the article
         const likedIndex = article.likes.indexOf(userId);
         if (likedIndex === -1) {
-            // If the user hasn't liked the article, add the user ID to the likes array
             article.likes.push(userId);
             await article.save();
         } else {
-            // If the user has already liked the article, remove the user ID from the likes array
             article.likes.splice(likedIndex, 1);
             await article.save();
         }    
@@ -81,6 +77,25 @@ router.post("/updateLikes", async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 });
+
+router.post("/addComment", async (req, res) => {
+    
+    const { articleId, userID, comment } = req.body;
+    try {
+        let article = await blogModel.findById(articleId);
+        if (!article) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+
+        article.comments.push({ userID, comment });
+        await article.save();
+        res.send("Comment added successfully");
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+);
 
 
 

@@ -14,7 +14,7 @@ import {
     message,
 } from "antd";
 import { Icon } from "@iconify/react";
-import { PlusOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { PlusOutlined, ExclamationCircleFilled, PrinterOutlined } from "@ant-design/icons";
 import axios, { all } from "axios";
 const { Search, TextArea } = Input;
 
@@ -379,6 +379,22 @@ function ExistingBlogs() {
                                 }}
                             />
                         </div>
+                        <button
+                                style={{
+                                    fontSize: "14px",
+                                    border: "none",
+                                    backgroundColor: "#4094F7",
+                                    width: "100px",
+                                    height: "35px",
+                                    color: "#fff",
+                                    borderRadius: "5px",
+                                    marginRight: "-300px",
+                                }}
+                                onClick={""}
+                            >
+                                <PrinterOutlined style={{ gap: "10" }} />
+                                Export
+                            </button>
                         <div
                             style={{
                                 marginLeft: "auto",
