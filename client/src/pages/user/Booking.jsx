@@ -593,19 +593,15 @@ function Booking() {
     useEffect(() => {
         const filterProducts = () => {
             let temp = [];
-            if (searchKey === "") {
-                products.map((product) => {
-                    if (
-                        product.itemName
-                            .toLowerCase()
-                            .includes(searchKey.toLowerCase())
-                    ) {
-                        temp.push(product);
-                    }
-                });
-            } else {
-                temp = products;
-            }
+            products.map((product) => {
+                if (
+                    product.itemName.toLowerCase().includes(searchKey.toLowerCase())
+                ) {
+                    temp.push(product);
+                }
+            });
+
+            console.log(temp);
 
             if (color === "Black") {
                 temp = temp.filter(
@@ -632,48 +628,7 @@ function Booking() {
                     (item) => item.color.toLowerCase() === "tan"
                 );
             }
-
-            if (!allFilter) {
-                let ch = [];
-                let ta = [];
-                let pl = [];
-                let gl = [];
-                let dec = [];
-
-                if (chairsFilter) {
-                    ch = temp.filter(
-                        (item) => item.category.toLowerCase() === "chairs"
-                    );
-                }
-                if (tablesFilter) {
-                    ta = temp.filter(
-                        (item) => item.category.toLowerCase() === "tables"
-                    );
-                }
-                if (cakeHoldersFilter) {
-                    ch = temp.filter(
-                        (item) => item.category.toLowerCase() === "cake holders"
-                    );
-                }
-                if (platesFilter) {
-                    pl = temp.filter(
-                        (item) => item.category.toLowerCase() === "plates"
-                    );
-                }
-                if (glassesFilter) {
-                    gl = temp.filter(
-                        (item) => item.category.toLowerCase() === "glasses"
-                    );
-                }
-                if (decorationsFilter) {
-                    dec = temp.filter(
-                        (item) => item.category.toLowerCase() === "decorations"
-                    );
-                }
-
-                temp = [...ch, ...ta, ...ch, ...pl, ...gl, ...dec];
-            }
-
+            console.log(temp);
             setFilteredProducts(temp);
         };
 
@@ -684,19 +639,7 @@ function Booking() {
         setPlates([]);
         setGlasses([]);
         setDecorations([]);
-        filterProductsByType();
-    }, [
-        searchKey,
-        products,
-        color,
-        chairsFilter,
-        tablesFilter,
-        decorationsFilter,
-        platesFilter,
-        glassesFilter,
-        cakeHoldersFilter,
-        allFilter,
-    ]);
+    }, [searchKey, products, color]);
 
     const filterProductsByType = () => {
         if (filteredProducts.length === 0) return null;
@@ -716,6 +659,10 @@ function Booking() {
             }
         });
     };
+
+    useEffect(() => {
+        filterProductsByType();
+    }, [filteredProducts]);
 
     //Booking popup
     const [bookingModal, setBookingModal] = useState(false);
