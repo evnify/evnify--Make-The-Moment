@@ -4,7 +4,7 @@ import { Upload, message, Modal } from "antd";
 import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined ,EditOutlined} from "@ant-design/icons";
 import axios from "axios";
-import { Input} from "antd";
+import { Input,Tag} from "antd";
 import Link from "antd/es/typography/Link";
 const { Search, TextArea } = Input;
 
@@ -15,6 +15,7 @@ function UserProfile() {
     const [fileList, setFileList] = useState([]);
     const [profileImage, setProfileImage] = useState();
     const [user, setUser] = useState({});
+    const [allFieldsFilled, setAllFieldsFilled] = useState(false);
 
     useEffect(() => {
         const fetchUserByID = async () => {
@@ -35,12 +36,41 @@ function UserProfile() {
                 ]);
                 setCoverPhoto(res.data.coverPic);
                 console.log(res.data);
+                setAllFieldsFilled(checkAllFieldsFilled(res.data));
             } catch (error) {
                 console.error(error);
             }
         };
         fetchUserByID();
     }, []);
+
+    const checkAllFieldsFilled = (userData) => {
+        const requiredFields = [
+            "firstName",
+            "lastName",
+            "email",
+            "phoneNumber",
+            "city",
+            "province",
+            "address1",
+            "zipcode",
+        ];
+
+        let allFieldsFilled = true;
+
+        for (const field of requiredFields) {
+            if (!userData[field]) {
+                allFieldsFilled = false;
+                break; // Stop loop if any field is missing
+            }
+        }
+
+        if (!allFieldsFilled) {
+            message.error("Please fill out all required fields");
+        }
+
+        return allFieldsFilled;
+    };
 
     const beforeUpload = (file) => {
         const isJpgOrPng =
@@ -322,6 +352,19 @@ function UserProfile() {
                         </span>
                     </p>
                 </div>
+            </div>
+
+            <div className="banner_for_update_details">
+                {!allFieldsFilled && (
+                    <div className="banner" >
+                        <Tag className= "tag" color="red">
+                            
+                            Please fill out all required fields. Click
+                            <Link href="/userprofile/UserSettings"> here </Link>
+                            to update your info.
+                        </Tag>
+                    </div>
+                )}
             </div>
 
             <div

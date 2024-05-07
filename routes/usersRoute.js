@@ -185,35 +185,39 @@ router.post("/activeUser", async (req, res) => {
     }
 });
 
+
 router.post("/login", async (req, res) => {
-    const { email,password } = req.body;
+    const { email, password } = req.body;
 
     try {
+        const user = await UserModel.findOne({ email: email });
 
-        const user = await UserModel.findOne({
-            email: email,
-            password: password,
-            
-        });
         if (user) {
-            const temp = {
-                userID: user.userID,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                username: user.username,
-                email: user.email,
-                userType: user.userType,
-                status: user.status,
-                profilePic: user.profilePic,
-            };
-            res.send(temp);
+            // Compare password with hashed password using bcrypt
+            const passwordMatch = await bcrypt.compare(password, user.password);
 
-            const userLogin = new UserLogin({
-                userId: user._id,
-                userType: user.userType,
-                ipAddress: req.ip,
-            });
-            await userLogin.save();
+            if (passwordMatch) {
+                const temp = {
+                    userID: user.userID,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    username: user.username,
+                    email: user.email,
+                    userType: user.userType,
+                    status: user.status,
+                    profilePic: user.profilePic,
+                };
+                res.send(temp);
+
+                const userLogin = new UserLogin({
+                    userId: user._id,
+                    userType: user.userType,
+                    ipAddress: req.ip,
+                });
+                await userLogin.save();
+            } else {
+                return res.status(400).json({ message: "Login Failed" });
+            }
         } else {
             return res.status(400).json({ message: "Login Failed" });
         }
@@ -221,6 +225,7 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({ error });
     }
 });
+
 
 
 router.post("/loginGoogle", async (req, res) => {

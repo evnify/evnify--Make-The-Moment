@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Form, Input, Checkbox, Button, Row, Col, Space, message } from "antd";
 import { UserAddOutlined, LockOutlined } from "@ant-design/icons";
 import { Divider, Grid, Typography } from "@mui/material";
 import FirebaseSocial from "./FirebaseSocial";
 import Navbar from "../../../components/users/navBar";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
     const [firstName, setFirstName] = useState("");
@@ -17,6 +18,99 @@ const Signup = () => {
     const [confirm, setConfirm] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [currentModal, setCurrentModal] = useState(0);
+    const [user, setUser] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log("Login Failed:", error),
+    });
+
+    useEffect(() => {
+        if (user) {
+            axios
+                .get(
+                    `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: "application/json",
+                        },
+                    }
+                )
+                .then((res) => {
+                    setProfile(res.data);
+                    checkEmailExistence(res.data.email);
+                })
+                .catch((err) => console.log(err));
+        }
+    }, [user]);
+
+    const checkEmailExistence = async (email) => {
+        try {
+            const response = await axios.post("/api/users/check-existing", {
+                email,
+            });
+            const emailExists = response.data.exists;
+
+            if (emailExists) {
+                const user = {
+                    email,
+                };
+                try {
+                    setLoading(true);
+                    const loginResponse = await axios.post(
+                        "/api/users/loginGoogle",
+                        user
+                    );
+                    setLoading(false);
+
+                    const userData = loginResponse.data;
+
+                    // Redirect based on userType
+                    switch (userData.userType) {
+                        case "Admin":
+                            navigate("/admin");
+                            break;
+                        case "Employee":
+                            navigate("/employee");
+                            break;
+                        case "Hr-Manager":
+                            navigate("/admin");
+                            break;
+                        default:
+                            navigate("/");
+                            break;
+                    }
+
+                    // Store user data in local storage
+                    localStorage.setItem(
+                        "currentUser",
+                        JSON.stringify(userData)
+                    );
+
+                    // Reload the window
+                    window.location.reload();
+                } catch (error) {
+                    setLoading(false);
+                    console.error("Login error:", error);
+                    setError(true);
+                    message.error("Invalid email or password");
+                }
+            } else {
+                // If email doesn't exist, display error message
+                message.error(
+                    "Email not registered. Cannot proceed with login."
+                );
+                console.log("Email not registered. Cannot proceed with login.");
+            }
+        } catch (error) {
+            console.error("Error checking email existence:", error);
+        }
+    };
 
     const [form] = Form.useForm();
 
@@ -412,10 +506,11 @@ const Signup = () => {
                             style={{ borderRadius: "5px" }}
                             disabled={
                                 !form.isFieldsTouched(true) || // Disable button if any field hasn't been touched
-                                form
+                                !!form
                                     .getFieldsError()
-                                    .filter(({ errors }) => errors.length) // Filter out fields with errors
-                                    .length // If there are any fields with errors, disable the button
+                                    .filter(({ errors }) => errors.length)
+                                    .length || // Disable if there are any fields with errors
+                                !form.getFieldValue("agree") // Disable if the agreement checkbox is not checked
                             }
                             onClick={register}
                         >
@@ -430,14 +525,18 @@ const Signup = () => {
                     <Grid item xs={12}>
                         <Divider>
                             <Typography variant="caption">
-                                Sign up with
+                                Sign in with
                             </Typography>
                         </Divider>
                     </Grid>
                 </div>
-
                 <Grid item xs={12} className="mt-3 ml-2 text-center">
-                    <FirebaseSocial />
+                    <button
+                        className="login-with-google-btn"
+                        onClick={() => login()}
+                    >
+                        Sign in with Google <i className="fab fa-google"></i>
+                    </button>
                 </Grid>
             </div>
         </>

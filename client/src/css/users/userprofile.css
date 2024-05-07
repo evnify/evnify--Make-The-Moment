@@ -142,9 +142,25 @@
     border-radius: 5px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     margin: auto;
-    margin-top: 18px;
+    
     
 }
+
+.banner_for_update_details{
+    margin-top: 20px;
+    height: auto;
+    margin-left: 10px;
+}
+
+.tag{
+    width: 963px;
+    height:60px;
+    padding: 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
 
 
 

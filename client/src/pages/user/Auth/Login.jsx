@@ -21,6 +21,8 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 const Login = () => {
     const [user, setUser] = useState([]);
     const [profile, setProfile] = useState([]);
+    
+   
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
@@ -307,9 +309,7 @@ const Login = () => {
                             Sign in with Google{" "}
                             <i className="fab fa-google"></i>
                         </button>
-                        <button class="login-with-facebook-btn">
-                            Login with Facebook
-                        </button>
+                        
                     </Grid>
                 </ConfigProvider>
             </div>
