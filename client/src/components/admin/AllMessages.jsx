@@ -261,10 +261,8 @@ function AllMessages() {
         const uid = selectedUserID;
         if (!groupedMessages[uid]) return '';
 
-        // Define CSV headers
         const headers = ['MessageId','Date', 'Time', 'Sender', 'Message', 'Category'];
 
-        // Map chat messages to CSV rows
         const rows = groupedMessages[uid].map(msg => [
             msg.messageId,
             moment(msg.sendDate).format('YYYY-MM-DD'),
@@ -274,10 +272,7 @@ function AllMessages() {
             msg.category
         ]);
 
-        // Combine headers and rows
         const csvData = [headers, ...rows];
-
-        // Convert to CSV string
         const csvContent = csvData.map(row => row.join(',')).join('\n');
 
         return csvContent;
@@ -354,7 +349,17 @@ function AllMessages() {
                             ) : (
                                 // Conditional rendering for grouped messages
                                 Object.keys(filteredMessages).length ? (
-                                    Object.keys(filteredMessages).map((customerID) => {
+                                    Object.keys(filteredMessages)
+                                    .sort((a, b) => {
+                                        const latestMsgA = groupedMessages[a][groupedMessages[a].length - 1];
+                                        const latestMsgB = groupedMessages[b][groupedMessages[b].length - 1];
+                                        const sendDateTimeA = moment(`${latestMsgA.sendDate} ${latestMsgA.sendTime}`, 'YYYY-MM-DD HH:mm:ss');
+                                        const sendDateTimeB = moment(`${latestMsgB.sendDate} ${latestMsgB.sendTime}`, 'YYYY-MM-DD HH:mm:ss');
+
+                                        // Compare send date and time
+                                        return sendDateTimeB.diff(sendDateTimeA);
+                                    })
+                                    .map((customerID) => {
                                         const user = users.find(user => user.userID === customerID)
                                         if (!user) {
                                             console.log(`User not found for userID: ${customerID}`);
