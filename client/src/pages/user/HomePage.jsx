@@ -451,16 +451,16 @@ function HomePage() {
                                                 padding: "10px",
                                             }}
                                             alt="example"
-                                            src={allBlogs[5].images[0]}
+                                            src={allBlogs[0].images[0]}
                                         />
                                         }
                                     >
                                         <div className="home_page_blog_card_txt">
                                         {allBlogs.length > 0 && (
-                                            <h2>{allBlogs[5].blogTitle}</h2>
+                                            <h2>{allBlogs[0].blogTitle}</h2>
                                         )}
                                         {allBlogs.length > 0 && (
-                                        <h1>• {allBlogs[5].eventDate}</h1>
+                                        <h1>• {allBlogs[0].eventDate}</h1>
                                         )}
                                         </div>
                                     </Card>
