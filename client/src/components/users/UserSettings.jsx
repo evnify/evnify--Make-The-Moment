@@ -5,12 +5,18 @@ import { Avatar, message, Upload,Modal,Button } from "antd";
 import UserBasicInfo from "./UserBasicInfo";
 import ChangePw from "./ChangePw";
 
+
+
+
 const { Dragger } = Upload;
 
 function UserSettings() {
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+
 
 
     const customRequest = ({ file, onSuccess, onError }) => {

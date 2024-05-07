@@ -28,8 +28,6 @@ const generateUniqueID = async () => {
     return userID;
 };
 
-
-
 router.post("/addUser", async (req, res) => {
     const UserUserData = req.body;
     const password = await generateUniquePwd();
@@ -65,9 +63,6 @@ router.post("/addUser", async (req, res) => {
         return res.status(400).json({ message: error });
     }
 });
-
-
-
 
 router.get("/getUser", async (req, res) => {
     try {
@@ -185,7 +180,6 @@ router.post("/activeUser", async (req, res) => {
     }
 });
 
-
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
@@ -226,15 +220,12 @@ router.post("/login", async (req, res) => {
     }
 });
 
-
-
 router.post("/loginGoogle", async (req, res) => {
     const { email } = req.body;
 
     try {
         const user = await UserModel.findOne({
             email: email,
-            
         });
         if (user) {
             const temp = {
@@ -262,7 +253,6 @@ router.post("/loginGoogle", async (req, res) => {
         return res.status(400).json({ error });
     }
 });
-
 
 router.post("/login-data", async (req, res) => {
     try {
@@ -457,7 +447,6 @@ function sendResetLinkByEmail(email, resetLink) {
 }
 
 function sendPasswordEmail(email, password) {
-
     const transporter = nodemailer.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",
@@ -475,8 +464,63 @@ function sendPasswordEmail(email, password) {
             address: process.env.GMAIL_EMAIL,
         },
         to: email,
-        subject: "Password",
-        html: `Your password is: ${password}`,
+        subject: "Temp password",
+        html: `
+            <!DOCTYPE html>
+            <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f4f4f4;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Password Reset</h1>
+        </div>
+        <div class="content">
+            <p>Hello,</p>
+            <p>We received a request to reset your password. Here is your new password:</p>
+            <h2>${password}</h2>
+            <p>Please login with this password and change it immediately for security reasons.</p>
+            <p>If you did not request a password reset, please ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>Thank you,</p>
+            <p>The Evnify Team</p>
+        </div>
+    </div>
+</body>
+</html>
+        `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -485,8 +529,7 @@ function sendPasswordEmail(email, password) {
         } else {
             console.log("Email sent: " + info.response);
         }
-    }
-    );
+    });
 }
 router.get("/generate-reset-link/:id/:token", async (req, res) => {
     const { id, token } = req.params;
