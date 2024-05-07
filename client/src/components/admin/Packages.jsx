@@ -261,7 +261,7 @@ function Packages() {
             setIsAddModalOpen(false);
         } catch (error) {
             console.error("Error adding new package:", error);
-            message.error("Failed to add new package");
+            message.error(error.response.data.message);
         }
     };
 
@@ -299,11 +299,11 @@ function Packages() {
     const DeletePackage = async (packageId) => {
         try {
             await axios.delete(`/api/packages/deletePackage/${packageId}`);
-            message.success("Inventory deleted successfully");
+            message.success("Package deleted successfully");
             fetchAllPackages();
         } catch (error) {
-            console.error("Error deleting inventory:", error);
-            message.error("Failed to delete inventory");
+            console.error("Error deleting package:", error);
+            message.error("Failed to delete package");
         }
     };
 
