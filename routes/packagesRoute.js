@@ -15,8 +15,6 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
-// Get user by ID
 router.get('/getPackage/:id', (req, res) => {
     const id = req.params.id;
     Package.findById({ _id: id })
@@ -24,7 +22,6 @@ router.get('/getPackage/:id', (req, res) => {
         .catch(err => res.json(err))
 })
 
-// Create a new user
 router.post('/createPackage', async (req, res) => {
     const packages = new User({
         packageType: req.body.packageType,
@@ -219,6 +216,15 @@ router.put('/updatePackage/:packageId', async (req, res) => {
     }
 });
 
+router.get('/getInventoriesByEventType/:eventType', async (req, res) => {
+    const eventType = req.params.eventType;
+    try {
+        const inventories = await Inventory.find({ AssignedEvents: eventType });
+        res.send(inventories);
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+});
 
 router.post("/getBookingByID", async (req, res) => {
     const bookingID = req.body._id;

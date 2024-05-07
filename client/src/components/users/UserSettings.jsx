@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { InboxOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, message, Upload } from "antd";
+import { Avatar, message, Upload,Modal,Button } from "antd";
 import UserBasicInfo from "./UserBasicInfo";
 import ChangePw from "./ChangePw";
 
@@ -10,6 +10,8 @@ const { Dragger } = Upload;
 function UserSettings() {
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
 
     const customRequest = ({ file, onSuccess, onError }) => {
         const formData = new FormData();
@@ -44,6 +46,23 @@ function UserSettings() {
             });
     };
 
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    
+    // Function to handle the OK button click
+    const handleOk = () => {
+        setIsModalVisible(false);
+        handleDeleteAccount();
+    };
+    
+    // Function to handle the Cancel button click
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+    
+
     const props = {
         name: "file",
         multiple: true,
@@ -70,7 +89,9 @@ function UserSettings() {
         const userID = user.userID;
 
         try {
-            const response = await axios.post("/api/users/delete-account", { userId: userID });
+            const response = await axios.post("/api/users/delete-account", {
+                userId: userID,
+            });
             console.log(response.data);
             message.success("Account deleted successfully");
             localStorage.removeItem("currentUser");
@@ -78,6 +99,15 @@ function UserSettings() {
         } catch (error) {
             console.error("Error deleting account:", error);
             message.error("Error deleting account");
+        }
+    };
+
+    const handleConfirmDeleteAccount = () => {
+        const isConfirmed = window.confirm(
+            "Are you sure you want to deactivate your account?"
+        );
+        if (isConfirmed) {
+            handleDeleteAccount();
         }
     };
 
@@ -129,12 +159,19 @@ function UserSettings() {
                         deleted.
                     </p>
                 </div>
-                <button
-                    className="deactivate-acc"
-                    onClick={handleDeleteAccount}
-                >
+                <Button className="deactivate-acc" onClick={showModal}>
                     Deactivate Account
-                </button>
+                </Button>
+                <Modal
+                    title="Confirm Deactivation"
+                    visible={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    okText="Confirm"
+                    cancelText="Cancel"
+                >
+                    <p>Are you sure you want to deactivate your account?</p>
+                </Modal>
             </div>
         </div>
     );

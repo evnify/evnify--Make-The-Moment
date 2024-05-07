@@ -58,21 +58,23 @@ router.get("/:id", async (req, res) => {
 
 // Update an inventory item
 router.put("/putInventories/:id", async (req, res) => {
-    
-    const existingItem = await Inventory.findOne({ itemName: req.body.itemName });
-    if (existingItem) {
-        // If itemName already exists, return an error
-        return res.status(400).json({ message: "Item with the same name already exists." });
-    }
     try {
+        const existingItem = await Inventory.findOne({ itemName: req.body.itemName });
+        if (existingItem && existingItem._id.toString() !== req.params.id) {
+            // If an item with the same name already exists and it's not the item being updated
+            return res.status(400).json({ message: "Item name already exists" });
+        }
+
         const updatedItem = await Inventory.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true }
         );
+
         if (!updatedItem) {
             return res.status(404).json({ message: "Item not found" });
         }
+
         res.json(updatedItem);
     } catch (error) {
         res.status(400).json({ message: error.message });
