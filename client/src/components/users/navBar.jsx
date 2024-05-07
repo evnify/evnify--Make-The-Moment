@@ -23,29 +23,31 @@ function NavBarUser() {
     const screens = useBreakpoint();
     const [user, setUser] = useState(null);
     const [fileList, setFileList] = useState([]);
+    const defaultProfilePic =
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png";
 
     useEffect(() => {
         const fetchUserByID = async () => {
             // Retrieve user from localStorage
             const userJSON = localStorage.getItem("currentUser");
-    
+
             // Check if user exists in localStorage
             if (!userJSON) {
                 console.error("User not found in localStorage.");
                 return;
             }
-    
+
             // Parse user JSON
             const user = JSON.parse(userJSON);
-    
+
             // Check if user has a valid userID
             if (!user || !user.userID) {
                 console.error("Invalid user object or userID not found.");
                 return;
             }
-    
+
             const userID = { userID: user.userID };
-    
+
             try {
                 // Fetch user data by ID
                 const res = await axios.post("/api/users/getUserById", userID);
@@ -63,14 +65,13 @@ function NavBarUser() {
                 console.error("Error fetching user data:", error);
             }
         };
-    
+
         fetchUserByID();
     }, []);
-    
 
     function logout() {
         localStorage.removeItem("currentUser");
-        localStorage.removeItem('selectedCategory');
+        localStorage.removeItem("selectedCategory");
         window.location.href = "/login";
     }
     const navigate = useNavigate();
@@ -133,7 +134,6 @@ function NavBarUser() {
         } else if (e.key === "about") {
             navigate("/contactus");
         } else if (e.key === "pricing") {
-            
         } else if (e.key === "blog") {
             navigate("/blog");
         } else if (e.key === "wedings") {
@@ -197,24 +197,22 @@ function NavBarUser() {
                 <a
                     style={{ textDecoration: "none" }}
                     rel="noopener noreferrer"
-                    href="/userprofile" 
+                    href="/userprofile"
                 >
                     My Account
                 </a>
             ),
             key: "0",
         },
-        user && user.userType !== "Customer" && {
-            label: (
-                <a
-                    style={{ textDecoration: "none" }}
-                    href="/admin"
-                >
-                    Admin
-                </a>
-            ),
-            key: "admin",
-        },
+        user &&
+            user.userType !== "Customer" && {
+                label: (
+                    <a style={{ textDecoration: "none" }} href="/admin">
+                        Admin
+                    </a>
+                ),
+                key: "admin",
+            },
         {
             label: (
                 <a
@@ -228,7 +226,7 @@ function NavBarUser() {
             key: "2",
         },
     ];
-    
+
     useEffect(() => {
         if (window.location.pathname === "/") {
             setCurrent("home");
@@ -350,15 +348,20 @@ function NavBarUser() {
                                             }}
                                         >
                                             <Space>
+                                                
                                                 <Avatar
                                                     size={30}
                                                     src={
-                                                        <img
-                                                            src={
-                                                                user.profilePic
-                                                            }
-                                                            alt="avatar"
-                                                        />
+                                                        user.profilePic ? (
+                                                            user.profilePic
+                                                        ) : (
+                                                            <img
+                                                                src={
+                                                                    defaultProfilePic
+                                                                }
+                                                                alt="avatar"
+                                                            />
+                                                        )
                                                     }
                                                 />
                                                 {user.username}
