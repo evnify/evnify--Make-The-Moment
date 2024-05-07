@@ -13,6 +13,16 @@ router.post("/addBlogs", async (req, res) => {
     }
 });
 
+router.get("/getBlogById/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const blog = await blogModel.findById(id);
+        res.send(blog);
+    } catch (error) {
+        return res.status(400).json({ message: "Something went wrong" });
+    }
+});
+
 router.get("/getBlogs", async (req, res) => {
     try {
         const blogs = await blogModel.find();
@@ -41,6 +51,48 @@ router.post("/deleteBlogById", async (req, res) => {
         res.send("Blog deleted successfully");
     } catch (error) {
         return res.status(400).json({ message: "Something went wrong" });
+    }
+}
+);
+
+router.post("/updateLikes", async (req, res) => {
+    const { articleId, userId } = req.body;
+    try {
+        let article = await blogModel.findById(articleId);
+        if (!article) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+        const likedIndex = article.likes.indexOf(userId);
+        if (likedIndex === -1) {
+            article.likes.push(userId);
+            await article.save();
+        } else {
+            article.likes.splice(likedIndex, 1);
+            await article.save();
+        }    
+
+        res.send("Likes updated successfully");
+    } catch (error) {
+        console.error("Error updating likes:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/addComment", async (req, res) => {
+    
+    const { articleId, userID, comment } = req.body;
+    try {
+        let article = await blogModel.findById(articleId);
+        if (!article) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+
+        article.comments.push({ userID, comment });
+        await article.save();
+        res.send("Comment added successfully");
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 );

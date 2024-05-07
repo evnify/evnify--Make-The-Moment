@@ -222,7 +222,7 @@ function AddBlog() {
                     </h3>
                     <TextArea
                         style={{
-                            width: 1000,
+                            width: 1100,
                             height: 429,
                             marginBottom: 20,
                         }}

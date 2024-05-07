@@ -40,7 +40,7 @@ function App() {
                         element={<Booking />}
                     />
                     <Route path="/blog" element={<Blog />} />
-                    <Route path="/article" element={<Article />} />
+                    <Route path="/article/:id" element={<Article />} />
                     <Route path="/admin/*" element={<AdminDashboard />} />
                     <Route path="/employee/*" element={<EmpDashboard />} />
                     <Route
