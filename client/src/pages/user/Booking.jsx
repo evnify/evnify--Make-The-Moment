@@ -885,19 +885,6 @@ function Booking() {
         console.log(selectedAddress);
     };
 
-    const [shippingCost, setShippingCost] = useState(0);
-
-    //Retrieve shipping cost by city
-    function getPriceByValue(value) {
-        for (let i = 0; i < options.length; i++) {
-            if (options[i].value === value) {
-                setShippingCost(options[i].price);
-                return options[i].price;
-            }
-        }
-        return null;
-    }
-
     // address delete
     const handleDeleteAddress = async (address) => {
         try {
@@ -1359,10 +1346,7 @@ function Booking() {
                                             Total :{" "}
                                             {(calculateTotal() ?? 0) +
                                                 (selectedPackage[0]?.price ??
-                                                    0) +
-                                                (getPriceByValue(
-                                                    selectedAddress.district
-                                                ) ?? 0)}{" "}
+                                                    0)}{" "}
                                             LKR
                                         </h3>
                                     </div>
@@ -1374,7 +1358,6 @@ function Booking() {
                                         selectedPackage={selectedPackage}
                                         selectedAddress={selectedAddress}
                                         date={date}
-                                        shippingCost={shippingCost}
                                     />
                                 </Elements>
                             </div>

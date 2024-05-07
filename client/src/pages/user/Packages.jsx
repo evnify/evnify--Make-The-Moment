@@ -30,7 +30,6 @@ function Packages() {
     console.log(customPackage);
 
     useEffect(() => {
-        console.log(category);
         async function getPackageData() {
             try {
                 const response = await axios.post(

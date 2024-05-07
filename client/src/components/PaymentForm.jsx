@@ -13,7 +13,7 @@ const PaymentForm = (props) => {
 
     const navigate = useNavigate();
 
-    const { cart, userId, selectedPackage, selectedAddress, date, shippingCost } = props;
+    const { cart, userId, selectedPackage, selectedAddress, date } = props;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -75,7 +75,7 @@ const PaymentForm = (props) => {
                 packageType: selectedPackage[0].packageType,
                 eventLocation: [selectedAddress],
                 eventDate: date,
-                amount: calculateTotal() + selectedPackage[0].price + shippingCost,
+                amount: calculateTotal() + selectedPackage[0].price,
                 status: "Pending",
                 AssignedInventory: cart,
                 AssignedEmployees: [],
@@ -85,7 +85,7 @@ const PaymentForm = (props) => {
                 customerID: userId,
                 customerEmail: email,
                 packageType: selectedPackage[0].packageType,
-                amount: calculateTotal() + selectedPackage[0].price + shippingCost,
+                amount: calculateTotal() + selectedPackage[0].price ,
                 paymentType: "card",
                 description: transaction.description,
             });
@@ -104,7 +104,7 @@ const PaymentForm = (props) => {
 
         const stripeToken = {
             token,
-            amount: calculateTotal() + selectedPackage[0].price + shippingCost,
+            amount: calculateTotal() + selectedPackage[0].price,
             description: `Payment for ${selectedPackage[0].packageType} Package by ${nameOnCard}`,
             email : email,
         };
