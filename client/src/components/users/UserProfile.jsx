@@ -4,7 +4,8 @@ import { Upload, message, Modal } from "antd";
 import { Icon } from "@iconify/react";
 import { LoadingOutlined, PlusOutlined ,EditOutlined} from "@ant-design/icons";
 import axios from "axios";
-import { Input} from "antd";
+import { Input,Tag} from "antd";
+import Link from "antd/es/typography/Link";
 const { Search, TextArea } = Input;
 
 function UserProfile() {
@@ -14,32 +15,77 @@ function UserProfile() {
     const [fileList, setFileList] = useState([]);
     const [profileImage, setProfileImage] = useState();
     const [user, setUser] = useState({});
+    const [allFieldsFilled, setAllFieldsFilled] = useState(false);
 
     useEffect(() => {
         const fetchUserByID = async () => {
             const user = JSON.parse(localStorage.getItem("currentUser"));
             const userID = { userID: user.userID };
-
+    
             try {
                 const res = await axios.post("/api/users/getUserById", userID);
                 setUser(res.data);
-                setFileList([
-                    {
-                        uid: "1",
-                        name: "image.png",
-                        status: "done",
-                        url: res.data.profilePic,
-                    },
-                    
-                ]);
+                if (!res.data.profilePic) {
+                    // Set default profile picture URL
+                    const defaultProfilePic = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/1200px-Windows_10_Default_Profile_Picture.svg.png";
+                    setFileList([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: defaultProfilePic,
+                        },
+                    ]);
+                } else {
+                    setFileList([
+                        {
+                            uid: "1",
+                            name: "image.png",
+                            status: "done",
+                            url: res.data.profilePic,
+                        },
+                    ]);
+                }
                 setCoverPhoto(res.data.coverPic);
                 console.log(res.data);
+                setAllFieldsFilled(checkAllFieldsFilled(res.data));
             } catch (error) {
                 console.error(error);
             }
         };
         fetchUserByID();
     }, []);
+    
+
+    
+
+    const checkAllFieldsFilled = (userData) => {
+        const requiredFields = [
+            "firstName",
+            "lastName",
+            "email",
+            "phoneNumber",
+            "city",
+            "province",
+            "address1",
+            "zipcode",
+        ];
+
+        let allFieldsFilled = true;
+
+        for (const field of requiredFields) {
+            if (!userData[field]) {
+                allFieldsFilled = false;
+                break; // Stop loop if any field is missing
+            }
+        }
+
+        if (!allFieldsFilled) {
+            message.error("Please fill out all required fields");
+        }
+
+        return allFieldsFilled;
+    };
 
     const beforeUpload = (file) => {
         const isJpgOrPng =
@@ -300,9 +346,11 @@ function UserProfile() {
                                 src={previewImage}
                             />
                         </Modal>
+                        <Link href="/userprofile/UserSettings" >
                         <button className="btn btn-primary edit">
                             Edit Profile
                         </button>
+                    </Link>
                     </div>
                 </div>
 
@@ -319,6 +367,19 @@ function UserProfile() {
                         </span>
                     </p>
                 </div>
+            </div>
+
+            <div className="banner_for_update_details">
+                {!allFieldsFilled && (
+                    <div className="banner" >
+                        <Tag className= "tag" color="red">
+                            
+                            Please fill out all required fields. Click
+                            <Link href="/userprofile/UserSettings"> here </Link>
+                            to update your info.
+                        </Tag>
+                    </div>
+                )}
             </div>
 
             <div
